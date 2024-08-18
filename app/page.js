@@ -1,15 +1,25 @@
 "use client"
-import Image from "next/image";
+import { ModeToggle } from "@/components/ui/mode-toggle";
+import { useEffect } from "react";
+import secureLocalStorage from "react-secure-storage";
 
 export default function Home() {
-  const handleSendEmail = async () => {
-    alert("Email Sent");
-    const formData = new FormData();
-    formData.append("operation", "sendEmail");
-  }
+
+  useEffect(() => {
+    if(secureLocalStorage.getItem("url") !== "https://localhost/delmonte/api/") {
+      secureLocalStorage.setItem("url", "https://localhost/delmonte/api/");
+    }
+    console.log("url", secureLocalStorage.getItem("url"));
+  }, [])
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <button onClick={handleSendEmail}>Send Email</button>
-    </main>
+    <>
+      <header className="p-4">
+        <ModeToggle />
+      </header>
+      <main className="flex min-h-screen flex-col items-center justify-between p-24">
+          hello
+      </main>
+    </>
   );
 }
