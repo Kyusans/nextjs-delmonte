@@ -23,7 +23,9 @@ export default function RootLayout({ children }) {
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <div className=" dark:bg-[#0e4028] h-screen">
+              {children}
+            </div>
           </ThemeProvider>
         </body>
       </html>
