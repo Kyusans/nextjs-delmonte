@@ -6,8 +6,8 @@ import secureLocalStorage from "react-secure-storage";
 export default function Home() {
 
   useEffect(() => {
-    if(secureLocalStorage.getItem("url") !== "https://localhost/delmonte/api/") {
-      secureLocalStorage.setItem("url", "https://localhost/delmonte/api/");
+    if(secureLocalStorage.getItem("url") !== "http://localhost/delmonte/api/") {
+      secureLocalStorage.setItem("url", "http://localhost/delmonte/api/");
     }
     console.log("url", secureLocalStorage.getItem("url"));
   }, [])
