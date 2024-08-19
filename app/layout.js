@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "sonner";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -24,6 +25,7 @@ export default function RootLayout({ children }) {
             disableTransitionOnChange
           >
             <div className=" dark:bg-[#0e4028] h-screen">
+              <Toaster position="top-center" richColors duration={2000} />
               {children}
             </div>
           </ThemeProvider>
