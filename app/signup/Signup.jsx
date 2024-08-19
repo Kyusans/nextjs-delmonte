@@ -35,7 +35,7 @@ const Signup = () => {
 
   useEffect(() => {
     setTheme("dark");
-  }, []);
+  }, [setTheme]);
 
   return (
     <main className='bg-[#0e4028]'>

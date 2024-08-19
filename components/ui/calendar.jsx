@@ -1,14 +1,24 @@
 "use client"
 
-import * as React from "react"
-import { buttonVariants } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { cn } from "@/lib/utils"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { DayPicker, DropdownProps } from "react-day-picker"
+import * as React from "react";
+import { buttonVariants } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { DayPicker, Day } from "react-day-picker";
 
-function Calendar({ className, classNames, showOutsideDays = true, ...props }) {
+function formatDate(date) {
+  return date.toISOString().split('T')[0];
+}
+
+function Calendar({ className, classNames, showOutsideDays = true, onDateSelect, ...props }) {
+  const handleDayClick = (day) => {
+    if (onDateSelect) {
+      onDateSelect(formatDate(day));
+    }
+  };
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
@@ -43,19 +53,19 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }) {
       }}
       components={{
         Dropdown: ({ value, onChange, children, ...props }) => {
-          const options = React.Children.toArray(children)
-          const selected = options.find((child) => child.props.value === value)
+          const options = React.Children.toArray(children);
+          const selected = options.find((child) => child.props.value === value);
           const handleChange = (value) => {
             const changeEvent = {
               target: { value },
-            } 
-            onChange?.(changeEvent)
-          }
+            };
+            onChange?.(changeEvent);
+          };
           return (
             <Select
               value={value?.toString()}
               onValueChange={(value) => {
-                handleChange(value)
+                handleChange(value);
               }}
             >
               <SelectTrigger className="pr-1.5 focus:ring-0">
@@ -71,15 +81,16 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }) {
                 </ScrollArea>
               </SelectContent>
             </Select>
-          )
+          );
         },
         IconLeft: ({ ...props }) => <ChevronLeft className="h-4 w-4" />,
         IconRight: ({ ...props }) => <ChevronRight className="h-4 w-4" />,
       }}
+      onDayClick={handleDayClick}
       {...props}
     />
-  )
+  );
 }
-Calendar.displayName = "Calendar"
+Calendar.displayName = "Calendar";
 
-export { Calendar }
+export { Calendar };
