@@ -15,7 +15,7 @@ const ComboBox = ({ list, subject, value, onChange, styles }) => {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={`w-full justify-between ${!styles ? "bg-[#0e4028] border-2 border-[#0b864a]" : styles}`} 
+          className={`w-full justify-between ${!styles ? "bg-[#0e4028] border-2 border-[#0b864a] hover:bg-[#0e5a35]" : styles}`} 
         >
           {value ? list.find((item) => item.value === value)?.label : `Select ${subject}...`}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

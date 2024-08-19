@@ -1,6 +1,6 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -46,7 +46,9 @@ const formSchema = z.object({
   permanentAddress: z.string().min(1, {
     message: "This field is required",
   }),
-  sex: z.enum(["male", "female", "other"]),
+  gender: z.string().min(1, {
+    message: "This field is required",
+  }),
   dob: z.date(),
   sss: z.string().min(1, {
     message: "This field is required",
@@ -60,8 +62,8 @@ const formSchema = z.object({
   pagibig: z.string().min(1, {
     message: "This field is required",
   }),
-  password: z.string().min(1, {
-    message: "This field is required",
+  password: z.string().min(5, {
+    message: "Password must be at least 5 characters",
   }),
   confirmPassword: z.string().min(5, {
     message: "Password must be at least 5 characters",
@@ -90,7 +92,7 @@ const PersonalInformation = ({ nextPage }) => {
       alternateContact: "",
       presentAddress: "",
       permanentAddress: "",
-      sex: "",
+      gender: "",
       dob: "",
       sss: "",
       tin: "",
@@ -239,19 +241,33 @@ const PersonalInformation = ({ nextPage }) => {
 
             <FormField
               control={form.control}
-              name="dateOfBirth"
+              name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Date of Birth</FormLabel>
+                  <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Date of Birth" {...field} />
+                    <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Password" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <Controller
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Confirm Password</FormLabel>
+                  <FormControl>
+                    <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Confirm Password" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
               name="gender"
               control={form.control}
               render={({ field }) => (
@@ -269,6 +285,7 @@ const PersonalInformation = ({ nextPage }) => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="dob"
@@ -280,7 +297,7 @@ const PersonalInformation = ({ nextPage }) => {
                       <PopoverTrigger asChild>
                         <Button
                           variant={"outline"}
-                          className={cn("justify-start w-full text-left font-normal bg-[#0e4028] border-2 border-[#0b864a]", !field.value && "text-muted-foreground")}
+                          className={cn("justify-start w-full text-left font-normal bg-[#0e4028] hover:bg-[#0e5a35] border-2 border-[#0b864a]", !field.value && "text-muted-foreground")}
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
@@ -293,7 +310,7 @@ const PersonalInformation = ({ nextPage }) => {
                           selected={field.value}
                           onSelect={field.onChange}
                           fromYear={1960}
-                          toYear={2030}
+                          toYear={new Date().getFullYear()}
                         />
                       </PopoverContent>
                     </Popover>
@@ -303,9 +320,61 @@ const PersonalInformation = ({ nextPage }) => {
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="sss"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>SSS</FormLabel>
+                  <FormControl>
+                    <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="SSS" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
+            <FormField
+              control={form.control}
+              name="tin"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>TIN</FormLabel>
+                  <FormControl>
+                    <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="TIN" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
+            <FormField
+              control={form.control}
+              name="philhealth"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>PhilHealth</FormLabel>
+                  <FormControl>
+                    <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="PhilHealth" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
+            <FormField
+              control={form.control}
+              name="pagibig"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Pagibig</FormLabel>
+                  <FormControl>
+                    <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Pagibig" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <div className="flex flex-col sm:flex-row gap-4 w-full max-w-4xl mt-3 justify-end">
             <Button
