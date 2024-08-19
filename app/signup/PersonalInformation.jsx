@@ -1,12 +1,18 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import ComboBox from "../my_components/combo-box";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   firstName: z.string().min(1, {
@@ -34,10 +40,43 @@ const formSchema = z.object({
   }).regex(/^\+?[0-9]\d{1,14}$/, {
     message: "Invalid contact number format",
   }),
+  presentAddress: z.string().min(1, {
+    message: "This field is required",
+  }),
+  permanentAddress: z.string().min(1, {
+    message: "This field is required",
+  }),
+  sex: z.enum(["male", "female", "other"]),
+  dob: z.date(),
+  sss: z.string().min(1, {
+    message: "This field is required",
+  }),
+  tin: z.string().min(1, {
+    message: "This field is required",
+  }),
+  philhealth: z.string().min(1, {
+    message: "This field is required",
+  }),
+  pagibig: z.string().min(1, {
+    message: "This field is required",
+  }),
+  password: z.string().min(1, {
+    message: "This field is required",
+  }),
+  confirmPassword: z.string().min(5, {
+    message: "Password must be at least 5 characters",
+  }),
 });
 
 const PersonalInformation = ({ nextPage }) => {
   const [isLoading, setIsloading] = useState(false);
+  const [date, setDate] = useState();
+
+  const genders = [
+    { label: "Male", value: "Male" },
+    { label: "Female", value: "Female" },
+    { label: "Other", value: "Other" },
+  ];
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -49,6 +88,16 @@ const PersonalInformation = ({ nextPage }) => {
       alternateEmail: "",
       contact: "",
       alternateContact: "",
+      presentAddress: "",
+      permanentAddress: "",
+      sex: "",
+      dob: "",
+      sss: "",
+      tin: "",
+      philhealth: "",
+      pagibig: "",
+      password: "",
+      confirmPassword: "",
     },
   });
 
@@ -66,8 +115,8 @@ const PersonalInformation = ({ nextPage }) => {
   return (
     <div className="flex justify-center items-center p-4 sm:p-6">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 sm:space-y-6 w-full max-w-lg">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2 sm:space-y-6 w-full max-w-2xl">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3">
             <FormField
               control={form.control}
               name="firstName"
@@ -155,10 +204,108 @@ const PersonalInformation = ({ nextPage }) => {
                   <FormControl>
                     <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Alternate Contact" {...field} />
                   </FormControl>
-                    <FormMessage />
+                  <FormMessage />
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="presentAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Present Address</FormLabel>
+                  <FormControl>
+                    <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Present Address" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="permanentAddress"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Permanent Address</FormLabel>
+                  <FormControl>
+                    <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Permanent Address" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="dateOfBirth"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date of Birth</FormLabel>
+                  <FormControl>
+                    <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Date of Birth" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Controller
+              name="gender"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gender</FormLabel>
+                  <div>
+                    <ComboBox
+                      list={genders}
+                      subject="Gender"
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="dob"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Date of Birth</FormLabel>
+                  <div>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant={"outline"}
+                          className={cn("justify-start w-full text-left font-normal bg-[#0e4028] border-2 border-[#0b864a]", !field.value && "text-muted-foreground")}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent align="start" className=" w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          captionLayout="dropdown-buttons"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          fromYear={1960}
+                          toYear={2030}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+
+
+
           </div>
           <div className="flex flex-col sm:flex-row gap-4 w-full max-w-4xl mt-3 justify-end">
             <Button
@@ -177,7 +324,7 @@ const PersonalInformation = ({ nextPage }) => {
           </div>
         </form>
       </Form>
-    </div>
+    </div >
   );
 };
 

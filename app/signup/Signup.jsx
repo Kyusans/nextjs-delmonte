@@ -38,7 +38,7 @@ const Signup = () => {
   }, []);
 
   return (
-    <main className='bg-[#0e4028] h-screen'>
+    <main className='bg-[#0e4028]'>
       <div className="flex flex-col w-full justify-center items-center">
         <Image src="/assets/images/delmonteLogo.png" alt="DelmonteLogo" width={152} height={152} className='mt-16' />
 
@@ -60,17 +60,32 @@ const Signup = () => {
           <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 3 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
             {currentStep === 3 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '3'}
           </div>
+          {/* Connector */}
+          <div className={`h-1 flex-1 ${currentStep >= 4 ? 'bg-primary dark:bg-[#0e4028]' : 'bg-gray-200'}`} />
+          {/* Step 4 */}
+          <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 4 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+            {currentStep === 4 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '4'}
+          </div>
+          {/* Connector */}
+          <div className={`h-1 flex-1 ${currentStep >= 3 ? 'bg-primary dark:bg-[#0e4028]' : 'bg-gray-200'}`} />
+          {/* Step 5 */}
+          <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 5 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+            {currentStep === 5 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '5'}
+          </div>
+
         </div>
 
         <div className="w-full max-w-4xl mt-6">
-          <Card className="w-full h-full flex flex-col bg-[#0e5a35]  xs:border-[#0e4028]">
-            <CardHeader>
-              <CardTitle className="text-lg sm:text-xl text-center">{pages[currentStep - 1].title}</CardTitle>
-            </CardHeader>
-            <CardContent className="h-full">
-              {pages[currentStep - 1].content}
-            </CardContent>
-          </Card>
+          <ScrollArea className="md:h-[calc(100vh-25rem)]">
+            <Card className="w-full h-full flex flex-col bg-[#0e5a35]  xs:border-[#0e4028]">
+              <CardHeader>
+                <CardTitle className="text-lg sm:text-xl text-center">{pages[currentStep - 1].title}</CardTitle>
+              </CardHeader>
+              <CardContent className="h-full">
+                {pages[currentStep - 1].content}
+              </CardContent>
+            </Card>
+          </ScrollArea>
         </div>
 
 
