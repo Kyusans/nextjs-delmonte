@@ -146,8 +146,11 @@ const PersonalInformation = ({ nextPage }) => {
       toast.error("Passwords do not match");
       return;
     } else if (localStorage.getItem("personalInfo")) {
-      nextPage();
-      return;
+      const data = JSON.parse(localStorage.getItem("personalInfo"));
+      if (data.email === values.email) {
+        nextPage();
+        return;
+      } 
     }
     try {
       setIsLoading(true);

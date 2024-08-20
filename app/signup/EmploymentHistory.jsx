@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddPositionModal from "./modals/AddPositionModal";
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,7 @@ import { formatDate } from "./page";
 import { PlusIcon, X } from "lucide-react";
 import ShowAlert from "@/components/ui/show-alert";
 
-function EducationalBackground({handlePrevious, handleNext}) {
+function EmploymentHistory({handlePrevious, handleNext}) {
   const [position, setPosition] = useState([]);
   const [openPositionModal, setOpenPositionModal] = useState(false);
   const [indexToRemove, setIndexToRemove] = useState(null);
@@ -21,7 +21,7 @@ function EducationalBackground({handlePrevious, handleNext}) {
     if (status === 1) {
       const filteredPosition = position.filter((_, index) => index !== indexToRemove);
       setPosition(filteredPosition);
-      localStorage.setItem("educationalBackground", JSON.stringify(filteredPosition));
+      localStorage.setItem("employmentHistory", JSON.stringify(filteredPosition));
     }
     setShowAlert(false);
   };
@@ -33,7 +33,7 @@ function EducationalBackground({handlePrevious, handleNext}) {
   const handleClosePositionModal = (status) => {
     if (status !== 0) {
       setPosition([...position, status]);
-      localStorage.setItem("educationalBackground", JSON.stringify([...position, status]));
+      localStorage.setItem("employmentHistory", JSON.stringify([...position, status]));
     }
     setOpenPositionModal(false);
   };
@@ -42,6 +42,12 @@ function EducationalBackground({handlePrevious, handleNext}) {
     setIndexToRemove(indexToRemove);
     handleShowAlert("This action cannot be undone. This will permanently delete the position and remove it from your list");
   };
+
+  useEffect(() => {
+    if (localStorage.getItem("employmentHistory") !== null) {
+      setPosition(JSON.parse(localStorage.getItem("employmentHistory")));
+    }
+  }, []);
 
   return (
     <div>
@@ -82,4 +88,4 @@ function EducationalBackground({handlePrevious, handleNext}) {
   );
 }
 
-export default EducationalBackground;
+export default EmploymentHistory;

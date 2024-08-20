@@ -8,8 +8,9 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PersonalInformation from './PersonalInformation';
 import { useTheme } from 'next-themes';
-import EducationalBackground from './EducationalBackground';
+import EducationalBackground from './EmploymentHistory';
 import { toast } from 'sonner';
+import EmploymentHistory from './EmploymentHistory';
 
 const Signup = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -37,7 +38,7 @@ const Signup = () => {
   const pages = [
     { content: "" },
     { title: "Tell us about your Educational Background", content: <EducationalBackground /> },
-    { title: "Tell us about your Educational Background", content: <EducationalBackground /> },
+    { title: "Tell us about your Educational Background", content: <EmploymentHistory /> },
     { title: "Tell us about your Educational Background", content: <EducationalBackground /> },
 
   ];
