@@ -8,16 +8,22 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import PersonalInformation from './PersonalInformation';
 import { useTheme } from 'next-themes';
+import EducationalBackground from './EducationalBackground';
+import { toast } from 'sonner';
 
 const Signup = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const { setTheme } = useTheme();
 
   const handleNext = () => {
-    if (currentStep === 1) {
-      //console.log the personalinformation
+
+    if (currentStep === 2) {
+      if (localStorage.getItem("educationalBackground") === null || localStorage.getItem("educationalBackground") === "[]") {
+        toast.error("Please complete your educational background first");
+        return;
+      } 
     }
-    if (currentStep < 3) {
+    if (currentStep < 5) {
       setCurrentStep(prevStep => prevStep + 1);
     }
   };
@@ -29,8 +35,11 @@ const Signup = () => {
   };
 
   const pages = [
-    { title: "Personal Information", content: "" },
-    { title: "Account Information", content: <div>Account Information</div> },
+    { content: "" },
+    { title: "Tell us about your Educational Background", content: <EducationalBackground /> },
+    { title: "Tell us about your Educational Background", content: <EducationalBackground /> },
+    { title: "Tell us about your Educational Background", content: <EducationalBackground /> },
+
   ];
 
   useEffect(() => {
@@ -75,6 +84,8 @@ const Signup = () => {
 
         </div>
 
+        { }
+
         {currentStep === 1 ? <PersonalInformation nextPage={handleNext} />
           :
           <div className="w-full max-w-4xl mt-6">
@@ -91,7 +102,7 @@ const Signup = () => {
             <div className="flex flex-col sm:flex-row gap-4 w-full max-w-4xl mt-3 justify-end">
               <Button
                 onClick={handlePrevious}
-                className="px-4 py-2 rounded w-full sm:w-auto"
+                className="px-4 py-2 rounded w-full sm:w-auto bg-[#0e5a35]"
                 variant="secondary"
                 disabled={currentStep === 1}
               >
@@ -99,7 +110,7 @@ const Signup = () => {
               </Button>
               <Button
                 onClick={handleNext}
-                className="px-4 py-2 text-white rounded dark:bg-[#0e4028] w-full sm:w-auto"
+                className="px-4 py-2 rounded bg-[#f5f5f5] text-[#0e4028]  w-full sm:w-auto"
                 disabled={currentStep === 3}
               >
                 Next

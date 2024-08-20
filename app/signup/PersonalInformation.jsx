@@ -13,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon } from "lucide-react";
 import { format, formatISO, set } from "date-fns";
 import { cn } from "@/lib/utils";
-import EnterPin from "./EnterPin";
+import EnterPin from "./modals/EnterPin";
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -56,14 +56,15 @@ const formSchema = z.object({
   gender: z.string().min(1, {
     message: "This field is required",
   }),
-  dob: z.string().refine((date) => {
-    const parsedDate = new Date(date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return parsedDate <= today;
-  }, {
-    message: "Date of Birth cannot be in the future",
-  }),
+  dob: z.string().min(1, { message: "This field is required" })
+    .refine((date) => {
+      const parsedDate = new Date(date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return parsedDate <= today;
+    }, {
+      message: "Invalid Date",
+    }),
   sss: z.string().min(1, {
     message: "This field is required",
   }),
@@ -86,10 +87,10 @@ const formSchema = z.object({
 
 const PersonalInformation = ({ nextPage }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [progress, setProgress] = useState(13);
   // const [pincode, setPincode] = useState("");
   // const [showPin, setShowPin] = useState(false);
   const [email, setEmail] = useState("");
-  const [progress, setProgress] = useState(13);
   const [expirationDate, setExpirationDate] = useState("");
 
   // const handleShowPin = () => { setShowPin(true); }
@@ -144,7 +145,7 @@ const PersonalInformation = ({ nextPage }) => {
     if (values.password !== values.confirmPassword) {
       toast.error("Passwords do not match");
       return;
-    } else if (secureLocalStorage.getItem("personalInfo")) {
+    } else if (localStorage.getItem("personalInfo")) {
       nextPage();
       return;
     }
@@ -166,7 +167,7 @@ const PersonalInformation = ({ nextPage }) => {
         toast.error("Email already exist");
         return;
       } else {
-        secureLocalStorage.setItem("personalInfo", JSON.stringify(values));
+        localStorage.setItem("personalInfo", JSON.stringify(values));
         nextPage();
       }
     } catch (error) {
@@ -248,9 +249,10 @@ const PersonalInformation = ({ nextPage }) => {
   }, [])
 
   useEffect(() => {
-    if (secureLocalStorage.getItem("personalInfo")) {
-      form.reset(JSON.parse(secureLocalStorage.getItem("personalInfo")));
+    if (localStorage.getItem("personalInfo") !== null) {
+      form.reset(JSON.parse(localStorage.getItem("personalInfo")));
     }
+    console.log("personalInfo", localStorage.getItem("personalInfo"));
   }, [form])
 
   return (
@@ -528,7 +530,7 @@ const PersonalInformation = ({ nextPage }) => {
             </ScrollArea>
             <div className="flex flex-col sm:flex-row gap-4 w-full max-w-4xl mt-3 justify-end">
               <Button
-                className="px-4 py-2 rounded w-full sm:w-auto"
+                className="px-4 py-2 rounded w-full sm:w-auto bg-[#0e5a35]"
                 variant="secondary"
                 disabled
               >
