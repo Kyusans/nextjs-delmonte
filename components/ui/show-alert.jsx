@@ -1,0 +1,55 @@
+import React from 'react'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+
+function ShowAlert({ open, onHide, message }) {
+  const handleOnHide = () => {
+    onHide(0);
+  };
+
+  const handleContinue = () => {
+    onHide(1);
+  };
+
+  return (
+    <div>
+      <AlertDialog open={open} onOpenChange={handleOnHide}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {message}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel variant="outline">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleContinue}>Continue</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
+
+export default ShowAlert;
+
+  //how to use it
+  // const [alertMessage, setAlertMessage] = useState("");
+  // const [showAlert, setShowAlert] = useState(false);
+  // const handleShowAlert = (message) => {
+  // setAlertMessage(message);
+  //   setShowAlert(true);
+  // };
+  // const handleCloseAlert = () => {
+  //   setShowAlert(false);
+  // };
+  // <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
+
