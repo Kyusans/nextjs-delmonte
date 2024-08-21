@@ -3,10 +3,30 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const ComboBox = ({ list, subject, value, onChange, styles }) => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [filteredItems, setFilteredItems] = useState(list.slice(0, 200));
+
+  useEffect(() => {
+    if (inputValue === '') {
+      setFilteredItems(list.slice(0, 200));
+    }
+  }, [inputValue, list]);
+
+  const handleInputChange = (newInputValue) => {
+    setInputValue(newInputValue);
+    if (newInputValue === '') {
+      setFilteredItems(list.slice(0, 200));
+    } else {
+      const newFilteredItems = list
+        .filter(item => item.label.toLowerCase().includes(newInputValue.toLowerCase()))
+        .slice(0, 200);
+      setFilteredItems(newFilteredItems);
+    }
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -23,25 +43,33 @@ const ComboBox = ({ list, subject, value, onChange, styles }) => {
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
         <Command>
-          <CommandInput placeholder={`Select ${subject}...`} />
+          <CommandInput
+            value={inputValue}
+            onValueChange={handleInputChange}
+            placeholder={`Select ${subject}...`}
+          />
           <CommandList>
             <CommandEmpty>No {subject} found.</CommandEmpty>
             <CommandGroup>
-              {list.map((item, index) => (
-                <CommandItem
-                  key={index}
-                  value={item.value}
-                  onSelect={() => {
-                    onChange(item.value);
-                    setOpen(false);
-                  }}
-                >
-                  <Check
-                    className={cn("mr-2 h-4 w-4", value === item.value ? "opacity-100" : "opacity-0")}
-                  />
-                  {item.label}
-                </CommandItem>
-              ))}
+              {filteredItems.length > 0 ? (
+                filteredItems.map((item, index) => (
+                  <CommandItem
+                    key={index}
+                    value={item.value}
+                    onSelect={() => {
+                      onChange(item.value);
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn("mr-2 h-4 w-4", value === item.value ? "opacity-100" : "opacity-0")}
+                    />
+                    {item.label}
+                  </CommandItem>
+                ))
+              ) : (
+                <CommandEmpty>No items found.</CommandEmpty>
+              )}
             </CommandGroup>
           </CommandList>
         </Command>

@@ -14,7 +14,6 @@ import EducationalBackground from './EducationalBackground';
 import secureLocalStorage from 'react-secure-storage';
 import axios from 'axios';
 import { Progress } from '@/components/ui/progress';
-import ComboBox from '../my_components/combo-box';
 
 const Signup = () => {
   const [progress, setProgress] = useState(13);
@@ -53,7 +52,7 @@ const Signup = () => {
 
   const pages = [
     { content: "" },
-    { title: "Tell us about your Educational Background", content: <EducationalBackground courseList={courses} graduateCourseList={courseGraduate} /> },
+    { title: "Tell us about your Educational Background", content: <EducationalBackground courseList={courses} graduateCourseList={courseGraduate} institutionList={institutions} /> },
     { title: "Tell us about your Employment History", content: <EmploymentHistory /> },
     { title: "Tell us about your Educational Background", content: <EducationalBackground /> },
 
@@ -122,7 +121,7 @@ const Signup = () => {
   return (
     <main className='bg-[#0e4028]'>
       <div className={`flex flex-col w-full justify-center items-center ${isLoading ? 'h-screen' : ''} `}>
-        {isLoading ? <Progress value={progress} className='w-1/3' /> :
+        {isLoading ? <Progress value={progress} className='w-3/4 sm:w-1/3' /> :
           <>
             <Image src="/assets/images/delmonteLogo.png" alt="DelmonteLogo" width={152} height={152} className='mt-16' />
             {/* Steppers container */}

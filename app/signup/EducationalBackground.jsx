@@ -8,7 +8,7 @@ import { formatDate } from './page'
 import AddCourseModal from './modals/AddCourseModal'
 import { Separator } from '@radix-ui/react-dropdown-menu'
 
-function EducationalBackground({ courseList, graduateCourseList }) {
+function EducationalBackground({ courseList, graduateCourseList, institutionList }) {
   const [educationDatas, setEducationDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 
@@ -22,7 +22,7 @@ function EducationalBackground({ courseList, graduateCourseList }) {
     if (status === 1) {
       const filteredEducationDatas = educationDatas.filter((_, index) => index !== indexToRemove);
       setEducationDatas(filteredEducationDatas);
-      localStorage.setItem("", JSON.stringify(filteredEducationDatas));
+      localStorage.setItem("educationalBackground", JSON.stringify(filteredEducationDatas));
     }
     setShowAlert(false);
   };
@@ -89,7 +89,7 @@ function EducationalBackground({ courseList, graduateCourseList }) {
           </CardDescription>
         )}
       </Alert>
-      <AddCourseModal open={showCourseModal} onHide={handleCloseCourseModal} courseList={courseList} graduateCourseList={graduateCourseList} />
+      <AddCourseModal open={showCourseModal} onHide={handleCloseCourseModal} courseList={courseList} graduateCourseList={graduateCourseList} institutionList={institutionList} />
       <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
     </div>
   )

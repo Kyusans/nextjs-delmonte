@@ -44,7 +44,7 @@ function EmploymentHistory({handlePrevious, handleNext}) {
   };
 
   useEffect(() => {
-    if (localStorage.getItem("employmentHistory") !== null) {
+    if (localStorage.getItem("employmentHistory") !== null || localStorage.getItem("employmentHistory") !== "[]") {
       setPosition(JSON.parse(localStorage.getItem("employmentHistory")));
     }
   }, []);

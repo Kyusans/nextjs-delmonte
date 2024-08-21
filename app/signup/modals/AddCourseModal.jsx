@@ -16,9 +16,12 @@ import { Dialog, DialogClose, DialogContent, DialogHeader, DialogOverlay, Dialog
 import ComboBox from "@/app/my_components/combo-box";
 import { Separator } from "@/components/ui/separator";
 
-function AddCourseModal({ open, onHide, courseList, graduateCourseList }) {
+function AddCourseModal({ open, onHide, courseList, graduateCourseList, institutionList }) {
 
   const formSchema = z.object({
+    institution: z.number().min(1, {
+      message: "This field is required",
+    }),
     course: z.number().min(1, {
       message: "This field is required",
     }),
@@ -52,6 +55,7 @@ function AddCourseModal({ open, onHide, courseList, graduateCourseList }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      institution: "",
       course: "",
       courseDateGraduated: "",
       graduateCourse: "",
@@ -91,11 +95,32 @@ function AddCourseModal({ open, onHide, courseList, graduateCourseList }) {
             <DialogTitle className="text-3xl">Add Course</DialogTitle>
           </DialogHeader>
           <div className="w-full">
+
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} >
                 <div className="flex justify-center items-center p-4 sm:p-6">
                   <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
-                    <div className="grid grid-cols-1 gap-4">
+                    <div className="grid grid-cols-1 gap-2">
+                      <FormField
+                        name="institution"
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Institution</FormLabel>
+                            <div>
+                              <ComboBox
+                                list={institutionList}
+                                subject="Institution"
+                                value={field.value}
+                                onChange={field.onChange}
+                              />
+                            </div>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Separator />
+
                       <FormField
                         name="course"
                         control={form.control}
@@ -149,7 +174,7 @@ function AddCourseModal({ open, onHide, courseList, graduateCourseList }) {
                       />
                     </div>
                     <Separator />
-                    <div className="grid grid-cols-1 gap-4">
+                    <div className="grid grid-cols-1 gap-2">
                       <FormField
                         name="graduateCourse"
                         control={form.control}
