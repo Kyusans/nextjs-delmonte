@@ -16,6 +16,9 @@ import axios from 'axios';
 import Skills from './Skills';
 import Training from './Training';
 import Spinner from '@/components/ui/spinner';
+import EnterPin from './modals/EnterPin';
+import StepsCompleteScreen from './StepsCompleteScreen';
+import SubscribeToEmail from './SubscribeToEmail';
 
 const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -25,7 +28,44 @@ const Signup = () => {
   const [skills, setSkills] = useState([]);
   const [trainings, setTrainings] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
+  const [email, setEmail] = useState("");
   const { setTheme } = useTheme();
+  const [isValidated, setIsValidated] = useState(false);
+
+  const [pincode, setPincode] = useState("");
+  const [showPin, setShowPin] = useState(false);
+  const [expirationDate, setExpirationDate] = useState("");
+
+  const handleShowPin = () => { setShowPin(true); }
+  const handleHidePin = (status) => {
+    switch (status) {
+      case 1:
+        handleNext();
+        setIsValidated(true);
+        break;
+      case 2:
+        setPincode("");
+        setExpirationDate("");
+        break;
+      default:
+        break;
+    }
+    setShowPin(false);
+  }
+
+  const handleSaveInformation = () => {
+    const jsonData = {
+      personalInfo: JSON.parse(localStorage.getItem("personalInfo")),
+      educationalBackground: JSON.parse(localStorage.getItem("educationalBackground")),
+      employmentHistory: JSON.parse(localStorage.getItem("employmentHistory")),
+      skills: JSON.parse(localStorage.getItem("skills")),
+      trainings: JSON.parse(localStorage.getItem("training")),
+      positionId: localStorage.getItem("positionId"),
+      isSubscribeToEmail: localStorage.getItem("isSubscribeToEmail") ?? false
+    }
+    console.log("IYANG INFO LMAO: ", jsonData);
+    console.log("IYANG INFO lol: ", JSON.stringify(jsonData));
+  }
 
   const handleNext = () => {
 
@@ -40,9 +80,7 @@ const Signup = () => {
         return;
       }
     }
-    if (currentStep < 5) {
-      setCurrentStep(prevStep => prevStep + 1);
-    }
+    setCurrentStep(prevStep => prevStep + 1);
   };
 
   const handlePrevious = () => {
@@ -52,36 +90,42 @@ const Signup = () => {
   };
 
   const handleSubmit = async () => {
-    try {
-      setIsLoading(true);
-      const url = secureLocalStorage.getItem("url") + "users.php";
-      const personalInfo = JSON.parse(localStorage.getItem("personalInfo"))
-      const jsonData = {
-        email: personalInfo.email,
-      }
-      // console.log("url: " + url);
-      console.log("email niya: " + JSON.stringify(jsonData));
-      const formData = new FormData();
-      formData.append("json", JSON.stringify(jsonData));
-      formData.append("operation", "getPinCode");
-      const res = await axios.post(url, formData);
+    const personalInfo = JSON.parse(localStorage.getItem("personalInfo"))
+    if (isValidated === true && email === personalInfo.email) {
+      handleNext();
+    } else if (pincode === "") {
+      try {
+        setIsLoading(true);
+        const url = secureLocalStorage.getItem("url") + "users.php";
+        const jsonData = {
+          email: personalInfo.email,
+        }
+        // console.log("url: " + url);
+        console.log("email niya: " + JSON.stringify(jsonData));
+        const formData = new FormData();
+        formData.append("json", JSON.stringify(jsonData));
+        formData.append("operation", "getPinCode");
+        const res = await axios.post(url, formData);
 
-      // console.log("RES DATA: ", res.data);
-      if (res.data !== 0) {
-        console.log("pincode niya: " + JSON.stringify(res.data));
-        // setPincode(res.data.pincode);
-        // setExpirationDate(res.data.expirationDate);
-        // console.log(values);
-        // handleShowPin();
-      }
+        // console.log("RES DATA: ", res.data);
+        if (res.data !== 0) {
+          console.log("pincode niya: " + JSON.stringify(res.data));
+          setEmail(personalInfo.email);
+          setPincode(res.data.pincode);
+          setExpirationDate(res.data.expirationDate);
+          handleShowPin();
+        }
 
-    } catch (error) {
-      setTimeout(() => {
-        toast.error("Network error");
-      }, [500])
-      console.log("Signup.jsx => onSubmit(): " + error);
-    } finally {
+      } catch (error) {
+        setTimeout(() => {
+          toast.error("Network error");
+        }, [500])
+        console.log("Signup.jsx => onSubmit(): " + error);
+      } finally {
         setIsLoading(false);
+      }
+    } else {
+      handleShowPin();
     }
   };
 
@@ -91,6 +135,9 @@ const Signup = () => {
     { title: "Tell us about your Employment History", content: <EmploymentHistory /> },
     { title: "Tell us about your Skills", content: <Skills skillList={skills} /> },
     { title: "Tell us about your Trainings", content: <Training trainingList={trainings} /> },
+    { title: "Subscribe to email update?", content: <SubscribeToEmail /> },
+    { title: "Woohoo! All steps completed! 🎉", content: <StepsCompleteScreen /> },
+
 
   ];
 
@@ -150,78 +197,88 @@ const Signup = () => {
     getAllDataForDropdownSignup();
   }, [getAllDataForDropdownSignup]);
   return (
-    <main className='bg-[#0e4028]'>
-      <div className={`flex flex-col w-full justify-center items-center ${isLoading ? 'h-screen' : ''} `}>
-        {isLoading ? <Spinner /> :
-          <>
-            <Image src="/assets/images/delmonteLogo.png" alt="DelmonteLogo" width={152} height={152} className='mt-16' />
-            {/* Steppers container */}
-            <div className="flex items-center gap-3 sm:gap-4 mt-6 w-full max-w-5xl px-4">
-              {/* Step 1 */}
-              <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 1 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
-                {currentStep > 1 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '1'}
-              </div>
-              {/* Connector */}
-              <div className={`h-1 flex-1 ${currentStep >= 2 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
-              {/* Step 2 */}
-              <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 2 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
-                {currentStep > 2 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '2'}
-              </div>
-              {/* Connector */}
-              <div className={`h-1 flex-1 ${currentStep >= 3 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
-              {/* Step 3 */}
-              <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 3 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
-                {currentStep > 3 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '3'}
-              </div>
-              {/* Connector */}
-              <div className={`h-1 flex-1 ${currentStep >= 4 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
-              {/* Step 4 */}
-              <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 4 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
-                {currentStep > 4 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '4'}
-              </div>
-              {/* Connector */}
-              <div className={`h-1 flex-1 ${currentStep >= 5 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
-              {/* Step 5 */}
-              <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 5 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
-                {currentStep > 5 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '5'}
-              </div>
-            </div>
-            {currentStep === 1 ? <PersonalInformation nextPage={handleNext} />
-              :
-              <div className="w-full max-w-4xl mt-6">
-                <ScrollArea className="h-[calc(100vh-25rem)]">
-                  <Card className="w-full h-full flex flex-col bg-[#0e5a35]  xs:border-[#0e4028]">
-                    <CardHeader>
-                      <CardTitle className="text-lg sm:text-xl text-center">{pages[currentStep - 1].title}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="h-full">
-                      {pages[currentStep - 1].content}
-                    </CardContent>
-                  </Card>
-                </ScrollArea>
-                <div className="flex flex-col sm:flex-row gap-4 w-full max-w-4xl mt-3 justify-end">
-                  <Button
-                    onClick={handlePrevious}
-                    className="px-4 py-2 rounded w-full sm:w-auto bg-[#0e5a35]"
-                    variant="secondary"
-                    disabled={currentStep === 1}
-                  >
-                    Previous
-                  </Button>
-                  <Button
-                    onClick={currentStep === pages.length ? handleSubmit : handleNext}
-                    className="px-4 py-2 rounded bg-[#f5f5f5] text-[#0e4028]  w-full sm:w-auto"
-                  >
-                    {currentStep === pages.length ? 'Submit' : 'Next'}
-                  </Button>
+    <>
+      <main className='bg-[#0e4028]'>
+        <div className={`flex flex-col w-full justify-center items-center ${isLoading ? 'h-screen' : ''} `}>
+          {isLoading ? <Spinner /> :
+            <>
+              <Image src="/assets/images/delmonteLogo.png" alt="DelmonteLogo" width={152} height={152} className='mt-16' />
+              {/* Steppers container */}
+              <div className="flex items-center gap-3 sm:gap-4 mt-6 w-full max-w-5xl px-4">
+                {/* Step 1 */}
+                <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 1 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  {currentStep > 1 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '1'}
+                </div>
+                {/* Connector */}
+                <div className={`h-1 flex-1 ${currentStep >= 2 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
+                {/* Step 2 */}
+                <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 2 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  {currentStep > 2 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '2'}
+                </div>
+                {/* Connector */}
+                <div className={`h-1 flex-1 ${currentStep >= 3 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
+                {/* Step 3 */}
+                <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 3 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  {currentStep > 3 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '3'}
+                </div>
+                {/* Connector */}
+                <div className={`h-1 flex-1 ${currentStep >= 4 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
+                {/* Step 4 */}
+                <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 4 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  {currentStep > 4 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '4'}
+                </div>
+                {/* Connector */}
+                <div className={`h-1 flex-1 ${currentStep >= 5 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
+                {/* Step 5 */}
+                <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 5 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  {currentStep > 5 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '5'}
+                </div>
+                {/* Connector */}
+                <div className={`h-1 flex-1 ${currentStep >= 6 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
+                {/* Step 6 */}
+                <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 6 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  {currentStep > 6 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '6'}
                 </div>
               </div>
-            }
-          </>
-        }
-
-      </div>
-    </main>
+              {currentStep === 1 ? <PersonalInformation nextPage={handleNext} />
+                :
+                <div className="w-full max-w-4xl mt-6">
+                  <ScrollArea className="h-[calc(100vh-25rem)]">
+                    <Card className="w-full h-full flex flex-col bg-[#0e5a35]  xs:border-[#0e4028]">
+                      <CardHeader>
+                        <CardTitle className="text-lg sm:text-xl text-center">{pages[currentStep - 1].title}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="h-full">
+                        {pages[currentStep - 1].content}
+                      </CardContent>
+                    </Card>
+                  </ScrollArea>
+                  {currentStep <= 6 &&
+                    <div className="flex flex-col sm:flex-row gap-4 w-full max-w-4xl mt-3 justify-end">
+                      <Button
+                        onClick={handlePrevious}
+                        className="px-4 py-2 rounded w-full sm:w-auto bg-[#0e5a35]"
+                        variant="secondary"
+                        disabled={currentStep === 1}
+                      >
+                        Previous
+                      </Button>
+                      <Button
+                        onClick={currentStep === 5 ? handleSubmit : currentStep === 6 ? handleSaveInformation : handleNext}
+                        className="px-4 py-2 rounded bg-[#f5f5f5] text-[#0e4028]  w-full sm:w-auto"
+                      >
+                        {currentStep === 6 ? 'Submit' : 'Next'}
+                      </Button>
+                    </div>
+                  }
+                </div>
+              }
+            </>
+          }
+        </div>
+      </main>
+      <EnterPin open={showPin} onHide={handleHidePin} pincode={pincode} expirationDate={expirationDate} />
+    </>
   );
 };
 

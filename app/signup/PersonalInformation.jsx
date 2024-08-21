@@ -88,29 +88,6 @@ const formSchema = z.object({
 const PersonalInformation = ({ nextPage }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(13);
-  // const [pincode, setPincode] = useState("");
-  // const [showPin, setShowPin] = useState(false);
-  const [email, setEmail] = useState("");
-  const [expirationDate, setExpirationDate] = useState("");
-
-  // const handleShowPin = () => { setShowPin(true); }
-  // const handleHidePin = (status) => { 
-  //   switch(status) {
-  //     case 1:
-  //       setIsValidated(true);
-  //       nextPage();
-  //       break;
-  //     case 2:
-  //       setPincode("");
-  //       setExpirationDate("");
-  //       setIsValidated(false);
-  //       onSubmit(form.getValues());
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  //   setShowPin(false);
-  //  }
 
   const genders = [
     { label: "Male", value: "Male" },
@@ -180,62 +157,6 @@ const PersonalInformation = ({ nextPage }) => {
       setIsLoading(false);
     }
 
-    // try {
-    //   if (values.password !== values.confirmPassword) {
-    //     toast.error("Passwords do not match");
-    //     return;
-    //   } else if (isValidated) {
-    //     nextPage();
-    //     return;
-    //   } else if (pincode !== "") {
-    //     handleShowPin();
-    //     return
-    //   }
-    //   setIsloading(true);
-    //   setEmail(values.email);
-    //   const url = secureLocalStorage.getItem("url") + "users.php";
-    //   // console.log("url: " + url);
-    //   // console.log("email niya: " + values.email);
-    //   const jsonData = { email: values.email, }
-    //   const formData = new FormData();
-    //   formData.append("json", JSON.stringify(jsonData));
-    //   formData.append("operation", "getPinCode");
-    //   setTimeout(() => {
-    //     setProgress(60);
-    //   }, [2000])
-    //   const res = await axios.post(url, formData);
-
-    //   console.log("RES DATA: ", res.data);
-    //   if (parseInt(res.data) === -1) {
-    //     toast.error("This email is already taken");
-    //     return
-    //   } else if (res.data !== 0) {
-    //     setTimeout(() => {
-    //       setProgress(96);
-    //     }, [500])
-    //     console.log("pincode niya: " + res.data);
-    //     setPincode(res.data.pincode);
-    //     setExpirationDate(res.data.expirationDate);
-    //     console.log(values);
-    //     handleShowPin();
-    //   } else {
-    //     toast.error("Network error");
-    //     console.log("PersonalInformation.jsx => onSubmit(): " + res.data);
-    //   }
-
-    // } catch (error) {
-    //   setTimeout(() => {
-    //     toast.error("Network error");
-    //   }, [500])
-    //   console.log("PersonalInformation.jsx => onSubmit(): " + error);
-    // } finally {
-    //   setTimeout(() => {
-    //     setProgress(96);
-    //     setIsloading(false);
-
-    //   }, [500])
-
-    // }
   };
 
   const handleDateChange = (date) => {
@@ -551,7 +472,6 @@ const PersonalInformation = ({ nextPage }) => {
           </form>
         </Form>
       </div>
-      {/* <EnterPin open={showPin} onHide={handleHidePin} pincode={pincode} email={email} expirationDate={expirationDate}/> */}
     </>
   );
 };
