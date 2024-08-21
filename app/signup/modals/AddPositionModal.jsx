@@ -71,7 +71,7 @@ function AddPositionModal({ open, onHide }) {
     }
   };
 
-  const onSubmit = async (values) => {
+  const onSubmit = (values) => {
     try {
       onHide(values);
       form.reset();

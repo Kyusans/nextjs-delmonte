@@ -1,85 +1,100 @@
-import { useState } from "react";
-import AddPositionModal from "./modals/AddPositionModal";
-import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertTitle } from "@/components/ui/alert";
-import { formatDate } from "./page";
-import { PlusIcon, X } from "lucide-react";
-import ShowAlert from "@/components/ui/show-alert";
+import { Alert, AlertTitle } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { CardContent, CardDescription } from '@/components/ui/card'
+import ShowAlert from '@/components/ui/show-alert'
+import { PlusIcon, X } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import { formatDate } from './page'
+import AddCourseModal from './modals/AddCourseModal'
+import { Separator } from '@radix-ui/react-dropdown-menu'
 
-function EducationalBackground({handlePrevious, handleNext}) {
-  const [position, setPosition] = useState([]);
-  const [openPositionModal, setOpenPositionModal] = useState(false);
+function EducationalBackground({ courseList, graduateCourseList, institutionList }) {
+  const [educationDatas, setEducationDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
-  const [showAlert, setShowAlert] = useState(false);
+
   const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
   const handleShowAlert = (message) => {
     setAlertMessage(message);
     setShowAlert(true);
   };
   const handleCloseAlert = (status) => {
     if (status === 1) {
-      const filteredPosition = position.filter((_, index) => index !== indexToRemove);
-      setPosition(filteredPosition);
-      localStorage.setItem("educationalBackground", JSON.stringify(filteredPosition));
+      const filteredEducationDatas = educationDatas.filter((_, index) => index !== indexToRemove);
+      setEducationDatas(filteredEducationDatas);
+      localStorage.setItem("educationalBackground", JSON.stringify(filteredEducationDatas));
     }
     setShowAlert(false);
   };
 
-  const handleOpenPositionModal = () => {
-    setOpenPositionModal(true);
-  };
+  const [showCourseModal, setShowCourseModal] = useState(false);
 
-  const handleClosePositionModal = (status) => {
+  const handleOpenCourseModal = () => {
+    setShowCourseModal(true);
+  }
+
+  const handleCloseCourseModal = (status) => {
     if (status !== 0) {
-      setPosition([...position, status]);
-      localStorage.setItem("educationalBackground", JSON.stringify([...position, status]));
+      setEducationDatas([...educationDatas, status]);
+      localStorage.setItem("educationalBackground", JSON.stringify([...educationDatas, status]));
     }
-    setOpenPositionModal(false);
+    setShowCourseModal(false);
   };
 
-  const handleRemovePosition = (indexToRemove) => {
+  const handleRemoveList = (indexToRemove) => {
     setIndexToRemove(indexToRemove);
-    handleShowAlert("This action cannot be undone. This will permanently delete the position and remove it from your list");
+    handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
+
+  useEffect(() => {
+    if (localStorage.getItem("educationalBackground") !== null || localStorage.getItem("educationalBackground") !== "[]") {
+      setEducationDatas(JSON.parse(localStorage.getItem("educationalBackground")));
+    }
+  }, []);
+
 
   return (
     <div>
-      <Button onClick={handleOpenPositionModal} className="bg-[#f5f5f5] mt-3 text-[#0e4028]">
+      <Button onClick={handleOpenCourseModal} className="bg-[#f5f5f5] mt-3 text-[#0e4028]">
         <PlusIcon className="h-4 w-4 mr-1" />
-        Add Position
+        Add Course
       </Button>
       <Alert className="w-full bg-[#0a2e1c] mt-3">
-        {position.length > 0 ? (
+        {educationDatas.length > 0 ? (
           <CardContent>
-            {position.map((pos, index) => (
+            {educationDatas.map((data, index) => (
               <Alert key={index} className="relative w-full bg-[#0e5a35] mt-3">
                 <button
                   className="absolute top-2 right-2 text-white"
-                  onClick={() => handleRemovePosition(index)}
+                  onClick={() => handleRemoveList(index)}
                 >
                   <X className="h-4 w-4" />
                 </button>
-                <AlertTitle className="text-md grid md:grid-cols-2 gap-4">
-                  <div className="container">Position: {pos.position}</div>
-                  <div className="container">Company: {pos.company}</div>
-                  <div className="container">Start Date: {formatDate(pos.startDate)}</div>
-                  <div className="container">End Date: {formatDate(pos.endDate)}</div>
+                <AlertTitle className="text-md ">
+                  <div className='mb-3'>Institution: {institutionList.find((item) => item.value === data.institution)?.label}</div>
+                  <Separator className="my-2 border-t " />
+                  <div className='mb-3'>Course: {courseList.find((item) => item.value === data.course)?.label}</div>
+                  <div className="mb-3">Date Graduated: {formatDate(data.courseDateGraduated)}</div>
+                  <Separator className="my-2 border-t " />
+                  <div className="mb-3">Graduate Course: {graduateCourseList.find((item) => item.value === data.graduateCourse)?.label}</div>
+                  <div className="mb-3">Date Graduated: {formatDate(data.graduateCourseDate)}</div>
+                  <Separator className="my-2 border-t " />
+                  <div className="mb-3">PRC License: {data.prcLicense}</div>
+                  <div className="mb-3">PRC License Number: {data.prcLicenseNumber}</div>
                 </AlertTitle>
               </Alert>
             ))}
           </CardContent>
         ) : (
           <CardDescription className="text-center">
-            No position added yet
+            No course added yet
           </CardDescription>
         )}
       </Alert>
-      <AddPositionModal open={openPositionModal} onHide={handleClosePositionModal} message={alertMessage} />
+      <AddCourseModal open={showCourseModal} onHide={handleCloseCourseModal} courseList={courseList} graduateCourseList={graduateCourseList} institutionList={institutionList} />
       <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
-
     </div>
-  );
+  )
 }
 
-export default EducationalBackground;
+export default EducationalBackground

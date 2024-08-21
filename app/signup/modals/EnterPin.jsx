@@ -9,16 +9,14 @@ import {
   DialogOverlay,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import axios from "axios";
 import { useState } from "react";
-import secureLocalStorage from "react-secure-storage";
 import { toast } from "sonner";
 
-export default function EnterPin({ open, onHide, pincode, email, expirationDate }) {
+export default function EnterPin({ open, onHide, pincode, expirationDate }) {
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     setIsLoading(true);
 
     try {
@@ -26,8 +24,8 @@ export default function EnterPin({ open, onHide, pincode, email, expirationDate 
       const currentDateTime = new Date();
       if (code === pincode) {
         if (expirationDateTime < currentDateTime) {
-          toast.error("Pin code has expired.");
-          handleDeletePin();
+          toast.error("Pin code has expired. Please try again.");
+          handleResendPin();
         } else {
           toast.success("Pin code verified.");
           onHide(1);
@@ -39,25 +37,16 @@ export default function EnterPin({ open, onHide, pincode, email, expirationDate 
     } catch (error) {
       toast.error("Network error");
       console.log("EnterPin.jsx => handleSubmit(): " + error);
-    } 
+    }
   };
 
-  const handleDeletePin = () => {
+  const handleResendPin = () => {
     setIsLoading(true);
     try {
-      const url = secureLocalStorage.getItem("url") + "users.php";
-      const jsonData = { email: email, pincode: code };
-      const formData = new FormData();
-      formData.append("json", JSON.stringify(jsonData));
-      formData.append("operation", "deletePinCode");
-
-      const res = axios.post(url, formData);
-      if(res.data === 1) {
-        onHide(2);
-      }
+      onHide(2);
     } catch (error) {
       toast.error("Network error");
-      console.log("EnterPin.jsx => handleDeletePin(): " + error);
+      console.log("EnterPin.jsx => handleResendPin(): " + error);
     } finally {
       setIsLoading(false);
     }
@@ -75,7 +64,7 @@ export default function EnterPin({ open, onHide, pincode, email, expirationDate 
           <DialogTitle>Enter Pin</DialogTitle>
           <DialogDescription>
             Please check your e-mail account for the verification code we sent
-            you and enter the code below. {pincode}
+            you and enter the code below.
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">

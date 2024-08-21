@@ -48,7 +48,12 @@ export default ShowAlert;
   // setAlertMessage(message);
   //   setShowAlert(true);
   // };
-  // const handleCloseAlert = () => {
+  // const handleCloseAlert = (status) => {
+  //   if (status === 1) {
+  //     const filteredPosition = position.filter((_, index) => index !== indexToRemove);
+  //     setPosition(filteredPosition);
+  //     localStorage.setItem("employmentHistory", JSON.stringify(filteredPosition));
+  //   }
   //   setShowAlert(false);
   // };
   // <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
