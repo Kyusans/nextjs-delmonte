@@ -4,39 +4,42 @@ import { CardContent, CardDescription } from '@/components/ui/card'
 import ShowAlert from '@/components/ui/show-alert'
 import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import AddSkillModal from './modals/AddSkillModal'
+import AddTrainingModal from './modals/AddTrainingModal'
 
-function Skills({ skillList }) {
-  const [skillData, setSkillData] = useState([]);
+function Training({ trainingList }) {
+  const [trainingData, setTrainingData] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  
   const handleShowAlert = (message) => {
     setAlertMessage(message);
     setShowAlert(true);
   };
+
   const handleCloseAlert = (status) => {
     if (status === 1) {
-      const filteredSkillData = skillData.filter((_, index) => index !== indexToRemove);
-      setSkillData(filteredSkillData);
-      localStorage.setItem("skills", JSON.stringify(filteredSkillData));
+      const filteredTrainingData = trainingData.filter((_, index) => index !== indexToRemove);
+      setTrainingData(filteredTrainingData);
+      localStorage.setItem("training", JSON.stringify(filteredTrainingData));
     }
     setShowAlert(false);
   };
 
-  const [showSkillsModal, setShowSkillsModal] = useState(false);
+  const [showTrainingModal, setShowTrainingModal] = useState(false);
 
-  const handleOpenSkillsModal = () => {
-    setShowSkillsModal(true);
+  const handleOpenTrainingModal = () => {
+    setShowTrainingModal(true);
   }
 
-  const handleCloseSkillsModal = (status) => {
+  const handleCloseTrainingModal = (status) => {
     if (status !== 0) {
-      setSkillData([...skillData, status]);
-      localStorage.setItem("skills", JSON.stringify([...skillData, status]));
+      const newTrainingData = [...trainingData, status];
+      setTrainingData(newTrainingData);
+      localStorage.setItem("training", JSON.stringify(newTrainingData));
     }
-    setShowSkillsModal(false);
+    setShowTrainingModal(false);
   };
 
   const handleRemoveList = (indexToRemove) => {
@@ -45,22 +48,22 @@ function Skills({ skillList }) {
   };
 
   useEffect(() => {
-    if (localStorage.getItem("skills") !== null || localStorage.getItem("skills") !== "[]") {
-      setSkillData(JSON.parse(localStorage.getItem("skills")));
+    const savedTrainingData = localStorage.getItem("training");
+    if (savedTrainingData && savedTrainingData !== "[]") {
+      setTrainingData(JSON.parse(savedTrainingData));
     }
   }, []);
 
-
   return (
     <div>
-      <Button onClick={handleOpenSkillsModal} className="bg-[#f5f5f5] mt-3 text-[#0e4028]">
+      <Button onClick={handleOpenTrainingModal} className="bg-[#f5f5f5] mt-3 text-[#0e4028]">
         <PlusIcon className="h-4 w-4 mr-1" />
-        Add Skills
+        Add Training
       </Button>
       <Alert className="w-full bg-[#0a2e1c] mt-3">
-        {skillData && skillData.length > 0 ? (
+        {trainingData && trainingData.length > 0 ? (
           <CardContent>
-            {skillData.map((data, index) => (
+            {trainingData.map((data, index) => (
               <Alert key={index} className="relative w-full bg-[#0e5a35] mt-3">
                 <button
                   className="absolute top-2 right-2 text-white"
@@ -69,21 +72,21 @@ function Skills({ skillList }) {
                   <X className="h-4 w-4" />
                 </button>
                 <AlertTitle className="text-md ">
-                  <div className='mb-3'>{skillList.find((item) => item.value === data.skills)?.label}</div>
+                  <div className='mb-3'>{trainingList.find((item) => item.value === data.training)?.label}</div>
                 </AlertTitle>
               </Alert>
             ))}
           </CardContent>
         ) : (
           <CardDescription className="text-center">
-            No skills added yet
+            No training added yet
           </CardDescription>
         )}
       </Alert>
-      <AddSkillModal open={showSkillsModal} onHide={handleCloseSkillsModal} skillList={skillList} />
+      <AddTrainingModal open={showTrainingModal} onHide={handleCloseTrainingModal} trainingList={trainingList}/>
       <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
     </div>
   )
 }
 
-export default Skills
+export default Training;

@@ -13,11 +13,11 @@ import { toast } from 'sonner';
 import EducationalBackground from './EducationalBackground';
 import secureLocalStorage from 'react-secure-storage';
 import axios from 'axios';
-import { Progress } from '@/components/ui/progress';
 import Skills from './Skills';
+import Training from './Training';
+import Spinner from '@/components/ui/spinner';
 
 const Signup = () => {
-  const [progress, setProgress] = useState(13);
   const [isLoading, setIsLoading] = useState(false);
   const [institutions, setInstitutions] = useState([{ value: "others", label: "Others..." }]);
   const [courses, setCourses] = useState([]);
@@ -51,11 +51,46 @@ const Signup = () => {
     }
   };
 
+  const handleSubmit = async () => {
+    try {
+      setIsLoading(true);
+      const url = secureLocalStorage.getItem("url") + "users.php";
+      const personalInfo = JSON.parse(localStorage.getItem("personalInfo"))
+      const jsonData = {
+        email: personalInfo.email,
+      }
+      // console.log("url: " + url);
+      console.log("email niya: " + JSON.stringify(jsonData));
+      const formData = new FormData();
+      formData.append("json", JSON.stringify(jsonData));
+      formData.append("operation", "getPinCode");
+      const res = await axios.post(url, formData);
+
+      // console.log("RES DATA: ", res.data);
+      if (res.data !== 0) {
+        console.log("pincode niya: " + JSON.stringify(res.data));
+        // setPincode(res.data.pincode);
+        // setExpirationDate(res.data.expirationDate);
+        // console.log(values);
+        // handleShowPin();
+      }
+
+    } catch (error) {
+      setTimeout(() => {
+        toast.error("Network error");
+      }, [500])
+      console.log("Signup.jsx => onSubmit(): " + error);
+    } finally {
+        setIsLoading(false);
+    }
+  };
+
   const pages = [
     { content: "" },
     { title: "Tell us about your Educational Background", content: <EducationalBackground courseList={courses} graduateCourseList={courseGraduate} institutionList={institutions} /> },
     { title: "Tell us about your Employment History", content: <EmploymentHistory /> },
     { title: "Tell us about your Skills", content: <Skills skillList={skills} /> },
+    { title: "Tell us about your Trainings", content: <Training trainingList={trainings} /> },
 
   ];
 
@@ -65,14 +100,9 @@ const Signup = () => {
       const url = secureLocalStorage.getItem("url") + "users.php";
       const formData = new FormData();
       formData.append("operation", "getAllDataForDropdownSignup");
-      setTimeout(() => {
-        setProgress(45);
-      }, [1000])
       const res = await axios.post(url, formData);
       console.log(res.data);
-      setTimeout(() => {
-        setProgress(80);
-      }, [1000]);
+
       if (res.data !== 0) {
         const formattedInstitutions = res.data.institution.map((institution) => ({
           value: institution.institution_id,
@@ -122,7 +152,7 @@ const Signup = () => {
   return (
     <main className='bg-[#0e4028]'>
       <div className={`flex flex-col w-full justify-center items-center ${isLoading ? 'h-screen' : ''} `}>
-        {isLoading ? <Progress value={progress} className='w-3/4 sm:w-1/3' /> :
+        {isLoading ? <Spinner /> :
           <>
             <Image src="/assets/images/delmonteLogo.png" alt="DelmonteLogo" width={152} height={152} className='mt-16' />
             {/* Steppers container */}
@@ -141,19 +171,19 @@ const Signup = () => {
               <div className={`h-1 flex-1 ${currentStep >= 3 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
               {/* Step 3 */}
               <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 3 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
-                {currentStep === 3 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '3'}
+                {currentStep > 3 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '3'}
               </div>
               {/* Connector */}
               <div className={`h-1 flex-1 ${currentStep >= 4 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
               {/* Step 4 */}
               <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 4 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
-                {currentStep === 4 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '4'}
+                {currentStep > 4 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '4'}
               </div>
               {/* Connector */}
-              <div className={`h-1 flex-1 ${currentStep >= 3 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
+              <div className={`h-1 flex-1 ${currentStep >= 5 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
               {/* Step 5 */}
               <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 5 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
-                {currentStep === 5 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '5'}
+                {currentStep > 5 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '5'}
               </div>
             </div>
             {currentStep === 1 ? <PersonalInformation nextPage={handleNext} />
@@ -179,11 +209,10 @@ const Signup = () => {
                     Previous
                   </Button>
                   <Button
-                    onClick={handleNext}
+                    onClick={currentStep === pages.length ? handleSubmit : handleNext}
                     className="px-4 py-2 rounded bg-[#f5f5f5] text-[#0e4028]  w-full sm:w-auto"
-                    disabled={currentStep === 5}
                   >
-                    Next
+                    {currentStep === pages.length ? 'Submit' : 'Next'}
                   </Button>
                 </div>
               </div>

@@ -8,10 +8,10 @@ import { Dialog, DialogClose, DialogContent, DialogHeader, DialogOverlay, Dialog
 import ComboBox from "@/app/my_components/combo-box";
 import { z } from "zod";
 
-function AddSkillModal({ open, onHide, skillList }) {
+function AddTrainingModal({ open, onHide, trainingList }) {
 
   const formSchema = z.object({
-    skills: z.number().min(1, {
+    training: z.number().min(1, {
       message: "This field is required",
     }),
   });
@@ -19,18 +19,19 @@ function AddSkillModal({ open, onHide, skillList }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      skills: 0,
+      training: 0,
     },
   });
 
   const onSubmit = (values) => {
+    console.log("AddTrainingModal.jsx => onSubmit():", values);
     try {
-      const selectedSkills = JSON.parse(localStorage.getItem("skills")) || [];
+      const selectedTraining = JSON.parse(localStorage.getItem("training")) || [];
       let isValid = true;
 
-      selectedSkills.forEach((element) => {
-        if (element.skills === values.skills) {
-          toast.error("You already have this skill");
+      selectedTraining.forEach((element) => {
+        if (element.training === values.training) {
+          toast.error("You already have this training");
           isValid = false;
         }
       });
@@ -41,7 +42,7 @@ function AddSkillModal({ open, onHide, skillList }) {
       }
     } catch (error) {
       toast.error("Network error");
-      console.log("AddSkillModal.jsx => onSubmit(): " + error);
+      console.log("AddTrainingModal.jsx => onSubmit(): " + error);
     }
   };
 
@@ -57,7 +58,7 @@ function AddSkillModal({ open, onHide, skillList }) {
         <DialogOverlay className="bg-black/5" />
         <DialogContent className="bg-[#0e5a35]">
           <DialogHeader>
-            <DialogTitle className="text-3xl">Add Skill</DialogTitle>
+            <DialogTitle className="text-3xl">Add Training</DialogTitle>
           </DialogHeader>
           <div className="w-full">
             <Form {...form}>
@@ -65,15 +66,15 @@ function AddSkillModal({ open, onHide, skillList }) {
                 <div className="flex justify-center items-center p-4 sm:p-6">
                   <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
                     <FormField
-                      name="skills"
+                      name="training"
                       control={form.control}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Skill</FormLabel>
+                          <FormLabel>Training</FormLabel>
                           <div>
                             <ComboBox
-                              list={skillList}
-                              subject="Skill"
+                              list={trainingList}
+                              subject="Training"
                               value={field.value}
                               onChange={field.onChange}
                             />
@@ -88,7 +89,7 @@ function AddSkillModal({ open, onHide, skillList }) {
                   <DialogClose asChild>
                     <Button className="bg-[#0e4028] text-white">Cancel</Button>
                   </DialogClose>
-                  <Button type="submit" className="bg-[#0b864a] text-white">Add Skill</Button>
+                  <Button type="submit" className="bg-[#0b864a] text-white">Add Training</Button>
                 </div>
               </form>
             </Form>
@@ -99,4 +100,4 @@ function AddSkillModal({ open, onHide, skillList }) {
   )
 }
 
-export default AddSkillModal;
+export default AddTrainingModal;

@@ -13,27 +13,21 @@ function formatDate(date) {
 }
 
 function Calendar({ className, classNames, showOutsideDays = true, onDateSelect, ...props }) {
-  const [isDateSelected, setIsDateSelected] = React.useState(false);
-  const [isFadingOut, setIsFadingOut] = React.useState(false);
+  const [selectedDate, setSelectedDate] = React.useState(null);
 
   const handleDayClick = (day) => {
+    const formattedDate = formatDate(day);
+    setSelectedDate(formattedDate);
     if (onDateSelect) {
-      onDateSelect(formatDate(day));
+      onDateSelect(formattedDate);
     }
-    setIsFadingOut(true); 
-    setTimeout(() => {
-      setIsDateSelected(true); 
-    }, 200);
   };
 
-  if (isDateSelected) {
-    return null;
-  }
-
   return (
-    <div className={cn(isFadingOut ? "transition-opacity duration-300 opacity-0" : "opacity-100")}>
+    <div className={cn("transition-opacity duration-200", className)}>
       <DayPicker
         showOutsideDays={showOutsideDays}
+        selected={selectedDate}
         className={cn("p-3", className)}
         classNames={{
           months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
