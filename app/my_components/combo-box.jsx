@@ -15,21 +15,21 @@ const ComboBox = ({ list, subject, value, onChange, styles }) => {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className={`w-full justify-between ${!styles ? "bg-[#0e4028] border-2 border-[#0b864a] hover:bg-[#0e5a35]" : styles}`} 
+          className={cn("w-full justify-between", !styles ? "bg-[#0e4028] border-2 border-[#0b864a] hover:bg-[#0e5a35]" : styles)}
         >
-          {value ? list.find((item) => item.value === value)?.label : `Select ${subject}...`}
+          <span className="truncate">{value ? list.find((item) => item.value === value)?.label : `Select ${subject}...`}</span>
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-full p-0 ">
+      <PopoverContent className="w-full p-0">
         <Command>
           <CommandInput placeholder={`Select ${subject}...`} />
           <CommandList>
             <CommandEmpty>No {subject} found.</CommandEmpty>
             <CommandGroup>
-              {list.map((item) => (
+              {list.map((item, index) => (
                 <CommandItem
-                  key={item.value}
+                  key={index}
                   value={item.value}
                   onSelect={() => {
                     onChange(item.value);

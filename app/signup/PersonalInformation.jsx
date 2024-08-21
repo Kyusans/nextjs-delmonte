@@ -263,7 +263,7 @@ const PersonalInformation = ({ nextPage }) => {
       <div className="w-full max-w-4xl mt-7">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} >
-            <ScrollArea className="md:h-[calc(100vh-25rem)]">
+            <ScrollArea className="h-[calc(100vh-25rem)]">
               <Card className="w-full h-full flex flex-col bg-[#0e5a35]  xs:border-[#0e4028]">
                 <CardHeader>
                   <CardTitle className="text-lg sm:text-xl text-center">{"Personal Information"}</CardTitle>

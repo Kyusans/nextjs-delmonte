@@ -40,7 +40,7 @@ function EmploymentHistory({handlePrevious, handleNext}) {
 
   const handleRemovePosition = (indexToRemove) => {
     setIndexToRemove(indexToRemove);
-    handleShowAlert("This action cannot be undone. This will permanently delete the position and remove it from your list");
+    handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
 
   useEffect(() => {
@@ -67,10 +67,10 @@ function EmploymentHistory({handlePrevious, handleNext}) {
                   <X className="h-4 w-4" />
                 </button>
                 <AlertTitle className="text-md grid md:grid-cols-2 gap-4">
-                  <div className="container">Position: {pos.position}</div>
-                  <div className="container">Company: {pos.company}</div>
-                  <div className="container">Start Date: {formatDate(pos.startDate)}</div>
-                  <div className="container">End Date: {formatDate(pos.endDate)}</div>
+                  <div className="gap-4">Position: {pos.position}</div>
+                  <div className="gap-4">Company: {pos.company}</div>
+                  <div className="gap-4">Start Date: {formatDate(pos.startDate)}</div>
+                  <div className="gap-4">End Date: {formatDate(pos.endDate)}</div>
                 </AlertTitle>
               </Alert>
             ))}
