@@ -18,7 +18,7 @@ export default function EnterPin({ open, onHide, pincode, email, expirationDate 
   const [code, setCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     setIsLoading(true);
 
     try {

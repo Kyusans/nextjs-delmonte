@@ -14,6 +14,7 @@ import EducationalBackground from './EducationalBackground';
 import secureLocalStorage from 'react-secure-storage';
 import axios from 'axios';
 import { Progress } from '@/components/ui/progress';
+import Skills from './Skills';
 
 const Signup = () => {
   const [progress, setProgress] = useState(13);
@@ -54,7 +55,7 @@ const Signup = () => {
     { content: "" },
     { title: "Tell us about your Educational Background", content: <EducationalBackground courseList={courses} graduateCourseList={courseGraduate} institutionList={institutions} /> },
     { title: "Tell us about your Employment History", content: <EmploymentHistory /> },
-    { title: "Tell us about your Educational Background", content: <EducationalBackground /> },
+    { title: "Tell us about your Skills", content: <Skills skillList={skills} /> },
 
   ];
 
@@ -154,7 +155,6 @@ const Signup = () => {
               <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 5 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
                 {currentStep === 5 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '5'}
               </div>
-
             </div>
             {currentStep === 1 ? <PersonalInformation nextPage={handleNext} />
               :

@@ -5,7 +5,6 @@ import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -55,10 +54,10 @@ function AddCourseModal({ open, onHide, courseList, graduateCourseList, institut
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      institution: "",
-      course: "",
+      institution: 0,
+      course: 0,
       courseDateGraduated: "",
-      graduateCourse: "",
+      graduateCourse: 0,
       graduateCourseDate: "",
       prcLicense: "",
       prcLicenseNumber: "",
@@ -70,7 +69,7 @@ function AddCourseModal({ open, onHide, courseList, graduateCourseList, institut
     }
   };
 
-  const onSubmit = async (values) => {
+  const onSubmit = (values) => {
     try {
       console.log("AddCourseModal.jsx => onSubmit():", values);
       onHide(values);
@@ -95,7 +94,6 @@ function AddCourseModal({ open, onHide, courseList, graduateCourseList, institut
             <DialogTitle className="text-3xl">Add Course</DialogTitle>
           </DialogHeader>
           <div className="w-full">
-
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} >
                 <div className="flex justify-center items-center p-4 sm:p-6">
