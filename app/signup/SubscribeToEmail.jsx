@@ -6,7 +6,7 @@ function SubscribeToEmail() {
   const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckboxChange = () => {
-    const newValue = !isChecked;
+    const newValue = isChecked ? 0 : 1;
     setIsChecked(newValue);
     localStorage.setItem("isSubscribeToEmail", newValue);
   };
