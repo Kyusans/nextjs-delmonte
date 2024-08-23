@@ -53,18 +53,44 @@ const Signup = () => {
     setShowPin(false);
   }
 
-  const handleSaveInformation = () => {
-    const jsonData = {
-      personalInfo: JSON.parse(localStorage.getItem("personalInfo")),
-      educationalBackground: JSON.parse(localStorage.getItem("educationalBackground")),
-      employmentHistory: JSON.parse(localStorage.getItem("employmentHistory")),
-      skills: JSON.parse(localStorage.getItem("skills")),
-      trainings: JSON.parse(localStorage.getItem("training")),
-      positionId: localStorage.getItem("positionId"),
-      isSubscribeToEmail: localStorage.getItem("isSubscribeToEmail") ?? false
+  const handleSaveInformation = async () => {
+    setIsLoading(true);
+    try {
+      const url = secureLocalStorage.getItem("url") + "users.php";
+      const jsonData = {
+        personalInfo: JSON.parse(localStorage.getItem("personalInfo")),
+        educationalBackground: JSON.parse(localStorage.getItem("educationalBackground")),
+        employmentHistory: JSON.parse(localStorage.getItem("employmentHistory")),
+        skills: JSON.parse(localStorage.getItem("skills")),
+        trainings: JSON.parse(localStorage.getItem("training")),
+        positionId: localStorage.getItem("positionId"),
+        isSubscribeToEmail: localStorage.getItem("isSubscribeToEmail") ?? 0
+      }
+      console.log("IYANG INFO LMAO: ", jsonData);
+      console.log("IYANG INFO lol: ", JSON.stringify(jsonData));
+      const formData = new FormData();
+      formData.append("json", JSON.stringify(jsonData));
+      formData.append("operation", "signup");
+      const res = await axios.post(url, formData);
+      console.log("res ni handleSaveInformation: ", res.data);
+      if (res.data === 1) {
+        toast.success("Signup successful");
+        localStorage.clear();
+        // localStorage.removeItem("personalInfo");
+        // localStorage.removeItem("educationalBackground");
+        // localStorage.removeItem("employmentHistory");
+        // localStorage.removeItem("skills");
+        // localStorage.removeItem("training");
+        // localStorage.removeItem("positionId");
+        // localStorage.removeItem("isSubscribeToEmail");
+
+      }
+    } catch (error) {
+      toast.error("Network error");
+      console.log("Signup.jsx => handleSaveInformation(): " + error);
+    } finally {
+      setIsLoading(false);
     }
-    console.log("IYANG INFO LMAO: ", jsonData);
-    console.log("IYANG INFO lol: ", JSON.stringify(jsonData));
   }
 
   const handleNext = () => {
@@ -79,7 +105,13 @@ const Signup = () => {
         toast.error("Please complete your employment history first");
         return;
       }
+    } else if (currentStep === 4) {
+      if (localStorage.getItem("skills") === null || localStorage.getItem("skills") === "[]") {
+        toast.error("Please complete your skills first");
+        return;
+      }
     }
+
     setCurrentStep(prevStep => prevStep + 1);
   };
 
@@ -108,7 +140,10 @@ const Signup = () => {
         const res = await axios.post(url, formData);
 
         // console.log("RES DATA: ", res.data);
-        if (res.data !== 0) {
+        if (res.data === -1) {
+          toast.error("Email already exist, please return to step 1");
+          return;
+        } else if (res.data !== 0) {
           console.log("pincode niya: " + JSON.stringify(res.data));
           setEmail(personalInfo.email);
           setPincode(res.data.pincode);
@@ -159,19 +194,19 @@ const Signup = () => {
         const formattedCourses = res.data.courses.map((course) => ({
           value: course.courses_id,
           label: course.courses_name,
-          categoryId: course.course_category_id
+          categoryId: course.courses_coursecategoryId
         }))
         const formattedCourseGraduate = res.data.courseGraduate.map((courseGrad) => ({
-          value: courseGrad.course_graduate_id,
-          label: courseGrad.course_graduate_name
+          value: courseGrad.course_graduateId,
+          label: courseGrad.course_graduateName
         }))
         const formattedSkills = res.data.skills.map((skill) => ({
-          value: skill.personal_skills_id,
-          label: skill.personal_skills_name
+          value: skill.perS_id,
+          label: skill.perS_name
         }))
         const formattedTrainings = res.data.training.map((training) => ({
-          value: training.personal_training_id,
-          label: training.personal_training_name
+          value: training.perT_id,
+          label: training.perT_name
         }))
         setInstitutions(formattedInstitutions);
         setCourses(formattedCourses);
@@ -196,6 +231,12 @@ const Signup = () => {
   useEffect(() => {
     getAllDataForDropdownSignup();
   }, [getAllDataForDropdownSignup]);
+
+  useEffect(() => {
+    if(localStorage.getItem("positionId") === null) {
+      localStorage.setItem("positionId", 2);  
+    }
+  }, [])
   return (
     <>
       <main className='bg-[#0e4028]'>

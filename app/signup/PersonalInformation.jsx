@@ -143,6 +143,7 @@ const PersonalInformation = ({ nextPage }) => {
         setProgress(70);
       }, [1000]);
       const res = await axios.post(url, formData);
+      console.log("EMAIL EXIST: ", res.data);
       if (res.data === -1) {
         toast.error("Email already exist");
         return;

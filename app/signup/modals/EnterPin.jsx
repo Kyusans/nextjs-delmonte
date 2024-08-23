@@ -18,7 +18,6 @@ export default function EnterPin({ open, onHide, pincode, expirationDate }) {
 
   const handleSubmit = () => {
     setIsLoading(true);
-
     try {
       const expirationDateTime = new Date(expirationDate);
       const currentDateTime = new Date();
