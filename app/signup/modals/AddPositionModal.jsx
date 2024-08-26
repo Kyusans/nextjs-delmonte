@@ -5,7 +5,6 @@ import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -49,7 +48,6 @@ function AddPositionModal({ open, onHide }) {
       }),
   });
 
-
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -79,7 +77,6 @@ function AddPositionModal({ open, onHide }) {
       toast.error("Network error");
       console.log("PersonalInformation.jsx => onSubmit(): " + error);
     }
-
   };
 
   const handleHide = () => {

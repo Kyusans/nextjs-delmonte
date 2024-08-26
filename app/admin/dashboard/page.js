@@ -4,8 +4,8 @@ import AdminDashboard from './AdminDashboard'
 import AdminSidebar from './AdminSidebar';
 import { CardTitle } from '@/components/ui/card';
 import AdminJobs from './AdminJobs';
-import secureLocalStorage from 'react-secure-storage';
 import { ModeToggle } from '@/components/ui/mode-toggle';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
 
 export default function Page() {
   const [viewIndex, setViewIndex] = useState(0);
@@ -15,15 +15,14 @@ export default function Page() {
   }
 
   useEffect(() => {
-    if (secureLocalStorage.getItem("url") !== "http://localhost/delmonte/api/") {
-      secureLocalStorage.setItem("url", "http://localhost/delmonte/api/");
+    if (retrieveData("url") !== "http://localhost/delmonte/api/") {
+      storeData("url", "http://localhost/delmonte/api/");
     }
-    console.log("url", secureLocalStorage.getItem("url"));
   }, [])
 
   const adminViews = [
-    { title: "Dashboard", view: <AdminDashboard /> },
-    { title: "Jobs", view: <AdminJobs /> },
+    { view: <AdminDashboard /> },
+    { view: <AdminJobs /> },
   ]
   return (
     <div className='bg-background h-screen'>

@@ -11,7 +11,7 @@ import React, { useState } from 'react'
 function AdminSidebar({ changeView }) {
   const [view, setView] = useState(0);
   const sideTabs = [
-    { name: "Home", icon: <Home className="h-5 w-5" /> },
+    { name: "Dashboard", icon: <Home className="h-5 w-5" /> },
     { name: "Jobs", icon: <Briefcase className="h-5 w-5" /> },
   ]
   const handleChangeView = (index) => {
@@ -79,7 +79,7 @@ function AdminSidebar({ changeView }) {
           </DropdownMenu>
         </div>
       </header>
-      <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-[#0e4028] sm:flex">
+      <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-[#0e5a35] dark:bg-[#0e4028] sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           {/* logo  */}
           <div
