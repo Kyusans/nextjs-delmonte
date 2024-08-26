@@ -1,14 +1,12 @@
 "use client"
-import React from 'react'
+import React, { useState } from 'react'
 import AdminSidebar from './AdminSidebar'
 
 function AdminDashboard() {
-  const handleChangeView = (index) => {
-    console.log("index:", index);
-  }
+
   return (
     <div>
-      <AdminSidebar changeView={handleChangeView} />
+      <h1 className="text-3xl font-bold underline">kunwari dashboard diri</h1>
     </div>
   )
 }
