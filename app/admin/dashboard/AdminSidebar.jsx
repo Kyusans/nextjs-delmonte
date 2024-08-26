@@ -4,7 +4,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { CircleUser, Home, LineChart, Menu, Package, Package2, Search, Settings, ShoppingCartIcon, Users2 } from 'lucide-react'
+import { Briefcase, CircleUser, FileText, Home, LineChart, Menu, Package, Package2, Search, Settings, ShoppingCartIcon, Users2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
@@ -13,7 +13,7 @@ function AdminSidebar({ changeView }) {
   const [view, setView] = useState(0);
   const sideTabs = [
     { name: "Home", icon: <Home className="h-5 w-5" /> },
-    { name: "Orders", icon: <ShoppingCartIcon className="h-5 w-5" /> },
+    { name: "Jobs", icon: <Briefcase className="h-5 w-5" /> },
   ]
   const handleChangeView = (index) => {
     changeView(index);
@@ -21,13 +21,12 @@ function AdminSidebar({ changeView }) {
   }
   return (
     <>
-      <header className="sm:hidden w-full sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+      <header className="sm:hidden w-full sticky top-0 flex h-16 items-center gap-4 border-b bg-[#0e4028] px-4 md:px-6 z-50">
         <Sheet>
           <SheetTrigger asChild>
             <Button
-              variant="outline"
               size="icon"
-              className="shrink-0 md:hidden"
+              className="shrink-0 md:hidden bg-[#0e5a35] text-white"
             >
               <Menu className="h-5 w-5" />
               <span className="sr-only">Toggle navigation menu</span>
@@ -47,7 +46,7 @@ function AdminSidebar({ changeView }) {
                 <div
                   key={index}
                   href="#"
-                  className={`flex p-3 items-center gap-2 text-lg font-semibold md:text-base ${index === view ? 'bg-accent rounded-md text-primary transition-all duration-500 ease-in-out' : 'text-muted-foreground'}`}
+                  className={`flex p-3 items-center gap-2 text-lg font-semibold md:text-base rounded-md ${index === view ? 'bg-accent text-primary transition-all duration-450 ease-in-out' : 'text-tertiary'}`}
                   onClick={() => handleChangeView(index)}
                 >
                   {tab.icon}
@@ -65,7 +64,7 @@ function AdminSidebar({ changeView }) {
           </form>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="secondary" size="icon" className="rounded-full">
+              <Button variant="secondary" size="icon" className="rounded-full bg-[#0e5a35] text-white">
                 <CircleUser className="h-5 w-5" />
                 <span className="sr-only">Toggle user menu</span>
               </Button>
@@ -81,7 +80,7 @@ function AdminSidebar({ changeView }) {
           </DropdownMenu>
         </div>
       </header>
-      <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
+      <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-[#0e4028] sm:flex">
         <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
           {/* logo  */}
           <div
@@ -97,7 +96,7 @@ function AdminSidebar({ changeView }) {
                 <TooltipTrigger asChild>
                   <div
                     href="#"
-                    className={`flex h-9 w-9 ${view === index ? "bg-primary text-secondary transition-all duration-500 ease-in-out" : "bg-transparent text-muted-foreground hover:text-foreground"} items-center justify-center rounded-lg  transition-colors md:h-8 md:w-8 cursor-pointer`}
+                    className={`flex h-9 w-9  ${view === index ? "bg-primary text-black hover:text-white transition-all duration-450 ease-in-out" : "bg-transparent text-white hover:text-black"} items-center justify-center rounded-lg  transition-colors md:h-8 md:w-8 cursor-pointer`}
                     onClick={() => handleChangeView(index)}
                   >
                     {tab.icon}
