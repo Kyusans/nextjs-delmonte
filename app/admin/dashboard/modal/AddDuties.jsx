@@ -1,20 +1,17 @@
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+"use client"
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import React from 'react'
-"use client";
-import { Card, CardContent } from '@/components/ui/card'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
-function AddDuties() {
+function AddDuties({ open, onHide }) {
   const formSchema = z.object({
-    title: z.string().min(1, {
-      message: "This field is required",
-    }),
-    description: z.string().min(1, {
+    duties: z.string().min(1, {
       message: "This field is required",
     }),
   });
@@ -22,8 +19,7 @@ function AddDuties() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      description: "",
+      duties: "",
     },
   });
 
@@ -33,35 +29,44 @@ function AddDuties() {
       form.reset();
     } catch (error) {
       toast.error("Network error");
-      console.log("PersonalInformation.jsx => onSubmit(): " + error);
+      console.log("AddDuties.jsx => onSubmit(): " + error);
     }
   };
+
+  const handleOnHide = () => {
+    onHide(0);
+  }
   return (
     <>
-      <Dialog>
-        <DialogHeader>
-          <DialogTitle>Add Duties</DialogTitle>
-          <DialogDescription>You can add duties here</DialogDescription>
-        </DialogHeader>
+      <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Duties</DialogTitle>
+          </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="flex justify-center items-center p-4 sm:p-6">
+              <div className="flex justify-center items-center">
                 <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
                   <FormField
                     control={form.control}
-                    name="description"
+                    name="duties"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Job Description</FormLabel>
+                        <FormLabel>Job Duty</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter job description" {...field} />
+                          <Textarea placeholder="Enter job duty" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
+              </div>
+              <div className="flex flex-cols gap-2 justify-end mt-5">
+                <DialogClose asChild>
+                  <Button variant="destructive">Cancel</Button>
+                </DialogClose>
+                <Button type="submit">Add Course</Button>
               </div>
             </form>
           </Form>

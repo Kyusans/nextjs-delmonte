@@ -57,10 +57,10 @@ function AddJobMaster() {
   }, [form]);
 
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col mt-4'>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex justify-center items-center p-4 sm:p-6">
+          <div className="flex justify-center items-center">
             <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
               <FormField
                 control={form.control}
@@ -82,7 +82,7 @@ function AddJobMaster() {
                   <FormItem>
                     <FormLabel>Job Description</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="Enter job description" {...field} />
+                      <Textarea style={{ height: "200px" }} placeholder="Enter job description" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
