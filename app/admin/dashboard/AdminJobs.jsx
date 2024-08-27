@@ -4,14 +4,17 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import secureLocalStorage from 'react-secure-storage';
 import { toast } from 'sonner';
-import { ArrowLeft, Circle, PlusCircle } from 'lucide-react';
+import { ArrowLeft, Briefcase, CheckCircle, Circle, Filter, PlusCircle, XCircle } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 import AddJob from './AddJob';
 import { removeData, retrieveData } from '@/app/utils/storageUtils';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 function AdminJobs() {
+  const [allJobs, setAllJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [jobs, setJobs] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState(-1);
   const [isAddJob, setIsAddJob] = useState(false);
 
   const handleSwitchView = async () => {
@@ -32,6 +35,7 @@ function AdminJobs() {
       const res = await axios.post(url, formData);
       console.log("RES DATA ni getAllJobs: ", res.data);
       if (res.data !== 0) {
+        setAllJobs(res.data);
         setJobs(res.data);
       } else {
         setJobs([]);
@@ -48,22 +52,53 @@ function AdminJobs() {
     getAllJobs();
   }, [])
 
+  useEffect(() => {
+    if (selectedStatus === -1) {
+      setJobs(allJobs);
+    } else {
+      const filteredJobs = allJobs.filter((job) => job.jobM_status === selectedStatus);
+      setJobs(filteredJobs);
+    }
+  }, [allJobs, selectedStatus]);
+
+
   return (
     <>
-      <Button className="mb-3" onClick={handleSwitchView}>
-        {isAddJob ? <ArrowLeft className="h-4 w-4 mr-1" /> : <PlusCircle className="h-4 w-4 mr-1" />}
-        {isAddJob ? "Back" : "Add Job"}
-      </Button>
+      <div className='flex justify-between'>
+        <Button className="mb-3" onClick={handleSwitchView}>
+          {isAddJob ? <ArrowLeft className="h-4 w-4 mr-1" /> : <PlusCircle className="h-4 w-4 mr-1" />}
+          {isAddJob ? "Back" : "Add Job"}
+        </Button>
+        <DropdownMenu className="mb-3 mx-3" >
+          <DropdownMenuTrigger asChild>
+            <Button><Filter className="mr-2 h-4 w-4" /> Filter  </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuLabel>Select Status</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => setSelectedStatus(-1)}>
+              <Briefcase className="mr-2 h-4 w-4" /> All Jobs
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setSelectedStatus(1)}>
+              <CheckCircle className="mr-2 h-4 w-4 text-green-500" /> Active Jobs
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setSelectedStatus(0)}>
+              <XCircle className="mr-2 h-4 w-4 text-gray-500" /> Inactive Jobs
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+      </div>
       {isLoading ? <Spinner /> :
         isAddJob ? <AddJob /> :
           <Card className='w-full'>
-            <CardContent className="grid grid-cols-1 gap-5 xl:grid-cols-2 mt-3">
+            <CardContent className="grid grid-cols-1 gap-3 xl:grid-cols-3 mt-3">
               {jobs.map((job, index) => (
-                <Card key={index} className='flex flex-col'>
+                <Card key={index} className='flex flex-col h-full'>
                   <CardTitle className="bg-[#0e5a35] dark:bg-[#0e4028] w-full p-10 rounded-t-lg text-white">
                     {job.jobM_title}
                   </CardTitle>
-                  <CardContent className="bg-[#def6db] dark:bg-background">
+                  <CardContent className="flex-grow bg-[#def6db] dark:bg-background">
                     <div className="flex items-center gap-2 mb-2 mt-4">
                       <Circle
                         className={`h-4 w-4 ${job.Total_Applied === 0 ? 'text-gray-400' : 'text-green-500'}`}

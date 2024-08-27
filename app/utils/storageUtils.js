@@ -64,7 +64,7 @@ export function decryptData(encryptedDataWithHmac) {
 
 export function storeData(key, data) {
   if (data === null || data === undefined) {
-    // handleSessionTampering();
+    handleSessionTampering();
   } else {
     const encryptedData = encryptData(data);
     window.sessionStorage.setItem(key, encryptedData);
@@ -76,7 +76,7 @@ export function retrieveData(key) {
   if (encryptedDataWithHmac) {
     const decryptedData = decryptData(encryptedDataWithHmac);
     if (decryptedData === null) {
-      // handleSessionTampering();
+      handleSessionTampering();
     }
     return decryptedData;
   }
@@ -91,7 +91,7 @@ export function removeData(key) {
       window.sessionStorage.removeItem(key);
       console.log(`Data associated with key '${key}' has been removed.`);
     } else {
-      // handleSessionTampering();
+      handleSessionTampering();
     }
   } else {
     console.warn(`No data found for key '${key}'.`);
@@ -99,7 +99,7 @@ export function removeData(key) {
 }
 
 
-// function handleSessionTampering() {
-//   window.sessionStorage.clear();
-//   window.location.href = "/";
-// }
+function handleSessionTampering() {
+  window.sessionStorage.clear();
+  // window.location.href = "/";
+}
