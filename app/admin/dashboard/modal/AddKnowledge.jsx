@@ -52,7 +52,7 @@ function AddKnowledge({ open, onHide }) {
                     name="jobKnowledge"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Job Knowledge</FormLabel>
+                        <FormLabel>Job Knowledge Description</FormLabel>
                         <FormControl>
                           <Textarea placeholder="Enter job knowledge" {...field} />
                         </FormControl>

@@ -52,7 +52,7 @@ function AddDuties({ open, onHide }) {
                     name="duties"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Job Duty</FormLabel>
+                        <FormLabel>Job Duty Description</FormLabel>
                         <FormControl>
                           <Textarea placeholder="Enter job duty" {...field} />
                         </FormControl>

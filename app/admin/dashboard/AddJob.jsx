@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import Spinner from '@/components/ui/spinner';
 import AddJobTraining from './AddJobStep/AddJobTraining';
 import AddJobKnowledge from './AddJobStep/AddJobKnowledge';
+import AddJobSkill from './AddJobStep/AddJobSkill';
 
 function AddJob() {
   const [isLoading, setIsLoading] = useState(true);
@@ -66,8 +67,8 @@ function AddJob() {
     if (retrieveData("jobKnowledge") === null) {
       storeData("jobKnowledge", "[]");
     }
-    if(retrieveData("jobSkills") === null) {
-      storeData("jobSkills", "[]");
+    if(retrieveData("jobSkill") === null) {
+      storeData("jobSkill", "[]");
     }
     if(retrieveData("jobExperience") === null) {
       storeData("jobExperience", "[]");
@@ -94,6 +95,10 @@ function AddJob() {
                 </div>
                 <div className='mb-5'>
                   <AddJobKnowledge />
+                </div>
+
+                <div className='mb-5'>
+                  <AddJobSkill skill={skills} />
                 </div>
 
               </div>

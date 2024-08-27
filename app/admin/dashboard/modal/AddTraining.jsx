@@ -58,7 +58,7 @@ function AddTraining({ open, onHide, training }) {
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Skill</FormLabel>
+                        <FormLabel>Training</FormLabel>
                         <div>
                           <ComboBox
                             list={training}
@@ -77,7 +77,7 @@ function AddTraining({ open, onHide, training }) {
                     name="jobTraining"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Job Training</FormLabel>
+                        <FormLabel>Job Training Description</FormLabel>
                         <FormControl>
                           <Textarea placeholder="Enter job training" {...field} />
                         </FormControl>

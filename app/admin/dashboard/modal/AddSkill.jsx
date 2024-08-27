@@ -10,12 +10,12 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import ComboBox from '@/app/my_components/combo-box';
 
-function AddEducation({ open, onHide, courseCategory }) {
+function AddSkill({ open, onHide, skill }) {
   const formSchema = z.object({
-    courseCategory: z.number().min(1, {
+    skill: z.number().min(1, {
       message: "This field is required",
     }),
-    jobEducation: z.string().min(1, {
+    jobSkill: z.string().min(1, {
       message: "This field is required",
     }),
   });
@@ -23,8 +23,8 @@ function AddEducation({ open, onHide, courseCategory }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      courseCategory: 0,
-      jobEducation: "",
+      skill: 0,
+      jobSkill: "",
     },
   });
 
@@ -34,7 +34,7 @@ function AddEducation({ open, onHide, courseCategory }) {
       form.reset();
     } catch (error) {
       toast.error("Network error");
-      console.log("AddEducation.jsx => onSubmit(): " + error);
+      console.log("AddSkill.jsx => onSubmit(): " + error);
     }
   };
 
@@ -47,22 +47,22 @@ function AddEducation({ open, onHide, courseCategory }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Education</DialogTitle>
+            <DialogTitle>Add Skill</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex justify-center items-center">
                 <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
                   <FormField
-                    name="courseCategory"
+                    name="skill"
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Course Category</FormLabel>
+                        <FormLabel>Skill Description</FormLabel>
                         <div>
                           <ComboBox
-                            list={courseCategory}
-                            subject="courseCategory"
+                            list={skill}
+                            subject="skill"
                             value={field.value}
                             onChange={field.onChange}
                             styles={"bg-background"}
@@ -74,12 +74,12 @@ function AddEducation({ open, onHide, courseCategory }) {
                   />
                   <FormField
                     control={form.control}
-                    name="jobEducation"
+                    name="jobSkill"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Job Education Description</FormLabel>
+                        <FormLabel>Job Skill</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter job education" {...field} />
+                          <Textarea placeholder="Enter job skill" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -91,7 +91,7 @@ function AddEducation({ open, onHide, courseCategory }) {
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button type="submit">Add Education</Button>
+                <Button type="submit">Add job skill</Button>
               </div>
             </form>
           </Form>
@@ -101,4 +101,4 @@ function AddEducation({ open, onHide, courseCategory }) {
   )
 }
 
-export default AddEducation
+export default AddSkill
