@@ -1,5 +1,5 @@
 "use client"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import React from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,9 +9,9 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-function AddDuties({ open, onHide }) {
+function AddEducation({ open, onHide }) {
   const formSchema = z.object({
-    duties: z.string().min(1, {
+    jobEducation: z.string().min(1, {
       message: "This field is required",
     }),
   });
@@ -19,7 +19,7 @@ function AddDuties({ open, onHide }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      duties: "",
+      jobEducation: "",
     },
   });
 
@@ -29,7 +29,7 @@ function AddDuties({ open, onHide }) {
       form.reset();
     } catch (error) {
       toast.error("Network error");
-      console.log("AddDuties.jsx => onSubmit(): " + error);
+      console.log("AddEducation.jsx => onSubmit(): " + error);
     }
   };
 
@@ -41,7 +41,7 @@ function AddDuties({ open, onHide }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Duties</DialogTitle>
+            <DialogTitle>Add Education</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -49,12 +49,12 @@ function AddDuties({ open, onHide }) {
                 <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
                   <FormField
                     control={form.control}
-                    name="duties"
+                    name="jobEducation"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Job Duty</FormLabel>
+                        <FormLabel>Job Education</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter job duty" {...field} />
+                          <Textarea placeholder="Enter job education" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -66,7 +66,7 @@ function AddDuties({ open, onHide }) {
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button type="submit">Add Course</Button>
+                <Button type="submit">Add Education</Button>
               </div>
             </form>
           </Form>
@@ -76,4 +76,4 @@ function AddDuties({ open, onHide }) {
   )
 }
 
-export default AddDuties
+export default AddEducation

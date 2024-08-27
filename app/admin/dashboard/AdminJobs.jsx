@@ -48,7 +48,7 @@ function AdminJobs() {
       {isLoading ? <Spinner /> :
         isAddJob ? <AddJob /> :
           <Card className='w-full'>
-            <CardContent className="grid grid-cols-1 gap-5 sm:grid-cols-3 mt-3">
+            <CardContent className="grid grid-cols-1 gap-5 xl:grid-cols-2 mt-3">
               {jobs.map((job, index) => (
                 <Card key={index} className='flex flex-col'>
                   <CardTitle className="bg-[#0e5a35] dark:bg-[#0e4028] w-full p-10 rounded-t-lg text-white">

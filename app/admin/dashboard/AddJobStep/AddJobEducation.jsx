@@ -7,10 +7,10 @@ import { Separator } from '@/components/ui/separator'
 import ShowAlert from '@/components/ui/show-alert'
 import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import AddDuties from '../modal/AddDuties';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import AddEducation from '../modal/AddEducation';
 
-function AddDutiesMaster() {
+function AddJobEducation() {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 
@@ -24,7 +24,7 @@ function AddDutiesMaster() {
     if (status === 1) {
       const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
       setDatas(filteredDatas);
-      storeData("duties", JSON.stringify(filteredDatas));
+      storeData("jobEducation", JSON.stringify(filteredDatas));
     }
     setShowAlert(false);
   };
@@ -38,7 +38,7 @@ function AddDutiesMaster() {
   const handleCloseModal = (status) => {
     if (status !== 0) {
       setDatas([...datas, status]);
-      storeData("duties", JSON.stringify([...datas, status]));
+      storeData("jobEducation", JSON.stringify([...datas, status]));
     } else {
       setDatas(datas);
     }
@@ -51,12 +51,12 @@ function AddDutiesMaster() {
   };
 
   useEffect(() => {
-    if (retrieveData("duties") !== null || retrieveData("duties") !== "[]") {
-      setDatas(JSON.parse(retrieveData("duties")));
+    if (retrieveData("jobEducation") !== null || retrieveData("jobEducation") !== "[]") {
+      setDatas(JSON.parse(retrieveData("jobEducation")));
     } else {
       setDatas([]);
     }
-    console.log(JSON.stringify(JSON.parse(retrieveData("duties"))));
+    console.log("jobEducation", JSON.stringify(JSON.parse(retrieveData("jobEducation"))));
   }, []);
 
   return (
@@ -64,10 +64,10 @@ function AddDutiesMaster() {
       <div>
         <Button onClick={handleOpenModal}>
           <PlusIcon className="h-4 w-4 mr-1" />
-          Add Duties
+          Add Job Education
         </Button>
         <Alert className="w-full mt-3">
-          <AlertTitle className="text-md">{datas.length > 0 ? "Duties" : ""}</AlertTitle>
+          <AlertTitle className="text-md">{datas.length > 0 ? "Job Education" : ""}</AlertTitle>
           <ScrollArea className={`w-full ${datas.length > 2 && "h-[calc(100vh-25rem)]"}`}>
             {datas && datas.length > 0 ? (
               <CardContent className={`${datas.length !== 1 && "lg:grid lg:grid-cols-2 lg:gap-x-4"}`}>
@@ -80,23 +80,23 @@ function AddDutiesMaster() {
                       <X className="h-4 w-4" />
                     </button>
                     <AlertTitle className="text-md">
-                      <div className='mb-3'>{index + 1}.&nbsp;&nbsp;<span className='text-white'>{data.duties}</span></div>
+                      <div className='mb-3'>{index + 1}.&nbsp;&nbsp;<span className='text-white'>{data.jobEducation}</span></div>
                     </AlertTitle>
                   </Alert>
                 ))}
               </CardContent>
             ) : (
               <CardDescription className="text-center">
-                No duties added yet
+                No Job Education added yet
               </CardDescription>
             )}
           </ScrollArea>
         </Alert>
-        <AddDuties open={showModal} onHide={handleCloseModal} />
+        <AddEducation open={showModal} onHide={handleCloseModal} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
   )
 }
 
-export default AddDutiesMaster
+export default AddJobEducation
