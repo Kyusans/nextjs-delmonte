@@ -11,6 +11,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import Spinner from '@/components/ui/spinner';
 import AddJobTraining from './AddJobStep/AddJobTraining';
+import AddJobKnowledge from './AddJobStep/AddJobKnowledge';
 
 function AddJob() {
   const [isLoading, setIsLoading] = useState(true);
@@ -62,14 +63,21 @@ function AddJob() {
     if (retrieveData("jobTraining") === null) {
       storeData("jobTraining", "[]");
     }
+    if (retrieveData("jobKnowledge") === null) {
+      storeData("jobKnowledge", "[]");
+    }
+    if(retrieveData("jobSkills") === null) {
+      storeData("jobSkills", "[]");
+    }
+    if(retrieveData("jobExperience") === null) {
+      storeData("jobExperience", "[]");
+    }
     getDropDownForAddJobs();
   }, []);
 
   return (
     <>
       {isLoading ? <Spinner /> :
-
-        <ScrollArea className="h-[calc(100vh-10rem)]">
           <Card className="rounded-md border-4 border-secondary">
             <CardContent>
               <AddJobMaster />
@@ -82,13 +90,16 @@ function AddJob() {
                   <AddJobEducation courseCategory={courseCategory} />
                 </div>
                 <div className='mb-5'>
-                  <AddJobTraining training={training}/>
+                  <AddJobTraining training={training} />
                 </div>
+                <div className='mb-5'>
+                  <AddJobKnowledge />
+                </div>
+
               </div>
 
             </CardContent>
           </Card>
-        </ScrollArea>
       }
     </>
   )
