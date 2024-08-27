@@ -9,6 +9,8 @@ import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import AddJobEducation from './AddJobStep/AddJobEducation';
 import axios from 'axios';
 import { toast } from 'sonner';
+import Spinner from '@/components/ui/spinner';
+import AddJobTraining from './AddJobStep/AddJobTraining';
 
 function AddJob() {
   const [isLoading, setIsLoading] = useState(true);
@@ -42,6 +44,7 @@ function AddJob() {
         setSkills(formattedSkills);
         console.log("res ni getDropDownForAddJobs", res.data);
       }
+
     } catch (error) {
       toast.error("Network error");
       console.log("PersonalInformation.jsx => onSubmit(): " + error);
@@ -56,24 +59,38 @@ function AddJob() {
     if (retrieveData("jobEducation") === null) {
       storeData("jobEducation", "[]");
     }
+    if (retrieveData("jobTraining") === null) {
+      storeData("jobTraining", "[]");
+    }
     getDropDownForAddJobs();
   }, []);
 
   return (
-    <ScrollArea className="h-[calc(100vh-10rem)]">
-      <Card className="rounded-md border-4 border-secondary">
-        <CardContent>
-          <AddJobMaster />
-          <Separator className="my-6" />
-          <div className='lg:grid lg:grid-cols-2 gap-4'>
-            <div className='mb-5'>
-              <AddDutiesMaster />
-            </div>
-            <AddJobEducation />
-          </div>
-        </CardContent>
-      </Card>
-    </ScrollArea>
+    <>
+      {isLoading ? <Spinner /> :
+
+        <ScrollArea className="h-[calc(100vh-10rem)]">
+          <Card className="rounded-md border-4 border-secondary">
+            <CardContent>
+              <AddJobMaster />
+              <Separator className="my-6" />
+              <div className='lg:grid lg:grid-cols-2 gap-4'>
+                <div className='mb-5'>
+                  <AddDutiesMaster />
+                </div>
+                <div className='mb-5'>
+                  <AddJobEducation courseCategory={courseCategory} />
+                </div>
+                <div className='mb-5'>
+                  <AddJobTraining training={training}/>
+                </div>
+              </div>
+
+            </CardContent>
+          </Card>
+        </ScrollArea>
+      }
+    </>
   )
 }
 

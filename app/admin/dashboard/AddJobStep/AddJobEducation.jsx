@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AddEducation from '../modal/AddEducation';
 
-function AddJobEducation() {
+function AddJobEducation({ courseCategory }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 
@@ -56,7 +56,6 @@ function AddJobEducation() {
     } else {
       setDatas([]);
     }
-    console.log("jobEducation", JSON.stringify(JSON.parse(retrieveData("jobEducation"))));
   }, []);
 
   return (
@@ -70,7 +69,7 @@ function AddJobEducation() {
           <AlertTitle className="text-md">{datas.length > 0 ? "Job Education" : ""}</AlertTitle>
           <ScrollArea className={`w-full ${datas.length > 2 && "h-[calc(100vh-25rem)]"}`}>
             {datas && datas.length > 0 ? (
-              <CardContent className={`${datas.length !== 1 && "lg:grid lg:grid-cols-2 lg:gap-x-4"}`}>
+              <CardContent className={`grid gap-4 ${datas.length > 1 ? "lg:grid-cols-2" : "grid-cols-1"}`}>
                 {datas.map((data, index) => (
                   <Alert key={index} className="relative w-full bg-[#1c1917] mt-3">
                     <button
@@ -80,7 +79,12 @@ function AddJobEducation() {
                       <X className="h-4 w-4" />
                     </button>
                     <AlertTitle className="text-md">
-                      <div className='mb-3'>{index + 1}.&nbsp;&nbsp;<span className='text-white'>{data.jobEducation}</span></div>
+                      <div className='mb-1 text-xl break-words'>
+                        {courseCategory.find((item) => item.value === data.courseCategory)?.label}
+                      </div>
+                      <div className='mb-3 text-sm break-words'>
+                        {data.jobEducation}
+                      </div>
                     </AlertTitle>
                   </Alert>
                 ))}
@@ -92,11 +96,11 @@ function AddJobEducation() {
             )}
           </ScrollArea>
         </Alert>
-        <AddEducation open={showModal} onHide={handleCloseModal} />
+        <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
   )
 }
 
-export default AddJobEducation
+export default AddJobEducation;
