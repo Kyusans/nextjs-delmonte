@@ -66,7 +66,7 @@ function AddJobEducation({ courseCategory }) {
           Add Job Education
         </Button>
         <Alert className="w-full mt-3">
-          <AlertTitle className="text-md">{datas.length > 0 ? "Job Education" : ""}</AlertTitle>
+          <AlertTitle className="text-md">Job Education</AlertTitle>
           <ScrollArea className={`w-full ${datas.length > 2 && "h-[calc(100vh-25rem)]"}`}>
             {datas && datas.length > 0 ? (
               <CardContent className={`grid gap-4 ${datas.length > 1 ? "lg:grid-cols-2" : "grid-cols-1"}`}>

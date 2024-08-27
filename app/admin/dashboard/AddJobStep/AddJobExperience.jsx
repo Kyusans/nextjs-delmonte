@@ -3,15 +3,13 @@ import { retrieveData, storeData } from '@/app/utils/storageUtils'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { CardContent, CardDescription } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import ShowAlert from '@/components/ui/show-alert'
 import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area';
-import AddEducation from '../modal/AddEducation';
-import AddSkill from '../modal/AddSkill';
+import AddExperience from '../modal/AddExperience';
 
-function AddJobSkill({ skill }) {
+function AddJobExperience() {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 
@@ -25,7 +23,7 @@ function AddJobSkill({ skill }) {
     if (status === 1) {
       const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
       setDatas(filteredDatas);
-      storeData("jobSkill", JSON.stringify(filteredDatas));
+      storeData("jobExperience", JSON.stringify(filteredDatas));
     }
     setShowAlert(false);
   };
@@ -39,7 +37,7 @@ function AddJobSkill({ skill }) {
   const handleCloseModal = (status) => {
     if (status !== 0) {
       setDatas([...datas, status]);
-      storeData("jobSkill", JSON.stringify([...datas, status]));
+      storeData("jobExperience", JSON.stringify([...datas, status]));
     } else {
       setDatas(datas);
     }
@@ -52,11 +50,12 @@ function AddJobSkill({ skill }) {
   };
 
   useEffect(() => {
-    if (retrieveData("jobSkill") !== null || retrieveData("jobSkill") !== "[]") {
-      setDatas(JSON.parse(retrieveData("jobSkill")));
+    if (retrieveData("jobExperience") !== null || retrieveData("jobExperience") !== "[]") {
+      setDatas(JSON.parse(retrieveData("jobExperience")));
     } else {
       setDatas([]);
     }
+    console.log(JSON.stringify(JSON.parse(retrieveData("jobExperience"))));
   }, []);
 
   return (
@@ -64,13 +63,13 @@ function AddJobSkill({ skill }) {
       <div>
         <Button onClick={handleOpenModal}>
           <PlusIcon className="h-4 w-4 mr-1" />
-          Add Job Skill
+          Add Job Experience
         </Button>
         <Alert className="w-full mt-3">
-          <AlertTitle className="text-md">Job Skill</AlertTitle>
+          <AlertTitle className="text-md">Job Experience</AlertTitle>
           <ScrollArea className={`w-full ${datas.length > 2 && "h-[calc(100vh-25rem)]"}`}>
             {datas && datas.length > 0 ? (
-              <CardContent className={`grid gap-4 ${datas.length > 1 ? "lg:grid-cols-2" : "grid-cols-1"}`}>
+              <CardContent className={`${datas.length !== 1 && "lg:grid lg:grid-cols-2 lg:gap-x-4"}`}>
                 {datas.map((data, index) => (
                   <Alert key={index} className="relative w-full bg-[#1c1917] mt-3">
                     <button
@@ -80,28 +79,24 @@ function AddJobSkill({ skill }) {
                       <X className="h-4 w-4" />
                     </button>
                     <AlertTitle className="text-md">
-                      <div className='mb-1 text-xl break-words'>
-                        {skill.find((item) => item.value === data.skill)?.label}
-                      </div>
-                      <div className='mb-3 text-sm break-words'>
-                        {data.jobSkill}
-                      </div>
+                      <div className='mb-3 break-words'>Years of Experience:&nbsp;<span className='text-white'>{data.yearsOfExperience} years</span></div>
+                      <div className='mb-3 break-words'>{index + 1}.&nbsp;&nbsp;<span className='text-white'>{data.jobExperience}</span></div>
                     </AlertTitle>
                   </Alert>
                 ))}
               </CardContent>
             ) : (
               <CardDescription className="text-center">
-                No Job Skill added yet
+                No Job Experience added yet
               </CardDescription>
             )}
           </ScrollArea>
         </Alert>
-        <AddSkill open={showModal} onHide={handleCloseModal} skill={skill} />
+        <AddExperience open={showModal} onHide={handleCloseModal} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
   )
 }
 
-export default AddJobSkill;
+export default AddJobExperience

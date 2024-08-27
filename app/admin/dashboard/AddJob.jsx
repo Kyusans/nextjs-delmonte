@@ -13,6 +13,7 @@ import Spinner from '@/components/ui/spinner';
 import AddJobTraining from './AddJobStep/AddJobTraining';
 import AddJobKnowledge from './AddJobStep/AddJobKnowledge';
 import AddJobSkill from './AddJobStep/AddJobSkill';
+import AddJobExperience from './AddJobStep/AddJobExperience';
 
 function AddJob() {
   const [isLoading, setIsLoading] = useState(true);
@@ -101,6 +102,9 @@ function AddJob() {
                   <AddJobSkill skill={skills} />
                 </div>
 
+                <div className='mb-5'> 
+                  <AddJobExperience />
+                </div>
               </div>
 
             </CardContent>

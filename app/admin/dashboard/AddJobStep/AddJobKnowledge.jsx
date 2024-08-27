@@ -66,7 +66,7 @@ function AddJobKnowledge() {
           Add Job Knowledge
         </Button>
         <Alert className="w-full mt-3">
-          <AlertTitle className="text-md">{datas.length > 0 ? "Job Knowledge" : ""}</AlertTitle>
+          <AlertTitle className="text-md">Job Knowledge</AlertTitle>
           <ScrollArea className={`w-full ${datas.length > 2 && "h-[calc(100vh-25rem)]"}`}>
             {datas && datas.length > 0 ? (
               <CardContent className={`${datas.length !== 1 && "lg:grid lg:grid-cols-2 lg:gap-x-4"}`}>
