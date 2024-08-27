@@ -1,0 +1,88 @@
+"use client";
+import React, { useEffect, useRef, useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
+import { Button } from '@/components/ui/button';
+
+function AddJobMaster({ nextStep }) {
+
+  const formSchema = z.object({
+    title: z.string().min(1, { message: "This field is required" }),
+    description: z.string().min(1, { message: "This field is required" }),
+  });
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+    },
+  });
+
+  const onSubmit = (values) => {
+    try {
+      storeData("jobMaster", values);
+      nextStep(values);
+      form.reset();
+    } catch (error) {
+      toast.error("Network error");
+      console.log("AddJobMaster.jsx => onSubmit(): " + error);
+    }
+  };
+
+  useEffect(() => {
+    if (retrieveData("jobMaster") !== null) {
+      form.reset(retrieveData("jobMaster"));
+    }
+  }, [form])
+
+  return (
+    <div className='flex flex-col mt-4'>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="flex justify-center items-center">
+            <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Job Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter job title" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Job Description</FormLabel>
+                    <FormControl>
+                      <Textarea style={{ height: "200px" }} placeholder="Enter job description" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+          <div className="flex flex-cols gap-2 justify-end mt-5">
+            <Button type="submit">Next</Button>
+          </div>
+        </form>
+      </Form>
+    </div>
+  );
+}
+
+export default AddJobMaster;
