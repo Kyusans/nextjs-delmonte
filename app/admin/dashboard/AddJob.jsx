@@ -104,6 +104,7 @@ function AddJob() {
       if (res.data !== 0) {
         toast.success("Job added successfully");
         setCurrentStep(1);
+        removeData("jobMaster");
         storeData("duties", "[]");
         storeData("jobEducation", "[]");
         storeData("jobTraining", "[]");

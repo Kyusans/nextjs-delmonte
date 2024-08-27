@@ -13,7 +13,16 @@ function AdminJobs() {
   const [isLoading, setIsLoading] = useState(true);
   const [jobs, setJobs] = useState([]);
   const [isAddJob, setIsAddJob] = useState(false);
-  
+
+  const handleSwitchView = async () => {
+    if (isAddJob) {
+      await getAllJobs();
+      setIsAddJob(false);
+    } else {
+      setIsAddJob(true);
+    }
+  }
+
   const getAllJobs = async () => {
     setIsLoading(true);
     try {
@@ -41,7 +50,7 @@ function AdminJobs() {
 
   return (
     <>
-      <Button className="mb-3" onClick={() => setIsAddJob(!isAddJob)}>
+      <Button className="mb-3" onClick={handleSwitchView}>
         {isAddJob ? <ArrowLeft className="h-4 w-4 mr-1" /> : <PlusCircle className="h-4 w-4 mr-1" />}
         {isAddJob ? "Back" : "Add Job"}
       </Button>
