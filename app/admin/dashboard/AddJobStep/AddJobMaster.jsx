@@ -8,9 +8,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { retrieveData, storeData } from '@/app/utils/storageUtils';
+import { Button } from '@/components/ui/button';
 
-function AddJobMaster() {
-  const isInitialMount = useRef(true);
+function AddJobMaster({ nextStep }) {
 
   const formSchema = z.object({
     title: z.string().min(1, { message: "This field is required" }),
@@ -27,34 +27,20 @@ function AddJobMaster() {
 
   const onSubmit = (values) => {
     try {
-      onHide(values);
+      storeData("jobMaster", values);
+      nextStep(values);
       form.reset();
     } catch (error) {
       toast.error("Network error");
-      console.log("PersonalInformation.jsx => onSubmit(): " + error);
+      console.log("AddJobMaster.jsx => onSubmit(): " + error);
     }
   };
 
   useEffect(() => {
-    if (retrieveData("jobTitle") !== null) {
-      form.setValue("title", retrieveData("jobTitle"));
-    }
-
-    if (retrieveData("jobDescription") !== null) {
-      form.setValue("description", retrieveData("jobDescription"));
+    if (retrieveData("jobMaster") !== null) {
+      form.reset(retrieveData("jobMaster"));
     }
   }, [form])
-
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-    } else {
-      return () => {
-        storeData("jobTitle", form.getValues("title"));
-        storeData("jobDescription", form.getValues("description"));
-      };
-    }
-  }, [form]);
 
   return (
     <div className='flex flex-col mt-4'>
@@ -89,6 +75,9 @@ function AddJobMaster() {
                 )}
               />
             </div>
+          </div>
+          <div className="flex flex-cols gap-2 justify-end mt-5">
+            <Button type="submit">Next</Button>
           </div>
         </form>
       </Form>

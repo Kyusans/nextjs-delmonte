@@ -71,16 +71,16 @@ function AddJobExperience() {
             {datas && datas.length > 0 ? (
               <CardContent className={`${datas.length !== 1 && "lg:grid lg:grid-cols-2 lg:gap-x-4"}`}>
                 {datas.map((data, index) => (
-                  <Alert key={index} className="relative w-full bg-[#1c1917] mt-3">
+                  <Alert key={index} className="relative w-full mt-3">
                     <button
-                      className="absolute top-2 right-2 text-white"
+                      className="absolute top-2 right-2"
                       onClick={() => handleRemoveList(index)}
                     >
                       <X className="h-4 w-4" />
                     </button>
-                    <AlertTitle className="text-md">
-                      <div className='mb-3 break-words'>Years of Experience:&nbsp;<span className='text-white'>{data.yearsOfExperience} years</span></div>
-                      <div className='mb-3 break-words'>{index + 1}.&nbsp;&nbsp;<span className='text-white'>{data.jobExperience}</span></div>
+                    <AlertTitle className="text-sm">
+                      <div className='mb-3 break-words'>Years of Experience:&nbsp;<span>{data.yearsOfExperience} years</span></div>
+                      <div className='mb-3 break-words'>{index + 1}.&nbsp;&nbsp;<span>{data.jobExperience}</span></div>
                     </AlertTitle>
                   </Alert>
                 ))}

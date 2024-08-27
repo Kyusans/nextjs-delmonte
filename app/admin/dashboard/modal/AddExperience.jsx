@@ -11,17 +11,21 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 
 function AddExperience({ open, onHide }) {
+
   const formSchema = z.object({
-    yearsOfExperience: z.string().min(1, {
-      message: "This field is required",
-    }).max(50, "Years of experience should not be more than 50")
+    yearsOfExperience: z.string()
+      .min(1, { message: "This field is required" })
       .refine((value) => !isNaN(Number(value)), {
         message: "Years of experience must be a number",
+      })
+      .refine((value) => Number(value) <= 50, {
+        message: "Years of experience should not be more than 50",
       }),
     jobExperience: z.string().min(1, {
       message: "This field is required",
     }),
   });
+  
 
   const form = useForm({
     resolver: zodResolver(formSchema),

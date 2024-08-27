@@ -70,14 +70,14 @@ function AddJobTraining({ training }) {
             {datas && datas.length > 0 ? (
               <CardContent className={`grid gap-4 ${datas.length > 1 ? "lg:grid-cols-2" : "grid-cols-1"}`}>
                 {datas.map((data, index) => (
-                  <Alert key={index} className="relative w-full bg-[#1c1917] mt-3">
+                  <Alert key={index} className="relative w-full mt-3">
                     <button
-                      className="absolute top-2 right-2 text-white"
+                      className="absolute top-2 right-2"
                       onClick={() => handleRemoveList(index)}
                     >
                       <X className="h-4 w-4" />
                     </button>
-                    <AlertTitle className="text-md">
+                    <AlertTitle className="text-sm">
                       <div className='mb-1 text-xl break-words'>
                         {training.find((item) => item.value === data.training)?.label}
                       </div>
