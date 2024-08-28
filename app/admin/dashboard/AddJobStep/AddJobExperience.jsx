@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AddExperience from '../modal/AddExperience';
 
-function AddJobExperience() {
+function AddJobExperience({previousStep, nextStep}) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 

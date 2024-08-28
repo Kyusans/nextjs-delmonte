@@ -8,18 +8,25 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
 
 function AddKnowledge({ open, onHide }) {
   const formSchema = z.object({
     jobKnowledge: z.string().min(1, {
       message: "This field is required",
     }),
+    points: z.string().min(1, {
+      message: "This field is required",
+    }).refine((value) => !isNaN(Number(value)), {
+      message: "Points must be a number",
+    })
   });
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       jobKnowledge: "",
+      points: "",
     },
   });
 
@@ -54,7 +61,20 @@ function AddKnowledge({ open, onHide }) {
                       <FormItem>
                         <FormLabel>Job Knowledge Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter job knowledge" {...field} />
+                          <Textarea style={{ height: "200px" }} placeholder="Enter job knowledge" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="points"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Points</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter points" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

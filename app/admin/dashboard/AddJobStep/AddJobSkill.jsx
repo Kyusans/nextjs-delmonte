@@ -11,7 +11,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import AddEducation from '../modal/AddEducation';
 import AddSkill from '../modal/AddSkill';
 
-function AddJobSkill({ skill }) {
+function AddJobSkill({ skill, previousStep, nextStep }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 

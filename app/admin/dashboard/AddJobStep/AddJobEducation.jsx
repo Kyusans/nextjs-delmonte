@@ -10,7 +10,7 @@ import React, { useEffect, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AddEducation from '../modal/AddEducation';
 
-function AddJobEducation({ courseCategory }) {
+function AddJobEducation({ courseCategory, previousStep, nextStep }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 

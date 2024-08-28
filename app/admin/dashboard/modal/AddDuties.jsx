@@ -54,7 +54,7 @@ function AddDuties({ open, onHide }) {
                       <FormItem>
                         <FormLabel>Job Duty Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter job duty" {...field} />
+                          <Textarea style={{ height: "200px" }}  placeholder="Enter duty description" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -66,7 +66,7 @@ function AddDuties({ open, onHide }) {
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button type="submit">Add Course</Button>
+                <Button type="submit">Add Duty</Button>
               </div>
             </form>
           </Form>

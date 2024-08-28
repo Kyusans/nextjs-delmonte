@@ -28,7 +28,7 @@ function AddJobMaster({ nextStep }) {
   const onSubmit = (values) => {
     try {
       storeData("jobMaster", values);
-      nextStep(values);
+      nextStep(15);
       form.reset();
     } catch (error) {
       toast.error("Network error");
@@ -43,9 +43,13 @@ function AddJobMaster({ nextStep }) {
   }, [form])
 
   return (
-    <div className='flex flex-col mt-4'>
+    <div className='flex flex-col'>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="flex flex-cols gap-2 justify-end mt-3">
+            <Button type="submit">Next</Button>
+          </div>
           <div className="flex justify-center items-center">
             <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
               <FormField
@@ -75,9 +79,6 @@ function AddJobMaster({ nextStep }) {
                 )}
               />
             </div>
-          </div>
-          <div className="flex flex-cols gap-2 justify-end mt-5">
-            <Button type="submit">Next</Button>
           </div>
         </form>
       </Form>
