@@ -66,35 +66,32 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
           Add Job Education
         </Button>
         <Alert className="w-full mt-3">
-          <AlertTitle className="text-md">Job Education</AlertTitle>
-          <ScrollArea className={`w-full ${datas.length > 2 && "h-[calc(100vh-25rem)]"}`}>
-            {datas && datas.length > 0 ? (
-              <CardContent className={`grid gap-4 ${datas.length > 1 ? "lg:grid-cols-2" : "grid-cols-1"}`}>
-                {datas.map((data, index) => (
-                  <Alert key={index} className="relative w-full mt-3">
-                    <button
-                      className="absolute top-2 right-2"
-                      onClick={() => handleRemoveList(index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                    <AlertTitle className="text-sm">
-                      <div className='mb-1 text-xl break-words'>
-                        {courseCategory.find((item) => item.value === data.courseCategory)?.label}
-                      </div>
-                      <div className='mb-3 text-sm break-words'>
-                        {data.jobEducation}
-                      </div>
-                    </AlertTitle>
-                  </Alert>
-                ))}
-              </CardContent>
-            ) : (
-              <CardDescription className="text-center">
-                No Job Education added yet
-              </CardDescription>
-            )}
-          </ScrollArea>
+          {datas && datas.length > 0 ? (
+            <CardContent className={`grid gap-4 ${datas.length > 1 ? "lg:grid-cols-2" : "grid-cols-1"}`}>
+              {datas.map((data, index) => (
+                <Alert key={index} className="relative w-full mt-3">
+                  <button
+                    className="absolute top-2 right-2"
+                    onClick={() => handleRemoveList(index)}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                  <AlertTitle className="text-sm">
+                    <div className='mb-1 text-xl break-words'>
+                      {courseCategory.find((item) => item.value === data.courseCategory)?.label}
+                    </div>
+                    <div className='mb-3 text-sm break-words'>
+                      {data.jobEducation}
+                    </div>
+                  </AlertTitle>
+                </Alert>
+              ))}
+            </CardContent>
+          ) : (
+            <CardDescription className="text-center">
+              No Job Education added yet
+            </CardDescription>
+          )}
         </Alert>
         <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />

@@ -10,9 +10,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import AddKnowledge from '../modal/AddKnowledge';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
 
 
-function AddJobKnowledge({ previousStep, nextStep }) {
+function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 
@@ -39,6 +41,7 @@ function AddJobKnowledge({ previousStep, nextStep }) {
 
   const handleCloseModal = (status) => {
     if (status !== 0) {
+      console.log("status: ", status);
       setDatas([...datas, status]);
       storeData("jobKnowledge", JSON.stringify([...datas, status]));
     } else {
@@ -73,7 +76,7 @@ function AddJobKnowledge({ previousStep, nextStep }) {
   return (
     <>
       <div>
-        <div className='flex justify-end gap-2'>
+        <div className='flex justify-end gap-2 mb-3'>
           <Button variant="secondary" onClick={() => previousStep(30)} className="mt-3">Previous</Button>
           <Button onClick={handleNextStep} className="mt-3">Next</Button>
         </div>
@@ -83,43 +86,70 @@ function AddJobKnowledge({ previousStep, nextStep }) {
         </Button>
         <Alert className="w-full mt-3">
           {datas && datas.length > 0 ? (
-            <Table className="w-full">
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-1/12">Index</TableHead>
-                  <TableHead className="w-10/12">Duty</TableHead>
-                  <TableHead className="w-1/12 text-center">Points</TableHead>
-                  <TableHead className="w-1/12 text-center"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <>
+              <div className="hidden md:block">
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-1/12">Index</TableHead>
+                      <TableHead className="w-10/12">Duty</TableHead>
+                      <TableHead className="w-1/12 text-center">Points</TableHead>
+                      <TableHead className="w-1/12 text-center"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {datas.map((data, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="w-1/12">{index + 1}</TableCell>
+                        <TableCell className="w-10/12 whitespace-normal">
+                          {data.jobKnowledge}
+                        </TableCell>
+                        <TableCell className="w-1/12 text-center">{data.points}</TableCell>
+                        <TableCell className="w-1/12 text-center">
+                          <button
+                            className="h-4 w-4"
+                            onClick={() => handleRemoveList(index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="block md:hidden">
                 {datas.map((data, index) => (
-                  <TableRow key={index}>
-                    <TableCell className="w-1/12">{index + 1}</TableCell>
-                    <TableCell className="w-10/12 whitespace-normal">
-                      {data.jobKnowledge}
-                    </TableCell>
-                    <TableCell className="w-1/12 text-center">{index.points}</TableCell>
-                    <TableCell className="w-1/12 text-center">
+                  <div key={index} className="relative w-full p-4 rounded-md shadow">
+                    <div className="flex justify-end">
                       <button
-                        className="h-4 w-4"
+                        className="h-6 w-6"
                         onClick={() => handleRemoveList(index)}
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-6 w-6" />
                       </button>
-                    </TableCell>
-                  </TableRow>
+                    </div>
+                    <div className="mt-2 text-sm">
+                      {index + 1}.&nbsp;&nbsp;
+                      {data.jobKnowledge}
+                    </div>
+                    <div className='text-end'>
+                      <Badge className="mt-2 text-xs font-bold">
+                        Points: {data.points}
+                      </Badge>
+                    </div>
+                    <Separator className="mt-3" />
+                  </div>
                 ))}
-              </TableBody>
-            </Table>
-
+              </div>
+            </>
           ) : (
             <CardDescription className="text-center">
               No duties added yet
             </CardDescription>
           )}
         </Alert>
-        <AddKnowledge open={showModal} onHide={handleCloseModal} />
+        <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>

@@ -24,6 +24,7 @@ function AddJob() {
   const [skills, setSkills] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [progress, setProgress] = useState(0);
+  const [knowledgeList, setKnowledgeList] = useState([]);
 
   const getDropDownForAddJobs = async () => {
     setIsLoading(true);
@@ -47,15 +48,22 @@ function AddJob() {
           value: item.perS_id,
           label: item.perS_name,
         }))
+
+        const formattedKnowledge = res.data.knowledge.map((item) => ({
+          value: item.knowledge_id,
+          label: item.knowledge_name,
+        }))
+
         setCourseCategory(formattedCourse);
         setTraining(formattedTraining);
         setSkills(formattedSkills);
+        setKnowledgeList(formattedKnowledge);
         console.log("res ni getDropDownForAddJobs", res.data);
       }
 
     } catch (error) {
       toast.error("Network error");
-      console.log("PersonalInformation.jsx => onSubmit(): " + error);
+      console.log("AddJob.jsx => onSubmit(): " + error);
     } finally {
       setIsLoading(false);
     }
@@ -152,7 +160,7 @@ function AddJob() {
                 <AddDutiesMaster previousStep={handlePrevious} nextStep={handleNextStep} />
               </TabsContent>
               <TabsContent value={3}>
-                <AddJobKnowledge previousStep={handlePrevious} nextStep={handleNextStep}/>
+                <AddJobKnowledge previousStep={handlePrevious} nextStep={handleNextStep} knowledgeList={knowledgeList}/>
               </TabsContent>
               <TabsContent value={4}>
                 <AddJobEducation courseCategory={courseCategory} previousStep={handlePrevious} nextStep={handleNextStep} />

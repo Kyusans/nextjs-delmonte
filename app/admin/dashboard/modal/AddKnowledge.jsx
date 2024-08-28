@@ -9,9 +9,13 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
+import ComboBox from '@/app/my_components/combo-box';
 
-function AddKnowledge({ open, onHide }) {
+function AddKnowledge({ open, onHide, knowledgeList }) {
   const formSchema = z.object({
+    knowledgeId: z.number().min(1, {
+      message: "This field is required",
+    }),
     jobKnowledge: z.string().min(1, {
       message: "This field is required",
     }),
@@ -25,6 +29,7 @@ function AddKnowledge({ open, onHide }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      knowledgeId: 0,
       jobKnowledge: "",
       points: "",
     },
@@ -54,6 +59,25 @@ function AddKnowledge({ open, onHide }) {
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex justify-center items-center">
                 <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
+                  <FormField
+                    name="knowledgeId"
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Knowledge and compliance </FormLabel>
+                        <div>
+                          <ComboBox
+                            list={knowledgeList}
+                            subject="knowledge and compliance"
+                            value={field.value}
+                            onChange={field.onChange}
+                            styles={"bg-background"}
+                          />
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   <FormField
                     control={form.control}
                     name="jobKnowledge"

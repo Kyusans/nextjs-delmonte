@@ -58,7 +58,7 @@ function AddSkill({ open, onHide, skill }) {
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Skill Description</FormLabel>
+                        <FormLabel>Skill</FormLabel>
                         <div>
                           <ComboBox
                             list={skill}

@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react';
 import AddDuties from '../modal/AddDuties';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { toast } from 'sonner';
 
 function AddDutiesMaster({ previousStep, nextStep }) {
   const [datas, setDatas] = useState([]);
@@ -72,7 +73,7 @@ function AddDutiesMaster({ previousStep, nextStep }) {
   return (
     <>
       <div>
-        <div className='flex justify-end gap-2'>
+        <div className='flex justify-end gap-2 mb-3'>
           <Button variant="secondary" onClick={() => previousStep(0)} className="mt-3">Previous</Button>
           <Button onClick={handleNextStep} className="mt-3">Next</Button>
         </div>
@@ -115,7 +116,6 @@ function AddDutiesMaster({ previousStep, nextStep }) {
                 </Table>
               </div>
               <div className="block md:hidden">
-                <ScrollArea className={`w-full ${datas.length > 2 && "h-[calc(100vh-25rem)]"}`}>
                   {datas.map((data, index) => (
                     <div key={index} className="relative w-full p-4 rounded-md shadow">
                       <div className="flex justify-end">
@@ -133,7 +133,6 @@ function AddDutiesMaster({ previousStep, nextStep }) {
                       <Separator className="mt-3" />
                     </div>
                   ))}
-                </ScrollArea>
               </div>
             </>
           ) : (
