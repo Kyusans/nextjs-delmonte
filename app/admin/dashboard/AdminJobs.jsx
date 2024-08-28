@@ -104,7 +104,7 @@ function AdminJobs() {
         <Breadcrumb className="flex ">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <div className='cursor-pointer hover:text-white' onClick={handleSwitchView}>Job List</div>
+              <div className='cursor-pointer hover:text-primary' onClick={handleSwitchView}>Job List</div>
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>

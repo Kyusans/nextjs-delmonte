@@ -77,7 +77,7 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
     <>
       <div>
         <div className='flex justify-end gap-2 mb-3'>
-          <Button variant="secondary" onClick={() => previousStep(30)} className="mt-3">Previous</Button>
+          <Button variant="secondary" onClick={() => previousStep(15)} className="mt-3">Previous</Button>
           <Button onClick={handleNextStep} className="mt-3">Next</Button>
         </div>
         <Button onClick={handleOpenModal}>
@@ -92,7 +92,8 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
-                      <TableHead className="w-10/12">Duty</TableHead>
+                      <TableHead className="w-1/12 ">Knowledge</TableHead>
+                      <TableHead className="w-10/12">Description</TableHead>
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center"></TableHead>
                     </TableRow>
@@ -101,6 +102,9 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
                     {datas.map((data, index) => (
                       <TableRow key={index}>
                         <TableCell className="w-1/12">{index + 1}</TableCell>
+                        <TableCell className="w-1/12">
+                          {knowledgeList.find((item) => item.value === data.knowledgeId)?.label}
+                        </TableCell>
                         <TableCell className="w-10/12 whitespace-normal">
                           {data.jobKnowledge}
                         </TableCell>
@@ -130,7 +134,9 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
                       </button>
                     </div>
                     <div className="mt-2 text-sm">
-                      {index + 1}.&nbsp;&nbsp;
+                      <div className='mb-1 text-xl break-words'>
+                        {knowledgeList.find((item) => item.value === data.knowledgeId)?.label}
+                      </div>
                       {data.jobKnowledge}
                     </div>
                     <div className='text-end'>

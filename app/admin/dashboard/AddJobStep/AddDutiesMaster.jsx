@@ -90,7 +90,6 @@ function AddDutiesMaster({ previousStep, nextStep }) {
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
                       <TableHead className="w-10/12">Duty</TableHead>
-                      <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center"></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -101,7 +100,6 @@ function AddDutiesMaster({ previousStep, nextStep }) {
                         <TableCell className="w-10/12 whitespace-normal">
                           {data.duties}
                         </TableCell>
-                        <TableCell className="w-1/12 text-center">{index + 1}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <button
                             className="h-4 w-4"

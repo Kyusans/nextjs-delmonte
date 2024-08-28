@@ -53,7 +53,7 @@ function AddKnowledge({ open, onHide, knowledgeList }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Job Knowledge</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Add Knowledge and Compliance</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>

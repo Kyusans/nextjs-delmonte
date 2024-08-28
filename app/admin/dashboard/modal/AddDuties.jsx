@@ -41,7 +41,7 @@ function AddDuties({ open, onHide }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Duties</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Add Duties</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>

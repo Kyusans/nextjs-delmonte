@@ -53,7 +53,7 @@ function AddExperience({ open, onHide }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Job Experience</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Add Experience</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>

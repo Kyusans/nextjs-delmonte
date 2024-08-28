@@ -47,7 +47,7 @@ function AddTraining({ open, onHide, training }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Training</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Add Training</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
