@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import ComboBox from '@/app/my_components/combo-box';
+import { Input } from '@/components/ui/input';
 
 function AddTraining({ open, onHide, training }) {
   const formSchema = z.object({
@@ -18,6 +19,11 @@ function AddTraining({ open, onHide, training }) {
     jobTraining: z.string().min(1, {
       message: "This field is required",
     }),
+    points: z.string().min(1, {
+      message: "This field is required",
+    }).refine((value) => !isNaN(Number(value)), {
+      message: "Points must be a number",
+    })
   });
 
   const form = useForm({
@@ -25,6 +31,7 @@ function AddTraining({ open, onHide, training }) {
     defaultValues: {
       training: 0,
       jobTraining: "",
+      points: "",
     },
   });
 
@@ -47,7 +54,7 @@ function AddTraining({ open, onHide, training }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Training</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Add Training</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -79,7 +86,20 @@ function AddTraining({ open, onHide, training }) {
                       <FormItem>
                         <FormLabel>Job Training Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter job training" {...field} />
+                          <Textarea style={{ height: "200px" }} placeholder="Enter description" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="points"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Points</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter points" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

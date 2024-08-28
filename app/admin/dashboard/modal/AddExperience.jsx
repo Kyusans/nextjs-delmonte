@@ -25,7 +25,6 @@ function AddExperience({ open, onHide }) {
       message: "This field is required",
     }),
   });
-  
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -53,7 +52,7 @@ function AddExperience({ open, onHide }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Job Experience</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Add Experience</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -79,7 +78,7 @@ function AddExperience({ open, onHide }) {
                       <FormItem>
                         <FormLabel>Job Experience Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter job experience" {...field} />
+                          <Textarea style={{ height: "200px" }} placeholder="Enter description" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

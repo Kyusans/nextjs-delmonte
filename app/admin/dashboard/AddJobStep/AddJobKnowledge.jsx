@@ -8,8 +8,13 @@ import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AddKnowledge from '../modal/AddKnowledge';
+import { Separator } from '@/components/ui/separator';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
 
-function AddJobKnowledge() {
+
+function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 
@@ -36,6 +41,7 @@ function AddJobKnowledge() {
 
   const handleCloseModal = (status) => {
     if (status !== 0) {
+      console.log("status: ", status);
       setDatas([...datas, status]);
       storeData("jobKnowledge", JSON.stringify([...datas, status]));
     } else {
@@ -49,6 +55,15 @@ function AddJobKnowledge() {
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
 
+  const handleNextStep = () => {
+    if (retrieveData("jobKnowledge") === null || retrieveData("jobKnowledge") === "[]") {
+      toast.error("Please add knowledge and compliance first");
+      return;
+    }
+    nextStep(45);
+  }
+
+
   useEffect(() => {
     if (retrieveData("jobKnowledge") !== null || retrieveData("jobKnowledge") !== "[]") {
       setDatas(JSON.parse(retrieveData("jobKnowledge")));
@@ -61,37 +76,86 @@ function AddJobKnowledge() {
   return (
     <>
       <div>
+        <div className='flex justify-end gap-2 mb-3'>
+          <Button variant="secondary" onClick={() => previousStep(15)} className="mt-3">Previous</Button>
+          <Button onClick={handleNextStep} className="mt-3">Next</Button>
+        </div>
         <Button onClick={handleOpenModal}>
           <PlusIcon className="h-4 w-4 mr-1" />
-          Add Job Knowledge
+          Add Knowledge and Compliance
         </Button>
         <Alert className="w-full mt-3">
-          <AlertTitle className="text-md">Job Knowledge</AlertTitle>
-          <ScrollArea className={`w-full ${datas.length > 2 && "h-[calc(100vh-25rem)]"}`}>
-            {datas && datas.length > 0 ? (
-              <CardContent className={`${datas.length !== 1 && "lg:grid lg:grid-cols-2 lg:gap-x-4"}`}>
+          {datas && datas.length > 0 ? (
+            <>
+              <div className="hidden md:block">
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-1/12">Index</TableHead>
+                      <TableHead className="w-1/12 ">Knowledge</TableHead>
+                      <TableHead className="w-10/12">Description</TableHead>
+                      <TableHead className="w-1/12 text-center">Points</TableHead>
+                      <TableHead className="w-1/12 text-center"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {datas.map((data, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="w-1/12">{index + 1}</TableCell>
+                        <TableCell className="w-1/12">
+                          {knowledgeList.find((item) => item.value === data.knowledgeId)?.label}
+                        </TableCell>
+                        <TableCell className="w-10/12 whitespace-normal">
+                          {data.jobKnowledge}
+                        </TableCell>
+                        <TableCell className="w-1/12 text-center">{data.points}</TableCell>
+                        <TableCell className="w-1/12 text-center">
+                          <button
+                            className="h-4 w-4"
+                            onClick={() => handleRemoveList(index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="block md:hidden">
                 {datas.map((data, index) => (
-                  <Alert key={index} className="relative w-full mt-3">
-                    <button
-                      className="absolute top-2 right-2"
-                      onClick={() => handleRemoveList(index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                    <AlertTitle className="text-sm">
-                      <div className='mb-3 break-words'>{index + 1}.&nbsp;&nbsp;<span>{data.jobKnowledge}</span></div>
-                    </AlertTitle>
-                  </Alert>
+                  <div key={index} className="relative w-full p-4 rounded-md shadow">
+                    <div className="flex justify-end">
+                      <button
+                        className="h-4 w-4"
+                        onClick={() => handleRemoveList(index)}
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+                    <div className="mt-2 text-sm">
+                      <div className='mb-1 text-xl break-words'>
+                        {knowledgeList.find((item) => item.value === data.knowledgeId)?.label}
+                      </div>
+                      {data.jobKnowledge}
+                    </div>
+                    <div className='text-end'>
+                      <Badge className="mt-2 text-xs font-bold">
+                        Points: {data.points}
+                      </Badge>
+                    </div>
+                    <Separator className="mt-3" />
+                  </div>
                 ))}
-              </CardContent>
-            ) : (
-              <CardDescription className="text-center">
-                No Job Knowledge added yet
-              </CardDescription>
-            )}
-          </ScrollArea>
+              </div>
+            </>
+          ) : (
+            <CardDescription className="text-center">
+              No duties added yet
+            </CardDescription>
+          )}
         </Alert>
-        <AddKnowledge open={showModal} onHide={handleCloseModal} />
+        <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>

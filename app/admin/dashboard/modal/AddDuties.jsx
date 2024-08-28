@@ -41,7 +41,7 @@ function AddDuties({ open, onHide }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Duties</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Add Duties</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -54,7 +54,7 @@ function AddDuties({ open, onHide }) {
                       <FormItem>
                         <FormLabel>Job Duty Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter job duty" {...field} />
+                          <Textarea style={{ height: "200px" }}  placeholder="Enter education" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -66,7 +66,7 @@ function AddDuties({ open, onHide }) {
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button type="submit">Add Course</Button>
+                <Button type="submit">Add Duty</Button>
               </div>
             </form>
           </Form>

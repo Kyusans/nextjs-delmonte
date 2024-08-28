@@ -14,13 +14,18 @@ import AddJobSkill from './AddJobStep/AddJobSkill';
 import AddJobExperience from './AddJobStep/AddJobExperience';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
 
-function AddJob() {
+function AddJob({ handleSwitchView }) {
   const [isLoading, setIsLoading] = useState(true);
   const [courseCategory, setCourseCategory] = useState([]);
   const [training, setTraining] = useState([]);
   const [skills, setSkills] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
+  const [progress, setProgress] = useState(0);
+  const [knowledgeList, setKnowledgeList] = useState([]);
+
   const getDropDownForAddJobs = async () => {
     setIsLoading(true);
     try {
@@ -43,44 +48,28 @@ function AddJob() {
           value: item.perS_id,
           label: item.perS_name,
         }))
+
+        const formattedKnowledge = res.data.knowledge.map((item) => ({
+          value: item.knowledge_id,
+          label: item.knowledge_name,
+        }))
+
         setCourseCategory(formattedCourse);
         setTraining(formattedTraining);
         setSkills(formattedSkills);
+        setKnowledgeList(formattedKnowledge);
         console.log("res ni getDropDownForAddJobs", res.data);
       }
 
     } catch (error) {
       toast.error("Network error");
-      console.log("PersonalInformation.jsx => onSubmit(): " + error);
+      console.log("AddJob.jsx => onSubmit(): " + error);
     } finally {
       setIsLoading(false);
     }
   }
 
   const handleSubmit = async () => {
-    if (!retrieveData("jobMaster")) {
-      toast.error("Please add Job Master");
-      return;
-    } else if (!retrieveData("jobKnowledge") || retrieveData("jobKnowledge") === "[]") {
-      toast.error("Please add Knowledge");
-      return;
-    } else if (!retrieveData("jobEducation") || retrieveData("jobEducation") === "[]") {
-      toast.error("Please add Education");
-      return;
-    } else if (!retrieveData("duties") || retrieveData("duties") === "[]") {
-      toast.error("Please add Duties");
-      return;
-    } else if (!retrieveData("jobTraining") || retrieveData("jobTraining") === "[]") {
-      toast.error("Please add Training");
-      return;
-    } else if (!retrieveData("jobSkill") || retrieveData("jobSkill") === "[]") {
-      toast.error("Please add Skill");
-      return;
-    } else if (!retrieveData("jobExperience") || retrieveData("jobExperience") === "[]") {
-      toast.error("Please add Experience");
-      return;
-    }
-
     try {
       setIsLoading(true);
       const url = retrieveData("url") + "admin.php";
@@ -93,13 +82,15 @@ function AddJob() {
         jobSkill: JSON.parse(retrieveData("jobSkill")),
         jobExperience: JSON.parse(retrieveData("jobExperience")),
       }
-      // console.log("jsonData", JSON.stringify(jsonData));
+      console.log("jsonData", JSON.stringify(jsonData));
 
+      setTimeout(() => {
+        handleSwitchView();
+      }, [1500])
       const formData = new FormData();
       formData.append("json", JSON.stringify(jsonData));
       formData.append("operation", "addJobMaster");
       const res = await axios.post(url, formData);
-      console.log("res ni add job:", res.data);
 
       if (res.data !== 0) {
         toast.success("Job added successfully");
@@ -111,6 +102,10 @@ function AddJob() {
         storeData("jobKnowledge", "[]");
         storeData("jobSkill", "[]");
         storeData("jobExperience", "[]");
+        handleNextStep(100);
+        setTimeout(() => {
+          handleSwitchView();
+        }, [1500])
       } else {
         toast.error("Failed to add job");
       }
@@ -123,8 +118,13 @@ function AddJob() {
     }
   }
 
-  const handleNextStep = () => {
-    setCurrentStep(2);
+  const handleNextStep = (progress) => {
+    setCurrentStep(currentStep + 1);
+    setProgress(progress);
+  }
+  const handlePrevious = (progress) => {
+    setCurrentStep(currentStep - 1);
+    setProgress(progress);
   }
 
   useEffect(() => {
@@ -152,41 +152,41 @@ function AddJob() {
   return (
     <>
       {isLoading ? <Spinner /> :
-        <Card className="rounded-md border-4 border-secondary">
+        <Card className="rounded-md border-4 border-secondary mt-4">
           <CardContent>
-
-            <Tabs defaultValue={1} value={currentStep}>
+            <div className="flex justify-center ">
+              <Progress value={progress} className="my-10 md:w-3/4" />
+            </div>
+            <Separator />
+            <Tabs defaultValue={7} value={currentStep}>
               <TabsContent value={1}>
                 <AddJobMaster nextStep={handleNextStep} />
               </TabsContent>
               <TabsContent value={2}>
-                <div className='lg:grid lg:grid-cols-2 gap-5 mt-8'>
-                  <div className='mb-5'>
-                    <AddDutiesMaster />
-                  </div>
-                  <div className='mb-5'>
-                    <AddJobKnowledge />
-                  </div>
-                  <div className='mb-5'>
-                    <AddJobEducation courseCategory={courseCategory} />
-                  </div>
-                  <div className='mb-5'>
-                    <AddJobTraining training={training} />
-                  </div>
-                  <div className='mb-5'>
-                    <AddJobSkill skill={skills} />
-                  </div>
-                  <div className='mb-5'>
-                    <AddJobExperience />
-                  </div>
+                <AddDutiesMaster previousStep={handlePrevious} nextStep={handleNextStep} />
+              </TabsContent>
+              <TabsContent value={3}>
+                <AddJobKnowledge previousStep={handlePrevious} nextStep={handleNextStep} knowledgeList={knowledgeList} />
+              </TabsContent>
+              <TabsContent value={4}>
+                <AddJobEducation courseCategory={courseCategory} previousStep={handlePrevious} nextStep={handleNextStep} />
+              </TabsContent>
+              <TabsContent value={5}>
+                <AddJobTraining training={training} previousStep={handlePrevious} nextStep={handleNextStep} />
+              </TabsContent>
+              <TabsContent value={6}>
+                <AddJobSkill skill={skills} previousStep={handlePrevious} nextStep={handleNextStep} />
+              </TabsContent>
+              <TabsContent value={7}>
+                <AddJobExperience previousStep={handlePrevious} handleSubmit={handleSubmit} />
+              </TabsContent>
+              <TabsContent value={8}>
+                <div className="flex justify-center items-center h-full">
+                  <p className="text-xl">Add Job Completed!</p>
                 </div>
               </TabsContent>
             </Tabs>
           </CardContent>
-          <CardFooter className={`${currentStep === 1 ? "hidden" : "flex justify-between items-end"}`}>
-            <Button onClick={() => setCurrentStep(1)}>Previous</Button>
-            <Button onClick={handleSubmit}>Add Job</Button>
-          </CardFooter>
         </Card>
       }
     </>

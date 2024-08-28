@@ -1,15 +1,15 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
-import secureLocalStorage from 'react-secure-storage';
 import { toast } from 'sonner';
-import { ArrowLeft, Briefcase, CheckCircle, Circle, Filter, PlusCircle, XCircle } from 'lucide-react';
+import { Briefcase, CheckCircle, Circle, Filter, Plus, XCircle } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 import AddJob from './AddJob';
 import { removeData, retrieveData } from '@/app/utils/storageUtils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import SelectedJob from './modal/SelectedJob';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 
 function AdminJobs() {
   const [allJobs, setAllJobs] = useState([]);
@@ -24,7 +24,6 @@ function AdminJobs() {
     setSelectedJobId(jobId);
     setShowSelectedJobModal(true);
   }
-
 
   const handleSwitchView = async () => {
     if (isAddJob) {
@@ -77,7 +76,7 @@ function AdminJobs() {
         <Button className="mb-3" onClick={handleSwitchView}>
           {/* {isAddJob ? <ArrowLeft className="h-4 w-4 mr-1" /> : <PlusCircle className="h-4 w-4 mr-1" />} */}
           {/* {isAddJob ? "Back" : "Add Job"} */}
-          <PlusCircle className="h-4 w-4 mr-1" />
+          <Plus className="h-4 w-4 mr-1" />
           Add Job
         </Button>
         <DropdownMenu className="mb-3 mx-3">
@@ -99,8 +98,22 @@ function AdminJobs() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      <div className={isAddJob ? "" : "hidden mb-3"}>
+        <Breadcrumb className="flex ">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <div className='cursor-pointer hover:text-primary' onClick={handleSwitchView}>Job List</div>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Add Job</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
       {isLoading ? <Spinner /> :
-        isAddJob ? <AddJob /> :
+        isAddJob ? <AddJob handleSwitchView={handleSwitchView} /> :
           <Card className='w-full'>
             <CardContent className="grid grid-cols-1 gap-3 xl:grid-cols-3 mt-3">
               {jobs.map((job, index) => (

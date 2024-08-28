@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import ComboBox from '@/app/my_components/combo-box';
+import { Input } from '@/components/ui/input';
 
 function AddSkill({ open, onHide, skill }) {
   const formSchema = z.object({
@@ -18,6 +19,11 @@ function AddSkill({ open, onHide, skill }) {
     jobSkill: z.string().min(1, {
       message: "This field is required",
     }),
+    points: z.string().min(1, {
+      message: "This field is required",
+    }).refine((value) => !isNaN(Number(value)), {
+      message: "Points must be a number",
+    })
   });
 
   const form = useForm({
@@ -25,6 +31,7 @@ function AddSkill({ open, onHide, skill }) {
     defaultValues: {
       skill: 0,
       jobSkill: "",
+      points: "",
     },
   });
 
@@ -47,7 +54,7 @@ function AddSkill({ open, onHide, skill }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Skill</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Add Skill</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -58,7 +65,7 @@ function AddSkill({ open, onHide, skill }) {
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Skill Description</FormLabel>
+                        <FormLabel>Skill</FormLabel>
                         <div>
                           <ComboBox
                             list={skill}
@@ -77,9 +84,22 @@ function AddSkill({ open, onHide, skill }) {
                     name="jobSkill"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Job Skill</FormLabel>
+                        <FormLabel>Job Skill Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter job skill" {...field} />
+                          <Textarea style={{ height: "200px" }} placeholder="Enter description" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="points"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Points</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter points" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

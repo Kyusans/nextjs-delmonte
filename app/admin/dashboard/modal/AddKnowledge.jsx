@@ -8,18 +8,30 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
+import ComboBox from '@/app/my_components/combo-box';
 
-function AddKnowledge({ open, onHide }) {
+function AddKnowledge({ open, onHide, knowledgeList }) {
   const formSchema = z.object({
+    knowledgeId: z.number().min(1, {
+      message: "This field is required",
+    }),
     jobKnowledge: z.string().min(1, {
       message: "This field is required",
     }),
+    points: z.string().min(1, {
+      message: "This field is required",
+    }).refine((value) => !isNaN(Number(value)), {
+      message: "Points must be a number",
+    })
   });
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      knowledgeId: 0,
       jobKnowledge: "",
+      points: "",
     },
   });
 
@@ -41,12 +53,31 @@ function AddKnowledge({ open, onHide }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Job Knowledge</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Add Knowledge and Compliance</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex justify-center items-center">
                 <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
+                  <FormField
+                    name="knowledgeId"
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Knowledge and compliance </FormLabel>
+                        <div>
+                          <ComboBox
+                            list={knowledgeList}
+                            subject="knowledge and compliance"
+                            value={field.value}
+                            onChange={field.onChange}
+                            styles={"bg-background"}
+                          />
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                   <FormField
                     control={form.control}
                     name="jobKnowledge"
@@ -54,7 +85,20 @@ function AddKnowledge({ open, onHide }) {
                       <FormItem>
                         <FormLabel>Job Knowledge Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter job knowledge" {...field} />
+                          <Textarea style={{ height: "200px" }} placeholder="Enter description" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="points"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Points</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter points" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

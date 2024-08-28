@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import ComboBox from '@/app/my_components/combo-box';
+import { Input } from '@/components/ui/input';
 
 function AddEducation({ open, onHide, courseCategory }) {
   const formSchema = z.object({
@@ -18,11 +19,17 @@ function AddEducation({ open, onHide, courseCategory }) {
     jobEducation: z.string().min(1, {
       message: "This field is required",
     }),
+    points: z.string().min(1, {
+      message: "This field is required",
+    }).refine((value) => !isNaN(Number(value)), {
+      message: "Points must be a number",
+    })
   });
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      points: "",
       courseCategory: 0,
       jobEducation: "",
     },
@@ -47,7 +54,7 @@ function AddEducation({ open, onHide, courseCategory }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Education</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Add Education</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -62,7 +69,7 @@ function AddEducation({ open, onHide, courseCategory }) {
                         <div>
                           <ComboBox
                             list={courseCategory}
-                            subject="courseCategory"
+                            subject="course category"
                             value={field.value}
                             onChange={field.onChange}
                             styles={"bg-background"}
@@ -79,7 +86,20 @@ function AddEducation({ open, onHide, courseCategory }) {
                       <FormItem>
                         <FormLabel>Job Education Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter job education" {...field} />
+                          <Textarea style={{ height: "200px" }}  placeholder="Enter description" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="points"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Points</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter points" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

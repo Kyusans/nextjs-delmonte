@@ -100,6 +100,6 @@ export function removeData(key) {
 
 
 function handleSessionTampering() {
-  window.sessionStorage.clear();
+  // window.sessionStorage.clear();
   // window.location.href = "/";
 }
