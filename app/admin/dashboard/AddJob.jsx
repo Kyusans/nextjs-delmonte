@@ -17,7 +17,7 @@ import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 
-function AddJob() {
+function AddJob({ handleSwitchView }) {
   const [isLoading, setIsLoading] = useState(true);
   const [courseCategory, setCourseCategory] = useState([]);
   const [training, setTraining] = useState([]);
@@ -82,13 +82,15 @@ function AddJob() {
         jobSkill: JSON.parse(retrieveData("jobSkill")),
         jobExperience: JSON.parse(retrieveData("jobExperience")),
       }
-      // console.log("jsonData", JSON.stringify(jsonData));
+      console.log("jsonData", JSON.stringify(jsonData));
 
+      setTimeout(() => {
+        handleSwitchView();
+      }, [1500])
       const formData = new FormData();
       formData.append("json", JSON.stringify(jsonData));
       formData.append("operation", "addJobMaster");
       const res = await axios.post(url, formData);
-      console.log("res ni add job:", res.data);
 
       if (res.data !== 0) {
         toast.success("Job added successfully");
@@ -100,6 +102,10 @@ function AddJob() {
         storeData("jobKnowledge", "[]");
         storeData("jobSkill", "[]");
         storeData("jobExperience", "[]");
+        handleNextStep(100);
+        setTimeout(() => {
+          handleSwitchView();
+        }, [1500])
       } else {
         toast.error("Failed to add job");
       }
@@ -149,9 +155,9 @@ function AddJob() {
         <Card className="rounded-md border-4 border-secondary mt-4">
           <CardContent>
             <div className="flex justify-center ">
-              <Progress value={progress} className="my-10 w-3/4" />
+              <Progress value={progress} className="my-10 md:w-3/4" />
             </div>
-            <Separator/>
+            <Separator />
             <Tabs defaultValue={7} value={currentStep}>
               <TabsContent value={1}>
                 <AddJobMaster nextStep={handleNextStep} />
@@ -160,7 +166,7 @@ function AddJob() {
                 <AddDutiesMaster previousStep={handlePrevious} nextStep={handleNextStep} />
               </TabsContent>
               <TabsContent value={3}>
-                <AddJobKnowledge previousStep={handlePrevious} nextStep={handleNextStep} knowledgeList={knowledgeList}/>
+                <AddJobKnowledge previousStep={handlePrevious} nextStep={handleNextStep} knowledgeList={knowledgeList} />
               </TabsContent>
               <TabsContent value={4}>
                 <AddJobEducation courseCategory={courseCategory} previousStep={handlePrevious} nextStep={handleNextStep} />
@@ -172,15 +178,15 @@ function AddJob() {
                 <AddJobSkill skill={skills} previousStep={handlePrevious} nextStep={handleNextStep} />
               </TabsContent>
               <TabsContent value={7}>
-                <AddJobExperience previousStep={handlePrevious} nextStep={handleNextStep} />
+                <AddJobExperience previousStep={handlePrevious} handleSubmit={handleSubmit} />
+              </TabsContent>
+              <TabsContent value={8}>
+                <div className="flex justify-center items-center h-full">
+                  <p className="text-xl">Add Job Completed!</p>
+                </div>
               </TabsContent>
             </Tabs>
           </CardContent>
-          {/* <CardFooter className={`${currentStep === 1 ? "hidden" : "flex justify-between items-end"}`}>
-            <Button onClick={handlePrevious} disabled={currentStep === 1}>Previous</Button>
-            <Button onClick={() => handleNextStep()} disabled={currentStep === 7}>Next</Button>
-            <Button onClick={handleSubmit}>Add Job</Button>
-          </CardFooter> */}
         </Card>
       }
     </>

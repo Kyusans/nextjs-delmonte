@@ -6,10 +6,14 @@ import { CardContent, CardDescription } from '@/components/ui/card'
 import ShowAlert from '@/components/ui/show-alert'
 import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import { ScrollArea } from '@/components/ui/scroll-area';
 import AddExperience from '../modal/AddExperience';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { toast } from 'sonner';
 
-function AddJobExperience({previousStep, nextStep}) {
+
+function AddJobExperience({ previousStep, handleSubmit }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 
@@ -49,6 +53,14 @@ function AddJobExperience({previousStep, nextStep}) {
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
 
+  const handleNextStep = () => {
+    if (retrieveData("jobExperience") === null || retrieveData("jobExperience") === "[]") {
+      toast.error("Please add experience first");
+      return;
+    }
+    handleSubmit();
+  }
+
   useEffect(() => {
     if (retrieveData("jobExperience") !== null || retrieveData("jobExperience") !== "[]") {
       setDatas(JSON.parse(retrieveData("jobExperience")));
@@ -61,36 +73,78 @@ function AddJobExperience({previousStep, nextStep}) {
   return (
     <>
       <div>
+        <div className='flex justify-end gap-2 mb-3'>
+          <Button variant="secondary" onClick={() => previousStep(80)} className="mt-3">Previous</Button>
+          <Button onClick={handleNextStep} className="mt-3">Submit</Button>
+        </div>
         <Button onClick={handleOpenModal}>
           <PlusIcon className="h-4 w-4 mr-1" />
-          Add Job Experience
+          Add Experience
         </Button>
         <Alert className="w-full mt-3">
-          <AlertTitle className="text-md">Job Experience</AlertTitle>
-          <ScrollArea className={`w-full ${datas.length > 2 && "h-[calc(100vh-25rem)]"}`}>
-            {datas && datas.length > 0 ? (
-              <CardContent className={`${datas.length !== 1 && "lg:grid lg:grid-cols-2 lg:gap-x-4"}`}>
+          {datas && datas.length > 0 ? (
+            <>
+              <div className="hidden md:block">
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-1/12">Index</TableHead>
+                      <TableHead className="w-10/12">Experience</TableHead>
+                      <TableHead className="w-1/12 text-center">Year/s of experience</TableHead>
+                      <TableHead className="w-1/12 text-center"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {datas.map((data, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="w-1/12">{index + 1}</TableCell>
+                        <TableCell className="w-10/12 whitespace-normal">
+                          {data.jobExperience}
+                        </TableCell>
+                        <TableCell className="w-1/12 text-center">{data.yearsOfExperience}</TableCell>
+                        <TableCell className="w-1/12 text-center">
+                          <button
+                            className="h-4 w-4"
+                            onClick={() => handleRemoveList(index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="block md:hidden">
                 {datas.map((data, index) => (
-                  <Alert key={index} className="relative w-full mt-3">
-                    <button
-                      className="absolute top-2 right-2"
-                      onClick={() => handleRemoveList(index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                    <AlertTitle className="text-sm">
-                      <div className='mb-3 break-words'>Years of Experience:&nbsp;<span>{data.yearsOfExperience} years</span></div>
-                      <div className='mb-3 break-words'>{index + 1}.&nbsp;&nbsp;<span>{data.jobExperience}</span></div>
-                    </AlertTitle>
-                  </Alert>
+                  <div key={index} className="relative w-full p-4 rounded-md shadow">
+                    <div className="flex justify-end">
+                      <button
+                        className="h-6 w-6"
+                        onClick={() => handleRemoveList(index)}
+                      >
+                        <X className="h-6 w-6" />
+                      </button>
+                    </div>
+                    <div className="mt-2 text-sm">
+                      {data.jobExperience}
+                    </div>
+                    <div className='text-end'>
+                      <Badge className="mt-2 text-xs font-bold">
+                        Year/s of Experience: {data.yearsOfExperience}
+                      </Badge>
+                    </div>
+                    <Separator className="mt-3" />
+                  </div>
                 ))}
-              </CardContent>
-            ) : (
-              <CardDescription className="text-center">
-                No experience added yet
-              </CardDescription>
-            )}
-          </ScrollArea>
+              </div>
+            </>
+
+          ) : (
+            <CardDescription className="text-center">
+              No experience added yet
+            </CardDescription>
+          )}
         </Alert>
         <AddExperience open={showModal} onHide={handleCloseModal} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />

@@ -25,7 +25,6 @@ function AdminJobs() {
     setShowSelectedJobModal(true);
   }
 
-
   const handleSwitchView = async () => {
     if (isAddJob) {
       await getAllJobs();
@@ -114,7 +113,7 @@ function AdminJobs() {
         </Breadcrumb>
       </div>
       {isLoading ? <Spinner /> :
-        isAddJob ? <AddJob /> :
+        isAddJob ? <AddJob handleSwitchView={handleSwitchView} /> :
           <Card className='w-full'>
             <CardContent className="grid grid-cols-1 gap-3 xl:grid-cols-3 mt-3">
               {jobs.map((job, index) => (

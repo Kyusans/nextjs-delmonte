@@ -58,7 +58,7 @@ function AddJobTraining({ training, previousStep, nextStep }) {
       toast.error("Please add training first");
       return;
     }
-    nextStep(72);
+    nextStep(75);
   }
 
   useEffect(() => {

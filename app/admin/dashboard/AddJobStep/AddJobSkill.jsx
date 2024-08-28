@@ -57,7 +57,7 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
       toast.error("Please add skill first");
       return;
     }
-    nextStep(83);
+    nextStep(93);
   }
 
   useEffect(() => {

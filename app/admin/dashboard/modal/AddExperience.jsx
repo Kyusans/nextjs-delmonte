@@ -25,7 +25,6 @@ function AddExperience({ open, onHide }) {
       message: "This field is required",
     }),
   });
-  
 
   const form = useForm({
     resolver: zodResolver(formSchema),
