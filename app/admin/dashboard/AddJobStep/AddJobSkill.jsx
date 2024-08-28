@@ -1,16 +1,16 @@
 "use client";
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
-import { Alert, AlertTitle } from '@/components/ui/alert'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { CardContent, CardDescription } from '@/components/ui/card'
+import { CardDescription } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import ShowAlert from '@/components/ui/show-alert'
 import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import { ScrollArea } from '@/components/ui/scroll-area';
-import AddEducation from '../modal/AddEducation';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AddSkill from '../modal/AddSkill';
 import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
 
 function AddJobSkill({ skill, previousStep, nextStep }) {
   const [datas, setDatas] = useState([]);
@@ -54,7 +54,7 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
 
   const handleNextStep = () => {
     if (retrieveData("jobSkill") === null || retrieveData("jobSkill") === "[]") {
-      toast.error("Please add education first");
+      toast.error("Please add skill first");
       return;
     }
     nextStep(83);
@@ -80,35 +80,75 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
           Add Skill
         </Button>
         <Alert className="w-full mt-3">
-          <AlertTitle className="text-md">Job Skill</AlertTitle>
-          <ScrollArea className={`w-full ${datas.length > 2 && "h-[calc(100vh-25rem)]"}`}>
-            {datas && datas.length > 0 ? (
-              <CardContent className={`grid gap-4 ${datas.length > 1 ? "lg:grid-cols-2" : "grid-cols-1"}`}>
+          {datas && datas.length > 0 ? (
+            <>
+              <div className="hidden md:block">
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-1/12">Index</TableHead>
+                      <TableHead className="w-1/12 ">Skill</TableHead>
+                      <TableHead className="w-10/12">Description</TableHead>
+                      <TableHead className="w-1/12 text-center">Points</TableHead>
+                      <TableHead className="w-1/12 text-center"></TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {datas.map((data, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="w-1/12">{index + 1}</TableCell>
+                        <TableCell className="w-1/12">
+                          {skill.find((item) => item.value === data.skill)?.label}
+                        </TableCell>
+                        <TableCell className="w-10/12 whitespace-normal">
+                          {data.jobSkill}
+                        </TableCell>
+                        <TableCell className="w-1/12 text-center">{data.points}</TableCell>
+                        <TableCell className="w-1/12 text-center">
+                          <button
+                            className="h-4 w-4"
+                            onClick={() => handleRemoveList(index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="block md:hidden">
                 {datas.map((data, index) => (
-                  <Alert key={index} className="relative w-full mt-3">
-                    <button
-                      className="absolute top-2 right-2"
-                      onClick={() => handleRemoveList(index)}
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                    <AlertTitle className="text-sm">
+                  <div key={index} className="relative w-full p-4 rounded-md shadow">
+                    <div className="flex justify-end">
+                      <button
+                        className="h-6 w-6"
+                        onClick={() => handleRemoveList(index)}
+                      >
+                        <X className="h-6 w-6" />
+                      </button>
+                    </div>
+                    <div className="mt-2 text-sm">
                       <div className='mb-1 text-xl break-words'>
                         {skill.find((item) => item.value === data.skill)?.label}
                       </div>
-                      <div className='mb-3 text-sm break-words'>
-                        {data.jobSkill}
-                      </div>
-                    </AlertTitle>
-                  </Alert>
+                      {data.jobSkill}
+                    </div>
+                    <div className='text-end'>
+                      <Badge className="mt-2 text-xs font-bold">
+                        Points: {data.points}
+                      </Badge>
+                    </div>
+                    <Separator className="mt-3" />
+                  </div>
                 ))}
-              </CardContent>
-            ) : (
-              <CardDescription className="text-center">
-                No Job Skill added yet
-              </CardDescription>
-            )}
-          </ScrollArea>
+              </div>
+            </>
+          ) : (
+            <CardDescription className="text-center">
+              No skill added yet
+            </CardDescription>
+          )}
         </Alert>
         <AddSkill open={showModal} onHide={handleCloseModal} skill={skill} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />

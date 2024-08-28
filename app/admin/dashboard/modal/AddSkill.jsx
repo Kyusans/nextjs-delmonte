@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import ComboBox from '@/app/my_components/combo-box';
+import { Input } from '@/components/ui/input';
 
 function AddSkill({ open, onHide, skill }) {
   const formSchema = z.object({
@@ -86,6 +87,19 @@ function AddSkill({ open, onHide, skill }) {
                         <FormLabel>Job Skill Description</FormLabel>
                         <FormControl>
                           <Textarea style={{ height: "200px" }} placeholder="Enter description" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="points"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Points</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter points" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

@@ -10,6 +10,7 @@ import AddTraining from '../modal/AddTraining';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { toast } from 'sonner';
 
 
 function AddJobTraining({ training, previousStep, nextStep }) {
@@ -53,8 +54,8 @@ function AddJobTraining({ training, previousStep, nextStep }) {
   };
 
   const handleNextStep = () => {
-    if (retrieveData("jobEducation") === null || retrieveData("jobEducation") === "[]") {
-      toast.error("Please add education first");
+    if (retrieveData("jobTraining") === null || retrieveData("jobTraining") === "[]") {
+      toast.error("Please add training first");
       return;
     }
     nextStep(72);
@@ -148,7 +149,7 @@ function AddJobTraining({ training, previousStep, nextStep }) {
 
           ) : (
             <CardDescription className="text-center">
-              No Job Training added yet
+              No training added yet
             </CardDescription>
           )}
         </Alert>

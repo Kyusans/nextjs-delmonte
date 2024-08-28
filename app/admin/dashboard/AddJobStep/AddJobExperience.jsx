@@ -87,7 +87,7 @@ function AddJobExperience({previousStep, nextStep}) {
               </CardContent>
             ) : (
               <CardDescription className="text-center">
-                No Job Experience added yet
+                No experience added yet
               </CardDescription>
             )}
           </ScrollArea>
