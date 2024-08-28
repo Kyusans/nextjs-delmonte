@@ -9,13 +9,22 @@ import Spinner from '@/components/ui/spinner';
 import AddJob from './AddJob';
 import { removeData, retrieveData } from '@/app/utils/storageUtils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import SelectedJob from './modal/SelectedJob';
 
 function AdminJobs() {
   const [allJobs, setAllJobs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [jobs, setJobs] = useState([]);
-  const [selectedStatus, setSelectedStatus] = useState(-1);
+  const [selectedStatus, setSelectedStatus] = useState(1);
   const [isAddJob, setIsAddJob] = useState(false);
+  const [showSelectedJobModal, setShowSelectedJobModal] = useState(false);
+  const [selectedJobId, setSelectedJobId] = useState(0);
+  const closeShowSelectedJobModal = () => { setShowSelectedJobModal(false); }
+  const openShowSelectedJobModal = (jobId) => {
+    setSelectedJobId(jobId);
+    setShowSelectedJobModal(true);
+  }
+
 
   const handleSwitchView = async () => {
     if (isAddJob) {
@@ -64,12 +73,14 @@ function AdminJobs() {
 
   return (
     <>
-      <div className='flex justify-between'>
+      <div className={`flex justify-between ${isAddJob ? "hidden" : ""}`}>
         <Button className="mb-3" onClick={handleSwitchView}>
-          {isAddJob ? <ArrowLeft className="h-4 w-4 mr-1" /> : <PlusCircle className="h-4 w-4 mr-1" />}
-          {isAddJob ? "Back" : "Add Job"}
+          {/* {isAddJob ? <ArrowLeft className="h-4 w-4 mr-1" /> : <PlusCircle className="h-4 w-4 mr-1" />} */}
+          {/* {isAddJob ? "Back" : "Add Job"} */}
+          <PlusCircle className="h-4 w-4 mr-1" />
+          Add Job
         </Button>
-        <DropdownMenu className="mb-3 mx-3" >
+        <DropdownMenu className="mb-3 mx-3">
           <DropdownMenuTrigger asChild>
             <Button><Filter className="mr-2 h-4 w-4" /> Filter  </Button>
           </DropdownMenuTrigger>
@@ -87,18 +98,17 @@ function AdminJobs() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-
       </div>
       {isLoading ? <Spinner /> :
         isAddJob ? <AddJob /> :
           <Card className='w-full'>
             <CardContent className="grid grid-cols-1 gap-3 xl:grid-cols-3 mt-3">
               {jobs.map((job, index) => (
-                <Card key={index} className='flex flex-col h-full'>
+                <Card key={index} className='flex flex-col h-full border-2 border-secondary shadow-lg dark:border-[#0c0a09]'>
                   <CardTitle className="bg-[#0e5a35] dark:bg-[#0e4028] w-full p-10 rounded-t-lg text-white">
                     {job.jobM_title}
                   </CardTitle>
-                  <CardContent className="flex-grow bg-[#def6db] dark:bg-background">
+                  <CardContent className="flex-grow bg-[#def6db] dark:bg-[#1c1917]">
                     <div className="flex items-center gap-2 mb-2 mt-4">
                       <Circle
                         className={`h-4 w-4 ${job.Total_Applied === 0 ? 'text-gray-400' : 'text-green-500'}`}
@@ -108,8 +118,8 @@ function AdminJobs() {
                       </span>
                     </div>
                   </CardContent>
-                  <CardFooter className="flex justify-between bg-[#def6db] dark:bg-background rounded-b-lg">
-                    <Button className="bg-[#188c54] text-white">View</Button>
+                  <CardFooter className="flex justify-between bg-[#def6db] dark:bg-[#1c1917] rounded-b-lg">
+                    <Button className="bg-[#188c54] text-white" onClick={() => openShowSelectedJobModal(job.jobM_id)}>View</Button>
                     <div className="flex items-center gap-2 mb-2">
                       <Circle
                         className={`h-4 w-4 ${job.jobM_status === 1 ? 'text-green-500' : 'text-gray-400'}`}
@@ -124,6 +134,7 @@ function AdminJobs() {
             </CardContent>
           </Card>
       }
+      {showSelectedJobModal && <SelectedJob open={showSelectedJobModal} onHide={closeShowSelectedJobModal} jobId={selectedJobId} />}
     </>
   )
 }
