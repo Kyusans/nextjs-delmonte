@@ -17,9 +17,6 @@ export default function Home() {
       <header className="p-4">
         <ModeToggle />
       </header>
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
-          hello
-      </main>
     </>
   );
 }
