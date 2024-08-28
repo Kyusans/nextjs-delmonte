@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react'
 import { ScrollArea } from '@/components/ui/scroll-area';
 import AddEducation from '../modal/AddEducation';
 import AddSkill from '../modal/AddSkill';
+import { toast } from 'sonner';
 
 function AddJobSkill({ skill, previousStep, nextStep }) {
   const [datas, setDatas] = useState([]);
@@ -51,6 +52,14 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
 
+  const handleNextStep = () => {
+    if (retrieveData("jobSkill") === null || retrieveData("jobSkill") === "[]") {
+      toast.error("Please add education first");
+      return;
+    }
+    nextStep(83);
+  }
+
   useEffect(() => {
     if (retrieveData("jobSkill") !== null || retrieveData("jobSkill") !== "[]") {
       setDatas(JSON.parse(retrieveData("jobSkill")));
@@ -62,9 +71,13 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
   return (
     <>
       <div>
+        <div className='flex justify-end gap-2 mb-3'>
+          <Button variant="secondary" onClick={() => previousStep(60)} className="mt-3">Previous</Button>
+          <Button onClick={handleNextStep} className="mt-3">Next</Button>
+        </div>
         <Button onClick={handleOpenModal}>
           <PlusIcon className="h-4 w-4 mr-1" />
-          Add Job Skill
+          Add Skill
         </Button>
         <Alert className="w-full mt-3">
           <AlertTitle className="text-md">Job Skill</AlertTitle>

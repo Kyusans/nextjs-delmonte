@@ -18,6 +18,11 @@ function AddSkill({ open, onHide, skill }) {
     jobSkill: z.string().min(1, {
       message: "This field is required",
     }),
+    points: z.string().min(1, {
+      message: "This field is required",
+    }).refine((value) => !isNaN(Number(value)), {
+      message: "Points must be a number",
+    })
   });
 
   const form = useForm({
@@ -25,6 +30,7 @@ function AddSkill({ open, onHide, skill }) {
     defaultValues: {
       skill: 0,
       jobSkill: "",
+      points: "",
     },
   });
 
@@ -77,9 +83,9 @@ function AddSkill({ open, onHide, skill }) {
                     name="jobSkill"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Job Skill</FormLabel>
+                        <FormLabel>Job Skill Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter job skill" {...field} />
+                          <Textarea style={{ height: "200px" }} placeholder="Enter description" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

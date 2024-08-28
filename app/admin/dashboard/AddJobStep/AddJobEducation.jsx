@@ -83,41 +83,42 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
         </Button>
         <Alert className="w-full mt-3">
           {datas && datas.length > 0 ? (
-            <>                          <div className="hidden md:block">
-              <Table className="w-full">
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-1/12">Index</TableHead>
-                    <TableHead className="w-1/12 ">Course category</TableHead>
-                    <TableHead className="w-10/12">Description</TableHead>
-                    <TableHead className="w-1/12 text-center">Points</TableHead>
-                    <TableHead className="w-1/12 text-center"></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {datas.map((data, index) => (
-                    <TableRow key={index}>
-                      <TableCell className="w-1/12">{index + 1}</TableCell>
-                      <TableCell className="w-1/12">
-                        {courseCategory.find((item) => item.value === data.courseCategory)?.label}
-                      </TableCell>
-                      <TableCell className="w-10/12 whitespace-normal">
-                        {data.jobEducation}
-                      </TableCell>
-                      <TableCell className="w-1/12 text-center">{data.points}</TableCell>
-                      <TableCell className="w-1/12 text-center">
-                        <button
-                          className="h-4 w-4"
-                          onClick={() => handleRemoveList(index)}
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      </TableCell>
+            <>
+              <div className="hidden md:block">
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-1/12">Index</TableHead>
+                      <TableHead className="w-1/12 ">Course category</TableHead>
+                      <TableHead className="w-10/12">Description</TableHead>
+                      <TableHead className="w-1/12 text-center">Points</TableHead>
+                      <TableHead className="w-1/12 text-center"></TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+                  </TableHeader>
+                  <TableBody>
+                    {datas.map((data, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="w-1/12">{index + 1}</TableCell>
+                        <TableCell className="w-1/12">
+                          {courseCategory.find((item) => item.value === data.courseCategory)?.label}
+                        </TableCell>
+                        <TableCell className="w-10/12 whitespace-normal">
+                          {data.jobEducation}
+                        </TableCell>
+                        <TableCell className="w-1/12 text-center">{data.points}</TableCell>
+                        <TableCell className="w-1/12 text-center">
+                          <button
+                            className="h-4 w-4"
+                            onClick={() => handleRemoveList(index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
               <div className="block md:hidden">
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">

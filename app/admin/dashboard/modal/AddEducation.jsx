@@ -86,7 +86,7 @@ function AddEducation({ open, onHide, courseCategory }) {
                       <FormItem>
                         <FormLabel>Job Education Description</FormLabel>
                         <FormControl>
-                          <Textarea style={{ height: "200px" }}  placeholder="Enter job education" {...field} />
+                          <Textarea style={{ height: "200px" }}  placeholder="Enter description" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

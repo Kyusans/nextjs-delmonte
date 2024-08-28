@@ -127,10 +127,10 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
                       <button
-                        className="h-6 w-6"
+                        className="h-4 w-4"
                         onClick={() => handleRemoveList(index)}
                       >
-                        <X className="h-6 w-6" />
+                        <X className="h-5 w-5" />
                       </button>
                     </div>
                     <div className="mt-2 text-sm">

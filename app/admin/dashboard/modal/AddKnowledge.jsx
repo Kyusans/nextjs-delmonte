@@ -85,7 +85,7 @@ function AddKnowledge({ open, onHide, knowledgeList }) {
                       <FormItem>
                         <FormLabel>Job Knowledge Description</FormLabel>
                         <FormControl>
-                          <Textarea style={{ height: "200px" }} placeholder="Enter job knowledge" {...field} />
+                          <Textarea style={{ height: "200px" }} placeholder="Enter description" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

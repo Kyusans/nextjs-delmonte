@@ -79,7 +79,7 @@ function AddExperience({ open, onHide }) {
                       <FormItem>
                         <FormLabel>Job Experience Description</FormLabel>
                         <FormControl>
-                          <Textarea placeholder="Enter job experience" {...field} />
+                          <Textarea style={{ height: "200px" }} placeholder="Enter description" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
