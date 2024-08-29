@@ -3,23 +3,23 @@ import { v4 as uuidv4 } from "uuid";
 
 const secretKey = "delMontedelMonte";
 
-function getBrowserFingerprint() {
-  return `${navigator.userAgent}:${window.screen.width}x${window.screen.height}:${navigator.language}`;
+function getStableBrowserFingerprint() {
+  return `${navigator.userAgent}:${navigator.language}:${navigator.platform}`;
 }
 
 function getSessionId() {
   let sessionId = window.sessionStorage.getItem("sessionId");
   if (!sessionId) {
-    sessionId = uuidv4();
+    const browserFingerprint = getStableBrowserFingerprint();
+    sessionId = `${uuidv4()}-${browserFingerprint}`;
     window.sessionStorage.setItem("sessionId", sessionId);
   }
   return sessionId;
 }
 
 export function encryptData(data) {
-  const browserFingerprint = getBrowserFingerprint();
   const sessionId = getSessionId();
-  const combinedData = { data, fingerprint: browserFingerprint, sessionId };
+  const combinedData = { data, sessionId };
   const encryptedData = CryptoJS.AES.encrypt(
     JSON.stringify(combinedData),
     secretKey
@@ -27,7 +27,6 @@ export function encryptData(data) {
   const hmac = CryptoJS.HmacSHA256(encryptedData, secretKey).toString();
   return `${encryptedData}:${hmac}`;
 }
-
 
 export function decryptData(encryptedDataWithHmac) {
   const [retrievedEncryptedData, retrievedHmac] =
@@ -43,21 +42,22 @@ export function decryptData(encryptedDataWithHmac) {
       secretKey
     ).toString(CryptoJS.enc.Utf8);
 
-    const { data, fingerprint, sessionId } = JSON.parse(decryptedData);
+    const { data, sessionId } = JSON.parse(decryptedData);
 
-    if (
-      fingerprint !== getBrowserFingerprint() ||
-      sessionId !== getSessionId()
-    ) {
+    const currentSessionId = getSessionId();
+
+    if (sessionId !== currentSessionId) {
       console.error(
-        "Browser fingerprint or session ID mismatch. Data may have been tampered with, copied to another browser, or different browser context."
+        "Session ID mismatch detected. This data may have been copied to another browser or session."
       );
+      handleSessionTampering();
       return null;
     }
 
     return data;
   } else {
     console.error("Data integrity check failed!");
+    handleSessionTampering();
     return null;
   }
 }
@@ -89,17 +89,14 @@ export function removeData(key) {
     const decryptedData = decryptData(encryptedDataWithHmac);
     if (decryptedData !== null) {
       window.sessionStorage.removeItem(key);
-      console.log(`Data associated with key '${key}' has been removed.`);
     } else {
       handleSessionTampering();
     }
-  } else {
-    console.warn(`No data found for key '${key}'.`);
   }
 }
 
-
 function handleSessionTampering() {
-  // window.sessionStorage.clear();
+  console.warn("Potential session tampering detected. Clearing session.");
+  window.sessionStorage.clear();
   // window.location.href = "/";
 }
