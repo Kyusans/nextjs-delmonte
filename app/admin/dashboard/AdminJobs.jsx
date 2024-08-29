@@ -127,7 +127,7 @@ function AdminJobs() {
                         className={`h-4 w-4 ${job.Total_Applied === 0 ? 'text-gray-400' : 'text-green-500'}`}
                       />
                       <span className={`text-sm font-bold ${job.Total_Applied === 0 ? 'text-gray-400' : 'text-green-500'}`}>
-                        {job.jobM_status === 1 ? `${job.Total_Applied} Applicants` : 'No Applicants'}
+                        {job.Total_Applied > 0 ? `${job.Total_Applied} Applicants` : 'No Applicants'}
                       </span>
                     </div>
                   </CardContent>
