@@ -20,6 +20,9 @@ function AddExperience({ open, onHide }) {
       })
       .refine((value) => Number(value) <= 50, {
         message: "Years of experience should not be more than 50",
+      })
+      .refine((value) => Number(value) >= 0, {
+        message: "Years of experience should not be less than 0",
       }),
     jobExperience: z.string().min(1, {
       message: "This field is required",

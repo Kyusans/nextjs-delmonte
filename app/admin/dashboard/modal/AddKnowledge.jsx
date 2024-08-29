@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import ComboBox from '@/app/my_components/combo-box';
+import { retrieveData } from '@/app/utils/storageUtils';
 
 function AddKnowledge({ open, onHide, knowledgeList }) {
   const formSchema = z.object({
@@ -37,8 +38,18 @@ function AddKnowledge({ open, onHide, knowledgeList }) {
 
   const onSubmit = (values) => {
     try {
-      onHide(values);
-      form.reset();
+      const selectedKnowledge = JSON.parse(retrieveData("jobKnowledge")) || [];
+      let isValid = true;
+      selectedKnowledge.forEach((element) => {
+        if (element.knowledgeId === values.knowledgeId) {
+          toast.error("You already have this knowledge and compliance");
+          isValid = false;
+        }
+      });
+      if (isValid) {
+        onHide(values);
+        form.reset();
+      }
     } catch (error) {
       toast.error("Network error");
       console.log("AddKnowledge.jsx => onSubmit(): " + error);

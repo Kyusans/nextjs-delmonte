@@ -14,6 +14,16 @@ function AddJobMaster({ nextStep }) {
   const formSchema = z.object({
     title: z.string().min(1, { message: "This field is required" }),
     description: z.string().min(1, { message: "This field is required" }),
+    passingPercentage: z.string().min(1, {
+      message: "This field is required",
+    }).refine((val) => {
+      if (parseInt(val) < 0 || parseInt(val) > 100) {
+        return false;
+      }
+      return true;
+    }).refine((value) => !isNaN(Number(value)), {
+      message: "This field must be a number",
+    }),
   });
 
   const form = useForm({
@@ -21,6 +31,7 @@ function AddJobMaster({ nextStep }) {
     defaultValues: {
       title: "",
       description: "",
+      passingPercentage: "",
     },
   });
 
@@ -43,7 +54,6 @@ function AddJobMaster({ nextStep }) {
 
   return (
     <div className='flex flex-col'>
-
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex flex-cols gap-2 justify-end mt-3">
@@ -72,6 +82,19 @@ function AddJobMaster({ nextStep }) {
                     <FormLabel>Job Description</FormLabel>
                     <FormControl>
                       <Textarea style={{ height: "200px" }} placeholder="Enter job description" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="passingPercentage"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Passing percentage</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter passing percentage" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
