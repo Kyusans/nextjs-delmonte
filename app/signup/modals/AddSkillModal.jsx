@@ -23,6 +23,13 @@ function AddSkillModal({ open, onHide, skillList }) {
     },
   });
 
+  // storeData("duties", "[]");
+  // storeData("jobEducation", "[]");
+  // storeData("jobTraining", "[]");
+  // storeData("jobKnowledge", "[]");
+  // storeData("jobSkill", "[]");
+  // storeData("jobExperience", "[]");
+
   const onSubmit = (values) => {
     try {
       const selectedSkills = JSON.parse(localStorage.getItem("skills")) || [];

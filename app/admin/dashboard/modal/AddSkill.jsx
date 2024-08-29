@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
+import { retrieveData } from '@/app/utils/storageUtils';
 
 function AddSkill({ open, onHide, skill }) {
   const formSchema = z.object({
@@ -37,8 +38,18 @@ function AddSkill({ open, onHide, skill }) {
 
   const onSubmit = (values) => {
     try {
-      onHide(values);
-      form.reset();
+      const selectedSkill = JSON.parse(retrieveData("jobSkill")) || [];
+      let isValid = true;
+      selectedSkill.forEach((element) => {
+        if (element.skill === values.skill) {
+          toast.error("You already have this skill");
+          isValid = false;
+        }
+      });
+      if (isValid) {
+        onHide(values);
+        form.reset();
+      }
     } catch (error) {
       toast.error("Network error");
       console.log("AddSkill.jsx => onSubmit(): " + error);

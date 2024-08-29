@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
+import { retrieveData } from '@/app/utils/storageUtils';
 
 function AddTraining({ open, onHide, training }) {
   const formSchema = z.object({
@@ -37,8 +38,18 @@ function AddTraining({ open, onHide, training }) {
 
   const onSubmit = (values) => {
     try {
-      onHide(values);
-      form.reset();
+      const selectedTraining = JSON.parse(retrieveData("jobTraining")) || [];
+      let isValid = true;
+      selectedTraining.forEach((element) => {
+        if (element.training === values.training) {
+          toast.error("You already have this training");
+          isValid = false;
+        }
+      });
+      if (isValid) {
+        onHide(values);
+        form.reset();
+      }
     } catch (error) {
       toast.error("Network error");
       console.log("AddTraining.jsx => onSubmit(): " + error);

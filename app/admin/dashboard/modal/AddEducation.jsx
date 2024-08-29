@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
+import { retrieveData } from '@/app/utils/storageUtils';
 
 function AddEducation({ open, onHide, courseCategory }) {
   const formSchema = z.object({
@@ -37,8 +38,18 @@ function AddEducation({ open, onHide, courseCategory }) {
 
   const onSubmit = (values) => {
     try {
-      onHide(values);
-      form.reset();
+      const selectedEducation = JSON.parse(retrieveData("jobEducation")) || [];
+      let isValid = true;
+      selectedEducation.forEach((element) => {
+        if (element.courseCategory === values.courseCategory) {
+          toast.error("You already have this education");
+          isValid = false;
+        }
+      });
+      if (isValid) {
+        onHide(values);
+        form.reset();
+      }
     } catch (error) {
       toast.error("Network error");
       console.log("AddEducation.jsx => onSubmit(): " + error);
@@ -86,7 +97,7 @@ function AddEducation({ open, onHide, courseCategory }) {
                       <FormItem>
                         <FormLabel>Job Education Description</FormLabel>
                         <FormControl>
-                          <Textarea style={{ height: "200px" }}  placeholder="Enter description" {...field} />
+                          <Textarea style={{ height: "200px" }} placeholder="Enter description" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
