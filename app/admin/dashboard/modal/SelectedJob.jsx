@@ -83,7 +83,7 @@ function SelectedJob({ open, onHide, jobId }) {
               </DialogHeader>
               <Separator className="mb-4" />
               <Card className="w-full p-3">
-                <Tabs defaultValue={2} className='mb-5'>
+                <Tabs defaultValue={1} className='mb-5'>
                   <TabsList>
                     <TabsTrigger value={1}>Details</TabsTrigger>
                     <TabsTrigger value={2}>Applicants</TabsTrigger>
@@ -102,51 +102,65 @@ function SelectedJob({ open, onHide, jobId }) {
                           </div>
                         </AccordionContent>
                       </AccordionItem>
-                      <AccordionItem value="item-2">
-                        <AccordionTrigger>Qualifications</AccordionTrigger>
-                        <AccordionContent className='px-5'>
-                          <div className='text-sm mb-3 font-bold'>Educational Background</div>
-                          <div className='w-full ml-3'>
-                            {data.jobEducation.map((data, index) => (
-                              <ul key={index} className="list-disc ml-4 mb-1">
-                                <li>{data.jeduc_text}</li>
-                              </ul>
-                            ))}
-                          </div>
-                          <div className='text-sm my-3 font-bold'>Knowledge and Compliance</div>
-                          <div className='w-full ml-3'>
-                            {data.jobEducation.map((data, index) => (
-                              <ul key={index} className="list-disc ml-4 mb-1">
-                                <li>{data.jeduc_text}</li>
-                              </ul>
-                            ))}
-                          </div>
-                          <div className='text-sm my-3 font-bold'>Skills</div>
-                          <div className='w-full ml-3'>
-                            {data.jobSkills.map((data, index) => (
-                              <ul key={index} className="list-disc ml-4 mb-1">
-                                <li>{data.jskills_text}</li>
-                              </ul>
-                            ))}
-                          </div>
-                          <div className='text-sm my-3 font-bold'>Trainings</div>
-                          <div className='w-full ml-3'>
-                            {data.jobTrainings.map((data, index) => (
-                              <ul key={index} className="list-disc ml-4 mb-1">
-                                <li>{data.jtrng_text}</li>
-                              </ul>
-                            ))}
-                          </div>
-                          <div className='text-sm my-3 font-bold'>Experience</div>
-                          <div className='w-full ml-3'>
-                            {data.jobExperience.map((data, index) => (
-                              <ul key={index} className="list-disc ml-4 mb-1">
-                                <li>{data.jwork_responsibilities} {`${data.jwork_duration} year${data.jwork_duration > 1 ? "s" : ""} of experience needed`}</li>
-                              </ul>
-                            ))}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
+                      {data.jobEducation.length > 0 || data.jobSkills.length > 0 || data.jobTrainings.length > 0 || data.jobExperience.length > 0 ? (
+                        <AccordionItem value="item-2">
+                          <AccordionTrigger>Qualifications</AccordionTrigger>
+                          <AccordionContent className='px-5'>
+
+                            {data.jobEducation.length > 0 && (
+                              <>
+                                <div className='text-sm mb-3 font-bold'>Educational Background</div>
+                                <div className='w-full ml-3'>
+                                  {data.jobEducation.map((data, index) => (
+                                    <ul key={index} className="list-disc ml-4 mb-1">
+                                      <li>{data.jeduc_text}</li>
+                                    </ul>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+
+                            {data.jobSkills.length > 0 && (
+                              <>
+                                <div className='text-sm my-3 font-bold'>Skills</div>
+                                <div className='w-full ml-3'>
+                                  {data.jobSkills.map((data, index) => (
+                                    <ul key={index} className="list-disc ml-4 mb-1">
+                                      <li>{data.jskills_text}</li>
+                                    </ul>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+
+                            {data.jobTrainings.length > 0 && (
+                              <>
+                                <div className='text-sm my-3 font-bold'>Trainings</div>
+                                <div className='w-full ml-3'>
+                                  {data.jobTrainings.map((data, index) => (
+                                    <ul key={index} className="list-disc ml-4 mb-1">
+                                      <li>{data.jtrng_text}</li>
+                                    </ul>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+
+                            {data.jobExperience.length > 0 && (
+                              <>
+                                <div className='text-sm my-3 font-bold'>Experience</div>
+                                <div className='w-full ml-3'>
+                                  {data.jobExperience.map((data, index) => (
+                                    <ul key={index} className="list-disc ml-4 mb-1">
+                                      <li>{data.jwork_responsibilities} {`${data.jwork_duration} year${data.jwork_duration > 1 ? "s" : ""} of experience needed`}</li>
+                                    </ul>
+                                  ))}
+                                </div>
+                              </>
+                            )}
+                          </AccordionContent>
+                        </AccordionItem>
+                      ) : null}
                     </Accordion>
                   </TabsContent>
                   <TabsContent value={2}>
@@ -172,11 +186,11 @@ function SelectedJob({ open, onHide, jobId }) {
                     ) :
                       (
                         <>
-                        <Card className="text-center bg-background">
-                          <CardDescription className="p-5">
-                            No applicants applied yet
-                          </CardDescription>
-                        </Card>
+                          <Card className="text-center bg-background">
+                            <CardDescription className="p-5">
+                              No applicants applied yet
+                            </CardDescription>
+                          </Card>
                         </>
                       )
                     }

@@ -158,7 +158,7 @@ function AddJob({ handleSwitchView }) {
               <Progress value={progress} className="my-10 md:w-3/4" />
             </div>
             <Separator />
-            <Tabs defaultValue={7} value={currentStep}>
+            <Tabs defaultValue={1} value={currentStep}>
               <TabsContent value={1}>
                 <AddJobMaster nextStep={handleNextStep} />
               </TabsContent>

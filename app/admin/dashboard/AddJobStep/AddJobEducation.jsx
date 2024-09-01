@@ -54,10 +54,10 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
   };
 
   const handleNextStep = () => {
-    if (retrieveData("jobEducation") === null || retrieveData("jobEducation") === "[]") {
-      toast.error("Please add education first");
-      return;
-    }
+    // if (retrieveData("jobEducation") === null || retrieveData("jobEducation") === "[]") {
+    //   toast.error("Please add education first");
+    //   return;
+    // }
     nextStep(60);
   }
 

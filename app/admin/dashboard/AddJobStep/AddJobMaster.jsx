@@ -1,6 +1,6 @@
 "use client";
-import React, { useEffect, useRef, useState } from 'react';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import React, { useEffect } from 'react';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,6 +8,8 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 
 function AddJobMaster({ nextStep }) {
 
@@ -24,6 +26,7 @@ function AddJobMaster({ nextStep }) {
     }).refine((value) => !isNaN(Number(value)), {
       message: "This field must be a number",
     }),
+    isJobActive: z.number().optional().default(0),
   });
 
   const form = useForm({
@@ -32,11 +35,13 @@ function AddJobMaster({ nextStep }) {
       title: "",
       description: "",
       passingPercentage: "",
+      isJobActive: 1,
     },
   });
 
   const onSubmit = (values) => {
     try {
+      console.log("AddJobMaster.jsx => onSubmit(): ", values);
       storeData("jobMaster", values);
       nextStep(15);
       form.reset();
@@ -60,7 +65,7 @@ function AddJobMaster({ nextStep }) {
             <Button type="submit">Next</Button>
           </div>
           <div className="flex justify-center items-center">
-            <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
+            <div className="space-y-3 sm:space-y-3 w-full max-w-8xl">
               <FormField
                 control={form.control}
                 name="title"
@@ -97,6 +102,24 @@ function AddJobMaster({ nextStep }) {
                       <Input placeholder="Enter passing percentage" {...field} />
                     </FormControl>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="isJobActive"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <FormControl>
+                      <div className="flex items-center space-x-2">
+                        <Switch
+                          checked={field.value === 1}
+                          onCheckedChange={(checked) => field.onChange(checked ? 1 : 0)}
+                        />
+                        <Label>{field.value === 1 ? "Job Active" : "Job Inactive"}</Label>
+                      </div>
+                    </FormControl>
                   </FormItem>
                 )}
               />

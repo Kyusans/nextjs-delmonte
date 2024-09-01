@@ -54,10 +54,10 @@ function AddJobExperience({ previousStep, handleSubmit }) {
   };
 
   const handleNextStep = () => {
-    if (retrieveData("jobExperience") === null || retrieveData("jobExperience") === "[]") {
-      toast.error("Please add experience first");
-      return;
-    }
+    // if (retrieveData("jobExperience") === null || retrieveData("jobExperience") === "[]") {
+    //   toast.error("Please add experience first");
+    //   return;
+    // }
     handleSubmit();
   }
 

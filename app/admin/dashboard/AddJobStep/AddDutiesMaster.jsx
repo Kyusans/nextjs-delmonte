@@ -55,7 +55,7 @@ function AddDutiesMaster({ previousStep, nextStep }) {
 
   const handleNextStep = () => {
     if (retrieveData("duties") === null || retrieveData("duties") === "[]") {
-      toast.error("Please add duties first");
+      toast.error("Duties is required");
       return;
     }
     nextStep(30);

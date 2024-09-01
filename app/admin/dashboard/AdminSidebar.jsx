@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Briefcase, CircleUser, Home, Menu, Settings } from 'lucide-react'
+import { Briefcase, CircleUser, Home, LogOut, Menu, Settings, Settings2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
@@ -71,10 +71,15 @@ function AdminSidebar({ changeView }) {
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Support</DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
+                <Settings2 className="mr-2 h-4 w-4" />
+                Settings
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer text-red-500">
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -95,7 +100,7 @@ function AdminSidebar({ changeView }) {
                 <TooltipTrigger asChild>
                   <div
                     href="#"
-                    className={`flex h-9 w-9  ${view === index ? "bg-primary text-black hover:text-white transition-all duration-500 ease-in-out" : "bg-transparent transition-colors text-white hover:text-black"} items-center justify-center rounded-lg  transition-colors md:h-8 md:w-8 cursor-pointer`}
+                    className={`flex h-9 w-9  ${view === index ? "bg-primary text-black hover:text-white transition-all duration-500 ease-in-out" : "bg-transparent transition-colors text-white hover:text-black"} items-center justify-center rounded-lg hover:bg-primary transition-colors md:h-8 md:w-8 cursor-pointer`}
                     onClick={() => handleChangeView(index)}
                   >
                     {tab.icon}
@@ -113,10 +118,30 @@ function AdminSidebar({ changeView }) {
               <TooltipTrigger asChild>
                 <Link
                   href="#"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg text-white transition-colors hover:text-black md:h-8 md:w-8"
+                  className="flex h-9 w-9 items-center justify-center "
                 >
-                  <Settings className="h-5 w-5" />
-                  <span className="sr-only">Settings</span>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="icon" className="bg-transparent rounded-lg text-white transition-colors hover:text-black md:h-8 md:w-8">
+                        <Settings className="h-5 w-5" />
+                        <span className="sr-only">Settings</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="cursor-pointer">
+                        <Settings2 className="mr-2 h-4 w-4" />
+                        Settings
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="cursor-pointer text-red-500">
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="right">Settings</TooltipContent>
