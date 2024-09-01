@@ -81,6 +81,7 @@ function AddJob({ handleSwitchView }) {
         jobKnowledge: JSON.parse(retrieveData("jobKnowledge")),
         jobSkill: JSON.parse(retrieveData("jobSkill")),
         jobExperience: JSON.parse(retrieveData("jobExperience")),
+        statusActive
       }
       console.log("jsonData", JSON.stringify(jsonData));
 
@@ -91,7 +92,7 @@ function AddJob({ handleSwitchView }) {
       formData.append("json", JSON.stringify(jsonData));
       formData.append("operation", "addJobMaster");
       const res = await axios.post(url, formData);
-
+      console.log("RES DATA ni addJobMaster: ", res.data);
       if (res.data !== 0) {
         toast.success("Job added successfully");
         setCurrentStep(1);
