@@ -53,10 +53,10 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
   };
 
   const handleNextStep = () => {
-    if (retrieveData("jobSkill") === null || retrieveData("jobSkill") === "[]") {
-      toast.error("Please add skill first");
-      return;
-    }
+    // if (retrieveData("jobSkill") === null || retrieveData("jobSkill") === "[]") {
+    //   toast.error("Please add skill first");
+    //   return;
+    // }
     nextStep(93);
   }
 

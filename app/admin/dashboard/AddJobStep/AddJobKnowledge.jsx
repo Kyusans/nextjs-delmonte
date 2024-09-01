@@ -56,10 +56,10 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
   };
 
   const handleNextStep = () => {
-    if (retrieveData("jobKnowledge") === null || retrieveData("jobKnowledge") === "[]") {
-      toast.error("Please add knowledge and compliance first");
-      return;
-    }
+    // if (retrieveData("jobKnowledge") === null || retrieveData("jobKnowledge") === "[]") {
+    //   toast.error("Please add knowledge and compliance first");
+    //   return;
+    // }
     nextStep(45);
   }
 

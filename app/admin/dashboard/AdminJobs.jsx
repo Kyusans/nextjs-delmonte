@@ -3,13 +3,15 @@ import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner';
-import { Briefcase, CheckCircle, Circle, Filter, Plus, XCircle } from 'lucide-react';
+import { Briefcase, CheckCircle, Circle, Edit, EllipsisVertical, Filter, Plus, Settings, XCircle } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 import AddJob from './AddJob';
 import { removeData, retrieveData } from '@/app/utils/storageUtils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import SelectedJob from './modal/SelectedJob';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import { Switch } from '@/components/ui/switch';
+import ShowAlert from '@/components/ui/show-alert';
 
 function AdminJobs() {
   const [allJobs, setAllJobs] = useState([]);
@@ -19,6 +21,7 @@ function AdminJobs() {
   const [isAddJob, setIsAddJob] = useState(false);
   const [showSelectedJobModal, setShowSelectedJobModal] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState(0);
+  const [selectedJobStatus, setSelectedJobStatus] = useState(0);
   const closeShowSelectedJobModal = () => { setShowSelectedJobModal(false); }
   const openShowSelectedJobModal = (jobId) => {
     setSelectedJobId(jobId);
@@ -56,6 +59,33 @@ function AdminJobs() {
     }
   }
 
+  const handleJobStatusSwitch = async () => {
+    setIsLoading(true);
+    try {
+      const url = retrieveData("url") + "admin.php";
+      const jsonData = {
+        "jobId": selectedJobId,
+        "status": selectedJobStatus
+      }
+      const formData = new FormData();
+      formData.append("json", JSON.stringify(jsonData));
+      formData.append("operation", "handleJobStatusSwitch");
+      const res = await axios.post(url, formData);
+      console.log("RES DATA ni handleJobStatusSwitch: ", res.data);
+      getAllJobs();
+      if(res.data === 1) {
+        toast.success("Job status updated");
+      } else {
+        toast.error("Failed to update job status");
+      }
+    } catch (error) {
+      toast.error("Network error");
+      console.log("AdminJobs.jsx => handleJobStatusSwitch(): " + error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
     getAllJobs();
   }, [])
@@ -68,6 +98,23 @@ function AdminJobs() {
       setJobs(filteredJobs);
     }
   }, [allJobs, selectedStatus]);
+
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const handleShowAlert = (message, status, jobId) => {
+    setSelectedJobStatus(status === 1 ? 0 : 1);
+    setSelectedJobId(jobId);
+    setAlertMessage(message);
+    setShowAlert(true);
+  };
+  const handleCloseAlert = (status) => {
+    if (status === 1) {
+      handleJobStatusSwitch();
+    }
+    setSelectedJobStatus(0);
+    setSelectedJobId(0);
+    setShowAlert(false);
+  };
 
 
   return (
@@ -117,10 +164,40 @@ function AdminJobs() {
           <Card className='w-full'>
             <CardContent className="grid grid-cols-1 gap-3 xl:grid-cols-3 mt-3">
               {jobs.map((job, index) => (
-                <Card key={index} className='flex flex-col h-full border-2 border-secondary shadow-lg dark:border-[#0c0a09]'>
-                  <CardTitle className="bg-[#0e5a35] dark:bg-[#0e4028] w-full p-10 rounded-t-lg text-white">
+                <Card key={index} className='flex flex-col justify-between h-full border-2 border-secondary shadow-lg dark:border-[#0c0a09]'>
+                  <CardTitle className="relative bg-[#0e5a35] dark:bg-[#0e4028] w-full p-10 rounded-t-lg text-white">
                     {job.jobM_title}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" className="absolute top-3 right-3 hover:text-primary hover:bg-transparent  bg-trasparent text-white">
+                          <Settings className="cursor-pointer" />
+                          <span className="sr-only">Toggle user menu</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel> Actions </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="cursor-pointer">
+                          <Edit className="mr-2 h-4 w-4" />
+                          Update job
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="cursor-pointer flex items-center"
+                          onClick={() => handleShowAlert(`Are you sure you want to ${job.jobM_status === 0 ? 'activate' : 'deactivate'} ${job.jobM_title}?`, job.jobM_status, job.jobM_id)}>
+                          <Switch
+                            className="mr-2"
+                            checked={job.jobM_status === 1}
+                          />
+                          {job.jobM_status === 1 ? 'Active' : 'Inactive'}
+                        </DropdownMenuItem>
+
+
+
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </CardTitle>
+
                   <CardContent className="flex-grow bg-[#def6db] dark:bg-[#1c1917]">
                     <div className="flex items-center gap-2 mb-2 mt-4">
                       <Circle
@@ -144,10 +221,13 @@ function AdminJobs() {
                   </CardFooter>
                 </Card>
               ))}
-            </CardContent>
-          </Card>
+            </CardContent >
+          </Card >
+
       }
       {showSelectedJobModal && <SelectedJob open={showSelectedJobModal} onHide={closeShowSelectedJobModal} jobId={selectedJobId} />}
+      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
+
     </>
   )
 }

@@ -54,10 +54,10 @@ function AddJobTraining({ training, previousStep, nextStep }) {
   };
 
   const handleNextStep = () => {
-    if (retrieveData("jobTraining") === null || retrieveData("jobTraining") === "[]") {
-      toast.error("Please add training first");
-      return;
-    }
+    // if (retrieveData("jobTraining") === null || retrieveData("jobTraining") === "[]") {
+    //   toast.error("Please add training first");
+    //   return;
+    // }
     nextStep(75);
   }
 
