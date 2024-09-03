@@ -19,7 +19,9 @@ import EnterPin from './modals/EnterPin';
 import StepsCompleteScreen from './StepsCompleteScreen';
 import SubscribeToEmail from './SubscribeToEmail';
 import { removeData, retrieveData, storeData } from '../utils/storageUtils';
-import { Progress } from '@/components/ui/progress';
+import KnowledgeForm from './KnowledgeAndCompliance';
+import ShowAlert from '@/components/ui/show-alert';
+import { useRouter } from 'next/navigation';
 
 const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,11 +30,11 @@ const Signup = () => {
   const [courseGraduate, setCourseGraduate] = useState([]);
   const [skills, setSkills] = useState([]);
   const [trainings, setTrainings] = useState([]);
+  const [knowledge, setKnowledge] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [email, setEmail] = useState("");
   const { setTheme } = useTheme();
   const [isValidated, setIsValidated] = useState(false);
-  const [progress, setProgress] = useState(0);
 
   const [pincode, setPincode] = useState("");
   const [showPin, setShowPin] = useState(false);
@@ -55,6 +57,8 @@ const Signup = () => {
     setShowPin(false);
   }
 
+  const router = useRouter();
+
   const handleSaveInformation = async () => {
     setIsLoading(true);
     try {
@@ -65,6 +69,7 @@ const Signup = () => {
         employmentHistory: JSON.parse(retrieveData("employmentHistory")),
         skills: JSON.parse(retrieveData("skills")),
         trainings: JSON.parse(retrieveData("training")),
+        knowledge: JSON.parse(retrieveData("knowledge")),
         isSubscribeToEmail: retrieveData("isSubscribeToEmail") ?? 0
       }
       console.log("IYANG INFO LMAO: ", jsonData);
@@ -76,14 +81,18 @@ const Signup = () => {
       console.log("res ni handleSaveInformation: ", res.data);
       if (res.data === 1) {
         toast.success("Signup successful");
+        setCurrentStep(prevStep => prevStep + 1);
         removeData("personalInfo");
         removeData("educationalBackground");
         removeData("employmentHistory");
         removeData("skills");
         removeData("training");
         removeData("positionId");
+        removeData("knowledge");
         removeData("isSubscribeToEmail");
-
+        setTimeout(() => {
+          router.push("/login");
+        }, 1250)
       }
     } catch (error) {
       toast.error("Network error");
@@ -93,55 +102,55 @@ const Signup = () => {
     }
   }
 
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const handleShowAlert = (message) => {
+    setAlertMessage(message);
+    setShowAlert(true);
+  };
+
+  const handleCloseAlert = (status) => {
+    if (status === 1) {
+      setCurrentStep(prevStep => prevStep + 1);
+    }
+    setShowAlert(false);
+  };
+
   const handleNext = () => {
-
-    // if (currentStep === 2) {
-    //   if (retrieveData("educationalBackground") === null || retrieveData("educationalBackground") === "[]") {
-    //     toast.error("Please complete your educational background first");
-    //     return;
-    //   }
-    // } else if (currentStep === 3) {
-    //   if (retrieveData("employmentHistory") === null || retrieveData("employmentHistory") === "[]") {
-    //     toast.error("Please complete your employment history first");
-    //     return;
-    //   }
-    // } else if (currentStep === 4) {
-    //   if (retrieveData("skills") === null || retrieveData("skills") === "[]") {
-    //     toast.error("Please complete your skills first");
-    //     return;
-    //   }
-    // }
-
-    setCurrentStep(prevStep => prevStep + 1);
+    if (currentStep === 2) {
+      if (retrieveData("knowledge") === null || retrieveData("knowledge") === "[]") {
+        handleShowAlert("You didn't put any educational background. Are you sure you want to continue?");
+        return;
+      }
+    }
+    else if (currentStep === 3) {
+      if (retrieveData("educationalBackground") === null || retrieveData("educationalBackground") === "[]") {
+        handleShowAlert("You didn't put any educational background. Are you sure you want to continue?");
+        return;
+      }
+    } else if (currentStep === 4) {
+      if (retrieveData("employmentHistory") === null || retrieveData("employmentHistory") === "[]") {
+        handleShowAlert("You didn't put any employment history. Are you sure you want to continue?");
+        return;
+      }
+    } else if (currentStep === 5) {
+      if (retrieveData("skills") === null || retrieveData("skills") === "[]") {
+        handleShowAlert("You didn't put any skills. Are you sure you want to continue?");
+        return;
+      }
+    } else if (currentStep === 6) {
+      if (retrieveData("training") === null || retrieveData("training") === "[]") {
+        handleShowAlert("You didn't put any trainings. Are you sure you want to continue?");
+        return;
+      }
+    }
+    setCurrentStep(prevStep => prevStep + 1)
   };
 
   const handlePrevious = () => {
     if (currentStep > 1) {
       setCurrentStep(prevStep => prevStep - 1);
-      switch (currentStep) {
-        case 1:
-          setProgress(0);
-          break;
-        case 2:
-          setProgress(25);
-          break;
-        case 3:
-          setProgress(35);
-          break;
-        case 4:
-          setProgress(50);
-          break;
-        case 5:
-          setProgress(75);
-          break;
-        case 6:
-          setProgress(88);
-          break;
-        default:
-          break;
-      }
     }
-
   };
 
   const handleSubmit = async () => {
@@ -189,14 +198,13 @@ const Signup = () => {
 
   const pages = [
     { content: "" },
-    { title: "Tell us about your Educational Background", content: <EducationalBackground courseList={courses} graduateCourseList={courseGraduate} institutionList={institutions} /> },
-    { title: "Tell us about your Employment History", content: <EmploymentHistory /> },
-    { title: "Tell us about your Skills", content: <Skills skillList={skills} /> },
-    { title: "Tell us about your Trainings", content: <Training trainingList={trainings} /> },
+    { title: "Knowledge and compliance", content: <KnowledgeForm knowledgeList={knowledge} /> },
+    { title: "Educational Background", content: <EducationalBackground courseList={courses} graduateCourseList={courseGraduate} institutionList={institutions} /> },
+    { title: "Employment History", content: <EmploymentHistory /> },
+    { title: "Skills", content: <Skills skillList={skills} /> },
+    { title: "Trainings", content: <Training trainingList={trainings} /> },
     { title: "Subscribe to email update?", content: <SubscribeToEmail /> },
     { title: "Woohoo! All steps completed! 🎉", content: <StepsCompleteScreen /> },
-
-
   ];
 
   const getAllDataForDropdownSignup = useCallback(async () => {
@@ -231,12 +239,16 @@ const Signup = () => {
           value: training.perT_id,
           label: training.perT_name
         }))
+        const formattedKnowledge = res.data.knowledge.map((knowledge) => ({
+          value: knowledge.knowledge_id,
+          label: knowledge.knowledge_name
+        }))
         setInstitutions(formattedInstitutions);
         setCourses(formattedCourses);
         setCourseGraduate(formattedCourseGraduate);
         setSkills(formattedSkills);
         setTrainings(formattedTrainings);
-
+        setKnowledge(formattedKnowledge);
       }
     } catch (error) {
       toast.error("Network error");
@@ -245,7 +257,6 @@ const Signup = () => {
       setIsLoading(false);
     }
   }, [])
-
 
   useEffect(() => {
     setTheme("dark");
@@ -256,6 +267,11 @@ const Signup = () => {
   }, [getAllDataForDropdownSignup]);
 
   useEffect(() => {
+
+    if (retrieveData("knowledge") === null) {
+      storeData("knowledge", "[]");
+    }
+
     if (retrieveData("educationalBackground") === null) {
       storeData("educationalBackground", "[]");
     }
@@ -276,8 +292,49 @@ const Signup = () => {
         <div className={`flex flex-col w-full justify-center items-center ${isLoading ? 'h-screen' : ''} `}>
           {isLoading ? <Spinner /> :
             <>
-              <Image src="/assets/images/delmonteLogo.png" alt="DelmonteLogo" width={160} height={160} className='my-16' />
-              <Progress className="w-full max-w-4xl" value={progress} />
+              <Image src="/assets/images/delmonteLogo.png" alt="DelmonteLogo" width={152} height={152} className='mt-16' />
+              <div className="flex items-center gap-3 sm:gap-4 mt-6 w-full max-w-5xl px-4">
+                {/* Step 1 */}
+                <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 1 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  {currentStep > 1 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '1'}
+                </div>
+                {/* Connector */}
+                <div className={`h-1 flex-1 ${currentStep >= 2 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
+                {/* Step 2 */}
+                <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 2 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  {currentStep > 2 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '2'}
+                </div>
+                {/* Connector */}
+                <div className={`h-1 flex-1 ${currentStep >= 3 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
+                {/* Step 3 */}
+                <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 3 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  {currentStep > 3 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '3'}
+                </div>
+                {/* Connector */}
+                <div className={`h-1 flex-1 ${currentStep >= 4 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
+                {/* Step 4 */}
+                <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 4 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  {currentStep > 4 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '4'}
+                </div>
+                {/* Connector */}
+                <div className={`h-1 flex-1 ${currentStep >= 5 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
+                {/* Step 5 */}
+                <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 5 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  {currentStep > 5 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '5'}
+                </div>
+                {/* Connector */}
+                <div className={`h-1 flex-1 ${currentStep >= 6 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
+                {/* Step 6 */}
+                <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 6 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  {currentStep > 6 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '6'}
+                </div>
+                {/* Connector */}
+                <div className={`h-1 flex-1 ${currentStep >= 7 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
+                {/* Step 7 */}
+                <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 7 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  {currentStep > 7 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '7'}
+                </div>
+              </div>
               {currentStep === 1 ? <PersonalInformation nextPage={handleNext} />
                 :
                 <div className="w-full max-w-4xl mt-6">
@@ -291,7 +348,7 @@ const Signup = () => {
                       </CardContent>
                     </Card>
                   </ScrollArea>
-                  {currentStep <= 6 &&
+                  {currentStep <= 7 &&
                     <div className="flex flex-col sm:flex-row gap-4 w-full max-w-4xl mt-3 justify-end">
                       <Button
                         onClick={handlePrevious}
@@ -302,10 +359,10 @@ const Signup = () => {
                         Previous
                       </Button>
                       <Button
-                        onClick={currentStep === 5 ? handleSubmit : currentStep === 6 ? handleSaveInformation : handleNext}
+                        onClick={currentStep === 6 ? handleSubmit : currentStep === 7 ? handleSaveInformation : handleNext}
                         className="px-4 py-2 rounded bg-[#f5f5f5] text-[#0e4028]  w-full sm:w-auto"
                       >
-                        {currentStep === 6 ? 'Submit' : 'Next'}
+                        {currentStep === 7 ? 'Submit' : 'Next'}
                       </Button>
                     </div>
                   }
@@ -316,46 +373,9 @@ const Signup = () => {
         </div>
       </main>
       <EnterPin open={showPin} onHide={handleHidePin} pincode={pincode} expirationDate={expirationDate} />
+      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
     </>
   );
 };
 
 export default Signup;
-
-              // {/* Steppers container
-              // <div className="flex items-center gap-3 sm:gap-4 mt-6 w-full max-w-5xl px-4">
-              //   {/* Step 1 */}
-              //   <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 1 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
-              //     {currentStep > 1 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '1'}
-              //   </div>
-              //   {/* Connector */}
-              //   <div className={`h-1 flex-1 ${currentStep >= 2 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
-              //   {/* Step 2 */}
-              //   <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 2 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
-              //     {currentStep > 2 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '2'}
-              //   </div>
-              //   {/* Connector */}
-              //   <div className={`h-1 flex-1 ${currentStep >= 3 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
-              //   {/* Step 3 */}
-              //   <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 3 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
-              //     {currentStep > 3 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '3'}
-              //   </div>
-              //   {/* Connector */}
-              //   <div className={`h-1 flex-1 ${currentStep >= 4 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
-              //   {/* Step 4 */}
-              //   <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 4 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
-              //     {currentStep > 4 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '4'}
-              //   </div>
-              //   {/* Connector */}
-              //   <div className={`h-1 flex-1 ${currentStep >= 5 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
-              //   {/* Step 5 */}
-              //   <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 5 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
-              //     {currentStep > 5 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '5'}
-              //   </div>
-              //   {/* Connector */}
-              //   <div className={`h-1 flex-1 ${currentStep >= 6 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
-              //   {/* Step 6 */}
-              //   <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 6 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
-              //     {currentStep > 6 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '6'}
-              //   </div>
-              // </div> 

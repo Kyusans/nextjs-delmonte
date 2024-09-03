@@ -1,3 +1,22 @@
 shadcn new download
 
 npx shadcn@latest add switch
+
+
+
+
+// para ma add tanan
+npx shadcn@latest add 
+Which components would you like to add? › Space to select. A to toggle all.
+Enter to submit.
+
+◯  accordion
+◯  alert
+◯  alert-dialog
+◯  aspect-ratio
+◯  avatar
+◯  badge
+◯  button
+◯  calendar
+◯  card
+◯  checkbox

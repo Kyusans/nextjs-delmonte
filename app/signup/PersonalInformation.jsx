@@ -165,7 +165,7 @@ const PersonalInformation = ({ nextPage }) => {
       toast.error("Network error");
       console.log("PersonalInformation.jsx => onSubmit(): " + error);
     } finally {
-      // setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
