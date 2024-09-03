@@ -5,6 +5,7 @@ import ShowAlert from '@/components/ui/show-alert'
 import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import AddTrainingModal from './modals/AddTrainingModal'
+import { retrieveData, storeData } from '../utils/storageUtils'
 
 function Training({ trainingList }) {
   const [trainingData, setTrainingData] = useState([]);
@@ -22,7 +23,7 @@ function Training({ trainingList }) {
     if (status === 1) {
       const filteredTrainingData = trainingData.filter((_, index) => index !== indexToRemove);
       setTrainingData(filteredTrainingData);
-      localStorage.setItem("training", JSON.stringify(filteredTrainingData));
+      storeData("training", JSON.stringify(filteredTrainingData));
     }
     setShowAlert(false);
   };
@@ -37,7 +38,7 @@ function Training({ trainingList }) {
     if (status !== 0) {
       const newTrainingData = [...trainingData, status];
       setTrainingData(newTrainingData);
-      localStorage.setItem("training", JSON.stringify(newTrainingData));
+      storeData("training", JSON.stringify(newTrainingData));
     }
     setShowTrainingModal(false);
   };
@@ -48,7 +49,7 @@ function Training({ trainingList }) {
   };
 
   useEffect(() => {
-    const savedTrainingData = localStorage.getItem("training");
+    const savedTrainingData = retrieveData("training");
     if (savedTrainingData && savedTrainingData !== "[]") {
       setTrainingData(JSON.parse(savedTrainingData));
     }

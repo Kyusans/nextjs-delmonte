@@ -26,7 +26,7 @@ export default function RootLayout({ children }) {
           >
             <div className=" dark:bg-[#0e4028] h-screen">
               <Toaster position="top-center" richColors duration={2000} />
-              {children}
+                {children}
             </div>
           </ThemeProvider>
         </body>

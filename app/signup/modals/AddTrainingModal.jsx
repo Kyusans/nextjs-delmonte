@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogOverlay, DialogTitle } from "@/components/ui/dialog";
 import ComboBox from "@/app/my_components/combo-box";
 import { z } from "zod";
+import { retrieveData } from "@/app/utils/storageUtils";
 
 function AddTrainingModal({ open, onHide, trainingList }) {
 
@@ -26,7 +27,7 @@ function AddTrainingModal({ open, onHide, trainingList }) {
   const onSubmit = (values) => {
     console.log("AddTrainingModal.jsx => onSubmit():", values);
     try {
-      const selectedTraining = JSON.parse(localStorage.getItem("training")) || [];
+      const selectedTraining = JSON.parse(retrieveData("training")) || [];
       let isValid = true;
 
       selectedTraining.forEach((element) => {

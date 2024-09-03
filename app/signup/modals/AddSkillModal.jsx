@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogOverlay, DialogTitle } from "@/components/ui/dialog";
 import ComboBox from "@/app/my_components/combo-box";
 import { z } from "zod";
+import { retrieveData } from "@/app/utils/storageUtils";
 
 function AddSkillModal({ open, onHide, skillList }) {
 
@@ -25,7 +26,7 @@ function AddSkillModal({ open, onHide, skillList }) {
 
   const onSubmit = (values) => {
     try {
-      const selectedSkills = JSON.parse(localStorage.getItem("skills")) || [];
+      const selectedSkills = JSON.parse(retrieveData("skills")) || [];
       let isValid = true;
 
       selectedSkills.forEach((element) => {

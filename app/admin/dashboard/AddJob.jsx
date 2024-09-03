@@ -81,7 +81,6 @@ function AddJob({ handleSwitchView }) {
         jobKnowledge: JSON.parse(retrieveData("jobKnowledge")),
         jobSkill: JSON.parse(retrieveData("jobSkill")),
         jobExperience: JSON.parse(retrieveData("jobExperience")),
-        statusActive
       }
       console.log("jsonData", JSON.stringify(jsonData));
 

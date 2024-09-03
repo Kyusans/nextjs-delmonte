@@ -1,6 +1,5 @@
 "use client"
-import React, { useState } from 'react'
-import AdminSidebar from './AdminSidebar'
+import Reacts from 'react'
 
 function AdminDashboard() {
 

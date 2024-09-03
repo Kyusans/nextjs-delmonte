@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import UpdateJobModal from './UpdateJobModal';
 
 function SelectedJob({ open, onHide, jobId }) {
 
@@ -71,169 +72,174 @@ function SelectedJob({ open, onHide, jobId }) {
 
   return (
     <>
-      {isLoading ? <Spinner /> :
-        <Dialog open={open} onOpenChange={onHide}>
-          <DialogContent className="max-w-7xl h-full md:h-4/5">
-            <ScrollArea className="h-full rounded-md md:p-2">
-              <DialogHeader>
-                <DialogTitle>{data.jobMaster[0].jobM_title}</DialogTitle>
-                <ScrollArea className="h-52 md:h-36">
-                  <DialogDescription>{data.jobMaster[0].jobM_description}</DialogDescription>
-                </ScrollArea>
-              </DialogHeader>
-              <Separator className="mb-4" />
-              <Card className="w-full p-3">
-                <Tabs defaultValue={1} className='mb-5'>
-                  <TabsList>
-                    <TabsTrigger value={1}>Details</TabsTrigger>
-                    <TabsTrigger value={2}>Applicants</TabsTrigger>
-                  </TabsList>
-                  <TabsContent value={1}>
-                    <Accordion type="multiple" collapsible="true" className="w-full" defaultValue={["item-1", "item-2"]}>
-                      <AccordionItem value="item-1">
-                        <AccordionTrigger>Duties and Responsibilities</AccordionTrigger>
-                        <AccordionContent className='px-5'>
-                          <div className='w-full'>
-                            {data.jobDuties.map((data, index) => (
-                              <ul key={index} className="list-disc ml-4 mb-1">
-                                <li>{data.duties_text}</li>
-                              </ul>
-                            ))}
-                          </div>
-                        </AccordionContent>
-                      </AccordionItem>
-                      {data.jobEducation.length > 0 || data.jobSkills.length > 0 || data.jobTrainings.length > 0 || data.jobExperience.length > 0 ? (
-                        <AccordionItem value="item-2">
-                          <AccordionTrigger>Qualifications</AccordionTrigger>
+      <Dialog open={open} onOpenChange={onHide}>
+        <DialogContent className="max-w-7xl h-full md:h-4/5">
+          {isLoading ? (<Spinner />) :
+            (<>
+              <ScrollArea className="h-full rounded-md p-5 md:p-2">
+                <DialogHeader>
+                  <DialogTitle>{data.jobMaster[0].jobM_title}</DialogTitle>
+                  <ScrollArea className="h-52 md:h-36">
+                    <DialogDescription>{data.jobMaster[0].jobM_description}</DialogDescription>
+                  </ScrollArea>
+                </DialogHeader>
+                <Separator className="mb-4" />
+                <div className='flex justify-end mr-5 mb-3'>
+                  <UpdateJobModal jobData={data} />
+                </div>
+                <Card className="w-full p-3">
+                  <Tabs defaultValue={1} className='mb-5'>
+                    <TabsList>
+                      <TabsTrigger value={1}>Details</TabsTrigger>
+                      <TabsTrigger value={2}>Applicants</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value={1}>
+                      <Accordion type="multiple" collapsible="true" className="w-full" defaultValue={["item-1", "item-2"]}>
+                        <AccordionItem value="item-1">
+                          <AccordionTrigger>Duties and Responsibilities</AccordionTrigger>
                           <AccordionContent className='px-5'>
-
-                            {data.jobEducation.length > 0 && (
-                              <>
-                                <div className='text-sm mb-3 font-bold'>Educational Background</div>
-                                <div className='w-full ml-3'>
-                                  {data.jobEducation.map((data, index) => (
-                                    <ul key={index} className="list-disc ml-4 mb-1">
-                                      <li>{data.jeduc_text}</li>
-                                    </ul>
-                                  ))}
-                                </div>
-                              </>
-                            )}
-
-                            {data.jobSkills.length > 0 && (
-                              <>
-                                <div className='text-sm my-3 font-bold'>Skills</div>
-                                <div className='w-full ml-3'>
-                                  {data.jobSkills.map((data, index) => (
-                                    <ul key={index} className="list-disc ml-4 mb-1">
-                                      <li>{data.jskills_text}</li>
-                                    </ul>
-                                  ))}
-                                </div>
-                              </>
-                            )}
-
-                            {data.jobTrainings.length > 0 && (
-                              <>
-                                <div className='text-sm my-3 font-bold'>Trainings</div>
-                                <div className='w-full ml-3'>
-                                  {data.jobTrainings.map((data, index) => (
-                                    <ul key={index} className="list-disc ml-4 mb-1">
-                                      <li>{data.jtrng_text}</li>
-                                    </ul>
-                                  ))}
-                                </div>
-                              </>
-                            )}
-
-                            {data.jobExperience.length > 0 && (
-                              <>
-                                <div className='text-sm my-3 font-bold'>Experience</div>
-                                <div className='w-full ml-3'>
-                                  {data.jobExperience.map((data, index) => (
-                                    <ul key={index} className="list-disc ml-4 mb-1">
-                                      <li>{data.jwork_responsibilities} {`${data.jwork_duration} year${data.jwork_duration > 1 ? "s" : ""} of experience needed`}</li>
-                                    </ul>
-                                  ))}
-                                </div>
-                              </>
-                            )}
+                            <div className='w-full'>
+                              {data.jobDuties.map((data, index) => (
+                                <ul key={index} className="list-disc ml-4 mb-1">
+                                  <li>{data.duties_text}</li>
+                                </ul>
+                              ))}
+                            </div>
                           </AccordionContent>
                         </AccordionItem>
-                      ) : null}
-                    </Accordion>
-                  </TabsContent>
-                  <TabsContent value={2}>
-                    {data.candidates?.length > 0 ? (
-                      <Table className="w-full text-center">
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="text-center">Index</TableHead>
-                            <TableHead className="text-center">Full Name</TableHead>
-                            <TableHead className="text-center">Points</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {currentCandidates?.map((data, index) => (
-                            <TableRow key={index}>
-                              <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
-                              <TableCell>{data.FullName}</TableCell>
-                              <TableCell>{data.posA_totalpoints}</TableCell>
+                        {data.jobEducation.length > 0 || data.jobSkills.length > 0 || data.jobTrainings.length > 0 || data.jobExperience.length > 0 ? (
+                          <AccordionItem value="item-2">
+                            <AccordionTrigger>Qualifications</AccordionTrigger>
+                            <AccordionContent className='px-5'>
+
+                              {data.jobEducation.length > 0 && (
+                                <>
+                                  <div className='text-sm mb-3 font-bold'>Educational Background</div>
+                                  <div className='w-full ml-3'>
+                                    {data.jobEducation.map((data, index) => (
+                                      <ul key={index} className="list-disc ml-4 mb-1">
+                                        <li>{data.jeduc_text}</li>
+                                      </ul>
+                                    ))}
+                                  </div>
+                                </>
+                              )}
+
+                              {data.jobSkills.length > 0 && (
+                                <>
+                                  <div className='text-sm my-3 font-bold'>Skills</div>
+                                  <div className='w-full ml-3'>
+                                    {data.jobSkills.map((data, index) => (
+                                      <ul key={index} className="list-disc ml-4 mb-1">
+                                        <li>{data.jskills_text}</li>
+                                      </ul>
+                                    ))}
+                                  </div>
+                                </>
+                              )}
+
+                              {data.jobTrainings.length > 0 && (
+                                <>
+                                  <div className='text-sm my-3 font-bold'>Trainings</div>
+                                  <div className='w-full ml-3'>
+                                    {data.jobTrainings.map((data, index) => (
+                                      <ul key={index} className="list-disc ml-4 mb-1">
+                                        <li>{data.jtrng_text}</li>
+                                      </ul>
+                                    ))}
+                                  </div>
+                                </>
+                              )}
+
+                              {data.jobExperience.length > 0 && (
+                                <>
+                                  <div className='text-sm my-3 font-bold'>Experience</div>
+                                  <div className='w-full ml-3'>
+                                    {data.jobExperience.map((data, index) => (
+                                      <ul key={index} className="list-disc ml-4 mb-1">
+                                        <li>{data.jwork_responsibilities} {`${data.jwork_duration} year${data.jwork_duration > 1 ? "s" : ""} of experience needed`}</li>
+                                      </ul>
+                                    ))}
+                                  </div>
+                                </>
+                              )}
+                            </AccordionContent>
+                          </AccordionItem>
+                        ) : null}
+                      </Accordion>
+                    </TabsContent>
+                    <TabsContent value={2}>
+                      {data.candidates?.length > 0 ? (
+                        <Table className="w-full text-center">
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="text-center">Index</TableHead>
+                              <TableHead className="text-center">Full Name</TableHead>
+                              <TableHead className="text-center">Points</TableHead>
                             </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    ) :
-                      (
-                        <>
-                          <Card className="text-center bg-background">
-                            <CardDescription className="p-5">
-                              No applicants applied yet
-                            </CardDescription>
-                          </Card>
-                        </>
-                      )
-                    }
-                    {data.candidates?.length > itemsPerPage && (
-                      <div className='flex justify-end items-end mt-4'>
-                        <Pagination>
-                          <PaginationContent>
-                            <PaginationItem>
-                              <PaginationPrevious
-                                onClick={handlePreviousPage}
-                                href="#"
-                                className={"hover:text-primary"}
-                              />
-                            </PaginationItem>
-                            {Array.from({ length: totalPages }, (_, index) => (
-                              <PaginationItem key={index}>
-                                <PaginationLink
-                                  href="#"
-                                  onClick={() => handlePageChange(index + 1)}
-                                  className={` ${currentPage === index + 1 ? "text-primary font-extrabold text-lg" : ""}`}
-                                >
-                                  {index + 1}
-                                </PaginationLink>
-                              </PaginationItem>
+                          </TableHeader>
+                          <TableBody>
+                            {currentCandidates?.map((data, index) => (
+                              <TableRow key={index}>
+                                <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
+                                <TableCell>{data.FullName}</TableCell>
+                                <TableCell>{data.posA_totalpoints}</TableCell>
+                              </TableRow>
                             ))}
-                            <PaginationItem>
-                              <PaginationNext
-                                onClick={handleNextPage}
-                                href="#"
-                                className={"hover:text-primary"}
-                              />
-                            </PaginationItem>
-                          </PaginationContent>
-                        </Pagination>
-                      </div>
-                    )}
-                  </TabsContent>
-                </Tabs>
-              </Card>
-            </ScrollArea>
-          </DialogContent>
-        </Dialog>
-      }
+                          </TableBody>
+                        </Table>
+                      ) :
+                        (
+                          <>
+                            <Card className="text-center bg-background">
+                              <CardDescription className="p-5">
+                                No applicants applied yet
+                              </CardDescription>
+                            </Card>
+                          </>
+                        )
+                      }
+                      {data.candidates?.length > itemsPerPage && (
+                        <div className='flex justify-end items-end mt-4'>
+                          <Pagination>
+                            <PaginationContent>
+                              <PaginationItem>
+                                <PaginationPrevious
+                                  onClick={handlePreviousPage}
+                                  href="#"
+                                  className={"hover:text-primary"}
+                                />
+                              </PaginationItem>
+                              {Array.from({ length: totalPages }, (_, index) => (
+                                <PaginationItem key={index}>
+                                  <PaginationLink
+                                    href="#"
+                                    onClick={() => handlePageChange(index + 1)}
+                                    className={` ${currentPage === index + 1 ? "text-primary font-extrabold text-lg" : ""}`}
+                                  >
+                                    {index + 1}
+                                  </PaginationLink>
+                                </PaginationItem>
+                              ))}
+                              <PaginationItem>
+                                <PaginationNext
+                                  onClick={handleNextPage}
+                                  href="#"
+                                  className={"hover:text-primary"}
+                                />
+                              </PaginationItem>
+                            </PaginationContent>
+                          </Pagination>
+                        </div>
+                      )}
+                    </TabsContent>
+                  </Tabs>
+                </Card>
+              </ScrollArea>
+            </>)}
+        </DialogContent>
+      </Dialog>
+
     </>
   );
 }
