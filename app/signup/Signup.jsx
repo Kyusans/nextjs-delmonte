@@ -11,7 +11,6 @@ import { useTheme } from 'next-themes';
 import EmploymentHistory from './EmploymentHistory';
 import { toast } from 'sonner';
 import EducationalBackground from './EducationalBackground';
-import secureLocalStorage from 'react-secure-storage';
 import axios from 'axios';
 import Skills from './Skills';
 import Training from './Training';
@@ -19,6 +18,10 @@ import Spinner from '@/components/ui/spinner';
 import EnterPin from './modals/EnterPin';
 import StepsCompleteScreen from './StepsCompleteScreen';
 import SubscribeToEmail from './SubscribeToEmail';
+import { removeData, retrieveData, storeData } from '../utils/storageUtils';
+import KnowledgeForm from './KnowledgeAndCompliance';
+import ShowAlert from '@/components/ui/show-alert';
+import { useRouter } from 'next/navigation';
 
 const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -27,6 +30,7 @@ const Signup = () => {
   const [courseGraduate, setCourseGraduate] = useState([]);
   const [skills, setSkills] = useState([]);
   const [trainings, setTrainings] = useState([]);
+  const [knowledge, setKnowledge] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [email, setEmail] = useState("");
   const { setTheme } = useTheme();
@@ -53,18 +57,20 @@ const Signup = () => {
     setShowPin(false);
   }
 
+  const router = useRouter();
+
   const handleSaveInformation = async () => {
     setIsLoading(true);
     try {
-      const url = secureLocalStorage.getItem("url") + "users.php";
+      const url = retrieveData("url") + "users.php";
       const jsonData = {
-        personalInfo: JSON.parse(localStorage.getItem("personalInfo")),
-        educationalBackground: JSON.parse(localStorage.getItem("educationalBackground")),
-        employmentHistory: JSON.parse(localStorage.getItem("employmentHistory")),
-        skills: JSON.parse(localStorage.getItem("skills")),
-        trainings: JSON.parse(localStorage.getItem("training")),
-        positionId: localStorage.getItem("positionId"),
-        isSubscribeToEmail: localStorage.getItem("isSubscribeToEmail") ?? 0
+        personalInfo: JSON.parse(retrieveData("personalInfo")),
+        educationalBackground: JSON.parse(retrieveData("educationalBackground")),
+        employmentHistory: JSON.parse(retrieveData("employmentHistory")),
+        skills: JSON.parse(retrieveData("skills")),
+        trainings: JSON.parse(retrieveData("training")),
+        knowledge: JSON.parse(retrieveData("knowledge")),
+        isSubscribeToEmail: retrieveData("isSubscribeToEmail") ?? 0
       }
       console.log("IYANG INFO LMAO: ", jsonData);
       console.log("IYANG INFO lol: ", JSON.stringify(jsonData));
@@ -75,15 +81,18 @@ const Signup = () => {
       console.log("res ni handleSaveInformation: ", res.data);
       if (res.data === 1) {
         toast.success("Signup successful");
-        localStorage.clear();
-        // localStorage.removeItem("personalInfo");
-        // localStorage.removeItem("educationalBackground");
-        // localStorage.removeItem("employmentHistory");
-        // localStorage.removeItem("skills");
-        // localStorage.removeItem("training");
-        // localStorage.removeItem("positionId");
-        // localStorage.removeItem("isSubscribeToEmail");
-
+        setCurrentStep(prevStep => prevStep + 1);
+        removeData("personalInfo");
+        removeData("educationalBackground");
+        removeData("employmentHistory");
+        removeData("skills");
+        removeData("training");
+        removeData("positionId");
+        removeData("knowledge");
+        removeData("isSubscribeToEmail");
+        setTimeout(() => {
+          router.push("/login");
+        }, 1250)
       }
     } catch (error) {
       toast.error("Network error");
@@ -93,26 +102,49 @@ const Signup = () => {
     }
   }
 
-  const handleNext = () => {
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const handleShowAlert = (message) => {
+    setAlertMessage(message);
+    setShowAlert(true);
+  };
 
+  const handleCloseAlert = (status) => {
+    if (status === 1) {
+      setCurrentStep(prevStep => prevStep + 1);
+    }
+    setShowAlert(false);
+  };
+
+  const handleNext = () => {
     if (currentStep === 2) {
-      if (localStorage.getItem("educationalBackground") === null || localStorage.getItem("educationalBackground") === "[]") {
-        toast.error("Please complete your educational background first");
-        return;
-      }
-    } else if (currentStep === 3) {
-      if (localStorage.getItem("employmentHistory") === null || localStorage.getItem("employmentHistory") === "[]") {
-        toast.error("Please complete your employment history first");
-        return;
-      }
-    } else if (currentStep === 4) {
-      if (localStorage.getItem("skills") === null || localStorage.getItem("skills") === "[]") {
-        toast.error("Please complete your skills first");
+      if (retrieveData("knowledge") === null || retrieveData("knowledge") === "[]") {
+        handleShowAlert("You didn't put any educational background. Are you sure you want to continue?");
         return;
       }
     }
-
-    setCurrentStep(prevStep => prevStep + 1);
+    else if (currentStep === 3) {
+      if (retrieveData("educationalBackground") === null || retrieveData("educationalBackground") === "[]") {
+        handleShowAlert("You didn't put any educational background. Are you sure you want to continue?");
+        return;
+      }
+    } else if (currentStep === 4) {
+      if (retrieveData("employmentHistory") === null || retrieveData("employmentHistory") === "[]") {
+        handleShowAlert("You didn't put any employment history. Are you sure you want to continue?");
+        return;
+      }
+    } else if (currentStep === 5) {
+      if (retrieveData("skills") === null || retrieveData("skills") === "[]") {
+        handleShowAlert("You didn't put any skills. Are you sure you want to continue?");
+        return;
+      }
+    } else if (currentStep === 6) {
+      if (retrieveData("training") === null || retrieveData("training") === "[]") {
+        handleShowAlert("You didn't put any trainings. Are you sure you want to continue?");
+        return;
+      }
+    }
+    setCurrentStep(prevStep => prevStep + 1)
   };
 
   const handlePrevious = () => {
@@ -122,13 +154,13 @@ const Signup = () => {
   };
 
   const handleSubmit = async () => {
-    const personalInfo = JSON.parse(localStorage.getItem("personalInfo"))
+    const personalInfo = JSON.parse(retrieveData("personalInfo"))
     if (isValidated === true && email === personalInfo.email) {
       handleNext();
     } else if (pincode === "") {
       try {
         setIsLoading(true);
-        const url = secureLocalStorage.getItem("url") + "users.php";
+        const url = retrieveData("url") + "users.php";
         const jsonData = {
           email: personalInfo.email,
         }
@@ -166,20 +198,19 @@ const Signup = () => {
 
   const pages = [
     { content: "" },
-    { title: "Tell us about your Educational Background", content: <EducationalBackground courseList={courses} graduateCourseList={courseGraduate} institutionList={institutions} /> },
-    { title: "Tell us about your Employment History", content: <EmploymentHistory /> },
-    { title: "Tell us about your Skills", content: <Skills skillList={skills} /> },
-    { title: "Tell us about your Trainings", content: <Training trainingList={trainings} /> },
+    { title: "Knowledge and compliance", content: <KnowledgeForm knowledgeList={knowledge} /> },
+    { title: "Educational Background", content: <EducationalBackground courseList={courses} graduateCourseList={courseGraduate} institutionList={institutions} /> },
+    { title: "Employment History", content: <EmploymentHistory /> },
+    { title: "Skills", content: <Skills skillList={skills} /> },
+    { title: "Trainings", content: <Training trainingList={trainings} /> },
     { title: "Subscribe to email update?", content: <SubscribeToEmail /> },
     { title: "Woohoo! All steps completed! 🎉", content: <StepsCompleteScreen /> },
-
-
   ];
 
   const getAllDataForDropdownSignup = useCallback(async () => {
     setIsLoading(true);
     try {
-      const url = secureLocalStorage.getItem("url") + "users.php";
+      const url = retrieveData("url") + "users.php";
       const formData = new FormData();
       formData.append("operation", "getAllDataForDropdownSignup");
       const res = await axios.post(url, formData);
@@ -208,12 +239,16 @@ const Signup = () => {
           value: training.perT_id,
           label: training.perT_name
         }))
+        const formattedKnowledge = res.data.knowledge.map((knowledge) => ({
+          value: knowledge.knowledge_id,
+          label: knowledge.knowledge_name
+        }))
         setInstitutions(formattedInstitutions);
         setCourses(formattedCourses);
         setCourseGraduate(formattedCourseGraduate);
         setSkills(formattedSkills);
         setTrainings(formattedTrainings);
-
+        setKnowledge(formattedKnowledge);
       }
     } catch (error) {
       toast.error("Network error");
@@ -222,7 +257,6 @@ const Signup = () => {
       setIsLoading(false);
     }
   }, [])
-
 
   useEffect(() => {
     setTheme("dark");
@@ -233,10 +267,25 @@ const Signup = () => {
   }, [getAllDataForDropdownSignup]);
 
   useEffect(() => {
-    if(localStorage.getItem("positionId") === null) {
-      localStorage.setItem("positionId", 2);  
+
+    if (retrieveData("knowledge") === null) {
+      storeData("knowledge", "[]");
     }
-  }, [])
+
+    if (retrieveData("educationalBackground") === null) {
+      storeData("educationalBackground", "[]");
+    }
+
+    if (retrieveData("employmentHistory") === null) {
+      storeData("employmentHistory", "[]");
+    }
+    if (retrieveData("skills", "[]") === null) {
+      storeData("skills", "[]");
+    }
+    if (retrieveData("trainings") === null) {
+      storeData("trainings", "[]");
+    }
+  }, []);
   return (
     <>
       <main className='bg-[#0e4028]'>
@@ -244,7 +293,6 @@ const Signup = () => {
           {isLoading ? <Spinner /> :
             <>
               <Image src="/assets/images/delmonteLogo.png" alt="DelmonteLogo" width={152} height={152} className='mt-16' />
-              {/* Steppers container */}
               <div className="flex items-center gap-3 sm:gap-4 mt-6 w-full max-w-5xl px-4">
                 {/* Step 1 */}
                 <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 1 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
@@ -280,6 +328,12 @@ const Signup = () => {
                 <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 6 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
                   {currentStep > 6 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '6'}
                 </div>
+                {/* Connector */}
+                <div className={`h-1 flex-1 ${currentStep >= 7 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
+                {/* Step 7 */}
+                <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 7 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  {currentStep > 7 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '7'}
+                </div>
               </div>
               {currentStep === 1 ? <PersonalInformation nextPage={handleNext} />
                 :
@@ -294,7 +348,7 @@ const Signup = () => {
                       </CardContent>
                     </Card>
                   </ScrollArea>
-                  {currentStep <= 6 &&
+                  {currentStep <= 7 &&
                     <div className="flex flex-col sm:flex-row gap-4 w-full max-w-4xl mt-3 justify-end">
                       <Button
                         onClick={handlePrevious}
@@ -305,10 +359,10 @@ const Signup = () => {
                         Previous
                       </Button>
                       <Button
-                        onClick={currentStep === 5 ? handleSubmit : currentStep === 6 ? handleSaveInformation : handleNext}
+                        onClick={currentStep === 6 ? handleSubmit : currentStep === 7 ? handleSaveInformation : handleNext}
                         className="px-4 py-2 rounded bg-[#f5f5f5] text-[#0e4028]  w-full sm:w-auto"
                       >
-                        {currentStep === 6 ? 'Submit' : 'Next'}
+                        {currentStep === 7 ? 'Submit' : 'Next'}
                       </Button>
                     </div>
                   }
@@ -319,6 +373,7 @@ const Signup = () => {
         </div>
       </main>
       <EnterPin open={showPin} onHide={handleHidePin} pincode={pincode} expirationDate={expirationDate} />
+      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
     </>
   );
 };

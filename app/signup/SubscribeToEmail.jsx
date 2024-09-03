@@ -1,6 +1,7 @@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Checkbox } from '@/components/ui/checkbox';
 import React, { useState } from 'react';
+import { storeData } from '../utils/storageUtils';
 
 function SubscribeToEmail() {
   const [isChecked, setIsChecked] = useState(false);
@@ -8,7 +9,7 @@ function SubscribeToEmail() {
   const handleCheckboxChange = () => {
     const newValue = isChecked ? 0 : 1;
     setIsChecked(newValue);
-    localStorage.setItem("isSubscribeToEmail", newValue);
+    storeData("isSubscribeToEmail", newValue);
   };
 
   return (

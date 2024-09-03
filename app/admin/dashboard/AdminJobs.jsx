@@ -12,6 +12,7 @@ import SelectedJob from './modal/SelectedJob';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Switch } from '@/components/ui/switch';
 import ShowAlert from '@/components/ui/show-alert';
+import UpdateJobModal from './modal/UpdateJobModal';
 
 function AdminJobs() {
   const [allJobs, setAllJobs] = useState([]);
@@ -73,7 +74,7 @@ function AdminJobs() {
       const res = await axios.post(url, formData);
       console.log("RES DATA ni handleJobStatusSwitch: ", res.data);
       getAllJobs();
-      if(res.data === 1) {
+      if (res.data === 1) {
         toast.success("Job status updated");
       } else {
         toast.error("Failed to update job status");
@@ -177,11 +178,11 @@ function AdminJobs() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel> Actions </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="cursor-pointer">
+                        {/* <DropdownMenuItem>
                           <Edit className="mr-2 h-4 w-4" />
-                          Update job
+
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        <DropdownMenuSeparator /> */}
                         <DropdownMenuItem
                           className="cursor-pointer flex items-center"
                           onClick={() => handleShowAlert(`Are you sure you want to ${job.jobM_status === 0 ? 'activate' : 'deactivate'} ${job.jobM_title}?`, job.jobM_status, job.jobM_id)}>
@@ -227,7 +228,6 @@ function AdminJobs() {
       }
       {showSelectedJobModal && <SelectedJob open={showSelectedJobModal} onHide={closeShowSelectedJobModal} jobId={selectedJobId} />}
       <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
-
     </>
   )
 }

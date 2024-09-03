@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { formatDate } from './page'
 import AddCourseModal from './modals/AddCourseModal'
 import { Separator } from '@radix-ui/react-dropdown-menu'
+import { retrieveData, storeData } from '../utils/storageUtils'
 
 function EducationalBackground({ courseList, graduateCourseList, institutionList }) {
   const [educationDatas, setEducationDatas] = useState([]);
@@ -22,7 +23,7 @@ function EducationalBackground({ courseList, graduateCourseList, institutionList
     if (status === 1) {
       const filteredEducationDatas = educationDatas.filter((_, index) => index !== indexToRemove);
       setEducationDatas(filteredEducationDatas);
-      localStorage.setItem("educationalBackground", JSON.stringify(filteredEducationDatas));
+      storeData("educationalBackground", JSON.stringify(filteredEducationDatas));
     }
     setShowAlert(false);
   };
@@ -36,7 +37,7 @@ function EducationalBackground({ courseList, graduateCourseList, institutionList
   const handleCloseCourseModal = (status) => {
     if (status !== 0) {
       setEducationDatas([...educationDatas, status]);
-      localStorage.setItem("educationalBackground", JSON.stringify([...educationDatas, status]));
+      storeData("educationalBackground", JSON.stringify([...educationDatas, status]));
     }
     setShowCourseModal(false);
   };
@@ -47,8 +48,8 @@ function EducationalBackground({ courseList, graduateCourseList, institutionList
   };
 
   useEffect(() => {
-    if (localStorage.getItem("educationalBackground") !== null || localStorage.getItem("educationalBackground") !== "[]") {
-      setEducationDatas(JSON.parse(localStorage.getItem("educationalBackground")));
+    if (retrieveData("educationalBackground") !== null || retrieveData("educationalBackground") !== "[]") {
+      setEducationDatas(JSON.parse(retrieveData("educationalBackground")));
     }
   }, []);
 

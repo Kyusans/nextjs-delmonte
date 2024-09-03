@@ -6,6 +6,7 @@ import { Alert, AlertTitle } from "@/components/ui/alert";
 import { formatDate } from "./page";
 import { PlusIcon, X } from "lucide-react";
 import ShowAlert from "@/components/ui/show-alert";
+import { retrieveData, storeData } from "../utils/storageUtils";
 
 function EmploymentHistory({handlePrevious, handleNext}) {
   const [position, setPosition] = useState([]);
@@ -21,7 +22,7 @@ function EmploymentHistory({handlePrevious, handleNext}) {
     if (status === 1) {
       const filteredPosition = position.filter((_, index) => index !== indexToRemove);
       setPosition(filteredPosition);
-      localStorage.setItem("employmentHistory", JSON.stringify(filteredPosition));
+      storeData.setItem("employmentHistory", JSON.stringify(filteredPosition));
     }
     setShowAlert(false);
   };
@@ -33,7 +34,7 @@ function EmploymentHistory({handlePrevious, handleNext}) {
   const handleClosePositionModal = (status) => {
     if (status !== 0) {
       setPosition([...position, status]);
-      localStorage.setItem("employmentHistory", JSON.stringify([...position, status]));
+      storeData("employmentHistory", JSON.stringify([...position, status]));
     }
     setOpenPositionModal(false);
   };
@@ -44,8 +45,8 @@ function EmploymentHistory({handlePrevious, handleNext}) {
   };
 
   useEffect(() => {
-    if (localStorage.getItem("employmentHistory") !== null || localStorage.getItem("employmentHistory") !== "[]") {
-      setPosition(JSON.parse(localStorage.getItem("employmentHistory")));
+    if (retrieveData("employmentHistory") !== null || retrieveData("employmentHistory") !== "[]") {
+      setPosition(JSON.parse(retrieveData("employmentHistory")));
     }
   }, []);
 

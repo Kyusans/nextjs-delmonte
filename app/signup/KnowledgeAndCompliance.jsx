@@ -6,14 +6,15 @@ import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import AddTrainingModal from './modals/AddTrainingModal'
 import { retrieveData, storeData } from '../utils/storageUtils'
+import AddKnowledge from './modals/AddKnowledge'
 
-function Training({ trainingList }) {
-  const [trainingData, setTrainingData] = useState([]);
+function KnowledgeForm({ knowledgeList }) {
+  const [data, setData] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-  
+
   const handleShowAlert = (message) => {
     setAlertMessage(message);
     setShowAlert(true);
@@ -21,26 +22,26 @@ function Training({ trainingList }) {
 
   const handleCloseAlert = (status) => {
     if (status === 1) {
-      const filteredTrainingData = trainingData.filter((_, index) => index !== indexToRemove);
-      setTrainingData(filteredTrainingData);
-      storeData("training", JSON.stringify(filteredTrainingData));
+      const filteredData = data.filter((_, index) => index !== indexToRemove);
+      setData(filteredData);
+      storeData("knowledge", JSON.stringify(filteredData));
     }
     setShowAlert(false);
   };
 
-  const [showTrainingModal, setShowTrainingModal] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
-  const handleOpenTrainingModal = () => {
-    setShowTrainingModal(true);
+  const handleOpenModal = () => {
+    setShowModal(true);
   }
 
-  const handleCloseTrainingModal = (status) => {
+  const handleCloseModal = (status) => {
     if (status !== 0) {
-      const newTrainingData = [...trainingData, status];
-      setTrainingData(newTrainingData);
-      storeData("training", JSON.stringify(newTrainingData));
+      const newData = [...data, status];
+      setData(newData);
+      storeData("knowledge", JSON.stringify(newData));
     }
-    setShowTrainingModal(false);
+    setShowModal(false);
   };
 
   const handleRemoveList = (indexToRemove) => {
@@ -49,22 +50,22 @@ function Training({ trainingList }) {
   };
 
   useEffect(() => {
-    const savedTrainingData = retrieveData("training");
-    if (savedTrainingData && savedTrainingData !== "[]") {
-      setTrainingData(JSON.parse(savedTrainingData));
+    const savedData = retrieveData("knowledge");
+    if (savedData && savedData !== "[]") {
+      setData(JSON.parse(savedData));
     }
   }, []);
 
   return (
     <div>
-      <Button onClick={handleOpenTrainingModal} className="bg-[#f5f5f5] mt-3 text-[#0e4028]">
+      <Button onClick={handleOpenModal} className="bg-[#f5f5f5] mt-3 text-[#0e4028]">
         <PlusIcon className="h-4 w-4 mr-1" />
-        Add Training
+        Add Knowledge and Compliance
       </Button>
       <Alert className="w-full bg-[#0a2e1c] mt-3">
-        {trainingData && trainingData.length > 0 ? (
+        {data && data.length > 0 ? (
           <CardContent>
-            {trainingData.map((data, index) => (
+            {data.map((datas, index) => (
               <Alert key={index} className="relative w-full bg-[#0e5a35] mt-3">
                 <button
                   className="absolute top-2 right-2 text-white"
@@ -73,21 +74,21 @@ function Training({ trainingList }) {
                   <X className="h-4 w-4" />
                 </button>
                 <AlertTitle className="text-md ">
-                  <div className='mb-3'>{trainingList.find((item) => item.value === data.training)?.label}</div>
+                  <div className='mb-3'>{knowledgeList.find((item) => item.value === datas.knowledge)?.label}</div>
                 </AlertTitle>
               </Alert>
             ))}
           </CardContent>
         ) : (
           <CardDescription className="text-center">
-            No training added yet
+            No knowledge added yet
           </CardDescription>
         )}
       </Alert>
-      <AddTrainingModal open={showTrainingModal} onHide={handleCloseTrainingModal} trainingList={trainingList}/>
+      <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} />
       <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
     </div>
   )
 }
 
-export default Training;
+export default KnowledgeForm;

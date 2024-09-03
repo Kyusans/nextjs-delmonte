@@ -15,11 +15,10 @@ import { format, formatISO, set } from "date-fns";
 import { cn } from "@/lib/utils";
 import EnterPin from "./modals/EnterPin";
 import axios from "axios";
-import secureLocalStorage from "react-secure-storage";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Spinner from "@/components/ui/spinner";
-import { Progress } from "@/components/ui/progress";
+import { retrieveData, storeData } from "../utils/storageUtils";
 
 const formSchema = z.object({
   firstName: z.string().min(1, {
@@ -87,13 +86,30 @@ const formSchema = z.object({
 
 const PersonalInformation = ({ nextPage }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [progress, setProgress] = useState(13);
-
   const genders = [
     { label: "Male", value: "Male" },
     { label: "Female", value: "Female" },
     { label: "Other", value: "Other" },
   ];
+
+  // para sa pag input2 lang ni so walay dropdown or katong date
+  const personalInformation = [
+    { label: "First Name", value: "firstName" },
+    { label: "Last Name", value: "lastName" },
+    { label: "Middle Name", value: "middleName" },
+    { label: "Email", value: "email" },
+    { label: "Alternate Email", value: "alternateEmail" },
+    { label: "Contact", value: "contact" },
+    { label: "Alternate Contact", value: "alternateContact" },
+    { label: "Present Address", value: "presentAddress" },
+    { label: "Permanent Address", value: "permanentAddress" },
+    { label: "SSS", value: "sss" },
+    { label: "TIN", value: "tin" },
+    { label: "Philhealth", value: "philhealth" },
+    { label: "Pag-ibig", value: "pagibig" },
+    { label: "Password", value: "password" },
+    { label: "Confirm Password", value: "confirmPassword" },
+  ]
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -122,33 +138,27 @@ const PersonalInformation = ({ nextPage }) => {
     if (values.password !== values.confirmPassword) {
       toast.error("Passwords do not match");
       return;
-    } else if (localStorage.getItem("personalInfo")) {
-      const data = JSON.parse(localStorage.getItem("personalInfo"));
+    } else if (retrieveData("personalInfo")) {
+      const data = JSON.parse(retrieveData("personalInfo"));
       if (data.email === values.email) {
         nextPage();
         return;
-      } 
+      }
     }
     try {
       setIsLoading(true);
-      const url = secureLocalStorage.getItem("url") + "users.php";
+      const url = retrieveData("url") + "users.php";
       const jsonData = { email: values.email };
       const formData = new FormData();
       formData.append("json", JSON.stringify(jsonData));
       formData.append("operation", "isEmailExist");
-      setTimeout(() => {
-        setProgress(45);
-      }, [1500]);
-      setTimeout(() => {
-        setProgress(70);
-      }, [1000]);
       const res = await axios.post(url, formData);
       console.log("EMAIL EXIST: ", res.data);
       if (res.data === -1) {
         toast.error("Email already exist");
         return;
       } else {
-        localStorage.setItem("personalInfo", JSON.stringify(values));
+        storeData("personalInfo", JSON.stringify(values));
         nextPage();
       }
     } catch (error) {
@@ -157,7 +167,6 @@ const PersonalInformation = ({ nextPage }) => {
     } finally {
       setIsLoading(false);
     }
-
   };
 
   const handleDateChange = (date) => {
@@ -167,17 +176,17 @@ const PersonalInformation = ({ nextPage }) => {
   };
 
   useEffect(() => {
-    if (secureLocalStorage.getItem("url") !== "http://localhost/delmonte/api/") {
-      secureLocalStorage.setItem("url", "http://localhost/delmonte/api/");
+    if (retrieveData("url") !== "http://localhost/delmonte/api/") {
+      storeData("url", "http://localhost/delmonte/api/");
     }
-    console.log("url", secureLocalStorage.getItem("url"));
+    console.log("url", retrieveData("url"));
   }, [])
 
   useEffect(() => {
-    if (localStorage.getItem("personalInfo") !== null) {
-      form.reset(JSON.parse(localStorage.getItem("personalInfo")));
+    if (retrieveData("personalInfo") !== null) {
+      form.reset(JSON.parse(retrieveData("personalInfo")));
     }
-    console.log("personalInfo", localStorage.getItem("personalInfo"));
+    console.log("personalInfo", retrieveData("personalInfo"));
   }, [form])
 
   return (
@@ -192,156 +201,27 @@ const PersonalInformation = ({ nextPage }) => {
                 </CardHeader>
                 <CardContent className="h-full">
                   {isLoading ? (
-                    <div className="w-full h-full flex justify-center items-center">
-                      <Progress value={progress} />
-                    </div>
+                    <Spinner /> 
                   ) : (
                     <div className="flex justify-center items-center p-4 sm:p-6">
                       <div className="space-y-2 sm:space-y-6 w-full max-w-2xl">
-                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-3">
-                          <FormField
-                            control={form.control}
-                            name="firstName"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>First Name</FormLabel>
-                                <FormControl>
-                                  <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="First Name" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="lastName"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Last Name</FormLabel>
-                                <FormControl>
-                                  <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Last Name" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="middleName"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Middle Name</FormLabel>
-                                <FormControl>
-                                  <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Middle Name" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Email</FormLabel>
-                                <FormControl>
-                                  <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Email" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="alternateEmail"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Alternate Email</FormLabel>
-                                <FormControl>
-                                  <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Alternate Email" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="contact"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Contact Number</FormLabel>
-                                <FormControl>
-                                  <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Contact Number" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="alternateContact"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Alternate Contact</FormLabel>
-                                <FormControl>
-                                  <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Alternate Contact" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="presentAddress"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Present Address</FormLabel>
-                                <FormControl>
-                                  <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Present Address" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="permanentAddress"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Permanent Address</FormLabel>
-                                <FormControl>
-                                  <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Permanent Address" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Password</FormLabel>
-                                <FormControl>
-                                  <Input type="password" className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Password" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="confirmPassword"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Confirm Password</FormLabel>
-                                <FormControl>
-                                  <Input type="password" className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Confirm Password" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
+                        <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-3">
+                          {personalInformation.map((data) => (
+                            <FormField
+                              key={data.value}
+                              control={form.control}
+                              name={data.value}
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel>{data.label}</FormLabel>
+                                  <FormControl>
+                                    <Input type={data.value.match(/password/i) ? "password" : "text"} className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder={data.label} {...field} />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          ))}
                           <FormField
                             name="gender"
                             control={form.control}
@@ -393,67 +273,14 @@ const PersonalInformation = ({ nextPage }) => {
                               </FormItem>
                             )}
                           />
-                          <FormField
-                            control={form.control}
-                            name="sss"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>SSS</FormLabel>
-                                <FormControl>
-                                  <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="SSS" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="tin"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>TIN</FormLabel>
-                                <FormControl>
-                                  <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="TIN" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="philhealth"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>PhilHealth</FormLabel>
-                                <FormControl>
-                                  <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="PhilHealth" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={form.control}
-                            name="pagibig"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Pagibig</FormLabel>
-                                <FormControl>
-                                  <Input className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder="Pagibig" {...field} />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
                         </div>
                       </div>
-
                     </div>
                   )}
                 </CardContent>
               </Card>
             </ScrollArea>
-            <div className="flex flex-col sm:flex-row gap-4 w-full max-w-4xl mt-3 justify-end">
+            <div className="flex flex-row gap-4 w-full max-w-4xl mt-3 justify-end p-3">
               <Button
                 className="px-4 py-2 rounded w-full sm:w-auto bg-[#0e5a35]"
                 variant="secondary"
@@ -478,6 +305,3 @@ const PersonalInformation = ({ nextPage }) => {
 };
 
 export default PersonalInformation;
-
-
-

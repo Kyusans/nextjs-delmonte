@@ -9,10 +9,10 @@ import ComboBox from "@/app/my_components/combo-box";
 import { z } from "zod";
 import { retrieveData } from "@/app/utils/storageUtils";
 
-function AddTrainingModal({ open, onHide, trainingList }) {
+function AddKnowledge({ open, onHide, knowledgeList }) {
 
   const formSchema = z.object({
-    training: z.number().min(1, {
+    knowledge: z.number().min(1, {
       message: "This field is required",
     }),
   });
@@ -20,19 +20,19 @@ function AddTrainingModal({ open, onHide, trainingList }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      training: 0,
+      knowledge: 0,
     },
   });
 
   const onSubmit = (values) => {
-    console.log("AddTrainingModal.jsx => onSubmit():", values);
     try {
-      const selectedTraining = JSON.parse(retrieveData("training")) || [];
+      console.log("retrieveData('knowledge'):", retrieveData("knowledge"));
+      const selectedKnowledge = JSON.parse(retrieveData("knowledge")) || [];
+      console.log("selectedKnowledge:", selectedKnowledge);
       let isValid = true;
-
-      selectedTraining.forEach((element) => {
-        if (element.training === values.training) {
-          toast.error("You already have this training");
+      selectedKnowledge.forEach((element) => {
+        if (element.knowledge === values.knowledge) {
+          toast.error("You already have this knowledge");
           isValid = false;
         }
       });
@@ -43,7 +43,7 @@ function AddTrainingModal({ open, onHide, trainingList }) {
       }
     } catch (error) {
       toast.error("Network error");
-      console.log("AddTrainingModal.jsx => onSubmit(): " + error);
+      console.log("AddKnowledge.jsx => onSubmit(): " + error);
     }
   };
 
@@ -59,7 +59,7 @@ function AddTrainingModal({ open, onHide, trainingList }) {
         <DialogOverlay className="bg-black/5" />
         <DialogContent className="bg-[#0e5a35]">
           <DialogHeader>
-            <DialogTitle className="text-3xl">Add Training</DialogTitle>
+            <DialogTitle className="text-3xl">Add Knowledge and Compliance</DialogTitle>
           </DialogHeader>
           <div className="w-full">
             <Form {...form}>
@@ -67,15 +67,15 @@ function AddTrainingModal({ open, onHide, trainingList }) {
                 <div className="flex justify-center items-center p-4 sm:p-6">
                   <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
                     <FormField
-                      name="training"
+                      name="knowledge"
                       control={form.control}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Training</FormLabel>
+                          <FormLabel>Knowledge and Compliance</FormLabel>
                           <div>
                             <ComboBox
-                              list={trainingList}
-                              subject="Training"
+                              list={knowledgeList}
+                              subject="Knowledge"
                               value={field.value}
                               onChange={field.onChange}
                             />
@@ -90,7 +90,7 @@ function AddTrainingModal({ open, onHide, trainingList }) {
                   <DialogClose asChild>
                     <Button className="bg-[#0e4028] text-white">Cancel</Button>
                   </DialogClose>
-                  <Button type="submit" className="bg-[#0b864a] text-white">Add Training</Button>
+                  <Button type="submit" className="bg-[#0b864a] text-white">Add Knowledge</Button>
                 </div>
               </form>
             </Form>
@@ -101,4 +101,4 @@ function AddTrainingModal({ open, onHide, trainingList }) {
   )
 }
 
-export default AddTrainingModal;
+export default AddKnowledge;
