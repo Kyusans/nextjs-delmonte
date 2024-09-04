@@ -138,7 +138,7 @@ function AddPositionModal({ open, onHide }) {
                                     className={cn("justify-start w-full text-left font-normal bg-[#0e4028] hover:bg-[#0e5a35] border-2 border-[#0b864a]", !field.value && "text-muted-foreground")}
                                   >
                                     <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {field.value ? format(new Date(field.value), "yyyy-MM-dd") : <span>Pick a date</span>}
+                                    {field.value ? formatDate(new Date(field.value), "yyyy-MM-dd") : <span>Pick a date</span>}
                                   </Button>
                                 </PopoverTrigger>
                                 <PopoverContent align="start" className=" w-auto p-0">
@@ -171,7 +171,7 @@ function AddPositionModal({ open, onHide }) {
                                     className={cn("justify-start w-full text-left font-normal bg-[#0e4028] hover:bg-[#0e5a35] border-2 border-[#0b864a]", !field.value && "text-muted-foreground")}
                                   >
                                     <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {field.value ? format(new Date(field.value), "yyyy-MM-dd") : <span>Pick a date</span>}
+                                    {field.value ? formatDate(new Date(field.value), "yyyy-MM-dd") : <span>Pick a date</span>}
                                   </Button>
                                 </PopoverTrigger>
                                 <PopoverContent align="start" className=" w-auto p-0">
