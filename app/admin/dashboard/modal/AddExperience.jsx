@@ -27,6 +27,11 @@ function AddExperience({ open, onHide }) {
     jobExperience: z.string().min(1, {
       message: "This field is required",
     }),
+    points: z.string().min(1, {
+      message: "This field is required",
+    }).refine((value) => !isNaN(Number(value)), {
+      message: "Points must be a number",
+    })
   });
 
   const form = useForm({
@@ -34,6 +39,7 @@ function AddExperience({ open, onHide }) {
     defaultValues: {
       yearsOfExperience: "",
       jobExperience: "",
+      points: "",
     },
   });
 
@@ -82,6 +88,19 @@ function AddExperience({ open, onHide }) {
                         <FormLabel>Job Experience Description</FormLabel>
                         <FormControl>
                           <Textarea style={{ height: "200px" }} placeholder="Enter description" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="points"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Points</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter points" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
