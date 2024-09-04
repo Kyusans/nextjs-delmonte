@@ -6,7 +6,7 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import Spinner from '@/components/ui/spinner';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -76,7 +76,7 @@ function SelectedJob({ open, onHide, jobId }) {
         <DialogContent className="max-w-7xl h-full md:h-4/5">
           {isLoading ? (<Spinner />) :
             (<>
-              <ScrollArea className="h-full rounded-md p-5 md:p-2">
+              <ScrollArea className="h-full rounded-md md:p-2">
                 <DialogHeader>
                   <DialogTitle>{data.jobMaster[0].jobM_title}</DialogTitle>
                   <ScrollArea className="h-52 md:h-36">
@@ -84,7 +84,7 @@ function SelectedJob({ open, onHide, jobId }) {
                   </ScrollArea>
                 </DialogHeader>
                 <Separator className="mb-4" />
-                <div className='flex justify-end mr-5 mb-3'>
+                <div className='flex justify-end   mb-3'>
                   <UpdateJobModal jobData={data} />
                 </div>
                 <Card className="w-full p-3">
@@ -111,7 +111,6 @@ function SelectedJob({ open, onHide, jobId }) {
                           <AccordionItem value="item-2">
                             <AccordionTrigger>Qualifications</AccordionTrigger>
                             <AccordionContent className='px-5'>
-
                               {data.jobEducation.length > 0 && (
                                 <>
                                   <div className='text-sm mb-3 font-bold'>Educational Background</div>
@@ -171,26 +170,29 @@ function SelectedJob({ open, onHide, jobId }) {
                     <TabsContent value={2}>
                       {data.candidates?.length > 0 ? (
                         <Table className="w-full text-center">
+                          <TableCaption className="text-center">Passing percentage: {data.jobPassing[0].passing_percentage}%  </TableCaption>
                           <TableHeader>
                             <TableRow>
                               <TableHead className="text-center">Index</TableHead>
                               <TableHead className="text-center">Full Name</TableHead>
                               <TableHead className="text-center">Points</TableHead>
-                            </TableRow>
+                              <TableHead className="text-center">percentage</TableHead>
+                            </TableRow> 
                           </TableHeader>
                           <TableBody>
-                            {currentCandidates?.map((data, index) => (
+                            {currentCandidates?.map((candData, index) => (
                               <TableRow key={index}>
                                 <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
-                                <TableCell>{data.FullName}</TableCell>
-                                <TableCell>{data.posA_totalpoints}</TableCell>
+                                <TableCell>{candData.FullName}</TableCell>
+                                <TableCell>{candData.points.totalPoints}/{candData.points.maxPoints}</TableCell>
+                                <TableCell className={candData.points.percentage >= data.jobPassing[0].passing_percentage ? "text-green-500" : "text-red-500"}>{candData.points.percentage}%</TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
                         </Table>
                       ) :
-                        (
-                          <>
+                        ( 
+                          <>  
                             <Card className="text-center bg-background">
                               <CardDescription className="p-5">
                                 No applicants applied yet

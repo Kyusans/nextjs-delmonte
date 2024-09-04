@@ -91,6 +91,7 @@ function AddJobExperience({ previousStep, handleSubmit }) {
                       <TableHead className="w-1/12">Index</TableHead>
                       <TableHead className="w-10/12">Experience</TableHead>
                       <TableHead className="w-1/12 text-center">Year/s of experience</TableHead>
+                      <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center"></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -102,6 +103,7 @@ function AddJobExperience({ previousStep, handleSubmit }) {
                           {data.jobExperience}
                         </TableCell>
                         <TableCell className="w-1/12 text-center">{data.yearsOfExperience}</TableCell>
+                        <TableCell className="w-1/12 text-center">{data.points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <button
                             className="h-4 w-4"

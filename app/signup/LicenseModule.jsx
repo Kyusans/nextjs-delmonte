@@ -56,7 +56,7 @@ function LicenseModule({ licenseType, licenseList }) {
       setData(JSON.parse(savedData));
     }
   }, []);
-
+  
   return (
     <div>
       <Button onClick={handleOpenModal} className="bg-[#f5f5f5] mt-3 text-[#0e4028]">

@@ -84,15 +84,15 @@ function AddJob({ handleSwitchView }) {
       }
       console.log("jsonData", JSON.stringify(jsonData));
 
-      setTimeout(() => {
-        handleSwitchView();
-      }, [1500])
+      // setTimeout(() => {
+      //   handleSwitchView();
+      // }, [1500])
       const formData = new FormData();
       formData.append("json", JSON.stringify(jsonData));
       formData.append("operation", "addJobMaster");
       const res = await axios.post(url, formData);
       console.log("RES DATA ni addJobMaster: ", res.data);
-      if (res.data !== 0) {
+      if (res.data === 1) {
         toast.success("Job added successfully");
         setCurrentStep(1);
         removeData("jobMaster");
