@@ -12,6 +12,8 @@ import { CalendarIcon } from "lucide-react";
 import { format, formatISO, set } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogOverlay, DialogTitle } from "@/components/ui/dialog";
+import { formatDate } from "../page";
+import { useState } from "react";
 
 function AddPositionModal({ open, onHide }) {
 
@@ -57,16 +59,28 @@ function AddPositionModal({ open, onHide }) {
       endDate: "",
     },
   });
+
+  const [showDatePickerStart, setShowDatePickerStart] = useState(false);
+  const [showDatePickerEnd, setShowDatePickerEnd] = useState(false);
   const handleStartDateChange = (date) => {
     if (date) {
       form.setValue("startDate", formatISO(date, { representation: 'date' }));
     }
+    form.trigger("startDate");
+    setTimeout(() => {
+      setShowDatePickerStart(false);
+    }, 50);    
+
   };
 
   const handleEndDateChange = (date) => {
     if (date) {
       form.setValue("endDate", formatISO(date, { representation: 'date' }));
     }
+    form.trigger("endDate");
+    setTimeout(() => {
+      setShowDatePickerEnd(false);
+    }, 50);
   };
 
   const onSubmit = (values) => {
@@ -131,14 +145,15 @@ function AddPositionModal({ open, onHide }) {
                           <FormItem>
                             <FormLabel>Start Date</FormLabel>
                             <div>
-                              <Popover>
+                              <Popover open={showDatePickerStart} onOpenChange={setShowDatePickerStart}>
                                 <PopoverTrigger asChild>
                                   <Button
+                                    onClick={() => setShowDatePickerStart(!showDatePickerStart)}
                                     variant={"outline"}
                                     className={cn("justify-start w-full text-left font-normal bg-[#0e4028] hover:bg-[#0e5a35] border-2 border-[#0b864a]", !field.value && "text-muted-foreground")}
                                   >
                                     <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {field.value ? format(new Date(field.value), "yyyy-MM-dd") : <span>Pick a date</span>}
+                                    {field.value ? formatDate(new Date(field.value), "yyyy-MM-dd") : <span>Pick a date</span>}
                                   </Button>
                                 </PopoverTrigger>
                                 <PopoverContent align="start" className=" w-auto p-0">
@@ -164,14 +179,15 @@ function AddPositionModal({ open, onHide }) {
                           <FormItem>
                             <FormLabel>End Date</FormLabel>
                             <div>
-                              <Popover>
+                              <Popover open={showDatePickerEnd} onOpenChange={setShowDatePickerEnd}>
                                 <PopoverTrigger asChild>
                                   <Button
+                                    onClick={() => setShowDatePickerEnd(!showDatePickerEnd)}
                                     variant={"outline"}
                                     className={cn("justify-start w-full text-left font-normal bg-[#0e4028] hover:bg-[#0e5a35] border-2 border-[#0b864a]", !field.value && "text-muted-foreground")}
                                   >
                                     <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {field.value ? format(new Date(field.value), "yyyy-MM-dd") : <span>Pick a date</span>}
+                                    {field.value ? formatDate(new Date(field.value), "yyyy-MM-dd") : <span>Pick a date</span>}
                                   </Button>
                                 </PopoverTrigger>
                                 <PopoverContent align="start" className=" w-auto p-0">

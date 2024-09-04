@@ -22,6 +22,7 @@ import { removeData, retrieveData, storeData } from '../utils/storageUtils';
 import KnowledgeForm from './KnowledgeAndCompliance';
 import ShowAlert from '@/components/ui/show-alert';
 import { useRouter } from 'next/navigation';
+import LicenseModule from './LicenseModule';
 
 const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +36,8 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const { setTheme } = useTheme();
   const [isValidated, setIsValidated] = useState(false);
+  const [license, setLicense] = useState([]);
+  const [licenseType, setLicenseType] = useState("");
 
   const [pincode, setPincode] = useState("");
   const [showPin, setShowPin] = useState(false);
@@ -70,6 +73,7 @@ const Signup = () => {
         skills: JSON.parse(retrieveData("skills")),
         trainings: JSON.parse(retrieveData("training")),
         knowledge: JSON.parse(retrieveData("knowledge")),
+        licenses: JSON.parse(retrieveData("licenses")),
         isSubscribeToEmail: retrieveData("isSubscribeToEmail") ?? 0
       }
       console.log("IYANG INFO LMAO: ", jsonData);
@@ -89,6 +93,7 @@ const Signup = () => {
         removeData("training");
         removeData("positionId");
         removeData("knowledge");
+        removeData("licenses");
         removeData("isSubscribeToEmail");
         setTimeout(() => {
           router.push("/login");
@@ -118,14 +123,14 @@ const Signup = () => {
 
   const handleNext = () => {
     if (currentStep === 2) {
-      if (retrieveData("knowledge") === null || retrieveData("knowledge") === "[]") {
+      if (retrieveData("educationalBackground") === null || retrieveData("educationalBackground") === "[]") {
         handleShowAlert("You didn't put any educational background. Are you sure you want to continue?");
         return;
       }
     }
     else if (currentStep === 3) {
-      if (retrieveData("educationalBackground") === null || retrieveData("educationalBackground") === "[]") {
-        handleShowAlert("You didn't put any educational background. Are you sure you want to continue?");
+      if (retrieveData("licenses") === null || retrieveData("licenses") === "[]") {
+        handleShowAlert("You didn't put any licenses. Are you sure you want to continue?");
         return;
       }
     } else if (currentStep === 4) {
@@ -134,11 +139,16 @@ const Signup = () => {
         return;
       }
     } else if (currentStep === 5) {
+      if (retrieveData("knowledge") === null || retrieveData("knowledge") === "[]") {
+        handleShowAlert("You didn't put any knowledge and compliance. Are you sure you want to continue?");
+        return;
+      }
+    } else if (currentStep === 6) {
       if (retrieveData("skills") === null || retrieveData("skills") === "[]") {
         handleShowAlert("You didn't put any skills. Are you sure you want to continue?");
         return;
       }
-    } else if (currentStep === 6) {
+    } else if (currentStep === 7) {
       if (retrieveData("training") === null || retrieveData("training") === "[]") {
         handleShowAlert("You didn't put any trainings. Are you sure you want to continue?");
         return;
@@ -198,9 +208,10 @@ const Signup = () => {
 
   const pages = [
     { content: "" },
-    { title: "Knowledge and compliance", content: <KnowledgeForm knowledgeList={knowledge} /> },
     { title: "Educational Background", content: <EducationalBackground courseList={courses} graduateCourseList={courseGraduate} institutionList={institutions} /> },
+    { title: "Licenses", content: <LicenseModule licenseType={licenseType} licenseList={license} /> },
     { title: "Employment History", content: <EmploymentHistory /> },
+    { title: "Knowledge and compliance", content: <KnowledgeForm knowledgeList={knowledge} /> },
     { title: "Skills", content: <Skills skillList={skills} /> },
     { title: "Trainings", content: <Training trainingList={trainings} /> },
     { title: "Subscribe to email update?", content: <SubscribeToEmail /> },
@@ -225,11 +236,12 @@ const Signup = () => {
         const formattedCourses = res.data.courses.map((course) => ({
           value: course.courses_id,
           label: course.courses_name,
-          categoryId: course.courses_coursecategoryId
+          categoryId: course.courses_coursecategoryId,
+          courseType: course.courses_courseTypeId
         }))
-        const formattedCourseGraduate = res.data.courseGraduate.map((courseGrad) => ({
-          value: courseGrad.course_graduateId,
-          label: courseGrad.course_graduateName
+        const formattedCourseGraduate = res.data.courseType.map((courseGrad) => ({
+          value: courseGrad.crs_type_id,
+          label: courseGrad.crs_type_name
         }))
         const formattedSkills = res.data.skills.map((skill) => ({
           value: skill.perS_id,
@@ -243,6 +255,17 @@ const Signup = () => {
           value: knowledge.knowledge_id,
           label: knowledge.knowledge_name
         }))
+        const formattedLicenseType = res.data.licenseType.map((licenseType) => ({
+          value: licenseType.license_type_id,
+          label: licenseType.license_type_name
+        }))
+        const formattedLicense = res.data.license.map((license) => ({
+          value: license.license_master_id,
+          label: license.license_master_name,
+          type: license.license_master_typeId
+        }))
+        setLicenseType(formattedLicenseType);
+        setLicense(formattedLicense);
         setInstitutions(formattedInstitutions);
         setCourses(formattedCourses);
         setCourseGraduate(formattedCourseGraduate);
@@ -252,7 +275,7 @@ const Signup = () => {
       }
     } catch (error) {
       toast.error("Network error");
-      console.log("PersonalInformation.jsx => onSubmit(): " + error);
+      console.log("Signup.jsx => onSubmit(): " + error);
     } finally {
       setIsLoading(false);
     }
@@ -284,6 +307,10 @@ const Signup = () => {
     }
     if (retrieveData("trainings") === null) {
       storeData("trainings", "[]");
+    }
+
+    if (retrieveData("licenses") === null) {
+      storeData("licenses", "[]");
     }
   }, []);
   return (
@@ -334,6 +361,12 @@ const Signup = () => {
                 <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 7 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
                   {currentStep > 7 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '7'}
                 </div>
+                {/* Connector */}
+                <div className={`h-1 flex-1 ${currentStep >= 7 ? 'bg-primary dark:bg-[#16995a]' : 'bg-gray-200'}`} />
+                {/* Step 8 */}
+                <div className={`h-8 w-8 sm:h-10 sm:w-10 flex items-center justify-center rounded-full border ${currentStep >= 8 ? 'dark:border-white dark:border-1 dark:bg-[#0e5a35] text-white' : 'bg-gray-200 text-gray-600'}`}>
+                  {currentStep > 8 ? <Check className="w-4 h-4 sm:w-5 sm:h-5" /> : '8'}
+                </div>
               </div>
               {currentStep === 1 ? <PersonalInformation nextPage={handleNext} />
                 :
@@ -348,8 +381,8 @@ const Signup = () => {
                       </CardContent>
                     </Card>
                   </ScrollArea>
-                  {currentStep <= 7 &&
-                    <div className="flex flex-col sm:flex-row gap-4 w-full max-w-4xl mt-3 justify-end">
+                  {currentStep <= 8 &&
+                    <div className="flex flex-row gap-4 w-full max-w-4xl mt-3 justify-end p-3">
                       <Button
                         onClick={handlePrevious}
                         className="px-4 py-2 rounded w-full sm:w-auto bg-[#0e5a35]"
@@ -359,10 +392,10 @@ const Signup = () => {
                         Previous
                       </Button>
                       <Button
-                        onClick={currentStep === 6 ? handleSubmit : currentStep === 7 ? handleSaveInformation : handleNext}
+                        onClick={currentStep === 7 ? handleSubmit : currentStep === 8 ? handleSaveInformation : handleNext}
                         className="px-4 py-2 rounded bg-[#f5f5f5] text-[#0e4028]  w-full sm:w-auto"
                       >
-                        {currentStep === 7 ? 'Submit' : 'Next'}
+                        {currentStep === 8 ? 'Submit' : 'Next'}
                       </Button>
                     </div>
                   }

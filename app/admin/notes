@@ -1,6 +1,8 @@
 shadcn new download
 
 npx shadcn@latest add switch
+npx shadcn@latest add radio-group
+
 
 
 

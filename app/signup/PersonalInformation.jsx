@@ -19,6 +19,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Spinner from "@/components/ui/spinner";
 import { retrieveData, storeData } from "../utils/storageUtils";
+import { formatDate } from "./page";
 
 const formSchema = z.object({
   firstName: z.string().min(1, {
@@ -57,12 +58,12 @@ const formSchema = z.object({
   }),
   dob: z.string().min(1, { message: "This field is required" })
     .refine((date) => {
-      const parsedDate = new Date(date);
+      const parsedEndDate = Date.parse(date);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      return parsedDate <= today;
+      return parsedEndDate <= today.getTime();
     }, {
-      message: "Invalid Date",
+      message: "Date cannot be in the future",
     }),
   sss: z.string().min(1, {
     message: "This field is required",
@@ -169,9 +170,14 @@ const PersonalInformation = ({ nextPage }) => {
     }
   };
 
+  const [showDOB, setShowDOB] = useState(false);
   const handleDateChange = (date) => {
     if (date) {
       form.setValue("dob", formatISO(date, { representation: 'date' }));
+      form.trigger("dob"); 
+      setTimeout(() => {
+        setShowDOB(false);
+      }, 50);
     }
   };
 
@@ -201,7 +207,7 @@ const PersonalInformation = ({ nextPage }) => {
                 </CardHeader>
                 <CardContent className="h-full">
                   {isLoading ? (
-                    <Spinner /> 
+                    <Spinner />
                   ) : (
                     <div className="flex justify-center items-center p-4 sm:p-6">
                       <div className="space-y-2 sm:space-y-6 w-full max-w-2xl">
@@ -247,14 +253,15 @@ const PersonalInformation = ({ nextPage }) => {
                               <FormItem>
                                 <FormLabel>Date of Birth</FormLabel>
                                 <div>
-                                  <Popover>
+                                  <Popover open={showDOB}>
                                     <PopoverTrigger asChild>
                                       <Button
+                                        onClick={() => setShowDOB(!showDOB)}
                                         variant={"outline"}
                                         className={cn("justify-start w-full text-left font-normal bg-[#0e4028] hover:bg-[#0e5a35] border-2 border-[#0b864a]", !field.value && "text-muted-foreground")}
                                       >
                                         <CalendarIcon className="mr-2 h-4 w-4" />
-                                        {field.value ? format(new Date(field.value), "yyyy-MM-dd") : <span>Pick a date</span>}
+                                        {field.value ? formatDate(new Date(field.value), "yyyy-MM-dd") : <span>Pick a date</span>}
                                       </Button>
                                     </PopoverTrigger>
                                     <PopoverContent align="start" className=" w-auto p-0">
