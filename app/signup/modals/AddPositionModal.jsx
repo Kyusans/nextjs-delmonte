@@ -12,6 +12,8 @@ import { CalendarIcon } from "lucide-react";
 import { format, formatISO, set } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogOverlay, DialogTitle } from "@/components/ui/dialog";
+import { formatDate } from "../page";
+import { useState } from "react";
 
 function AddPositionModal({ open, onHide }) {
 
@@ -57,16 +59,28 @@ function AddPositionModal({ open, onHide }) {
       endDate: "",
     },
   });
+
+  const [showDatePickerStart, setShowDatePickerStart] = useState(false);
+  const [showDatePickerEnd, setShowDatePickerEnd] = useState(false);
   const handleStartDateChange = (date) => {
     if (date) {
       form.setValue("startDate", formatISO(date, { representation: 'date' }));
     }
+    form.trigger("startDate");
+    setTimeout(() => {
+      setShowDatePickerStart(false);
+    }, 50);    
+
   };
 
   const handleEndDateChange = (date) => {
     if (date) {
       form.setValue("endDate", formatISO(date, { representation: 'date' }));
     }
+    form.trigger("endDate");
+    setTimeout(() => {
+      setShowDatePickerEnd(false);
+    }, 50);
   };
 
   const onSubmit = (values) => {
@@ -131,9 +145,10 @@ function AddPositionModal({ open, onHide }) {
                           <FormItem>
                             <FormLabel>Start Date</FormLabel>
                             <div>
-                              <Popover>
+                              <Popover open={showDatePickerStart} onOpenChange={setShowDatePickerStart}>
                                 <PopoverTrigger asChild>
                                   <Button
+                                    onClick={() => setShowDatePickerStart(!showDatePickerStart)}
                                     variant={"outline"}
                                     className={cn("justify-start w-full text-left font-normal bg-[#0e4028] hover:bg-[#0e5a35] border-2 border-[#0b864a]", !field.value && "text-muted-foreground")}
                                   >
@@ -164,9 +179,10 @@ function AddPositionModal({ open, onHide }) {
                           <FormItem>
                             <FormLabel>End Date</FormLabel>
                             <div>
-                              <Popover>
+                              <Popover open={showDatePickerEnd} onOpenChange={setShowDatePickerEnd}>
                                 <PopoverTrigger asChild>
                                   <Button
+                                    onClick={() => setShowDatePickerEnd(!showDatePickerEnd)}
                                     variant={"outline"}
                                     className={cn("justify-start w-full text-left font-normal bg-[#0e4028] hover:bg-[#0e5a35] border-2 border-[#0b864a]", !field.value && "text-muted-foreground")}
                                   >

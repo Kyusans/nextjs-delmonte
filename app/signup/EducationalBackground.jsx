@@ -76,12 +76,6 @@ function EducationalBackground({ courseList, graduateCourseList, institutionList
                   <Separator className="my-2 border-t " />
                   <div className='mb-3'>Course: {courseList.find((item) => item.value === data.course)?.label}</div>
                   <div className="mb-3">Date Graduated: {formatDate(data.courseDateGraduated)}</div>
-                  <Separator className="my-2 border-t " />
-                  <div className="mb-3">Graduate Course: {graduateCourseList.find((item) => item.value === data.graduateCourse)?.label}</div>
-                  <div className="mb-3">Date Graduated: {formatDate(data.graduateCourseDate)}</div>
-                  <Separator className="my-2 border-t " />
-                  <div className="mb-3">PRC License: {data.prcLicense}</div>
-                  <div className="mb-3">PRC License Number: {data.prcLicenseNumber}</div>
                 </AlertTitle>
               </Alert>
             ))}
