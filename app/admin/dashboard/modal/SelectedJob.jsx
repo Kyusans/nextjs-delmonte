@@ -12,6 +12,7 @@ import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import UpdateJobModal from './UpdateJobModal';
+import SelectedApplicant from './SelectedApplicant';
 
 function SelectedJob({ open, onHide, jobId }) {
 
@@ -69,6 +70,18 @@ function SelectedJob({ open, onHide, jobId }) {
       setCurrentPage(currentPage - 1);
     }
   };
+
+  const [showSelectedApplicant, setShowSelectedApplicant] = useState(false);
+  const [selectedApplicantId, setSelectedApplicantId] = useState(0);
+  const handleShowSelectedApplicant = (id) => {
+    setSelectedApplicantId(id);
+    setShowSelectedApplicant(true);
+  }
+  const handleCloseSelectedApplicant = () => {
+    // alert("HIDDEN NA")
+    setShowSelectedApplicant(false);
+  };
+
 
   return (
     <>
@@ -177,11 +190,11 @@ function SelectedJob({ open, onHide, jobId }) {
                               <TableHead className="text-center">Full Name</TableHead>
                               <TableHead className="text-center">Points</TableHead>
                               <TableHead className="text-center">percentage</TableHead>
-                            </TableRow> 
+                            </TableRow>
                           </TableHeader>
                           <TableBody>
                             {currentCandidates?.map((candData, index) => (
-                              <TableRow key={index}>
+                              <TableRow key={index} className="cursor-pointer" onClick={() => handleShowSelectedApplicant(candData.cand_id)}>
                                 <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
                                 <TableCell>{candData.FullName}</TableCell>
                                 <TableCell>{candData.points.totalPoints}/{candData.points.maxPoints}</TableCell>
@@ -191,8 +204,8 @@ function SelectedJob({ open, onHide, jobId }) {
                           </TableBody>
                         </Table>
                       ) :
-                        ( 
-                          <>  
+                        (
+                          <>
                             <Card className="text-center bg-background">
                               <CardDescription className="p-5">
                                 No applicants applied yet
@@ -241,7 +254,7 @@ function SelectedJob({ open, onHide, jobId }) {
             </>)}
         </DialogContent>
       </Dialog>
-
+      <SelectedApplicant open={showSelectedApplicant} onHide={handleCloseSelectedApplicant} candId={selectedApplicantId} />
     </>
   );
 }

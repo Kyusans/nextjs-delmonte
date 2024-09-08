@@ -60,9 +60,9 @@ function UpdateJobModal({ jobData }) {
 
   return (
     <Drawer onClose={handleClose}>
-      <DrawerTrigger asChild>
+      {/* <DrawerTrigger asChild>
         <Button variant="outline"><Edit className="mr-2 h-4 w-4" /> Edit </Button>
-      </DrawerTrigger>
+      </DrawerTrigger> */}
       <DrawerContent className="h-full">
         <DrawerHeader>
           <DrawerTitle>Update Job</DrawerTitle>
