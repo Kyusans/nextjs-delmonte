@@ -78,7 +78,6 @@ function SelectedJob({ open, onHide, jobId }) {
     setShowSelectedApplicant(true);
   }
   const handleCloseSelectedApplicant = () => {
-    // alert("HIDDEN NA")
     setShowSelectedApplicant(false);
   };
 
@@ -87,6 +86,7 @@ function SelectedJob({ open, onHide, jobId }) {
     <>
       <Dialog open={open} onOpenChange={onHide}>
         <DialogContent className="max-w-7xl h-full md:h-4/5">
+        <DialogTitle className="hidden"/>
           {isLoading ? (<Spinner />) :
             (<>
               <ScrollArea className="h-full rounded-md md:p-2">
@@ -183,13 +183,13 @@ function SelectedJob({ open, onHide, jobId }) {
                     <TabsContent value={2}>
                       {data.candidates?.length > 0 ? (
                         <Table className="w-full text-center">
-                          <TableCaption className="text-center">Passing percentage: {data.jobPassing[0].passing_percentage}%  </TableCaption>
+                          <TableCaption className="text-center">Passing percentage: {data.jobPassing[0].passing_percentage ? data.jobPassing[0].passing_percentage : 0}%  </TableCaption>
                           <TableHeader>
                             <TableRow>
                               <TableHead className="text-center">Index</TableHead>
                               <TableHead className="text-center">Full Name</TableHead>
                               <TableHead className="text-center">Points</TableHead>
-                              <TableHead className="text-center">percentage</TableHead>
+                              <TableHead className="text-center">Percentage</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -254,7 +254,8 @@ function SelectedJob({ open, onHide, jobId }) {
             </>)}
         </DialogContent>
       </Dialog>
-      <SelectedApplicant open={showSelectedApplicant} onHide={handleCloseSelectedApplicant} candId={selectedApplicantId} />
+      
+      {showSelectedApplicant && <SelectedApplicant open={showSelectedApplicant} onHide={handleCloseSelectedApplicant} candId={selectedApplicantId} />}
     </>
   );
 }
