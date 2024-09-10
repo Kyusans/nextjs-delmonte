@@ -192,9 +192,6 @@ function AdminJobs() {
                           />
                           {job.jobM_status === 1 ? 'Active' : 'Inactive'}
                         </DropdownMenuItem>
-
-
-
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </CardTitle>
