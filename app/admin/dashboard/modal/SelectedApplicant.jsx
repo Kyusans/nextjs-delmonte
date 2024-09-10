@@ -151,7 +151,7 @@ function SelectedApplicant({ open, onHide, candId }) {
                           <TabsContent value={1}>
                             {data.educationalBackground && data.educationalBackground.length > 0 ? (
                               <>
-                                <div className='w-full ml-3 hidden md:block'>
+                                <div className='w-full ml-3 hidden lg:block'>
                                   <Table className="w-full">
                                     <TableHeader>
                                       <TableRow>
@@ -177,7 +177,7 @@ function SelectedApplicant({ open, onHide, candId }) {
                                     </TableBody>
                                   </Table>
                                 </div>
-                                <div className="block md:hidden">
+                                <div className="block lg:hidden">
                                   {data.educationalBackground.map((data, index) => (
                                     <div key={index} className="relative w-full p-4 rounded-md shadow">
 
@@ -202,10 +202,11 @@ function SelectedApplicant({ open, onHide, candId }) {
                           <TabsContent value={2}>
                             {data.employmentHistory && data.employmentHistory.length > 0 ? (
                               <>
-                                <div className='w-full ml-3 hidden md:block'>
+                                <div className='w-full ml-3 hidden lg:block'>
                                   <Table className="w-full">
                                     <TableHeader>
                                       <TableRow>
+                                        <TableHead>#</TableHead>
                                         <TableHead>Company name</TableHead>
                                         <TableHead>Position</TableHead>
                                         <TableHead>Start date</TableHead>
@@ -215,6 +216,7 @@ function SelectedApplicant({ open, onHide, candId }) {
                                     <TableBody>
                                       {data.employmentHistory.map((data, index) => (
                                         <TableRow key={index}>
+                                          <TableCell>{index + 1}</TableCell>
                                           <TableCell>{data.empH_companyName}</TableCell>
                                           <TableCell>{data.empH_positionName}</TableCell>
                                           <TableCell>{formatDate(data.empH_startdate)}</TableCell>
@@ -224,7 +226,7 @@ function SelectedApplicant({ open, onHide, candId }) {
                                     </TableBody>
                                   </Table>
                                 </div>
-                                <div className="block md:hidden">
+                                <div className="block lg:hidden">
                                   {data.employmentHistory.map((data, index) => (
                                     <div key={index} className="relative w-full p-4 rounded-md shadow">
 
@@ -249,7 +251,7 @@ function SelectedApplicant({ open, onHide, candId }) {
                           <TabsContent value={3}>
                             {data.training && data.training.length > 0 ? (
                               <>
-                                <div className='w-full ml-3 hidden md:block'>
+                                <div className='w-full ml-3 hidden lg:block'>
                                   <Table className="w-full text-center">
                                     <TableHeader>
                                       <TableRow>
@@ -267,7 +269,7 @@ function SelectedApplicant({ open, onHide, candId }) {
                                     </TableBody>
                                   </Table>
                                 </div>
-                                <div className="block md:hidden">
+                                <div className="block lg:hidden">
                                   {data.training.map((data, index) => (
                                     <div key={index} className="relative w-full p-4 rounded-md shadow">
                                       <div className="mt-2 text-sm">

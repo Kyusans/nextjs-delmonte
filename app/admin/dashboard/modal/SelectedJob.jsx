@@ -81,12 +81,15 @@ function SelectedJob({ open, onHide, jobId }) {
     setShowSelectedApplicant(false);
   };
 
+  const handleUpdateJob = (data, type) => {
+    return <UpdateJobModal jobData={data} type={type} getSelectedJobs={getSelectedJobs} />
+  }
 
   return (
     <>
       <Dialog open={open} onOpenChange={onHide}>
         <DialogContent className="max-w-7xl h-full md:h-4/5">
-        <DialogTitle className="hidden"/>
+          <DialogTitle className="hidden" />
           {isLoading ? (<Spinner />) :
             (<>
               <ScrollArea className="h-full rounded-md md:p-2">
@@ -98,7 +101,6 @@ function SelectedJob({ open, onHide, jobId }) {
                 </DialogHeader>
                 <Separator className="mb-4" />
                 <div className='flex justify-end   mb-3'>
-                  <UpdateJobModal jobData={data} />
                 </div>
                 <Card className="w-full p-3">
                   <Tabs defaultValue={1} className='mb-5'>
@@ -109,7 +111,12 @@ function SelectedJob({ open, onHide, jobId }) {
                     <TabsContent value={1}>
                       <Accordion type="multiple" collapsible="true" className="w-full" defaultValue={["item-1", "item-2"]}>
                         <AccordionItem value="item-1">
-                          <AccordionTrigger>Duties and Responsibilities</AccordionTrigger>
+                          <AccordionTrigger>
+                            <div className="flex items-center w-full">
+                              <span>Duties and Responsibilities</span>
+                              {handleUpdateJob(data.jobDuties, "duties")}
+                            </div>
+                          </AccordionTrigger>
                           <AccordionContent className='px-5'>
                             <div className='w-full'>
                               {data.jobDuties.map((data, index) => (
@@ -126,7 +133,10 @@ function SelectedJob({ open, onHide, jobId }) {
                             <AccordionContent className='px-5'>
                               {data.jobEducation.length > 0 && (
                                 <>
-                                  <div className='text-sm mb-3 font-bold'>Educational Background</div>
+                                  <div className='text-sm mb-3 font-bold flex items-center'>
+                                    <span>Educational Background </span>
+                                    {handleUpdateJob(data, "education")}
+                                  </div>
                                   <div className='w-full ml-3'>
                                     {data.jobEducation.map((data, index) => (
                                       <ul key={index} className="list-disc ml-4 mb-1">
@@ -136,10 +146,12 @@ function SelectedJob({ open, onHide, jobId }) {
                                   </div>
                                 </>
                               )}
-
                               {data.jobSkills.length > 0 && (
                                 <>
-                                  <div className='text-sm my-3 font-bold'>Skills</div>
+                                  <div className='text-sm my-3 font-bold flex items-center'>
+                                    <span>Skills</span>
+                                    {handleUpdateJob(data, "skills")}
+                                  </div>
                                   <div className='w-full ml-3'>
                                     {data.jobSkills.map((data, index) => (
                                       <ul key={index} className="list-disc ml-4 mb-1">
@@ -149,10 +161,12 @@ function SelectedJob({ open, onHide, jobId }) {
                                   </div>
                                 </>
                               )}
-
                               {data.jobTrainings.length > 0 && (
                                 <>
-                                  <div className='text-sm my-3 font-bold'>Trainings</div>
+                                  <div className='text-sm my-3 font-bold flex items-center'>
+                                    <span>Trainings</span>
+                                    {handleUpdateJob(data, "trainings")}
+                                  </div>
                                   <div className='w-full ml-3'>
                                     {data.jobTrainings.map((data, index) => (
                                       <ul key={index} className="list-disc ml-4 mb-1">
@@ -162,10 +176,12 @@ function SelectedJob({ open, onHide, jobId }) {
                                   </div>
                                 </>
                               )}
-
                               {data.jobExperience.length > 0 && (
                                 <>
-                                  <div className='text-sm my-3 font-bold'>Experience</div>
+                                  <div className='text-sm my-3 font-bold flex items-center'>
+                                    <span>Experience</span>
+                                    {handleUpdateJob(data, "experience")}
+                                    </div>
                                   <div className='w-full ml-3'>
                                     {data.jobExperience.map((data, index) => (
                                       <ul key={index} className="list-disc ml-4 mb-1">
@@ -254,7 +270,7 @@ function SelectedJob({ open, onHide, jobId }) {
             </>)}
         </DialogContent>
       </Dialog>
-      
+
       {showSelectedApplicant && <SelectedApplicant open={showSelectedApplicant} onHide={handleCloseSelectedApplicant} candId={selectedApplicantId} />}
     </>
   );

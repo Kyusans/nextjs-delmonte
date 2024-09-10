@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -8,9 +8,38 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 
 function ShowAlert({ open, onHide, message }) {
+  const [countdown, setCountdown] = useState(5);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+
+  useEffect(() => {
+    let timer;
+
+    if (open) {
+      setCountdown(5);
+      setIsButtonDisabled(true);
+      
+      timer = setInterval(() => {
+        setCountdown(prev => {
+          if (prev > 1) {
+            return prev - 1;
+          } else {
+            clearInterval(timer);
+            setIsButtonDisabled(false);
+            return 0;
+          }
+        });
+      }, 1000);
+    }
+
+    return () => {
+      clearInterval(timer);
+      setIsButtonDisabled(true);
+    };
+  }, [open]);
+
   const handleOnHide = () => {
     onHide(0);
   };
@@ -31,7 +60,9 @@ function ShowAlert({ open, onHide, message }) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel variant="outline">Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleContinue}>Continue</AlertDialogAction>
+            <AlertDialogAction onClick={handleContinue} disabled={isButtonDisabled}>
+              {isButtonDisabled ? `Continue in ${countdown}` : "Continue"}
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -40,6 +71,8 @@ function ShowAlert({ open, onHide, message }) {
 }
 
 export default ShowAlert;
+
+
 
   //how to use it
   // const [alertMessage, setAlertMessage] = useState("");
