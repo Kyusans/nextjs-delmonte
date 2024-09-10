@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { Popover } from '@/components/ui/popover';
 import UpdateDuties from './UpdateDuties';
 
-function UpdateJobModal({ jobData, type, getSelectedJobs }) {
+function UpdateJobModal({ jobData, type, getSelectedJobs, jobId}) {
 
 
   const handleClose = () => {
@@ -16,18 +16,18 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
 
   const updatePage = () => {
     if(type === "duties"){
-      return <UpdateDuties data={jobData}  />
+      return <UpdateDuties data={jobData} getSelectedJobs={getSelectedJobs} jobId={jobId} />
     }
   }
 
   return (
     <Drawer onClose={handleClose}>
       <DrawerTrigger asChild>
-        <Button variant="transparent">
+        <button variant="transparent">
           <Popover>
             <Edit className="mr-2 h-4 w-4" />
           </Popover>
-        </Button>
+        </button>
       </DrawerTrigger>
       <DrawerContent className="h-full">
         <DrawerHeader>

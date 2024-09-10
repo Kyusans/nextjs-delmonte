@@ -82,7 +82,7 @@ function SelectedJob({ open, onHide, jobId }) {
   };
 
   const handleUpdateJob = (data, type) => {
-    return <UpdateJobModal jobData={data} type={type} getSelectedJobs={getSelectedJobs} />
+    return <UpdateJobModal jobData={data} type={type} getSelectedJobs={getSelectedJobs} jobId={jobId} />
   }
 
   return (
@@ -113,7 +113,7 @@ function SelectedJob({ open, onHide, jobId }) {
                         <AccordionItem value="item-1">
                           <AccordionTrigger>
                             <div className="flex items-center w-full">
-                              <span>Duties and Responsibilities</span>
+                              <span className='mr-2'>Duties and Responsibilities</span>
                               {handleUpdateJob(data.jobDuties, "duties")}
                             </div>
                           </AccordionTrigger>
@@ -134,7 +134,7 @@ function SelectedJob({ open, onHide, jobId }) {
                               {data.jobEducation.length > 0 && (
                                 <>
                                   <div className='text-sm mb-3 font-bold flex items-center'>
-                                    <span>Educational Background </span>
+                                    <span className='mr-2'>Educational Background </span>
                                     {handleUpdateJob(data, "education")}
                                   </div>
                                   <div className='w-full ml-3'>
@@ -149,7 +149,7 @@ function SelectedJob({ open, onHide, jobId }) {
                               {data.jobSkills.length > 0 && (
                                 <>
                                   <div className='text-sm my-3 font-bold flex items-center'>
-                                    <span>Skills</span>
+                                    <span className='mr-2'>Skills</span>
                                     {handleUpdateJob(data, "skills")}
                                   </div>
                                   <div className='w-full ml-3'>
@@ -164,7 +164,7 @@ function SelectedJob({ open, onHide, jobId }) {
                               {data.jobTrainings.length > 0 && (
                                 <>
                                   <div className='text-sm my-3 font-bold flex items-center'>
-                                    <span>Trainings</span>
+                                    <span className='mr-2'>Trainings</span>
                                     {handleUpdateJob(data, "trainings")}
                                   </div>
                                   <div className='w-full ml-3'>
@@ -179,7 +179,7 @@ function SelectedJob({ open, onHide, jobId }) {
                               {data.jobExperience.length > 0 && (
                                 <>
                                   <div className='text-sm my-3 font-bold flex items-center'>
-                                    <span>Experience</span>
+                                    <span className='mr-2'>Experience</span>
                                     {handleUpdateJob(data, "experience")}
                                     </div>
                                   <div className='w-full ml-3'>

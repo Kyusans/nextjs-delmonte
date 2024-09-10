@@ -11,16 +11,14 @@ import {
 } from "@/components/ui/alert-dialog";
 
 function ShowAlert({ open, onHide, message }) {
-  const [countdown, setCountdown] = useState(5);
+  const [countdown, setCountdown] = useState(3);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
   useEffect(() => {
     let timer;
-
     if (open) {
-      setCountdown(5);
+      setCountdown(3);
       setIsButtonDisabled(true);
-      
       timer = setInterval(() => {
         setCountdown(prev => {
           if (prev > 1) {

@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 
-function UpdateDuties({ data }) {
+function UpdateDuties({ data, getSelectedJobs, jobId }) {
   const [isLoading, setIsLoading] = useState(false);
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
@@ -33,7 +33,6 @@ function UpdateDuties({ data }) {
     if (status === 1) {
       const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
       setDatas(filteredDatas);
-      storeData("duties", JSON.stringify(filteredDatas));
     }
     setShowAlert(false);
   };
@@ -44,10 +43,10 @@ function UpdateDuties({ data }) {
     setShowModal(true);
   }
 
-  const handleCloseModal = (status) => {
+  const handleCloseModal = async (status) => {
     if (status !== 0) {
-      setDatas([...datas, status]);
-      storeData("duties", JSON.stringify([...datas, status]));
+      await handleAddDuties(status.duties);
+      getSelectedJobs();
     } else {
       setDatas(datas);
     }
@@ -69,6 +68,30 @@ function UpdateDuties({ data }) {
     setEditIndex(null);
     setEditedText("");
     setSelectedId(null);
+  };
+
+  const handleAddDuties = async (value) => {
+    setIsLoading(true);
+    try {
+      const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
+      const jsonData = {
+        dutyId: jobId,
+        duties: value
+      }
+      console.log("jsonData ni handleAddDuties: ", jsonData)
+      const formData = new FormData();
+      formData.append("operation", "addDuties");
+      formData.append("json", JSON.stringify(jsonData));
+      const res = await axios.post(url, formData);
+      console.log("res.data ni handleAddDuties: ", res.data)
+      if (res.data !== 0) {
+        toast.success("Duties added successfully");
+      }
+    } catch (error) {
+      toast.error("Network error");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleUpdate = async () => {
@@ -98,7 +121,7 @@ function UpdateDuties({ data }) {
         setDatas(updatedDatas);
         handleCancelEdit();
       } else {
-       handleCancelEdit();
+        handleCancelEdit();
       }
     } catch (error) {
       toast.error("Network error");
