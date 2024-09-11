@@ -10,10 +10,15 @@ import { toast } from 'sonner';
 import axios from 'axios';
 import Spinner from '@/components/ui/spinner';
 import { retrieveData } from '@/app/utils/storageUtils';
+import UpdateEducation from './UpdateEducationBackground';
 
 function UpdateJobModal({ jobData, type, getSelectedJobs }) {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
+  const [courseCategory, setCourseCategory] = useState([]);
+  const [training, setTraining] = useState([]);
+  const [skills, setSkills] = useState([]);
+  const [knowledgeList, setKnowledgeList] = useState([]);
 
   const handleClose = () => {
     getSelectedJobs();
@@ -107,11 +112,65 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
     }
   };
 
+  const getAllDropdownData = async () => {
+    setIsLoading(true);
+    try {
+      const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
+      const formData = new FormData();
+      formData.append("operation", "getAllDataForDropdownUpdate");
+      const res = await axios.post(url, formData);
+      console.log("res.data ni getAllDropdownData: ", res.data)
+      if (res.data !== 0) {
+        const formattedCourse = res.data.courseCategory.map((item) => ({
+          value: item.course_categoryId,
+          label: item.course_categoryName,
+        }))
+
+        const formattedTraining = res.data.training.map((item) => ({
+          value: item.perT_id,
+          label: item.perT_name,
+        }))
+
+        const formattedSkills = res.data.skills.map((item) => ({
+          value: item.perS_id,
+          label: item.perS_name,
+        }))
+
+        const formattedKnowledge = res.data.knowledge.map((item) => ({
+          value: item.knowledge_id,
+          label: item.knowledge_name,
+        }))
+
+        setCourseCategory(formattedCourse);
+        setTraining(formattedTraining);
+        setSkills(formattedSkills);
+        setKnowledgeList(formattedKnowledge);
+        console.log("res ni getDropDownForAddJobs", res.data);
+      }
+    } catch (error) {
+      toast.error("Network error");
+      console.log("UpdateJobModal.jsx => getAllDropdownData(): " + error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   const updatePage = () => {
     switch (type) {
       case "duties":
         return (
           <UpdateDuties
+            data={data}
+            handleAddData={handleAddData}
+            getData={getData}
+            handleUpdate={handleUpdate}
+            deleteData={deleteData}
+          />
+        );
+      case "education":
+        return (
+          <UpdateEducation
+            courseCategory={courseCategory}
             data={data}
             handleAddData={handleAddData}
             getData={getData}
@@ -126,6 +185,9 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
 
   useEffect(() => {
     setData(jobData);
+    if (jobData) {
+      getAllDropdownData();
+    }
   }, [jobData]);
 
   return (
@@ -152,7 +214,7 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
         <DrawerFooter>
           <DrawerClose asChild>
             <div className="flex justify-end p-3">
-              <Button variant="secondary">Close Drawer</Button>
+              <Button variant="secondary">Close</Button>
             </div>
           </DrawerClose>
         </DrawerFooter>

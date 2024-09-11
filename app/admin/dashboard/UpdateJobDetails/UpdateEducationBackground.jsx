@@ -1,21 +1,24 @@
+
 "use client";
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
-import { Alert, AlertTitle } from '@/components/ui/alert'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { CardDescription } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 import ShowAlert from '@/components/ui/show-alert'
-import { PlusIcon, X } from 'lucide-react'
+import { Edit2, PlusIcon, Trash2, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import AddTraining from '../modal/AddJob/AddTraining';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { toast } from 'sonner';
+import UpdateEducationModal from '../modal/UpdateJob/UpdateEducationModal';
+import AddEducation from '../modal/AddJob/AddEducation';
 
 
-function AddJobTraining({ training, previousStep, nextStep }) {
+function UpdateEducation({ courseCategory, data, handleAddData, getData, handleUpdate, deleteData }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
 
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
@@ -27,21 +30,25 @@ function AddJobTraining({ training, previousStep, nextStep }) {
     if (status === 1) {
       const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
       setDatas(filteredDatas);
-      storeData("jobTraining", JSON.stringify(filteredDatas));
+      storeData("jobEducation", JSON.stringify(filteredDatas));
     }
     setShowAlert(false);
   };
-
-  const [showModal, setShowModal] = useState(false);
 
   const handleOpenModal = () => {
     setShowModal(true);
   }
 
-  const handleCloseModal = (status) => {
+  const handleCloseModal = async (status) => {
     if (status !== 0) {
-      setDatas([...datas, status]);
-      storeData("jobTraining", JSON.stringify([...datas, status]));
+      const jsonData = {
+        points: status.points,
+        courseCategory: status.courseCategory,
+        jobEducation: status.jobEducation,
+        jobId: retrieveData("jobId"),
+      }
+      await handleAddData("addJobEducation", jsonData);
+      getData("getJobEducation");
     } else {
       setDatas(datas);
     }
@@ -53,32 +60,20 @@ function AddJobTraining({ training, previousStep, nextStep }) {
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
 
-  const handleNextStep = () => {
-    // if (retrieveData("jobTraining") === null || retrieveData("jobTraining") === "[]") {
-    //   toast.error("Please add training first");
-    //   return;
-    // }
-    nextStep(75);
-  }
-
   useEffect(() => {
-    if (retrieveData("jobTraining") !== null || retrieveData("jobTraining") !== "[]") {
-      setDatas(JSON.parse(retrieveData("jobTraining")));
-    } else {
-      setDatas([]);
+    if (data) {
+      setDatas(data);
     }
-  }, []);
+    console.log("data ni education useEffect: ", data)
+    console.log("courseCategory ni education useEffect: ", courseCategory)
+  }, [courseCategory, data]);
 
   return (
     <>
       <div>
-        <div className='flex justify-end gap-2 mb-3'>
-          <Button variant="secondary" onClick={() => previousStep(45)} className="mt-3">Previous</Button>
-          <Button onClick={handleNextStep} className="mt-3">Next</Button>
-        </div>
         <Button onClick={handleOpenModal}>
           <PlusIcon className="h-4 w-4 mr-1" />
-          Add Training
+          Add Education
         </Button>
         <Alert className="w-full mt-3">
           {datas && datas.length > 0 ? (
@@ -88,10 +83,10 @@ function AddJobTraining({ training, previousStep, nextStep }) {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
-                      <TableHead className="w-1/12 ">Training</TableHead>
+                      <TableHead className="w-1/12 ">Course category</TableHead>
                       <TableHead className="w-10/12">Description</TableHead>
                       <TableHead className="w-1/12 text-center">Points</TableHead>
-                      <TableHead className="w-1/12 text-center"></TableHead>
+                      <TableHead className="w-1/12 text-center">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -99,46 +94,47 @@ function AddJobTraining({ training, previousStep, nextStep }) {
                       <TableRow key={index}>
                         <TableCell className="w-1/12">{index + 1}</TableCell>
                         <TableCell className="w-1/12">
-                          {training.find((item) => item.value === data.training)?.label}
+                          {courseCategory.find((item) => item.value === data.jeduc_categoryId)?.label}
                         </TableCell>
                         <TableCell className="w-10/12 whitespace-normal">
-                          {data.jobTraining}
+                          {data.jeduc_text}
                         </TableCell>
-                        <TableCell className="w-1/12 text-center">{data.points}</TableCell>
+                        <TableCell className="w-1/12 text-center">{data.jeduc_points}</TableCell>
                         <TableCell className="w-1/12 text-center">
-                          <button
-                            className="h-4 w-4"
-                            onClick={() => handleRemoveList(index)}
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
+                          <div className='flex justify-center'>
+                            <button onClick={() => handleEdit(index, data.duties_text, data.duties_id)}>
+                              <Edit2 className="h-4 w-4 mr-4" />
+                            </button>
+                            <button className="h-4 w-4" onClick={() => handleRemoveList(index)}>
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
               </div>
-
               <div className="block md:hidden">
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
-                      <button
-                        className="h-4 w-4"
-                        onClick={() => handleRemoveList(index)}
-                      >
-                        <X className="h-5 w-5" />
+                      <button onClick={() => handleEdit(index, data.duties_text, data.duties_id)}>
+                        <Edit2 className="h-4 w-4 mr-4" />
+                      </button>
+                      <button className="h-4 w-4" onClick={() => handleRemoveList(index)}>
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
                     <div className="mt-2 text-sm">
                       <div className='mb-1 text-xl break-words'>
-                        {training.find((item) => item.value === data.training)?.label}
+                        {courseCategory.find((item) => item.value === data.jeduc_categoryId)?.label}
                       </div>
-                      {data.jobTraining}
+                      {data.jeduc_text}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">
-                        Points: {data.points}
+                        Points: {data.jeduc_points}
                       </Badge>
                     </div>
                     <Separator className="mt-3" />
@@ -146,18 +142,18 @@ function AddJobTraining({ training, previousStep, nextStep }) {
                 ))}
               </div>
             </>
-
           ) : (
             <CardDescription className="text-center">
-              No training added yet
+              No education added yet
             </CardDescription>
           )}
         </Alert>
-        <AddTraining open={showModal} onHide={handleCloseModal} training={training} />
-        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
+        <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} />
+        {/* <UpdateEducationModal open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} /> */}
+        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
       </div>
     </>
   )
 }
 
-export default AddJobTraining;
+export default UpdateEducation;

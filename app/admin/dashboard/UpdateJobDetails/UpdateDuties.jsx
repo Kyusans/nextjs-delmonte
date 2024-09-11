@@ -2,7 +2,7 @@
 import { CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import React, { useEffect, useState } from 'react';
-import AddDuties from './AddDuties';
+import AddDuties from '../modal/AddJob/AddDuties';
 import ShowAlert from '@/components/ui/show-alert';
 import { Edit2, PlusIcon, Trash2 } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -13,7 +13,6 @@ import { retrieveData } from '@/app/utils/storageUtils';
 
 function UpdateDuties({ data, handleAddData, getData, handleUpdate, deleteData }) {
   const [datas, setDatas] = useState([]);
-  const [indexToRemove, setIndexToRemove] = useState(null);
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
@@ -52,9 +51,8 @@ function UpdateDuties({ data, handleAddData, getData, handleUpdate, deleteData }
     setShowModal(false);
   };
 
-  const handleRemoveList = (indexToRemove, dutyId) => {
+  const handleRemoveList = (dutyId) => {
     setSelectedId(dutyId);
-    setIndexToRemove(indexToRemove);
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
 
@@ -134,7 +132,7 @@ function UpdateDuties({ data, handleAddData, getData, handleUpdate, deleteData }
                               <button onClick={() => handleEdit(index, data.duties_text, data.duties_id)}>
                                 <Edit2 className="h-4 w-4 mr-4" />
                               </button>
-                              <button className="h-4 w-4" onClick={() => handleRemoveList(index, data.duties_id)}>
+                              <button className="h-4 w-4" onClick={() => handleRemoveList(data.duties_id)}>
                                 <Trash2 className="h-4 w-4" />
                               </button>
                             </>
@@ -161,7 +159,7 @@ function UpdateDuties({ data, handleAddData, getData, handleUpdate, deleteData }
                           </button>
                           <button
                             className="h-4 w-4"
-                            onClick={() => handleRemoveList(index, data.duties_id)}
+                            onClick={() => handleRemoveList(data.duties_id)}
                           >
                             <Trash2 className="h-5 w-5" />
                           </button>
