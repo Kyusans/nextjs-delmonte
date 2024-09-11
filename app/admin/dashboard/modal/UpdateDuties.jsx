@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { retrieveData } from '@/app/utils/storageUtils';
 
-function UpdateDuties({ data, handleAddData, getData, handleUpdate }) {
+function UpdateDuties({ data, handleAddData, getData, handleUpdate, deleteData }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
   const [alertMessage, setAlertMessage] = useState("");
@@ -19,6 +19,7 @@ function UpdateDuties({ data, handleAddData, getData, handleUpdate }) {
   const [editIndex, setEditIndex] = useState(null);
   const [editedText, setEditedText] = useState("");
   const [selectedId, setSelectedId] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const handleShowAlert = (message) => {
     setAlertMessage(message);
@@ -27,13 +28,11 @@ function UpdateDuties({ data, handleAddData, getData, handleUpdate }) {
 
   const handleCloseAlert = (status) => {
     if (status === 1) {
-      const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
-      setDatas(filteredDatas);
+      const jsonData = {dutyId: selectedId}
+      deleteData("deleteDuties", jsonData, "getDuties");
     }
     setShowAlert(false);
   };
-
-  const [showModal, setShowModal] = useState(false);
 
   const handleOpenModal = () => {
     setShowModal(true);
@@ -53,7 +52,8 @@ function UpdateDuties({ data, handleAddData, getData, handleUpdate }) {
     setShowModal(false);
   };
 
-  const handleRemoveList = (indexToRemove) => {
+  const handleRemoveList = (indexToRemove, dutyId) => {
+    setSelectedId(dutyId);
     setIndexToRemove(indexToRemove);
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
@@ -134,7 +134,7 @@ function UpdateDuties({ data, handleAddData, getData, handleUpdate }) {
                               <button onClick={() => handleEdit(index, data.duties_text, data.duties_id)}>
                                 <Edit2 className="h-4 w-4 mr-4" />
                               </button>
-                              <button className="h-4 w-4" onClick={() => handleRemoveList(index)}>
+                              <button className="h-4 w-4" onClick={() => handleRemoveList(index, data.duties_id)}>
                                 <Trash2 className="h-4 w-4" />
                               </button>
                             </>
@@ -161,7 +161,7 @@ function UpdateDuties({ data, handleAddData, getData, handleUpdate }) {
                           </button>
                           <button
                             className="h-4 w-4"
-                            onClick={() => handleRemoveList(index)}
+                            onClick={() => handleRemoveList(index, data.duties_id)}
                           >
                             <Trash2 className="h-5 w-5" />
                           </button>

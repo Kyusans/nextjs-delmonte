@@ -19,22 +19,6 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
     getSelectedJobs();
   };
 
-  const updatePage = () => {
-    switch (type) {
-      case "duties":
-        return (
-          <UpdateDuties
-            data={data}
-            handleAddData={handleAddData}
-            getData={getData}
-            handleUpdate={handleUpdate}
-          />
-        )
-      default:
-        return null
-    }
-  }
-
   const getData = async (operation) => {
     setIsLoading(true);
     try {
@@ -61,10 +45,6 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
     setIsLoading(true);
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
-      // const jsonData = {
-      //   dutyId: retrieveData("dutyId"),
-      //   duties: value
-      // }
       console.log("jsonData ni handleAddData: ", jsonData)
       const formData = new FormData();
       formData.append("operation", operation);
@@ -87,15 +67,11 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
       console.log("url ni handleUpdate: ", url)
-
       console.log("jsonData ni handleUpdate: ", jsonData)
       const formData = new FormData();
-      // formData.append("operation", "updateDuties");
       formData.append("operation", operation);
       formData.append("json", JSON.stringify(jsonData));
-
       const res = await axios.post(url, formData);
-
       if (res.data === 1) {
         toast.success("Updated successfully");
         getData(getDataOperation);
@@ -107,6 +83,46 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
       setIsLoading(false);
     }
   };
+
+  const deleteData = async (operation, jsonData, getDataOperation) => {
+    setIsLoading(true);
+    try {
+      const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
+      const formData = new FormData();
+      formData.append("operation", operation);
+      formData.append("json", JSON.stringify(jsonData));
+      console.log("url ni deleteData: ", url)
+      console.log("jsonData ni deleteData: ", jsonData)
+      const res = await axios.post(url, formData);
+      console.log("res.data ni deleteData: ", res.data)
+      if (res.data === 1) {
+        toast.success("Deleted successfully");
+        getData(getDataOperation);
+      }
+    } catch (error) {
+      toast.error("Network error");
+      console.log("UpdateJobModal.jsx => deleteData(): " + error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updatePage = () => {
+    switch (type) {
+      case "duties":
+        return (
+          <UpdateDuties
+            data={data}
+            handleAddData={handleAddData}
+            getData={getData}
+            handleUpdate={handleUpdate}
+            deleteData={deleteData}
+          />
+        )
+      default:
+        return null
+    }
+  }
 
   useEffect(() => {
     setData(jobData);
