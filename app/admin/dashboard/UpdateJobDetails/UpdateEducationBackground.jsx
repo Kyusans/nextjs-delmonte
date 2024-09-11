@@ -18,6 +18,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [updateData, setUpdateData] = useState({});
 
 
   const [alertMessage, setAlertMessage] = useState("");
@@ -59,6 +60,28 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
     setIndexToRemove(indexToRemove);
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
+
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const handleOpenUpdateModal = () => {
+    setShowUpdateModal(true);
+  }
+
+  const handleCloseUpdateModal = async (values) => {
+    if (values !== 0) {
+      const jsonData = {
+        id: updateData.id,
+        points: values.points,
+        courseCategory: values.courseCategory,
+        educationText: values.jobEducation
+      }
+      handleUpdate("updateJobEducation", jsonData, "getJobEducation");
+    }
+    setShowUpdateModal(false);
+  }
+  const handleEdit = (id, categoryId, points, educationText) => {
+    setUpdateData({ id: id, categoryId: categoryId, points: points, educationText: educationText });
+    handleOpenUpdateModal();
+  }
 
   useEffect(() => {
     if (data) {
@@ -102,7 +125,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
                         <TableCell className="w-1/12 text-center">{data.jeduc_points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <div className='flex justify-center'>
-                            <button onClick={() => handleEdit(index, data.duties_text, data.duties_id)}>
+                            <button onClick={() => handleEdit(data.jeduc_id, data.jeduc_categoryId, data.jeduc_points, data.jeduc_text)}>
                               <Edit2 className="h-4 w-4 mr-4" />
                             </button>
                             <button className="h-4 w-4" onClick={() => handleRemoveList(index)}>
@@ -119,7 +142,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
-                      <button onClick={() => handleEdit(index, data.duties_text, data.duties_id)}>
+                      <button onClick={() => handleEdit(data.jeduc_id, data.jeduc_categoryId, data.jeduc_points, data.jeduc_text)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
                       <button className="h-4 w-4" onClick={() => handleRemoveList(index)}>
@@ -148,8 +171,8 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
             </CardDescription>
           )}
         </Alert>
-        <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} />
-        {/* <UpdateEducationModal open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} /> */}
+        <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} selectedEducations={data} />
+        {showUpdateModal && <UpdateEducationModal open={showUpdateModal} onHide={handleCloseUpdateModal} courseCategory={courseCategory} updateData={updateData} selectedEducations={data} />}
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
       </div>
     </>

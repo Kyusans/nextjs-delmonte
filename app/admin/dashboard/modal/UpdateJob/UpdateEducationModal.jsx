@@ -14,7 +14,7 @@ import { retrieveData } from '@/app/utils/storageUtils';
 import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
-function UpdateEducationModal({ open, onHide, courseCategory }) {
+function UpdateEducationModal({ open, onHide, courseCategory, updateData, selectedEducations }) {
   const formSchema = z.object({
     courseCategory: z.number().min(1, {
       message: "This field is required",
@@ -32,17 +32,17 @@ function UpdateEducationModal({ open, onHide, courseCategory }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      points: "",
-      courseCategory: 0,
-      jobEducation: "",
+      points: updateData.points.toString() || "",
+      courseCategory: updateData.categoryId || "",
+      jobEducation: updateData.educationText || "",
     },
   });
 
   const onSubmit = (values) => {
     try {
-      const selectedEducation = JSON.parse(retrieveData("jobEducation")) || [];
+      // const selectedEducation = JSON.parse(retrieveData("jobEducation")) || [];
       let isValid = true;
-      selectedEducation.forEach((element) => {
+      selectedEducations.forEach((element) => {
         if (element.courseCategory === values.courseCategory) {
           toast.error("You already have this education");
           isValid = false;
