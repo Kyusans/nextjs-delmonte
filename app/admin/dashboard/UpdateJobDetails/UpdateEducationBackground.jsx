@@ -16,9 +16,9 @@ import AddEducation from '../modal/AddJob/AddEducation';
 
 function UpdateEducation({ courseCategory, data, handleAddData, getData, handleUpdate, deleteData }) {
   const [datas, setDatas] = useState([]);
-  const [indexToRemove, setIndexToRemove] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [updateData, setUpdateData] = useState({});
+  const [selectedId, setSelectedId] = useState(null);
 
 
   const [alertMessage, setAlertMessage] = useState("");
@@ -27,11 +27,12 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
     setAlertMessage(message);
     setShowAlert(true);
   };
-  const handleCloseAlert = (status) => {
+  const handleCloseAlert = async (status) => {
     if (status === 1) {
-      const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
-      setDatas(filteredDatas);
-      storeData("jobEducation", JSON.stringify(filteredDatas));
+      const jsonData = {
+        id: selectedId,
+      }
+      await deleteData("deleteJobEducation", jsonData, "getJobEducation");
     }
     setShowAlert(false);
   };
@@ -56,8 +57,8 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
     setShowModal(false);
   };
 
-  const handleRemoveList = (indexToRemove) => {
-    setIndexToRemove(indexToRemove);
+  const handleRemoveList = (id) => {
+    setSelectedId(id);
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
 
@@ -86,9 +87,14 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
   useEffect(() => {
     if (data) {
       setDatas(data);
+      const filteredData = data.map((element) => ({
+        courseCategory: element.jeduc_categoryId,
+      }))
+      storeData("jobEducation", JSON.stringify(filteredData));
     }
     console.log("data ni education useEffect: ", data)
     console.log("courseCategory ni education useEffect: ", courseCategory)
+    console.log("datas ni retrieveData: ", retrieveData("jobEducation"))
   }, [courseCategory, data]);
 
   return (
@@ -128,7 +134,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
                             <button onClick={() => handleEdit(data.jeduc_id, data.jeduc_categoryId, data.jeduc_points, data.jeduc_text)}>
                               <Edit2 className="h-4 w-4 mr-4" />
                             </button>
-                            <button className="h-4 w-4" onClick={() => handleRemoveList(index)}>
+                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jeduc_id)}>
                               <Trash2 className="h-4 w-4" />
                             </button>
                           </div>
@@ -145,7 +151,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
                       <button onClick={() => handleEdit(data.jeduc_id, data.jeduc_categoryId, data.jeduc_points, data.jeduc_text)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
-                      <button className="h-4 w-4" onClick={() => handleRemoveList(index)}>
+                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jeduc_id)}>
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
@@ -171,9 +177,9 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
             </CardDescription>
           )}
         </Alert>
-        <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} selectedEducations={data} />
+        {showModal && <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} />}
         {showUpdateModal && <UpdateEducationModal open={showUpdateModal} onHide={handleCloseUpdateModal} courseCategory={courseCategory} updateData={updateData} selectedEducations={data} />}
-        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
+        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={0} />
       </div>
     </>
   )

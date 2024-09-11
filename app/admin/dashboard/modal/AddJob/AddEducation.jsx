@@ -12,7 +12,7 @@ import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
 import { retrieveData } from '@/app/utils/storageUtils';
 
-function AddEducation({ open, onHide, courseCategory, selectedEducations }) {
+function AddEducation({ open, onHide, courseCategory }) {
   const formSchema = z.object({
     courseCategory: z.number().min(1, {
       message: "This field is required",
@@ -38,24 +38,14 @@ function AddEducation({ open, onHide, courseCategory, selectedEducations }) {
 
   const onSubmit = (values) => {
     try {
-      if (selectedEducations.length > 0) {
-        let isValid = true;
-        selectedEducations.forEach((element) => {
-          if (element.jobEducation === values.jobEducation) {
-            toast.error("You already have this education");
-            isValid = false;
-          }
-        });
-      } else {
-        const selectedEducation = JSON.parse(retrieveData("jobEducation")) || [];
-        let isValid = true;
-        selectedEducation.forEach((element) => {
-          if (element.courseCategory === values.courseCategory) {
-            toast.error("You already have this education");
-            isValid = false;
-          }
-        });
-      }
+      const selectedEducation = JSON.parse(retrieveData("jobEducation")) || [];
+      let isValid = true;
+      selectedEducation.forEach((element) => {
+        if (element.courseCategory === values.courseCategory) {
+          toast.error("You already have this education");
+          isValid = false;
+        }
+      });
       if (isValid) {
         onHide(values);
         form.reset();
