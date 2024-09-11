@@ -12,7 +12,7 @@ import SelectedJob from './modal/SelectedJob';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Switch } from '@/components/ui/switch';
 import ShowAlert from '@/components/ui/show-alert';
-import UpdateJobModal from './modal/UpdateJobModal';
+import UpdateJobModal from './UpdateJobDetails/UpdateJobModal';
 
 function AdminJobs() {
   const [allJobs, setAllJobs] = useState([]);

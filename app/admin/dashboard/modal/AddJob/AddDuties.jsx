@@ -54,7 +54,7 @@ function AddDuties({ open, onHide }) {
                       <FormItem>
                         <FormLabel>Job Duty Description</FormLabel>
                         <FormControl>
-                          <Textarea style={{ height: "200px" }}  placeholder="Enter education" {...field} />
+                          <Textarea style={{ height: "200px" }}  placeholder="Enter duty" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>

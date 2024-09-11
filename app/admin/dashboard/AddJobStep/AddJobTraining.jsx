@@ -6,7 +6,7 @@ import { CardDescription } from '@/components/ui/card'
 import ShowAlert from '@/components/ui/show-alert'
 import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import AddTraining from '../modal/AddTraining';
+import AddTraining from '../modal/AddJob/AddTraining';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';

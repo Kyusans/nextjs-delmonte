@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
             disableTransitionOnChange
           >
             <div className=" dark:bg-[#0e4028] h-screen">
-              <Toaster position="top-center" richColors duration={2000} />
+              <Toaster position="bottom-left" richColors duration={2000} />
                 {children}
             </div>
           </ThemeProvider>

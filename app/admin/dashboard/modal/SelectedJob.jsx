@@ -1,4 +1,4 @@
-import { retrieveData } from '@/app/utils/storageUtils';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardDescription } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import UpdateJobModal from './UpdateJobModal';
+import UpdateJobModal from '../UpdateJobDetails/UpdateJobModal';
 import SelectedApplicant from './SelectedApplicant';
 
 function SelectedJob({ open, onHide, jobId }) {
@@ -47,8 +47,9 @@ function SelectedJob({ open, onHide, jobId }) {
   useEffect(() => {
     if (open) {
       getSelectedJobs();
+      storeData("jobId", jobId);
     }
-  }, [getSelectedJobs, open]);
+  }, [getSelectedJobs, jobId, open]);
 
   const indexOfLastCandidate = currentPage * itemsPerPage;
   const indexOfFirstCandidate = indexOfLastCandidate - itemsPerPage;
@@ -113,10 +114,11 @@ function SelectedJob({ open, onHide, jobId }) {
                         <AccordionItem value="item-1">
                           <AccordionTrigger>
                             <div className="flex items-center w-full">
-                              <span>Duties and Responsibilities</span>
-                              {handleUpdateJob(data.jobDuties, "duties")}
+                              <span className='mr-2'>Duties and Responsibilities</span>
+                              <div>{handleUpdateJob(data.jobDuties, "duties")}</div>
                             </div>
                           </AccordionTrigger>
+
                           <AccordionContent className='px-5'>
                             <div className='w-full'>
                               {data.jobDuties.map((data, index) => (
@@ -134,8 +136,8 @@ function SelectedJob({ open, onHide, jobId }) {
                               {data.jobEducation.length > 0 && (
                                 <>
                                   <div className='text-sm mb-3 font-bold flex items-center'>
-                                    <span>Educational Background </span>
-                                    {handleUpdateJob(data, "education")}
+                                    <span className='mr-2'>Educational Background </span>
+                                    {handleUpdateJob(data.jobEducation, "education")}
                                   </div>
                                   <div className='w-full ml-3'>
                                     {data.jobEducation.map((data, index) => (
@@ -149,7 +151,7 @@ function SelectedJob({ open, onHide, jobId }) {
                               {data.jobSkills.length > 0 && (
                                 <>
                                   <div className='text-sm my-3 font-bold flex items-center'>
-                                    <span>Skills</span>
+                                    <span className='mr-2'>Skills</span>
                                     {handleUpdateJob(data, "skills")}
                                   </div>
                                   <div className='w-full ml-3'>
@@ -164,7 +166,7 @@ function SelectedJob({ open, onHide, jobId }) {
                               {data.jobTrainings.length > 0 && (
                                 <>
                                   <div className='text-sm my-3 font-bold flex items-center'>
-                                    <span>Trainings</span>
+                                    <span className='mr-2'>Trainings</span>
                                     {handleUpdateJob(data, "trainings")}
                                   </div>
                                   <div className='w-full ml-3'>
@@ -179,9 +181,9 @@ function SelectedJob({ open, onHide, jobId }) {
                               {data.jobExperience.length > 0 && (
                                 <>
                                   <div className='text-sm my-3 font-bold flex items-center'>
-                                    <span>Experience</span>
+                                    <span className='mr-2'>Experience</span>
                                     {handleUpdateJob(data, "experience")}
-                                    </div>
+                                  </div>
                                   <div className='w-full ml-3'>
                                     {data.jobExperience.map((data, index) => (
                                       <ul key={index} className="list-disc ml-4 mb-1">

@@ -8,7 +8,7 @@ import ShowAlert from '@/components/ui/show-alert'
 import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import AddSkill from '../modal/AddSkill';
+import AddSkill from '../modal/AddJob/AddSkill';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 
