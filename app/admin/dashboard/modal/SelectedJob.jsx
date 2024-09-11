@@ -1,4 +1,4 @@
-import { retrieveData } from '@/app/utils/storageUtils';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardDescription } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -47,8 +47,9 @@ function SelectedJob({ open, onHide, jobId }) {
   useEffect(() => {
     if (open) {
       getSelectedJobs();
+      storeData("jobId", jobId);
     }
-  }, [getSelectedJobs, open]);
+  }, [getSelectedJobs, jobId, open]);
 
   const indexOfLastCandidate = currentPage * itemsPerPage;
   const indexOfFirstCandidate = indexOfLastCandidate - itemsPerPage;
@@ -82,7 +83,7 @@ function SelectedJob({ open, onHide, jobId }) {
   };
 
   const handleUpdateJob = (data, type) => {
-    return <UpdateJobModal jobData={data} type={type} getSelectedJobs={getSelectedJobs} jobId={jobId} />
+    return <UpdateJobModal jobData={data} type={type} getSelectedJobs={getSelectedJobs}/>
   }
 
   return (

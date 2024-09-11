@@ -10,14 +10,14 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-function ShowAlert({ open, onHide, message }) {
-  const [countdown, setCountdown] = useState(3);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+function ShowAlert({ open, onHide, message, duration }) {
+  const [countdown, setCountdown] = useState(0);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
   useEffect(() => {
     let timer;
-    if (open) {
-      setCountdown(3);
+    if (open && duration) {
+      setCountdown(duration);
       setIsButtonDisabled(true);
       timer = setInterval(() => {
         setCountdown(prev => {
@@ -30,13 +30,14 @@ function ShowAlert({ open, onHide, message }) {
           }
         });
       }, 1000);
+    } else if (open && !duration) {
+      setIsButtonDisabled(false);
     }
 
     return () => {
       clearInterval(timer);
-      setIsButtonDisabled(true);
     };
-  }, [open]);
+  }, [duration, open]);
 
   const handleOnHide = () => {
     onHide(0);
@@ -69,6 +70,7 @@ function ShowAlert({ open, onHide, message }) {
 }
 
 export default ShowAlert;
+
 
 
 
