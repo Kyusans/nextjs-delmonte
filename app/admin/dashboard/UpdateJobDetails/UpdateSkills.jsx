@@ -1,4 +1,3 @@
-
 "use client";
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
 import { Alert } from '@/components/ui/alert'
@@ -6,19 +5,18 @@ import { Button } from '@/components/ui/button'
 import { CardDescription } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import ShowAlert from '@/components/ui/show-alert'
-import { Edit2, PlusIcon, Trash2, X } from 'lucide-react'
+import { Edit2, PlusIcon, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import AddSkill from '../modal/AddJob/AddSkill';
+import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
-import UpdateEducationModal from '../modal/UpdateJob/UpdateEducationModal';
-import AddEducation from '../modal/AddJob/AddEducation';
+import UpdateSkillModal from '../modal/UpdateJob/UpdateSkillModal';
 
-
-function UpdateEducation({ courseCategory, data, handleAddData, getData, handleUpdate, deleteData }) {
+function UpdateSkill({ skill, data, handleAddData, getData, handleUpdate, deleteData }) {
   const [datas, setDatas] = useState([]);
-  const [showModal, setShowModal] = useState(false);
   const [updateData, setUpdateData] = useState({});
-  const [selectedId, setSelectedId] = useState(null);
+  const [indexToRemove, setIndexToRemove] = useState(null);
 
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
@@ -26,38 +24,33 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
     setAlertMessage(message);
     setShowAlert(true);
   };
-  const handleCloseAlert = async (status) => {
+  const handleCloseAlert = (status) => {
     if (status === 1) {
-      const jsonData = {
-        id: selectedId,
-      }
-      await deleteData("deleteJobEducation", jsonData, "getJobEducation");
+      // const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
+      // setDatas(filteredDatas);
+      // storeData("jobSkill", JSON.stringify(filteredDatas));
     }
     setShowAlert(false);
   };
+
+  const [showModal, setShowModal] = useState(false);
 
   const handleOpenModal = () => {
     setShowModal(true);
   }
 
-  const handleCloseModal = async (status) => {
+  const handleCloseModal = (status) => {
     if (status !== 0) {
-      const jsonData = {
-        points: status.points,
-        courseCategory: status.courseCategory,
-        jobEducation: status.jobEducation,
-        jobId: retrieveData("jobId"),
-      }
-      await handleAddData("addJobEducation", jsonData);
-      getData("getJobEducation");
+      // setDatas([...datas, status]);
+      // storeData("jobSkill", JSON.stringify([...datas, status]));
     } else {
       setDatas(datas);
     }
     setShowModal(false);
   };
 
-  const handleRemoveList = (id) => {
-    setSelectedId(id);
+  const handleRemoveList = (indexToRemove) => {
+    setIndexToRemove(indexToRemove);
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
 
@@ -68,18 +61,19 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
 
   const handleCloseUpdateModal = async (values) => {
     if (values !== 0) {
-      const jsonData = {
-        id: updateData.id,
-        points: values.points,
-        courseCategory: values.courseCategory,
-        educationText: values.jobEducation
-      }
-      handleUpdate("updateJobEducation", jsonData, "getJobEducation");
+      // const jsonData = {
+      //   id: updateData.id,
+      //   points: values.points,
+      //   courseCategory: values.courseCategory,
+      //   educationText: values.jobEducation
+      // }
+      // handleUpdate("updateJobEducation", jsonData, "getJobEducation");
     }
     setShowUpdateModal(false);
   }
-  const handleEdit = (id, categoryId, points, educationText) => {
-    setUpdateData({ id: id, categoryId: categoryId, points: points, educationText: educationText });
+
+  const handleEdit = (id, skillId, points, jobSkill) => {
+    setUpdateData({ id: id, skill: skillId, points: points, jobSkill: jobSkill });
     handleOpenUpdateModal();
   }
 
@@ -87,21 +81,20 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
     if (data) {
       setDatas(data);
       const filteredData = data.map((element) => ({
-        courseCategory: element.jeduc_categoryId,
+        skill: element.jskills_skillsId,
       }))
-      storeData("jobEducation", JSON.stringify(filteredData));
+      storeData("jobSkill", JSON.stringify(filteredData));
     }
-    console.log("data ni education useEffect: ", data)
-    console.log("courseCategory ni education useEffect: ", courseCategory)
-    console.log("datas ni retrieveData: ", retrieveData("jobEducation"))
-  }, [courseCategory, data]);
+    console.log("datas ni skills:", data)
+    console.log("skills ni skills:", skill)
+  }, [data, skill]);
 
   return (
     <>
       <div>
         <Button onClick={handleOpenModal}>
           <PlusIcon className="h-4 w-4 mr-1" />
-          Add Education
+          Add Skill
         </Button>
         <Alert className="w-full mt-3">
           {datas && datas.length > 0 ? (
@@ -111,7 +104,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
-                      <TableHead className="w-1/12 ">Course category</TableHead>
+                      <TableHead className="w-1/12 ">Skill</TableHead>
                       <TableHead className="w-10/12">Description</TableHead>
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center">Actions</TableHead>
@@ -122,15 +115,15 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
                       <TableRow key={index}>
                         <TableCell className="w-1/12">{index + 1}</TableCell>
                         <TableCell className="w-1/12">
-                          {courseCategory.find((item) => item.value === data.jeduc_categoryId)?.label}
+                          {skill.find((item) => item.value === data.jskills_skillsId)?.label}
                         </TableCell>
                         <TableCell className="w-10/12 whitespace-normal">
-                          {data.jeduc_text}
+                          {data.jskills_text}
                         </TableCell>
-                        <TableCell className="w-1/12 text-center">{data.jeduc_points}</TableCell>
+                        <TableCell className="w-1/12 text-center">{data.jskills_points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <div className='flex justify-center'>
-                            <button onClick={() => handleEdit(data.jeduc_id, data.jeduc_categoryId, data.jeduc_points, data.jeduc_text)}>
+                            <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points, data.jskills_text)}>
                               <Edit2 className="h-4 w-4 mr-4" />
                             </button>
                             <button className="h-4 w-4" onClick={() => handleRemoveList(data.jeduc_id)}>
@@ -147,7 +140,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
-                      <button onClick={() => handleEdit(data.jeduc_id, data.jeduc_categoryId, data.jeduc_points, data.jeduc_text)}>
+                      <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points, data.jskills_text)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
                       <button className="h-4 w-4" onClick={() => handleRemoveList(data.jeduc_id)}>
@@ -156,13 +149,13 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
                     </div>
                     <div className="mt-2 text-sm">
                       <div className='mb-1 text-xl break-words'>
-                        {courseCategory.find((item) => item.value === data.jeduc_categoryId)?.label}
+                        {skill.find((item) => item.value === data.jskills_skillsId)?.label}
                       </div>
-                      {data.jeduc_text}
+                      {data.jskills_text}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">
-                        Points: {data.jeduc_points}
+                        Points: {data.jskills_points}
                       </Badge>
                     </div>
                     <Separator className="mt-3" />
@@ -172,16 +165,16 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
             </>
           ) : (
             <CardDescription className="text-center">
-              No education added yet
+              No skill added yet
             </CardDescription>
           )}
         </Alert>
-        {showModal && <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} />}
-        {showUpdateModal && <UpdateEducationModal open={showUpdateModal} onHide={handleCloseUpdateModal} courseCategory={courseCategory} updateData={updateData} selectedEducations={data} />}
-        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
+        {showModal && <AddSkill open={showModal} onHide={handleCloseModal} skill={skill} />}
+        {showUpdateModal && <UpdateSkillModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} skill={skill} />}
+        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
   )
 }
 
-export default UpdateEducation;
+export default UpdateSkill;

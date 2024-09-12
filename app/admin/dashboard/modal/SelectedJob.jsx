@@ -118,7 +118,6 @@ function SelectedJob({ open, onHide, jobId }) {
                               <div>{handleUpdateJob(data.jobDuties, "duties")}</div>
                             </div>
                           </AccordionTrigger>
-
                           <AccordionContent className='px-5'>
                             <div className='w-full'>
                               {data.jobDuties.map((data, index) => (
@@ -152,7 +151,7 @@ function SelectedJob({ open, onHide, jobId }) {
                                 <>
                                   <div className='text-sm my-3 font-bold flex items-center'>
                                     <span className='mr-2'>Skills</span>
-                                    {handleUpdateJob(data, "skills")}
+                                    {handleUpdateJob(data.jobSkills, "skills")}
                                   </div>
                                   <div className='w-full ml-3'>
                                     {data.jobSkills.map((data, index) => (

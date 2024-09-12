@@ -11,6 +11,7 @@ import axios from 'axios';
 import Spinner from '@/components/ui/spinner';
 import { retrieveData } from '@/app/utils/storageUtils';
 import UpdateEducation from './UpdateEducationBackground';
+import UpdateSkill from './UpdateSkills';
 
 function UpdateJobModal({ jobData, type, getSelectedJobs }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -177,7 +178,18 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
             handleUpdate={handleUpdate}
             deleteData={deleteData}
           />
-        )
+        );
+      case "skills":
+        return (
+          <UpdateSkill
+            skill={skills}
+            data={data}
+            handleAddData={handleAddData}
+            getData={getData}
+            handleUpdate={handleUpdate}
+            deleteData={deleteData}
+          />
+        );
       default:
         return null
     }
