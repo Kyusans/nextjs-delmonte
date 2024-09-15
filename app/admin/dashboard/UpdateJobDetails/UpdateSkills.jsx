@@ -23,11 +23,12 @@ function UpdateSkill({ skill, data, handleAddData, getData, handleUpdate, delete
     setAlertMessage(message);
     setShowAlert(true);
   };
-  const handleCloseAlert = (status) => {
+  const handleCloseAlert = async (status) => {
     if (status === 1) {
-      // const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
-      // setDatas(filteredDatas);
-      // storeData("jobSkill", JSON.stringify(filteredDatas));
+      const jsonData = {
+        id: indexToRemove
+      }
+      await deleteData("deleteJobSkills", jsonData, "getJobSkills");
     }
     setShowAlert(false);
   };
@@ -131,7 +132,7 @@ function UpdateSkill({ skill, data, handleAddData, getData, handleUpdate, delete
                             <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points, data.jskills_text)}>
                               <Edit2 className="h-4 w-4 mr-4" />
                             </button>
-                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jeduc_id)}>
+                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jskills_id)}>
                               <Trash2 className="h-4 w-4" />
                             </button>
                           </div>
@@ -176,7 +177,7 @@ function UpdateSkill({ skill, data, handleAddData, getData, handleUpdate, delete
         </Alert>
         {showModal && <AddSkill open={showModal} onHide={handleCloseModal} skill={skill} />}
         {showUpdateModal && <UpdateSkillModal open={showUpdateModal} onHide={handleCloseUpdateModal} skill={skill} updateData={updateData} />}
-        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
+        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
       </div>
     </>
   )
