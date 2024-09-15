@@ -40,7 +40,10 @@ function UpdateSkillModal({ open, onHide, skill, updateData }) {
     try {
       const selectedSkill = JSON.parse(retrieveData("jobSkill")) || [];
       let isValid = true;
-      selectedSkill.forEach((element) => {
+      const filteredSelectedData = selectedSkill.filter((element) => {
+        return element.skill !== updateData.skill;
+      })
+      filteredSelectedData.forEach((element) => {
         if (element.skill === values.skill) {
           toast.error("You already have this skill");
           isValid = false;

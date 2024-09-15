@@ -11,8 +11,6 @@ import { toast } from 'sonner';
 import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
 import { retrieveData } from '@/app/utils/storageUtils';
-import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 function UpdateEducationModal({ open, onHide, courseCategory, updateData }) {
   const formSchema = z.object({
@@ -45,7 +43,7 @@ function UpdateEducationModal({ open, onHide, courseCategory, updateData }) {
       let isValid = true;
       const filteredSelectedData = selectedEducation.filter((element) => {
         return element.courseCategory !== updateData.categoryId;
-      })
+      });
       filteredSelectedData.forEach((element) => {
         if (element.courseCategory === values.courseCategory) {
           toast.error("You already have this education");
@@ -72,7 +70,7 @@ function UpdateEducationModal({ open, onHide, courseCategory, updateData }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <SheetTitle className="text-center text-2xl font-bold">Update Education</SheetTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Update Education</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>

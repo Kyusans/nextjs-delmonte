@@ -61,13 +61,13 @@ function UpdateSkill({ skill, data, handleAddData, getData, handleUpdate, delete
 
   const handleCloseUpdateModal = async (values) => {
     if (values !== 0) {
-      // const jsonData = {
-      //   id: updateData.id,
-      //   points: values.points,
-      //   courseCategory: values.courseCategory,
-      //   educationText: values.jobEducation
-      // }
-      // handleUpdate("updateJobEducation", jsonData, "getJobEducation");
+      const jsonData = {
+        id: updateData.id,
+        skillText: values.jobSkill,
+        skillId: values.skill,
+        points: values.points
+      }
+      handleUpdate("updateJobSkills", jsonData, "getJobSkills");
     }
     setShowUpdateModal(false);
   }
@@ -87,6 +87,7 @@ function UpdateSkill({ skill, data, handleAddData, getData, handleUpdate, delete
     }
     console.log("datas ni skills:", data)
     console.log("skills ni skills:", skill)
+    console.log("retrieveData ni skills", JSON.parse(retrieveData("jobSkill")))
   }, [data, skill]);
 
   return (
@@ -170,7 +171,7 @@ function UpdateSkill({ skill, data, handleAddData, getData, handleUpdate, delete
           )}
         </Alert>
         {showModal && <AddSkill open={showModal} onHide={handleCloseModal} skill={skill} />}
-        {showUpdateModal && <UpdateSkillModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} skill={skill} />}
+        {showUpdateModal && <UpdateSkillModal open={showUpdateModal} onHide={handleCloseUpdateModal} skill={skill} updateData={updateData} />}
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
