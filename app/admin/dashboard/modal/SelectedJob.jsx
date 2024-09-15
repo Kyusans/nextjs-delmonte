@@ -166,7 +166,7 @@ function SelectedJob({ open, onHide, jobId }) {
                                 <>
                                   <div className='text-sm my-3 font-bold flex items-center'>
                                     <span className='mr-2'>Trainings</span>
-                                    {handleUpdateJob(data, "trainings")}
+                                    {handleUpdateJob(data.jobTrainings, "trainings")}
                                   </div>
                                   <div className='w-full ml-3'>
                                     {data.jobTrainings.map((data, index) => (
@@ -181,7 +181,7 @@ function SelectedJob({ open, onHide, jobId }) {
                                 <>
                                   <div className='text-sm my-3 font-bold flex items-center'>
                                     <span className='mr-2'>Experience</span>
-                                    {handleUpdateJob(data, "experience")}
+                                    {handleUpdateJob(data.jobExperience, "experience")}
                                   </div>
                                   <div className='w-full ml-3'>
                                     {data.jobExperience.map((data, index) => (

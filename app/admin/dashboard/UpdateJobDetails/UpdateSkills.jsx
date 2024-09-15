@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import UpdateSkillModal from '../modal/UpdateJob/UpdateSkillModal';
 
-function UpdateSkill({ skill, data, handleAddData, getData, handleUpdate, deleteData }) {
+function UpdateSkill({ skill, data, handleAddData, handleUpdate, deleteData }) {
   const [datas, setDatas] = useState([]);
   const [updateData, setUpdateData] = useState({});
   const [indexToRemove, setIndexToRemove] = useState(null);
@@ -72,7 +72,7 @@ function UpdateSkill({ skill, data, handleAddData, getData, handleUpdate, delete
         skillId: values.skill,
         points: values.points
       }
-      handleUpdate("updateJobSkills", jsonData, "getJobSkills");
+      await handleUpdate("updateJobSkills", jsonData, "getJobSkills");
     }
     setShowUpdateModal(false);
   }
@@ -149,7 +149,7 @@ function UpdateSkill({ skill, data, handleAddData, getData, handleUpdate, delete
                       <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points, data.jskills_text)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
-                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jeduc_id)}>
+                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jskills_id)}>
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
