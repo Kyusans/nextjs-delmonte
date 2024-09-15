@@ -47,7 +47,7 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
     }
   }
 
-  const handleAddData = async (operation, jsonData) => {
+  const handleAddData = async (operation, jsonData, getDataOperation) => {
     setIsLoading(true);
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
@@ -59,6 +59,7 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
       console.log("res.data ni handleAddData: ", res.data)
       if (res.data !== 0) {
         toast.success("Success!");
+        getData(getDataOperation);
       }
     } catch (error) {
       toast.error("Network error");
