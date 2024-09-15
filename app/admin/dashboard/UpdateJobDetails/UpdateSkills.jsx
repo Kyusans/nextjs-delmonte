@@ -17,7 +17,6 @@ function UpdateSkill({ skill, data, handleAddData, getData, handleUpdate, delete
   const [datas, setDatas] = useState([]);
   const [updateData, setUpdateData] = useState({});
   const [indexToRemove, setIndexToRemove] = useState(null);
-
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const handleShowAlert = (message) => {
@@ -41,8 +40,13 @@ function UpdateSkill({ skill, data, handleAddData, getData, handleUpdate, delete
 
   const handleCloseModal = (status) => {
     if (status !== 0) {
-      // setDatas([...datas, status]);
-      // storeData("jobSkill", JSON.stringify([...datas, status]));
+      const jsonData = {
+        jobId: retrieveData("jobId"),
+        skillText: status.jobSkill,
+        skillId: status.skill,
+        points: status.points
+      }
+      handleAddData("addJobSkills", jsonData, "getJobSkills");
     } else {
       setDatas(datas);
     }
