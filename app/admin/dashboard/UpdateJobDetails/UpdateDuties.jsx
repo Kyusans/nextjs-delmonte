@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { retrieveData } from '@/app/utils/storageUtils';
 
-function UpdateDuties({ data, handleAddData, getData, handleUpdate, deleteData }) {
+function UpdateDuties({ data, handleAddData, handleUpdate, deleteData }) {
   const [datas, setDatas] = useState([]);
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
@@ -44,7 +44,6 @@ function UpdateDuties({ data, handleAddData, getData, handleUpdate, deleteData }
         duties: status.duties
       }
       await handleAddData("addDuties", jsonData);
-      getData("getDuties");
     } else {
       setDatas(datas);
     }

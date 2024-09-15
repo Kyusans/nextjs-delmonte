@@ -14,7 +14,7 @@ import UpdateEducationModal from '../modal/UpdateJob/UpdateEducationModal';
 import AddEducation from '../modal/AddJob/AddEducation';
 
 
-function UpdateEducation({ courseCategory, data, handleAddData, getData, handleUpdate, deleteData }) {
+function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, deleteData }) {
   const [datas, setDatas] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [updateData, setUpdateData] = useState({});
@@ -49,7 +49,6 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
         jobId: retrieveData("jobId"),
       }
       await handleAddData("addJobEducation", jsonData);
-      getData("getJobEducation");
     } else {
       setDatas(datas);
     }
