@@ -48,7 +48,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, de
         jobEducation: status.jobEducation,
         jobId: retrieveData("jobId"),
       }
-      await handleAddData("addJobEducation", jsonData);
+      await handleAddData("addJobEducation", jsonData, "getJobEducation");
     } else {
       setDatas(datas);
     }

@@ -181,7 +181,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
         </Alert>
         {showModal && <AddTraining open={showModal} onHide={handleCloseModal} training={training} />}
         {showUpdateModal && <UpdateTrainingModal open={showUpdateModal} onHide={handleCloseUpdateModal} training={training} updateData={updateData} />}
-        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
+        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
       </div>
     </>
   )
