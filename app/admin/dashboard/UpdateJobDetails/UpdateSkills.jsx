@@ -72,7 +72,7 @@ function UpdateSkill({ skill, data, handleAddData, handleUpdate, deleteData }) {
         skillId: values.skill,
         points: values.points
       }
-      handleUpdate("updateJobSkills", jsonData, "getJobSkills");
+      await handleUpdate("updateJobSkills", jsonData, "getJobSkills");
     }
     setShowUpdateModal(false);
   }

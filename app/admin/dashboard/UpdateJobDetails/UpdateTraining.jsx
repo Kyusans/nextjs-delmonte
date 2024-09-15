@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
+import UpdateTrainingModal from '../modal/UpdateJob/UpdateTrainingModal';
 
 
 function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteData }) {
@@ -65,20 +66,21 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
   }
 
   const handleCloseUpdateModal = async (values) => {
+     // {"id": 10, "trainingText": "trainingsssssss", "trainingId": 3, "points": 10}
     if (values !== 0) {
       const jsonData = {
         id: updateData.id,
-        skillText: values.jobSkill,
-        skillId: values.skill,
+        trainingText: values.jobTraining,
+        trainingId: values.training,
         points: values.points
       }
-      handleUpdate("updateJobSkills", jsonData, "getJobSkills");
+      await handleUpdate("updateJobTraining", jsonData, "getJobTraining");
     }
     setShowUpdateModal(false);
   }
 
-  const handleEdit = (id, skillId, points, jobSkill) => {
-    setUpdateData({ id: id, skill: skillId, points: points, jobSkill: jobSkill });
+  const handleEdit = (id, trainingId, points, jobTrainingText) => {
+    setUpdateData({ id: id, training: trainingId, points: points, jobTraining: jobTrainingText });
     handleOpenUpdateModal();
   }
 
@@ -129,7 +131,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
                         <TableCell className="w-1/12 text-center">{data.jtrng_points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <div className='flex justify-center'>
-                            <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points, data.jskills_text)}>
+                            <button onClick={() => handleEdit(data.jtrng_id, data.jtrng_trainingId, data.jtrng_points, data.jtrng_text)}>
                               <Edit2 className="h-4 w-4 mr-4" />
                             </button>
                             <button className="h-4 w-4" onClick={() => handleRemoveList(data.jskills_id)}>
@@ -147,7 +149,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
-                      <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points, data.jskills_text)}>
+                      <button onClick={() => handleEdit(data.jtrng_id, data.jtrng_trainingId, data.jtrng_points, data.jtrng_text)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
                       <button className="h-4 w-4" onClick={() => handleRemoveList(data.jeduc_id)}>
@@ -178,6 +180,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
           )}
         </Alert>
         {showModal && <AddTraining open={showModal} onHide={handleCloseModal} training={training} />}
+        {showUpdateModal && <UpdateTrainingModal open={showUpdateModal} onHide={handleCloseUpdateModal} training={training} updateData={updateData} />}
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
