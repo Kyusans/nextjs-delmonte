@@ -27,9 +27,10 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
   };
   const handleCloseAlert = (status) => {
     if (status === 1) {
-      // const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
-      // setDatas(filteredDatas);
-      // storeData("jobTraining", JSON.stringify(filteredDatas));
+      const jsonData = {
+        id: indexToRemove
+      }
+      deleteData("deleteJobTraining", jsonData, "getJobTraining");
     }
     setShowAlert(false);
   };
@@ -66,7 +67,6 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
   }
 
   const handleCloseUpdateModal = async (values) => {
-     // {"id": 10, "trainingText": "trainingsssssss", "trainingId": 3, "points": 10}
     if (values !== 0) {
       const jsonData = {
         id: updateData.id,
@@ -134,7 +134,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
                             <button onClick={() => handleEdit(data.jtrng_id, data.jtrng_trainingId, data.jtrng_points, data.jtrng_text)}>
                               <Edit2 className="h-4 w-4 mr-4" />
                             </button>
-                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jskills_id)}>
+                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jtrng_id)}>
                               <Trash2 className="h-4 w-4" />
                             </button>
                           </div>
@@ -152,7 +152,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
                       <button onClick={() => handleEdit(data.jtrng_id, data.jtrng_trainingId, data.jtrng_points, data.jtrng_text)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
-                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jeduc_id)}>
+                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jtrng_id)}>
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
