@@ -14,6 +14,7 @@ import UpdateEducation from './UpdateEducationBackground';
 import UpdateSkill from './UpdateSkills';
 import UpdateTraining from './UpdateTraining';
 import UpdateExperience from './UpdateExperience';
+import UpdateKnowledge from './UpdateKnowledge';
 
 function UpdateJobModal({ jobData, type, getSelectedJobs }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -204,6 +205,16 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
       case "experience":
         return (
           <UpdateExperience
+            data={data}
+            handleAddData={handleAddData}
+            handleUpdate={handleUpdate}
+            deleteData={deleteData}
+          />
+        )
+      case "knowledge":
+        return (
+          <UpdateKnowledge
+            knowledgeList={knowledgeList}
             data={data}
             handleAddData={handleAddData}
             handleUpdate={handleUpdate}

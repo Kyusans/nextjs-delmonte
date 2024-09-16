@@ -49,7 +49,7 @@ function UpdateExperienceModal({ open, onHide, updateData }) {
       form.reset();
     } catch (error) {
       toast.error("Network error");
-      console.log("AddExperience.jsx => onSubmit(): " + error);
+      console.log("UpdateExperienceModal.jsx => onSubmit(): " + error);
     }
   };
 
@@ -61,7 +61,7 @@ function UpdateExperienceModal({ open, onHide, updateData }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold">Add Experience</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Update Experience</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -112,7 +112,7 @@ function UpdateExperienceModal({ open, onHide, updateData }) {
                 <DialogClose asChild>
                   <Button variant="outline">Cancel</Button>
                 </DialogClose>
-                <Button type="submit">Add Job Experience</Button>
+                <Button type="submit">Update</Button>
               </div>
             </form>
           </Form>

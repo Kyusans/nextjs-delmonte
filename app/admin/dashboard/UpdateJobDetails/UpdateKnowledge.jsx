@@ -1,0 +1,186 @@
+"use client";
+import { retrieveData, storeData } from '@/app/utils/storageUtils'
+import { Alert, AlertTitle } from '@/components/ui/alert'
+import { Button } from '@/components/ui/button'
+import { CardContent, CardDescription } from '@/components/ui/card'
+import ShowAlert from '@/components/ui/show-alert'
+import { Edit2, PlusIcon, Trash2, X } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import { ScrollArea } from '@/components/ui/scroll-area';
+import AddKnowledge from '../modal/AddJob/AddKnowledge';
+import { Separator } from '@/components/ui/separator';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
+
+
+function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, deleteData }) {
+  const [datas, setDatas] = useState([]);
+  const [indexToRemove, setIndexToRemove] = useState(null);
+  const [updateData, setUpdateData] = useState({});
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const handleShowAlert = (message) => {
+    setAlertMessage(message);
+    setShowAlert(true);
+  };
+  const handleCloseAlert = (status) => {
+    if (status === 1) {
+      // const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
+      // setDatas(filteredDatas);
+      // storeData("jobKnowledge", JSON.stringify(filteredDatas));
+    }
+    setShowAlert(false);
+  };
+
+  const [showModal, setShowModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setShowModal(true);
+  }
+
+  const handleCloseModal = (status) => {
+    if (status !== 0) {
+      const jsonData ={
+        jobId: retrieveData("jobId"),
+        knowledgeText: status.jobKnowledge,
+        knowledgeId: status.knowledgeId,
+        points: status.points
+      }
+      handleAddData("addJobKnowledge", jsonData, "getJobKnowledge");
+    } else {
+      setDatas(datas);
+    }
+    setShowModal(false);
+  };
+
+  const handleRemoveList = (indexToRemove) => {
+    setIndexToRemove(indexToRemove);
+    handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
+  };
+
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const handleOpenUpdateModal = () => {
+    setShowUpdateModal(true);
+  }
+
+  const handleCloseUpdateModal = (values) => {
+    if (values !== 0) {
+      // const jsonData = {
+      //   id: updateData.id,
+      //   skillText: values.jobSkill,
+      //   skillId: values.skill,
+      //   points: values.points
+      // }
+      // handleUpdate("updateJobSkills", jsonData, "getJobSkills");
+    }
+    setShowUpdateModal(false);
+  }
+
+  const handleEdit = (id, skillId, points, jobSkill) => {
+    setUpdateData({ id: id, skill: skillId, points: points, jobSkill: jobSkill });
+    handleOpenUpdateModal();
+  }
+
+  useEffect(() => {
+    if (data) {
+      setDatas(data);
+      const filteredData = data.map((element) => ({
+        knowledgeId: element.jknow_knowledgeId,
+      }))
+      storeData("jobKnowledge", JSON.stringify(filteredData));
+    }
+    console.log("datas ni knowledge:", data)
+    console.log("knowledge ni knowledge:", knowledgeList)
+    console.log("retrieveData ni knowledge", JSON.parse(retrieveData("knowledgeList")))
+  }, [data, knowledgeList]);
+
+  return (
+    <>
+      <div>
+        <Button onClick={handleOpenModal}>
+          <PlusIcon className="h-4 w-4 mr-1" />
+          Add Knowledge and Compliance
+        </Button>
+        <Alert className="w-full mt-3">
+          {datas && datas.length > 0 ? (
+            <>
+              <div className="hidden md:block">
+                <Table className="w-full">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-1/12">Index</TableHead>
+                      <TableHead className="w-1/12 ">Knowledge</TableHead>
+                      <TableHead className="w-10/12">Description</TableHead>
+                      <TableHead className="w-1/12 text-center">Points</TableHead>
+                      <TableHead className="w-1/12 text-center">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {datas.map((data, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="w-1/12">{index + 1}</TableCell>
+                        <TableCell className="w-1/12">
+                          {knowledgeList.find((item) => item.value === data.jknow_knowledgeId)?.label}
+                        </TableCell>
+                        <TableCell className="w-10/12 whitespace-normal">
+                          {data.jknow_text}
+                        </TableCell>
+                        <TableCell className="w-1/12 text-center">{data.jknow_points}</TableCell>
+                        <TableCell className="w-1/12 text-center">
+                          <div className='flex justify-center'>
+                            <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points, data.jskills_text)}>
+                              <Edit2 className="h-4 w-4 mr-4" />
+                            </button>
+                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jskills_id)}>
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              <div className="block md:hidden">
+                {datas.map((data, index) => (
+                  <div key={index} className="relative w-full p-4 rounded-md shadow">
+                    <div className="flex justify-end">
+                      <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points, data.jskills_text)}>
+                        <Edit2 className="h-4 w-4 mr-4" />
+                      </button>
+                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jskills_id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <div className="mt-2 text-sm">
+                      <div className='mb-1 text-xl break-words'>
+                        {knowledgeList.find((item) => item.value === data.jknow_knowledgeId)?.label}
+                      </div>
+                      {data.jknow_text}
+                    </div>
+                    <div className='text-end'>
+                      <Badge className="mt-2 text-xs font-bold">
+                        Points: {data.jknow_points}
+                      </Badge>
+                    </div>
+                    <Separator className="mt-3" />
+                  </div>
+                ))}
+              </div>
+            </>
+          ) : (
+            <CardDescription className="text-center">
+              No duties added yet
+            </CardDescription>
+          )}
+        </Alert>
+
+        {showModal && <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} />}
+        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
+      </div>
+    </>
+  )
+}
+
+export default UpdateKnowledge
