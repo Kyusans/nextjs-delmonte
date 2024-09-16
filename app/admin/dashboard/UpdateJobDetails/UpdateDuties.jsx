@@ -67,7 +67,7 @@ function UpdateDuties({ data, handleAddData, handleUpdate, deleteData }) {
     setSelectedId(null);
   };
 
-  const handleUpdateDuty = async () => {
+  const handleUpdateDuty = () => {
     if (editedText === datas[editIndex].duties_text) {
       handleCancelEdit();
       return;
@@ -79,7 +79,7 @@ function UpdateDuties({ data, handleAddData, handleUpdate, deleteData }) {
       duties: editedText,
       dutyId: selectedId,
     }
-    await handleUpdate("updateDuties", jsonData, "getDuties");
+    handleUpdate("updateDuties", jsonData, "getDuties");
     handleCancelEdit();
   }
 

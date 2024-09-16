@@ -13,6 +13,7 @@ import { retrieveData } from '@/app/utils/storageUtils';
 import UpdateEducation from './UpdateEducationBackground';
 import UpdateSkill from './UpdateSkills';
 import UpdateTraining from './UpdateTraining';
+import UpdateExperience from './UpdateExperience';
 
 function UpdateJobModal({ jobData, type, getSelectedJobs }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -176,7 +177,6 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
             courseCategory={courseCategory}
             data={data}
             handleAddData={handleAddData}
-            getData={getData}
             handleUpdate={handleUpdate}
             deleteData={deleteData}
           />
@@ -201,6 +201,15 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
             deleteData={deleteData}
           />
         );
+      case "experience":
+        return (
+          <UpdateExperience
+            data={data}
+            handleAddData={handleAddData}
+            handleUpdate={handleUpdate}
+            deleteData={deleteData}
+          />
+        )
       default:
         return null
     }
