@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
+import UpdateKnowledgeModal from '../modal/UpdateJob/UpdateKnowledgeModal';
 
 
 function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, deleteData }) {
@@ -65,20 +66,21 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
   }
 
   const handleCloseUpdateModal = (values) => {
+     // {"id": 11, "knowledgeText": "knowledge NATIN TO", "points": 10, "knowledgeId": 2}
     if (values !== 0) {
-      // const jsonData = {
-      //   id: updateData.id,
-      //   skillText: values.jobSkill,
-      //   skillId: values.skill,
-      //   points: values.points
-      // }
-      // handleUpdate("updateJobSkills", jsonData, "getJobSkills");
+      const jsonData ={
+        id: updateData.id,
+        knowledgeText: values.jobKnowledge,
+        knowledgeId: values.knowledgeId,
+        points: values.points
+      }
+      handleUpdate("updateJobKnowledge", jsonData, "getJobKnowledge");
     }
     setShowUpdateModal(false);
   }
 
-  const handleEdit = (id, skillId, points, jobSkill) => {
-    setUpdateData({ id: id, skill: skillId, points: points, jobSkill: jobSkill });
+  const handleEdit = (id, knowledgeId, points, jobKnowledge) => {
+    setUpdateData({ id: id, knowledgeId: knowledgeId, points: points, jobKnowledge: jobKnowledge });
     handleOpenUpdateModal();
   }
 
@@ -129,10 +131,10 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
                         <TableCell className="w-1/12 text-center">{data.jknow_points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <div className='flex justify-center'>
-                            <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points, data.jskills_text)}>
+                            <button onClick={() => handleEdit(data.jknow_id, data.jknow_knowledgeId, data.jknow_points, data.jknow_text)}>
                               <Edit2 className="h-4 w-4 mr-4" />
                             </button>
-                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jskills_id)}>
+                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jknow_id)}>
                               <Trash2 className="h-4 w-4" />
                             </button>
                           </div>
@@ -146,10 +148,10 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
-                      <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points, data.jskills_text)}>
+                      <button onClick={() => handleEdit(data.jknow_id, data.jknow_knowledgeId, data.jknow_points, data.jknow_text)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
-                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jskills_id)}>
+                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jknow_id)}>
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
@@ -177,6 +179,7 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
         </Alert>
 
         {showModal && <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} />}
+        {showUpdateModal && <UpdateKnowledgeModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} knowledgeList={knowledgeList} />}
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
