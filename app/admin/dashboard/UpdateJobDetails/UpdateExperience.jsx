@@ -28,9 +28,10 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
   };
   const handleCloseAlert = (status) => {
     if (status === 1) {
-      // const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
-      // setDatas(filteredDatas);
-      // storeData("jobExperience", JSON.stringify(filteredDatas));
+      const jsonData = {
+        id: indexToRemove
+      }
+      deleteData("deleteJobExperience", jsonData, "getJobExperience");
     }
     setShowAlert(false);
   };
@@ -84,18 +85,11 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
     handleOpenUpdateModal();
   }
 
-
   useEffect(() => {
     if (data) {
       setDatas(data);
-      const filteredData = data.map((element) => ({
-        training: element.jtrng_trainingId,
-      }))
-      storeData("jobTraining", JSON.stringify(filteredData));
     }
-    console.log("datas ni experience:", data);
-    console.log("retrieveData ni experience", JSON.parse(retrieveData("experience")));
-  }, [data]);
+   }, [data]);
 
   return (
     <>
@@ -132,7 +126,7 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
                             <button onClick={() => handleEdit(data.jwork_id, data.jwork_points, data.jwork_responsibilities, data.jwork_duration)}>
                               <Edit2 className="h-4 w-4 mr-4" />
                             </button>
-                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jtrng_id)}>
+                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jwork_id)}>
                               <Trash2 className="h-4 w-4" />
                             </button>
                           </div>
@@ -149,7 +143,7 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
                       <button onClick={() => handleEdit(data.jwork_id, data.jwork_points, data.jwork_responsibilities, data.jwork_duration)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
-                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jtrng_id)}>
+                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jwork_id)}>
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
@@ -178,7 +172,7 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
         </Alert>
         {showModal && <AddExperience open={showModal} onHide={handleCloseModal} />}
         {showUpdateModal && <UpdateExperienceModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} />}
-        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
+        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
       </div>
     </>
   )
