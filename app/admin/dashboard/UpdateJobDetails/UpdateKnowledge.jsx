@@ -27,9 +27,10 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
   };
   const handleCloseAlert = (status) => {
     if (status === 1) {
-      // const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
-      // setDatas(filteredDatas);
-      // storeData("jobKnowledge", JSON.stringify(filteredDatas));
+      const jsonData = {
+        id: indexToRemove
+      }
+      deleteData("deleteJobKnowledge", jsonData, "getJobKnowledge");
     }
     setShowAlert(false);
   };
@@ -66,7 +67,6 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
   }
 
   const handleCloseUpdateModal = (values) => {
-     // {"id": 11, "knowledgeText": "knowledge NATIN TO", "points": 10, "knowledgeId": 2}
     if (values !== 0) {
       const jsonData ={
         id: updateData.id,
@@ -180,7 +180,7 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
 
         {showModal && <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} />}
         {showUpdateModal && <UpdateKnowledgeModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} knowledgeList={knowledgeList} />}
-        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
+        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
       </div>
     </>
   )
