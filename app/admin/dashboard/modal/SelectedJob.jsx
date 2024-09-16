@@ -192,6 +192,21 @@ function SelectedJob({ open, onHide, jobId }) {
                                   </div>
                                 </>
                               )}
+                              {data.jobKnowledge.length > 0 && (
+                                <>
+                                  <div className='text-sm my-3 font-bold flex items-center'>
+                                    <span className='mr-2'>Knowledge and Compliance</span>
+                                    {handleUpdateJob(data.jobKnowledge, "knowledge")}
+                                  </div>
+                                  <div className='w-full ml-3'>
+                                    {data.jobKnowledge.map((data, index) => (
+                                      <ul key={index} className="list-disc ml-4 mb-1">
+                                        <li>{data.jknow_text}</li>
+                                      </ul>
+                                    ))}
+                                  </div>
+                                </>
+                              )}
                             </AccordionContent>
                           </AccordionItem>
                         ) : null}

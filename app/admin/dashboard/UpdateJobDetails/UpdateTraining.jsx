@@ -66,7 +66,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
     setShowUpdateModal(true);
   }
 
-  const handleCloseUpdateModal = async (values) => {
+  const handleCloseUpdateModal = (values) => {
     if (values !== 0) {
       const jsonData = {
         id: updateData.id,
@@ -74,7 +74,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
         trainingId: values.training,
         points: values.points
       }
-      await handleUpdate("updateJobTraining", jsonData, "getJobTraining");
+      handleUpdate("updateJobTraining", jsonData, "getJobTraining");
     }
     setShowUpdateModal(false);
   }
