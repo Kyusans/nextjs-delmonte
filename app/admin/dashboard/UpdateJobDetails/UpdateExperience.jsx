@@ -12,6 +12,7 @@ import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { jsx } from 'react/jsx-runtime';
+import UpdateExperienceModal from '../modal/UpdateJob/UpdateExperienceModal';
 
 
 function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
@@ -67,19 +68,19 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
 
   const handleCloseUpdateModal = (values) => {
     if (values !== 0) {
-      // const jsonData = {
-      //   id: updateData.id,
-      //   trainingText: values.jobTraining,
-      //   trainingId: values.training,
-      //   points: values.points
-      // }
-      handleUpdate("updateJobTraining", jsonData, "getJobTraining");
+      const jsonData = {
+        id: updateData.id,
+        experienceText: values.jobExperience,
+        yearsOfExperience: values.yearsOfExperience,
+        points: values.points
+      }
+      handleUpdate("updateJobExperience", jsonData, "getJobExperience");
     }
     setShowUpdateModal(false);
   }
 
-  const handleEdit = (id, trainingId, points, jobTrainingText) => {
-    setUpdateData({ id: id, training: trainingId, points: points, jobTraining: jobTrainingText });
+  const handleEdit = (id, points, jobExperienceText, yearsOfExperience) => {
+    setUpdateData({ id: id, jobExperience: jobExperienceText, yearsOfExperience: yearsOfExperience, points: points });
     handleOpenUpdateModal();
   }
 
@@ -128,7 +129,7 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
                         <TableCell className="w-1/12 text-center">{data.jwork_points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <div className='flex justify-center'>
-                            <button onClick={() => handleEdit(data.jtrng_id, data.jtrng_trainingId, data.jtrng_points, data.jtrng_text)}>
+                            <button onClick={() => handleEdit(data.jwork_id, data.jwork_points, data.jwork_responsibilities, data.jwork_duration)}>
                               <Edit2 className="h-4 w-4 mr-4" />
                             </button>
                             <button className="h-4 w-4" onClick={() => handleRemoveList(data.jtrng_id)}>
@@ -145,7 +146,7 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
-                      <button onClick={() => handleEdit(data.jtrng_id, data.jtrng_trainingId, data.jtrng_points, data.jtrng_text)}>
+                      <button onClick={() => handleEdit(data.jwork_id, data.jwork_points, data.jwork_responsibilities, data.jwork_duration)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
                       <button className="h-4 w-4" onClick={() => handleRemoveList(data.jtrng_id)}>
@@ -175,7 +176,8 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
             </CardDescription>
           )}
         </Alert>
-        <AddExperience open={showModal} onHide={handleCloseModal} />
+        {showModal && <AddExperience open={showModal} onHide={handleCloseModal} />}
+        {showUpdateModal && <UpdateExperienceModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} />}
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
