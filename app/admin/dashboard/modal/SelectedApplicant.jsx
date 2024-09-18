@@ -160,7 +160,6 @@ function SelectedApplicant({ open, onHide, candId }) {
                       </ScrollArea>
                     </Card>
                   </div>
-
                   <div className="lg:col-span-4">
                     <Card className="w-full">
                       <ScrollArea className="h-80">
@@ -168,9 +167,10 @@ function SelectedApplicant({ open, onHide, candId }) {
                           <Tabs defaultValue={1} className="my-3">
                             <TabsList>
                               <TabsTrigger value={1}>Education</TabsTrigger>
-                              <TabsTrigger value={2}>Experience</TabsTrigger>
-                              <TabsTrigger value={3}>Trainings</TabsTrigger>
-                              <TabsTrigger value={4}>Knowledge</TabsTrigger>
+                              <TabsTrigger value={2}>Trainings</TabsTrigger>
+                              <TabsTrigger value={3}>Knowledge</TabsTrigger>
+                              <TabsTrigger value={4}>Experience</TabsTrigger>
+
                             </TabsList>
 
                             <TabsContent value={1}>
@@ -238,6 +238,84 @@ function SelectedApplicant({ open, onHide, candId }) {
                             </TabsContent>
 
                             <TabsContent value={2}>
+                              {data.training && data.training.length > 0 ? (
+                                <>
+                                  <div className='w-full ml-3 hidden lg:block'>
+                                    <Table className="w-full text-center">
+                                      <TableHeader>
+                                        <TableRow>
+                                          <TableHead className="text-center">#</TableHead>
+                                          <TableHead className="text-center">Training</TableHead>
+                                        </TableRow>
+                                      </TableHeader>
+                                      <TableBody>
+                                        {data.training.map((data, index) => (
+                                          <TableRow key={index}>
+                                            <TableCell>{index + 1}</TableCell>
+                                            <TableCell>{data.perT_name}</TableCell>
+                                          </TableRow>
+                                        ))}
+                                      </TableBody>
+                                    </Table>
+                                  </div>
+                                  <div className="block lg:hidden">
+                                    {data.training.map((data, index) => (
+                                      <div key={index} className="relative w-full p-4 rounded-md shadow">
+                                        <div className="mt-2 text-sm">
+                                          <div className='mb-1 text-xl break-words'>
+                                            {data.perT_name}
+                                          </div>
+                                        </div>
+                                        <Separator className="mt-3" />
+                                      </div>
+                                    ))}
+                                  </div>
+                                </>
+                              ) : (
+                                <p className="text-center text-gray-500">No training added</p>
+                              )}
+                            </TabsContent>
+
+                            <TabsContent value={3}>
+                              {data.knowledge && data.knowledge.length > 0 ? (
+                                <>
+                                  <div className='w-full ml-3 hidden lg:block'>
+                                    <Table className="w-full text-center">
+                                      <TableHeader>
+                                        <TableRow>
+                                          <TableHead className="text-center">#</TableHead>
+                                          <TableHead className="text-center">Knowledge and Compliance</TableHead>
+                                        </TableRow>
+                                      </TableHeader>
+                                      <TableBody>
+                                        {data.knowledge.map((data, index) => (
+                                          <TableRow key={index}>
+                                            <TableCell>{index + 1}</TableCell>
+                                            <TableCell>{data.knowledge_name}</TableCell>
+                                          </TableRow>
+                                        ))}
+                                      </TableBody>
+                                    </Table>
+                                  </div>
+                                  <div className="block lg:hidden">
+                                    {data.knowledge.map((data, index) => (
+                                      <div key={index} className="relative w-full p-4 rounded-md shadow">
+                                        <div className="mt-2 text-sm">
+                                          <div className='mb-1 text-xl break-words'>
+                                            {data.knowledge_name}
+                                          </div>
+                                        </div>
+                                        <Separator className="mt-3" />
+                                      </div>
+                                    ))}
+                                  </div>
+                                </>
+                              ) : (
+                                <p className="text-center text-gray-500">No knowledge added</p>
+                              )}
+                            </TabsContent>
+
+                            <TabsContent value={4}>
                               {data.employmentHistory && data.employmentHistory.length > 0 ? (
                                 <>
                                   <div className='w-full ml-3 hidden lg:block'>
@@ -283,44 +361,6 @@ function SelectedApplicant({ open, onHide, candId }) {
                                 </>
                               ) : (
                                 <p className="text-center text-gray-500">No experience added</p>
-                              )}
-                            </TabsContent>
-                            <TabsContent value={3}>
-                              {data.training && data.training.length > 0 ? (
-                                <>
-                                  <div className='w-full ml-3 hidden lg:block'>
-                                    <Table className="w-full text-center">
-                                      <TableHeader>
-                                        <TableRow>
-                                          <TableHead className="text-center">#</TableHead>
-                                          <TableHead className="text-center">Training</TableHead>
-                                        </TableRow>
-                                      </TableHeader>
-                                      <TableBody>
-                                        {data.training.map((data, index) => (
-                                          <TableRow key={index}>
-                                            <TableCell>{index + 1}</TableCell>
-                                            <TableCell>{data.perT_name}</TableCell>
-                                          </TableRow>
-                                        ))}
-                                      </TableBody>
-                                    </Table>
-                                  </div>
-                                  <div className="block lg:hidden">
-                                    {data.training.map((data, index) => (
-                                      <div key={index} className="relative w-full p-4 rounded-md shadow">
-                                        <div className="mt-2 text-sm">
-                                          <div className='mb-1 text-xl break-words'>
-                                            {data.perT_name}
-                                          </div>
-                                        </div>
-                                        <Separator className="mt-3" />
-                                      </div>
-                                    ))}
-                                  </div>
-                                </>
-                              ) : (
-                                <p className="text-center text-gray-500">No training added</p>
                               )}
                             </TabsContent>
                           </Tabs>
@@ -477,7 +517,6 @@ function SelectedApplicant({ open, onHide, candId }) {
                     </ScrollArea>
                   </CardContent>
                 </Card>
-
               </div>
             )}
           </ScrollArea>
