@@ -1,4 +1,4 @@
-import { retrieveData, storeData } from '@/app/utils/storageUtils';
+import { removeData, retrieveData, storeData } from '@/app/utils/storageUtils';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardDescription } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -13,9 +13,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import UpdateJobModal from '../UpdateJobDetails/UpdateJobModal';
 import SelectedApplicant from './SelectedApplicant';
+import { Badge } from '@/components/ui/badge';
 
 function SelectedJob({ open, onHide, jobId }) {
-
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,8 +26,8 @@ function SelectedJob({ open, onHide, jobId }) {
     try {
       const url = retrieveData("url") + "admin.php";
       const jsonData = {
-        "jobId": jobId
-      }
+        jobId: jobId
+      };
       const formData = new FormData();
       formData.append("operation", "getSelectedJobs");
       formData.append("json", JSON.stringify(jsonData));
@@ -38,7 +38,7 @@ function SelectedJob({ open, onHide, jobId }) {
       }
     } catch (error) {
       toast.error("Network error");
-      console.log("AdminJobs.jsx => getSelectedJobs(): " + error);
+      console.log("SelectedJob.jsx => getSelectedJobs(): " + error);
     } finally {
       setIsLoading(false);
     }
@@ -74,21 +74,27 @@ function SelectedJob({ open, onHide, jobId }) {
 
   const [showSelectedApplicant, setShowSelectedApplicant] = useState(false);
   const [selectedApplicantId, setSelectedApplicantId] = useState(0);
+
   const handleShowSelectedApplicant = (id) => {
     setSelectedApplicantId(id);
     setShowSelectedApplicant(true);
-  }
+  };
+
   const handleCloseSelectedApplicant = () => {
     setShowSelectedApplicant(false);
   };
 
   const handleUpdateJob = (data, type) => {
-    return <UpdateJobModal jobData={data} type={type} getSelectedJobs={getSelectedJobs} />
-  }
+    return <UpdateJobModal jobData={data} type={type} getSelectedJobs={getSelectedJobs} />;
+  };
 
+  const handleClose = () => {
+    removeData("jobId");
+    onHide();
+  };
   return (
     <>
-      <Dialog open={open} onOpenChange={onHide}>
+      <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent className="max-w-7xl h-full md:h-4/5">
           <DialogTitle className="hidden" />
           {isLoading ? (<Spinner />) :
@@ -101,7 +107,7 @@ function SelectedJob({ open, onHide, jobId }) {
                   </ScrollArea>
                 </DialogHeader>
                 <Separator className="mb-4" />
-                <div className='flex justify-end   mb-3'>
+                <div className='flex justify-end mb-3'>
                 </div>
                 <Card className="w-full p-3">
                   <Tabs defaultValue={1} className='mb-5'>
@@ -141,7 +147,10 @@ function SelectedJob({ open, onHide, jobId }) {
                                   <div className='w-full ml-3'>
                                     {data.jobEducation.map((data, index) => (
                                       <ul key={index} className="list-disc ml-4 mb-1">
-                                        <li>{data.jeduc_text}</li>
+                                        <li>
+                                          {data.jeduc_text}
+                                          <Badge className='ml-2 text-xs'>{data.jeduc_points} point{data.jeduc_points > 1 ? "s" : ""}</Badge>
+                                        </li>
                                       </ul>
                                     ))}
                                   </div>
@@ -156,7 +165,10 @@ function SelectedJob({ open, onHide, jobId }) {
                                   <div className='w-full ml-3'>
                                     {data.jobSkills.map((data, index) => (
                                       <ul key={index} className="list-disc ml-4 mb-1">
-                                        <li>{data.jskills_text}</li>
+                                        <li>
+                                          {data.jskills_text}
+                                          <Badge className='ml-2 text-xs'>{data.jskills_points} point{data.jskills_points > 1 ? "s" : ""}</Badge>
+                                        </li>
                                       </ul>
                                     ))}
                                   </div>
@@ -171,7 +183,10 @@ function SelectedJob({ open, onHide, jobId }) {
                                   <div className='w-full ml-3'>
                                     {data.jobTrainings.map((data, index) => (
                                       <ul key={index} className="list-disc ml-4 mb-1">
-                                        <li>{data.jtrng_text}</li>
+                                        <li>
+                                          {data.jtrng_text}
+                                          <Badge className='ml-2 text-xs'>{data.jtrng_points} point{data.jtrng_points > 1 ? "s" : ""}</Badge>
+                                        </li>
                                       </ul>
                                     ))}
                                   </div>
@@ -186,7 +201,10 @@ function SelectedJob({ open, onHide, jobId }) {
                                   <div className='w-full ml-3'>
                                     {data.jobExperience.map((data, index) => (
                                       <ul key={index} className="list-disc ml-4 mb-1">
-                                        <li>{data.jwork_responsibilities} {`${data.jwork_duration} year${data.jwork_duration > 1 ? "s" : ""} of experience needed`}</li>
+                                        <li>
+                                          {data.jwork_responsibilities} {`${data.jwork_duration} year${data.jwork_duration > 1 ? "s" : ""} of experience needed`}
+                                          <Badge className='ml-2 text-xs'>{data.jwork_points} point{data.jwork_points > 1 ? "s" : ""}</Badge>
+                                        </li>
                                       </ul>
                                     ))}
                                   </div>
@@ -201,7 +219,10 @@ function SelectedJob({ open, onHide, jobId }) {
                                   <div className='w-full ml-3'>
                                     {data.jobKnowledge.map((data, index) => (
                                       <ul key={index} className="list-disc ml-4 mb-1">
-                                        <li>{data.jknow_text}</li>
+                                        <li>
+                                          {data.jknow_text}
+                                          <Badge className='ml-2 text-xs'>{data.jknow_points} point{data.jknow_points > 1 ? "s" : ""}</Badge>
+                                        </li>
                                       </ul>
                                     ))}
                                   </div>
@@ -286,8 +307,13 @@ function SelectedJob({ open, onHide, jobId }) {
             </>)}
         </DialogContent>
       </Dialog>
-
-      {showSelectedApplicant && <SelectedApplicant open={showSelectedApplicant} onHide={handleCloseSelectedApplicant} candId={selectedApplicantId} />}
+      {showSelectedApplicant && (
+        <SelectedApplicant
+          open={showSelectedApplicant}
+          onHide={handleCloseSelectedApplicant}
+          candId={selectedApplicantId}
+        />
+      )}
     </>
   );
 }
