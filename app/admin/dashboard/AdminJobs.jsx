@@ -41,7 +41,7 @@ function AdminJobs() {
   const getAllJobs = async () => {
     setIsLoading(true);
     try {
-      const url = retrieveData("url") + "admin.php";
+      const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
       const formData = new FormData();
       formData.append("operation", "getAllJobs");
       const res = await axios.post(url, formData);
@@ -63,7 +63,7 @@ function AdminJobs() {
   const handleJobStatusSwitch = async () => {
     setIsLoading(true);
     try {
-      const url = retrieveData("url") + "admin.php";
+      const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
       const jsonData = {
         "jobId": selectedJobId,
         "status": selectedJobStatus

@@ -24,7 +24,7 @@ function SelectedJob({ open, onHide, jobId }) {
   const getSelectedJobs = useCallback(async () => {
     setIsLoading(true);
     try {
-      const url = retrieveData("url") + "admin.php";
+      const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
       const jsonData = {
         jobId: jobId
       };

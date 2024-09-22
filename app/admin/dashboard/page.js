@@ -14,12 +14,6 @@ export default function Page() {
     setViewIndex(index);
   }
 
-  useEffect(() => {
-    if (retrieveData("url") !== "http://localhost/delmonte/api/") {
-      storeData("url", "http://localhost/delmonte/api/");
-    }
-  }, [])
-
   const adminViews = [
     { view: <AdminDashboard /> },
     { view: <AdminJobs /> },
