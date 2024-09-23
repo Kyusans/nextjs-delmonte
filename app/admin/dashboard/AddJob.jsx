@@ -29,7 +29,7 @@ function AddJob({ handleSwitchView }) {
   const getDropDownForAddJobs = async () => {
     setIsLoading(true);
     try {
-      const url = retrieveData("url") + "admin.php";
+      const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
       const formData = new FormData();
       formData.append("operation", "getDropDownForAddJobs");
       const res = await axios.post(url, formData);
@@ -72,7 +72,7 @@ function AddJob({ handleSwitchView }) {
   const handleSubmit = async () => {
     try {
       setIsLoading(true);
-      const url = retrieveData("url") + "admin.php";
+      const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
       const jsonData = {
         jobMaster: retrieveData("jobMaster"),
         jobMasterDuties: JSON.parse(retrieveData("duties")),

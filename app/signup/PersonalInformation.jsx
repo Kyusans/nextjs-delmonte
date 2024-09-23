@@ -148,7 +148,7 @@ const PersonalInformation = ({ nextPage }) => {
     }
     try {
       setIsLoading(true);
-      const url = retrieveData("url") + "users.php";
+      const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
       const jsonData = { email: values.email };
       const formData = new FormData();
       formData.append("json", JSON.stringify(jsonData));
@@ -180,13 +180,6 @@ const PersonalInformation = ({ nextPage }) => {
       }, 50);
     }
   };
-
-  useEffect(() => {
-    if (retrieveData("url") !== "http://localhost/delmonte/api/") {
-      storeData("url", "http://localhost/delmonte/api/");
-    }
-    console.log("url", retrieveData("url"));
-  }, [])
 
   useEffect(() => {
     if (retrieveData("personalInfo") !== null) {

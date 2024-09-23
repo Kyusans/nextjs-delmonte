@@ -65,7 +65,7 @@ const Signup = () => {
   const handleSaveInformation = async () => {
     setIsLoading(true);
     try {
-      const url = retrieveData("url") + "users.php";
+      const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
       const jsonData = {
         personalInfo: JSON.parse(retrieveData("personalInfo")),
         educationalBackground: JSON.parse(retrieveData("educationalBackground")),
@@ -170,7 +170,7 @@ const Signup = () => {
     } else if (pincode === "") {
       try {
         setIsLoading(true);
-        const url = retrieveData("url") + "users.php";
+        const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
         const jsonData = {
           email: personalInfo.email,
         }
@@ -221,7 +221,7 @@ const Signup = () => {
   const getAllDataForDropdownSignup = useCallback(async () => {
     setIsLoading(true);
     try {
-      const url = retrieveData("url") + "users.php";
+      const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
       const formData = new FormData();
       formData.append("operation", "getAllDataForDropdownSignup");
       const res = await axios.post(url, formData);

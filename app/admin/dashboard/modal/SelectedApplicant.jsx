@@ -28,6 +28,8 @@ function SelectedApplicant({ open, onHide, candId }) {
         cand_id: candId,
         job_id: retrieveData("jobId"),
       };
+      console.log("url ni getCandidateProfile: ", url);
+      console.log("jsonData ni getCandidateProfile: ", jsonData);
       const formData = new FormData();
       formData.append("operation", "getCandidateProfile");
       formData.append("json", JSON.stringify(jsonData));
@@ -170,7 +172,6 @@ function SelectedApplicant({ open, onHide, candId }) {
                               <TabsTrigger value={2}>Trainings</TabsTrigger>
                               <TabsTrigger value={3}>Knowledge</TabsTrigger>
                               <TabsTrigger value={4}>Experience</TabsTrigger>
-
                             </TabsList>
 
                             <TabsContent value={1}>
@@ -385,6 +386,17 @@ function SelectedApplicant({ open, onHide, candId }) {
                           <AccordionContent>
                             {data.criteria && data.criteria.education && data.criteria.education.length > 0 ? (
                               <>
+                                <div className="grid grid-cols-3 gap-4 my-3">
+                                  <p className="col-span-2">Total points</p>
+                                  <p className={`flex justify-end` + (data.pointsByCategory.education.points
+                                    >= (data.pointsByCategory.education.maxPoints / 2) ? " text-green-500"
+                                    : " text-red-500")}
+                                  >
+                                    {data.pointsByCategory.education.points}
+                                    /{data.pointsByCategory.education.maxPoints}
+                                  </p>
+                                </div>
+                                <Separator />
                                 {data.criteria.education.map((edu, index) => (
                                   <React.Fragment key={index}>
                                     <div className="grid grid-cols-3 gap-4 my-3">
@@ -412,6 +424,17 @@ function SelectedApplicant({ open, onHide, candId }) {
                           <AccordionContent>
                             {data.criteria && data.criteria.skills && data.criteria.skills.length > 0 ? (
                               <>
+                              <div className="grid grid-cols-3 gap-4 my-3">
+                                  <p className="col-span-2">Total points</p>
+                                  <p className={`flex justify-end` + (data.pointsByCategory.skills.points
+                                    >= (data.pointsByCategory.skills.maxPoints / 2) ? " text-green-500"
+                                    : " text-red-500")}
+                                  >
+                                    {data.pointsByCategory.skills.points}
+                                    /{data.pointsByCategory.skills.maxPoints}
+                                  </p>
+                                </div>
+                                <Separator />
                                 {data.criteria.skills.map((skills, index) => (
                                   <React.Fragment key={index}>
                                     <div className="grid grid-cols-3 gap-4 my-3">
@@ -439,6 +462,17 @@ function SelectedApplicant({ open, onHide, candId }) {
                           <AccordionContent>
                             {data.criteria && data.criteria.training && data.criteria.training.length > 0 ? (
                               <>
+                               <div className="grid grid-cols-3 gap-4 my-3">
+                                  <p className="col-span-2">Total points</p>
+                                  <p className={`flex justify-end` + (data.pointsByCategory.training.points
+                                    >= (data.pointsByCategory.training.maxPoints / 2) ? " text-green-500"
+                                    : " text-red-500")}
+                                  >
+                                    {data.pointsByCategory.training.points}
+                                    /{data.pointsByCategory.training.maxPoints}
+                                  </p>
+                                </div>
+                                <Separator />
                                 {data.criteria.training.map((training, index) => (
                                   <React.Fragment key={index}>
                                     <div className="grid grid-cols-3 gap-4 my-3">
@@ -466,6 +500,17 @@ function SelectedApplicant({ open, onHide, candId }) {
                           <AccordionContent>
                             {data.criteria && data.criteria.knowledge && data.criteria.knowledge.length > 0 ? (
                               <>
+                                    <div className="grid grid-cols-3 gap-4 my-3">
+                                  <p className="col-span-2">Total points</p>
+                                  <p className={`flex justify-end` + (data.pointsByCategory.knowledge.points
+                                    >= (data.pointsByCategory.knowledge.maxPoints / 2) ? " text-green-500"
+                                    : " text-red-500")}
+                                  >
+                                    {data.pointsByCategory.knowledge.points}
+                                    /{data.pointsByCategory.knowledge.maxPoints}
+                                  </p>
+                                </div>
+                                <Separator />
                                 {data.criteria.knowledge.map((knowledge, index) => (
                                   <React.Fragment key={index}>
                                     <div className="grid grid-cols-3 gap-4 my-3">
@@ -493,6 +538,17 @@ function SelectedApplicant({ open, onHide, candId }) {
                           <AccordionContent>
                             {data.criteria && data.criteria.experience && data.criteria.experience.length > 0 ? (
                               <>
+                                    <div className="grid grid-cols-3 gap-4 my-3">
+                                  <p className="col-span-2">Total points</p>
+                                  <p className={`flex justify-end` + (data.pointsByCategory.experience.points
+                                    >= (data.pointsByCategory.experience.maxPoints / 2) ? " text-green-500"
+                                    : " text-red-500")}
+                                  >
+                                    {data.pointsByCategory.experience.points}
+                                    /{data.pointsByCategory.experience.maxPoints}
+                                  </p>
+                                </div>
+                                <Separator />
                                 {data.criteria.experience.map((experience, index) => (
                                   <React.Fragment key={index}>
                                     <div className="grid grid-cols-3 gap-4 my-3">

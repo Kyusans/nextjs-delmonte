@@ -1,4 +1,4 @@
-import { removeData, retrieveData, storeData } from '@/app/utils/storageUtils';
+import { removeData, storeData } from '@/app/utils/storageUtils';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card, CardDescription } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import UpdateJobModal from '../UpdateJobDetails/UpdateJobModal';
 import SelectedApplicant from './SelectedApplicant';
 import { Badge } from '@/components/ui/badge';
+import { SortAsc, SortDesc } from 'lucide-react';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
@@ -21,13 +22,14 @@ function SelectedJob({ open, onHide, jobId }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
 
+  const [sortField, setSortField] = useState(null);
+  const [sortOrder, setSortOrder] = useState('asc');
+
   const getSelectedJobs = useCallback(async () => {
     setIsLoading(true);
     try {
-      const url = retrieveData("url") + "admin.php";
-      const jsonData = {
-        jobId: jobId
-      };
+      const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
+      const jsonData = { jobId: jobId };
       const formData = new FormData();
       formData.append("operation", "getSelectedJobs");
       formData.append("json", JSON.stringify(jsonData));
@@ -38,7 +40,6 @@ function SelectedJob({ open, onHide, jobId }) {
       }
     } catch (error) {
       toast.error("Network error");
-      console.log("SelectedJob.jsx => getSelectedJobs(): " + error);
     } finally {
       setIsLoading(false);
     }
@@ -56,20 +57,14 @@ function SelectedJob({ open, onHide, jobId }) {
   const currentCandidates = data.candidates?.slice(indexOfFirstCandidate, indexOfLastCandidate);
   const totalPages = Math.ceil((data.candidates?.length || 0) / itemsPerPage);
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
+  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
   };
 
   const handlePreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
   };
 
   const [showSelectedApplicant, setShowSelectedApplicant] = useState(false);
@@ -80,9 +75,7 @@ function SelectedJob({ open, onHide, jobId }) {
     setShowSelectedApplicant(true);
   };
 
-  const handleCloseSelectedApplicant = () => {
-    setShowSelectedApplicant(false);
-  };
+  const handleCloseSelectedApplicant = () => setShowSelectedApplicant(false);
 
   const handleUpdateJob = (data, type) => {
     return <UpdateJobModal jobData={data} type={type} getSelectedJobs={getSelectedJobs} />;
@@ -92,28 +85,47 @@ function SelectedJob({ open, onHide, jobId }) {
     removeData("jobId");
     onHide();
   };
+
+  const handleSort = (field) => {
+    const order = sortField === field && sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortField(field);
+    setSortOrder(order);
+
+    const sortedData = [...data.candidates].sort((a, b) => {
+      let aField = field === 'FullName' ? a.FullName.toLowerCase() : a.points[field];
+      let bField = field === 'FullName' ? b.FullName.toLowerCase() : b.points[field];
+
+      if (aField < bField) return order === 'asc' ? -1 : 1;
+      if (aField > bField) return order === 'asc' ? 1 : -1;
+      return 0;
+    });
+
+    setData({ ...data, candidates: sortedData });
+  };
+
   return (
     <>
-      <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="max-w-7xl h-full md:h-4/5">
+      <Dialog open={open} onOpenChange={handleClose} className="text-white">
+        <DialogContent className="max-w-7xl h-full md:h-4/5 bg-[#107343] dark:bg-background">
           <DialogTitle className="hidden" />
-          {isLoading ? (<Spinner />) :
-            (<>
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <>
               <ScrollArea className="h-full rounded-md md:p-2">
-                <DialogHeader>
+                <DialogHeader className="text-white">
                   <DialogTitle>{data.jobMaster[0].jobM_title}</DialogTitle>
                   <ScrollArea className="h-52 md:h-36">
-                    <DialogDescription>{data.jobMaster[0].jobM_description}</DialogDescription>
+                    <DialogDescription className="text-white">{data.jobMaster[0].jobM_description}</DialogDescription>
                   </ScrollArea>
                 </DialogHeader>
                 <Separator className="mb-4" />
-                <div className='flex justify-end mb-3'>
-                </div>
-                <Card className="w-full p-3">
+                <Card className="w-full p-3 bg-[#def6db] dark:bg-[#1c1917]">
                   <Tabs defaultValue={1} className='mb-5'>
                     <TabsList>
-                      <TabsTrigger value={1}>Details</TabsTrigger>
+                      <TabsTrigger value={1} >Details</TabsTrigger>
                       <TabsTrigger value={2}>Applicants</TabsTrigger>
+                      <TabsTrigger value={3}>Interview</TabsTrigger>
                     </TabsList>
                     <TabsContent value={1}>
                       <Accordion type="multiple" collapsible="true" className="w-full" defaultValue={["item-1", "item-2"]}>
@@ -236,13 +248,30 @@ function SelectedJob({ open, onHide, jobId }) {
                     <TabsContent value={2}>
                       {data.candidates?.length > 0 ? (
                         <Table className="w-full text-center">
-                          <TableCaption className="text-center">Passing percentage: {data.jobPassing[0].passing_percentage ? data.jobPassing[0].passing_percentage : 0}%  </TableCaption>
+                          <TableCaption className="text-center">
+                            Passing percentage: {data.jobPassing[0].passing_percentage ? data.jobPassing[0].passing_percentage : 0}%
+                          </TableCaption>
                           <TableHeader>
                             <TableRow>
                               <TableHead className="text-center">Index</TableHead>
-                              <TableHead className="text-center">Full Name</TableHead>
-                              <TableHead className="text-center">Points</TableHead>
-                              <TableHead className="text-center">Percentage</TableHead>
+                              <TableHead className="cursor-pointer text-center">
+                                <div className="flex items-center justify-center gap-1" onClick={() => handleSort('FullName')}>
+                                  <span>Full Name</span>
+                                  {sortField === 'FullName' && (sortOrder === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />)}
+                                </div>
+                              </TableHead>
+                              <TableHead className="cursor-pointer text-center">
+                                <div className="flex items-center justify-center gap-1" onClick={() => handleSort('totalPoints')}>
+                                  <span>Points</span>
+                                  {sortField === 'totalPoints' && (sortOrder === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />)}
+                                </div>
+                              </TableHead>
+                              <TableHead className="cursor-pointer text-center">
+                                <div className="flex items-center justify-center gap-1" onClick={() => handleSort('percentage')}>
+                                  <span>Percentage</span>
+                                  {sortField === 'percentage' && (sortOrder === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />)}
+                                </div>
+                              </TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -251,32 +280,26 @@ function SelectedJob({ open, onHide, jobId }) {
                                 <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
                                 <TableCell>{candData.FullName}</TableCell>
                                 <TableCell>{candData.points.totalPoints}/{candData.points.maxPoints}</TableCell>
-                                <TableCell className={candData.points.percentage >= data.jobPassing[0].passing_percentage ? "text-green-500" : "text-red-500"}>{candData.points.percentage}%</TableCell>
+                                <TableCell className={candData.points.percentage >= data.jobPassing[0].passing_percentage ? "text-green-500" : "text-red-500"}>
+                                  {candData.points.percentage}%
+                                </TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
                         </Table>
-                      ) :
-                        (
-                          <>
-                            <Card className="text-center bg-background">
-                              <CardDescription className="p-5">
-                                No applicants applied yet
-                              </CardDescription>
-                            </Card>
-                          </>
-                        )
-                      }
+                      ) : (
+                        <Card className="text-center bg-background">
+                          <CardDescription className="p-5">
+                            No applicants applied yet
+                          </CardDescription>
+                        </Card>
+                      )}
                       {data.candidates?.length > itemsPerPage && (
                         <div className='flex justify-end items-end mt-4'>
                           <Pagination>
                             <PaginationContent>
                               <PaginationItem>
-                                <PaginationPrevious
-                                  onClick={handlePreviousPage}
-                                  href="#"
-                                  className={"hover:text-primary"}
-                                />
+                                <PaginationPrevious onClick={handlePreviousPage} href="#" className={"hover:text-primary"} />
                               </PaginationItem>
                               {Array.from({ length: totalPages }, (_, index) => (
                                 <PaginationItem key={index}>
@@ -290,29 +313,24 @@ function SelectedJob({ open, onHide, jobId }) {
                                 </PaginationItem>
                               ))}
                               <PaginationItem>
-                                <PaginationNext
-                                  onClick={handleNextPage}
-                                  href="#"
-                                  className={"hover:text-primary"}
-                                />
+                                <PaginationNext onClick={handleNextPage} href="#" className={"hover:text-primary"} />
                               </PaginationItem>
                             </PaginationContent>
                           </Pagination>
                         </div>
                       )}
                     </TabsContent>
+                    <TabsContent value={3}>
+                    </TabsContent>
                   </Tabs>
                 </Card>
               </ScrollArea>
-            </>)}
+            </>
+          )}
         </DialogContent>
       </Dialog>
       {showSelectedApplicant && (
-        <SelectedApplicant
-          open={showSelectedApplicant}
-          onHide={handleCloseSelectedApplicant}
-          candId={selectedApplicantId}
-        />
+        <SelectedApplicant open={showSelectedApplicant} onHide={handleCloseSelectedApplicant} candId={selectedApplicantId} />
       )}
     </>
   );
