@@ -28,6 +28,8 @@ function SelectedApplicant({ open, onHide, candId }) {
         cand_id: candId,
         job_id: retrieveData("jobId"),
       };
+      console.log("url ni getCandidateProfile: ", url);
+      console.log("jsonData ni getCandidateProfile: ", jsonData);
       const formData = new FormData();
       formData.append("operation", "getCandidateProfile");
       formData.append("json", JSON.stringify(jsonData));
