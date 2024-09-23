@@ -272,6 +272,11 @@ function SelectedJob({ open, onHide, jobId }) {
                                   {sortField === 'percentage' && (sortOrder === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />)}
                                 </div>
                               </TableHead>
+                              <TableHead className="cursor-pointer text-center">
+                                <div className="flex items-center justify-center gap-1">
+                                  <span>Status</span>
+                                </div>
+                              </TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -283,6 +288,7 @@ function SelectedJob({ open, onHide, jobId }) {
                                 <TableCell className={candData.points.percentage >= data.jobPassing[0].passing_percentage ? "text-green-500" : "text-red-500"}>
                                   {candData.points.percentage}%
                                 </TableCell>
+                                <TableCell>{candData.status_name}</TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
