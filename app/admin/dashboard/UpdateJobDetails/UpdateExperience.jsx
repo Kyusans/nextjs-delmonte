@@ -2,7 +2,7 @@
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { CardContent, CardDescription } from '@/components/ui/card'
+import { Card, CardContent, CardDescription } from '@/components/ui/card'
 import ShowAlert from '@/components/ui/show-alert'
 import { Edit2, PlusIcon, Trash2, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
@@ -98,7 +98,7 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
           <PlusIcon className="h-4 w-4 mr-1" />
           Add Experience
         </Button>
-        <Alert className="w-full mt-3">
+        <Card className="w-full mt-3">
           {datas && datas.length > 0 ? (
             <>
               <div className="hidden md:block">
@@ -169,7 +169,7 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
               No experience added yet
             </CardDescription>
           )}
-        </Alert>
+        </Card>
         {showModal && <AddExperience open={showModal} onHide={handleCloseModal} />}
         {showUpdateModal && <UpdateExperienceModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} />}
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />

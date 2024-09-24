@@ -15,6 +15,7 @@ import UpdateJobModal from '../UpdateJobDetails/UpdateJobModal';
 import SelectedApplicant from './SelectedApplicant';
 import { Badge } from '@/components/ui/badge';
 import { SortAsc, SortDesc } from 'lucide-react';
+import InterviewPage from '../Interview/InterviewPage';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
@@ -120,7 +121,7 @@ function SelectedJob({ open, onHide, jobId }) {
                   </ScrollArea>
                 </DialogHeader>
                 <Separator className="mb-4" />
-                <Card className="w-full p-3 bg-[#def6db] dark:bg-[#1c1917]">
+                <Card className="w-full p-3 dark:bg-[#1c1917]">
                   <Tabs defaultValue={1} className='mb-5'>
                     <TabsList>
                       <TabsTrigger value={1} >Details</TabsTrigger>
@@ -272,6 +273,11 @@ function SelectedJob({ open, onHide, jobId }) {
                                   {sortField === 'percentage' && (sortOrder === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />)}
                                 </div>
                               </TableHead>
+                              <TableHead className="cursor-pointer text-center">
+                                <div className="flex items-center justify-center gap-1">
+                                  <span>Status</span>
+                                </div>
+                              </TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -283,6 +289,7 @@ function SelectedJob({ open, onHide, jobId }) {
                                 <TableCell className={candData.points.percentage >= data.jobPassing[0].passing_percentage ? "text-green-500" : "text-red-500"}>
                                   {candData.points.percentage}%
                                 </TableCell>
+                                <TableCell>{candData.status_name}</TableCell>
                               </TableRow>
                             ))}
                           </TableBody>
@@ -321,6 +328,9 @@ function SelectedJob({ open, onHide, jobId }) {
                       )}
                     </TabsContent>
                     <TabsContent value={3}>
+                      <>
+                        <InterviewPage interviewData={data.interview} />
+                      </>
                     </TabsContent>
                   </Tabs>
                 </Card>

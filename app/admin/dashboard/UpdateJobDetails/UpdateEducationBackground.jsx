@@ -3,7 +3,7 @@
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
 import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { CardDescription } from '@/components/ui/card'
+import { Card, CardDescription } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import ShowAlert from '@/components/ui/show-alert'
 import { Edit2, PlusIcon, Trash2, X } from 'lucide-react'
@@ -102,7 +102,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, de
           <PlusIcon className="h-4 w-4 mr-1" />
           Add Education
         </Button>
-        <Alert className="w-full mt-3">
+        <Card className="w-full mt-3">
           {datas && datas.length > 0 ? (
             <>
               <div className="hidden md:block">
@@ -174,7 +174,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, de
               No education added yet
             </CardDescription>
           )}
-        </Alert>
+        </Card>
         {showModal && <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} />}
         {showUpdateModal && <UpdateEducationModal open={showUpdateModal} onHide={handleCloseUpdateModal} courseCategory={courseCategory} updateData={updateData} selectedEducations={data} />}
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />

@@ -2,7 +2,7 @@
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { CardContent, CardDescription } from '@/components/ui/card'
+import { Card, CardContent, CardDescription } from '@/components/ui/card'
 import ShowAlert from '@/components/ui/show-alert'
 import { Edit2, PlusIcon, Trash2, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
@@ -104,7 +104,7 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
           <PlusIcon className="h-4 w-4 mr-1" />
           Add Knowledge and Compliance
         </Button>
-        <Alert className="w-full mt-3">
+        <Card className="w-full mt-3">
           {datas && datas.length > 0 ? (
             <>
               <div className="hidden md:block">
@@ -176,7 +176,7 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
               No duties added yet
             </CardDescription>
           )}
-        </Alert>
+        </Card>
 
         {showModal && <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} />}
         {showUpdateModal && <UpdateKnowledgeModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} knowledgeList={knowledgeList} />}
