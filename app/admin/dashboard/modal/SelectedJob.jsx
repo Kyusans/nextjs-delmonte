@@ -15,6 +15,7 @@ import UpdateJobModal from '../UpdateJobDetails/UpdateJobModal';
 import SelectedApplicant from './SelectedApplicant';
 import { Badge } from '@/components/ui/badge';
 import { SortAsc, SortDesc } from 'lucide-react';
+import InterviewPage from '../Interview/InterviewPage';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
@@ -120,7 +121,7 @@ function SelectedJob({ open, onHide, jobId }) {
                   </ScrollArea>
                 </DialogHeader>
                 <Separator className="mb-4" />
-                <Card className="w-full p-3 bg-[#def6db] dark:bg-[#1c1917]">
+                <Card className="w-full p-3 dark:bg-[#1c1917]">
                   <Tabs defaultValue={1} className='mb-5'>
                     <TabsList>
                       <TabsTrigger value={1} >Details</TabsTrigger>
@@ -327,6 +328,9 @@ function SelectedJob({ open, onHide, jobId }) {
                       )}
                     </TabsContent>
                     <TabsContent value={3}>
+                      <>
+                        <InterviewPage interviewData={data.interview} />
+                      </>
                     </TabsContent>
                   </Tabs>
                 </Card>

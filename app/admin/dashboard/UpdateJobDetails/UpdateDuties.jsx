@@ -1,5 +1,5 @@
 "use client"
-import { CardDescription } from '@/components/ui/card';
+import { Card, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import React, { useEffect, useState } from 'react';
 import AddDuties from '../modal/AddJob/AddDuties';
@@ -97,7 +97,7 @@ function UpdateDuties({ data, handleAddData, handleUpdate, deleteData }) {
           <PlusIcon className="h-4 w-4 mr-1" />
           Add Duties
         </Button>
-        <Alert className="w-full mt-3">
+        <Card className="w-full mt-3">
           {datas && datas.length > 0 ? (
             <>
               <div className="hidden md:block">
@@ -185,7 +185,7 @@ function UpdateDuties({ data, handleAddData, handleUpdate, deleteData }) {
               No duties added yet
             </CardDescription>
           )}
-        </Alert>
+        </Card>
       </div>
       <AddDuties open={showModal} onHide={handleCloseModal} />
       <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
