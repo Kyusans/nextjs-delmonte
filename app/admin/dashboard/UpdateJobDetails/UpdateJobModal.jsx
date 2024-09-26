@@ -124,7 +124,6 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
       const formData = new FormData();
       formData.append("operation", "getAllDataForDropdownUpdate");
       const res = await axios.post(url, formData);
-      console.log("res.data ni getAllDropdownData: ", res.data)
       if (res.data !== 0) {
         const formattedCourse = res.data.courseCategory.map((item) => ({
           value: item.course_categoryId,
@@ -150,7 +149,7 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
         setTraining(formattedTraining);
         setSkills(formattedSkills);
         setKnowledgeList(formattedKnowledge);
-        console.log("res ni getDropDownForAddJobs", res.data);
+        // console.log("res ni getDropDownForAddJobs", res.data);
       }
     } catch (error) {
       toast.error("Network error");

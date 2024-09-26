@@ -7,15 +7,38 @@ import { Separator } from '@/components/ui/separator'
 import Spinner from '@/components/ui/spinner'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Edit2, PlusCircle, Trash2 } from 'lucide-react'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import AddInterviewCriteria from '../modal/AddInterviewCriteria/AddInterviewCriteria'
 
 function InterviewPage({ interviewData }) {
+  const [data, setData] = useState([]);
+  const [showAddModal, setShowAddModal] = useState(false); 
+
+  const openShowModal = () => {
+    setShowAddModal(true);
+  };
+
+  const closeShowModal = (status) => {
+    if (status !== 0) {
+      setData([...data, { inter_criteria_name: status.name, inter_criteria_points: status.points }]);
+    }
+    setShowAddModal(false);
+  };
+
+  useEffect(() => {
+    if (interviewData.interviewCriteria) {
+      setData(interviewData.interviewCriteria); 
+    }
+  }, [interviewData.interviewCriteria]);
+
   return (
     <div>
       {interviewData.interviewMaster === 0 ? (
         <div className='flex flex-col justify-center items-center gap-3'>
           <div className='font-bold text-xl'>No criteria for interview</div>
-          <Button><PlusCircle className='h-5 w-5 mr-1' />Add criteria</Button>
+          <Button onClick={openShowModal}>
+            <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
+          </Button>
         </div>
       ) : (
         <div>
@@ -31,36 +54,38 @@ function InterviewPage({ interviewData }) {
               <Separator />
               <ScrollArea className="w-full h-[calc(100vh-200px)]">
                 <div className='p-3'>
-                  <Button><PlusCircle className='h-5 w-5 mr-1' /> Add criteria</Button>
+                  <Button onClick={openShowModal}>
+                    <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
+                  </Button>
                 </div>
                 <Card className="mx-3">
                   <CardContent>
                     <Table>
                       <TableHeader>
-                        <TableHead>#</TableHead>
-                        <TableHead>Criteria</TableHead>
-                        <TableHead className="text-center">points</TableHead>
-                        <TableHead className="text-center">Actions</TableHead>
+                        <TableRow>
+                          <TableHead>#</TableHead>
+                          <TableHead>Criteria</TableHead>
+                          <TableHead className="text-center">Points</TableHead>
+                          <TableHead className="text-center">Actions</TableHead>
+                        </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {interviewData.interviewCriteria.map((item, index) => (
-                          <>
-                            <TableRow>
-                              <TableCell>{index + 1}</TableCell>
-                              <TableCell >{item.inter_criteria_name}</TableCell>
-                              <TableCell className="text-center">{item.inter_criteria_points}</TableCell>
-                              <TableCell>
-                                <div className='flex justify-center'>
-                                  <button onClick={() => handleEdit(data.jeduc_id, data.jeduc_categoryId, data.jeduc_points, data.jeduc_text)}>
-                                    <Edit2 className="h-4 w-4 mr-4" />
-                                  </button>
-                                  <button className="h-4 w-4" onClick={() => handleRemoveList(data.jeduc_id)}>
-                                    <Trash2 className="h-4 w-4" />
-                                  </button>
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          </>
+                        {data.map((item, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{index + 1}</TableCell>
+                            <TableCell>{item.inter_criteria_name}</TableCell>
+                            <TableCell className="text-center">{item.inter_criteria_points}</TableCell>
+                            <TableCell>
+                              <div className='flex justify-center'>
+                                <button onClick={() => { }}>
+                                  <Edit2 className="h-4 w-4 mr-4" />
+                                </button>
+                                <button className="h-4 w-4" onClick={() => { }}>
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
                         ))}
                       </TableBody>
                     </Table>
@@ -78,12 +103,19 @@ function InterviewPage({ interviewData }) {
               </DrawerFooter>
             </DrawerContent>
           </Drawer>
-          <div>
-          </div>
         </div>
       )}
+      {showAddModal && (
+        <AddInterviewCriteria
+          open={showAddModal}
+          onHide={closeShowModal}
+          interviewId={interviewData.interviewMaster[0].interviewM_id} 
+          interviewCriteria={data}
+        />
+      )}
     </div>
-  )
+  );
 }
+
 
 export default InterviewPage
