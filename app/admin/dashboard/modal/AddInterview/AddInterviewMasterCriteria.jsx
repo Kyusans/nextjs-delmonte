@@ -1,6 +1,6 @@
 "use client"
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import React from 'react'
+import React, { useRef } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -9,9 +9,8 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
-import axios from 'axios';
 
-function AddInterviewCriteria({ open, onHide, interviewId, interviewCriteria }) {
+function AddInterviewMasterCriteria({ open, onHide, addCriteria, criteriaList }) {
   const [isLoading, setIsLoading] = React.useState(false);
   const formSchema = z.object({
     name: z.string().min(1, {
@@ -22,56 +21,41 @@ function AddInterviewCriteria({ open, onHide, interviewId, interviewCriteria }) 
     }).refine((value) => !isNaN(Number(value)), {
       message: "Points must be a number",
     }),
-    interviewId: z.number().min(1, {
-      message: "This field is required",
-    }),
   });
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       points: "",
-      interviewId: interviewId
     },
   });
 
+  const nameInputRef = useRef(null);
   const onSubmit = async (values) => {
     setIsLoading(true);
     try {
-      const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
-      if (interviewCriteria.some((element) => element.inter_criteria_name === values.name)) {
+      if (criteriaList.some((element) => element.name === values.name)) {
         toast.error("Criteria already exist");
         return;
       }
-      const formData = new FormData();
-      formData.append("operation", "addInterviewCriteria");
-      formData.append("json", JSON.stringify(values));
-      const res = await axios.post(url, formData);
-      console.log("res.data ni onSubmit:", res.data);
-      if (res.data === 1) {
-        toast.success("Criteria added successfully");
-        onHide(values);
-        form.reset();
-      }
-      console.log("values:", values);
+      addCriteria(values);
+      toast.success("Criteria added successfully");
+      form.reset();
+      nameInputRef.current.focus();
     } catch (error) {
       toast.error("Network error");
-      console.log("AddInterviewCriteria.jsx => onSubmit(): " + error);
+      console.log("AddInterviewMasterCriteria.jsx => onSubmit(): " + error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleOnHide = () => {
-    onHide(0);
-  };
-
   return (
     <div>
-      <Dialog open={open} onOpenChange={handleOnHide}>
+      <Dialog open={open} onOpenChange={onHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Interview Category</DialogTitle>
+            <DialogTitle>Add Interview Criteria</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -82,9 +66,13 @@ function AddInterviewCriteria({ open, onHide, interviewId, interviewCriteria }) 
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Interview Category</FormLabel>
+                        <FormLabel>Interview Criteria</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter interview category"  {...field} />
+                          <Input
+                            placeholder="Enter interview criteria"
+                            {...field}
+                            ref={nameInputRef}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -107,7 +95,7 @@ function AddInterviewCriteria({ open, onHide, interviewId, interviewCriteria }) 
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button type="button" variant="outline">Close</Button>
                 </DialogClose>
                 <Button type="submit" disabled={isLoading}>{isLoading && <Spinner />} Submit</Button>
               </div>
@@ -119,4 +107,4 @@ function AddInterviewCriteria({ open, onHide, interviewId, interviewCriteria }) 
   )
 }
 
-export default AddInterviewCriteria
+export default AddInterviewMasterCriteria

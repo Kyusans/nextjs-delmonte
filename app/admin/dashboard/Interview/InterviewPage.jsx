@@ -8,16 +8,15 @@ import Spinner from '@/components/ui/spinner'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Edit2, PlusCircle, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import AddInterviewCriteria from '../modal/AddInterviewCriteria/AddInterviewCriteria'
+import AddInterviewCriteria from '../modal/AddInterview/AddInterviewCriteria'
+import AddInterviewMaster from '../modal/AddInterview/AddInterviewMaster'
 
-function InterviewPage({ interviewData }) {
+function InterviewPage({ interviewData, getSelectedJob }) {
   const [data, setData] = useState([]);
-  const [showAddModal, setShowAddModal] = useState(false); 
 
-  const openShowModal = () => {
-    setShowAddModal(true);
-  };
-
+  // add interview criteria modal diri
+  const [showAddModal, setShowAddModal] = useState(false);
+  const openShowModal = () => { setShowAddModal(true); };
   const closeShowModal = (status) => {
     if (status !== 0) {
       setData([...data, { inter_criteria_name: status.name, inter_criteria_points: status.points }]);
@@ -25,9 +24,17 @@ function InterviewPage({ interviewData }) {
     setShowAddModal(false);
   };
 
+  // add interview master modal diri
+  const [showAddInterviewMaster, setShowAddInterviewMaster] = useState(false);
+  const openShowModalMaster = () => { setShowAddInterviewMaster(true); };
+  const closeShowModalMaster = () => {
+    setShowAddInterviewMaster(false);
+    getSelectedJob();
+  };
+
   useEffect(() => {
     if (interviewData.interviewCriteria) {
-      setData(interviewData.interviewCriteria); 
+      setData(interviewData.interviewCriteria);
     }
   }, [interviewData.interviewCriteria]);
 
@@ -36,7 +43,7 @@ function InterviewPage({ interviewData }) {
       {interviewData.interviewMaster === 0 ? (
         <div className='flex flex-col justify-center items-center gap-3'>
           <div className='font-bold text-xl'>No criteria for interview</div>
-          <Button onClick={openShowModal}>
+          <Button onClick={openShowModalMaster}>
             <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
           </Button>
         </div>
@@ -103,14 +110,36 @@ function InterviewPage({ interviewData }) {
               </DrawerFooter>
             </DrawerContent>
           </Drawer>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Name</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {interviewData.interviewCandidate.map((data, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    {data.FullName}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       )}
       {showAddModal && (
         <AddInterviewCriteria
           open={showAddModal}
           onHide={closeShowModal}
-          interviewId={interviewData.interviewMaster[0].interviewM_id} 
+          interviewId={interviewData.interviewMaster[0].interviewM_id}
           interviewCriteria={data}
+        />
+      )}
+      {showAddInterviewMaster && (
+        <AddInterviewMaster
+          open={showAddInterviewMaster}
+          onHide={closeShowModalMaster}
         />
       )}
     </div>

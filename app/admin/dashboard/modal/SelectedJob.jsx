@@ -329,7 +329,7 @@ function SelectedJob({ open, onHide, jobId }) {
                     </TabsContent>
                     <TabsContent value={3}>
                       <>
-                        <InterviewPage interviewData={data.interview} />
+                        <InterviewPage interviewData={data.interview} getSelectedJob={getSelectedJobs} />
                       </>
                     </TabsContent>
                   </Tabs>
