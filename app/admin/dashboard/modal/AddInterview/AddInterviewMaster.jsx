@@ -32,6 +32,27 @@ function AddInterviewMaster({ open, onHide }) {
     setInterviewCriteria([...interviewCriteria, { name: status.name, points: status.points }]);
   }
 
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [indexToRemove, setIndexToRemove] = useState(null);
+  const handleShowAlert = (message) => {
+    setAlertMessage(message);
+    setShowAlert(true);
+  };
+  const handleCloseAlert = (status) => {
+    if (status === 1) {
+      toast.success("Criteria deleted successfully");
+      const filteredData = interviewCriteria.filter((element) => element !== interviewCriteria[indexToRemove]);
+      setInterviewCriteria(filteredData);
+    }
+    setShowAlert(false);
+  };
+    const handleRemoveList = (indexToRemove) => {
+    setIndexToRemove(indexToRemove);
+    handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
+  };
+
+
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedIndex, setSelecetedIndex] = useState(0);
   const [selectedData, setSelectedData] = useState({});
@@ -151,7 +172,7 @@ function AddInterviewMaster({ open, onHide }) {
                                   <TableCell>{item.points}</TableCell>
                                   <TableCell className='flex items-center justify-center gap-4'>
                                     <Edit2 onClick={() => openUpdateModal(index, item)} className='h-4 w-4 cursor-pointer' />
-                                    <Trash2 className='h-4 w-4 cursor-pointer' />
+                                    <Trash2 onClick={() => handleRemoveList(index)} className='h-4 w-4 cursor-pointer' />
                                   </TableCell>
                                 </TableRow>
                               ))}
@@ -192,6 +213,13 @@ function AddInterviewMaster({ open, onHide }) {
           data={selectedData}
           criteriaList={interviewCriteria}
           isMaster={true}
+        />
+      )}
+      {showAlert && (
+        <ShowAlert
+          open={showAlert}
+          onHide={handleCloseAlert}
+          message={alertMessage}
         />
       )}
     </div>
