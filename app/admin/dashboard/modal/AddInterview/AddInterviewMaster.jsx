@@ -18,6 +18,7 @@ import AddInterviewMasterCriteria from './AddInterviewMasterCriteria';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import ShowAlert from '@/components/ui/show-alert';
 import { retrieveData } from '@/app/utils/storageUtils';
+import UpdateInterviewCriteria from './UpdateInterview/UpdateInterviewCriteria';
 
 function AddInterviewMaster({ open, onHide }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -29,6 +30,25 @@ function AddInterviewMaster({ open, onHide }) {
 
   const addCriteria = (status) => {
     setInterviewCriteria([...interviewCriteria, { name: status.name, points: status.points }]);
+  }
+
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedIndex, setSelecetedIndex] = useState(0);
+  const [selectedData, setSelectedData] = useState({});
+  const openUpdateModal = (index, data) => {
+    setShowUpdateModal(true);
+    setSelecetedIndex(index);
+    setSelectedData(data);
+  }
+  const closeUpdateModal = (status) => {
+    console.log("status", status);
+    if (status !== 0) {
+      let criteriaList = interviewCriteria;
+      criteriaList[selectedIndex] = { name: status.name, points: status.points };
+      setInterviewCriteria(criteriaList);
+    }
+    setShowUpdateModal(false);
+    setSelecetedIndex(0);
   }
 
   const formSchema = z.object({
@@ -130,7 +150,7 @@ function AddInterviewMaster({ open, onHide }) {
                                   <TableCell>{item.name}</TableCell>
                                   <TableCell>{item.points}</TableCell>
                                   <TableCell className='flex items-center justify-center gap-4'>
-                                    <Edit2 className='h-4 w-4 cursor-pointer' />
+                                    <Edit2 onClick={() => openUpdateModal(index, item)} className='h-4 w-4 cursor-pointer' />
                                     <Trash2 className='h-4 w-4 cursor-pointer' />
                                   </TableCell>
                                 </TableRow>
@@ -163,6 +183,15 @@ function AddInterviewMaster({ open, onHide }) {
           onHide={closeAddCriteriaMaster}
           addCriteria={addCriteria}
           criteriaList={interviewCriteria}
+        />
+      )}
+      {showUpdateModal && (
+        <UpdateInterviewCriteria
+          open={showUpdateModal}
+          onHide={closeUpdateModal}
+          data={selectedData}
+          criteriaList={interviewCriteria}
+          isMaster={true}
         />
       )}
     </div>
