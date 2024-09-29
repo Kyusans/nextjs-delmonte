@@ -1,20 +1,19 @@
 "use client";
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
-import { Alert, AlertTitle } from '@/components/ui/alert'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { CardContent, CardDescription } from '@/components/ui/card'
+import { CardDescription } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 import ShowAlert from '@/components/ui/show-alert'
 import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import { ScrollArea } from '@/components/ui/scroll-area';
-import AddKnowledge from '../modal/AddJob/AddKnowledge';
-import { Separator } from '@/components/ui/separator';
+import AddEducation from '../../modal/AddJob/AddEducation';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 
 
-function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
+function AddJobEducation({ courseCategory, previousStep, nextStep }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 
@@ -28,7 +27,7 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
     if (status === 1) {
       const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
       setDatas(filteredDatas);
-      storeData("jobKnowledge", JSON.stringify(filteredDatas));
+      storeData("jobEducation", JSON.stringify(filteredDatas));
     }
     setShowAlert(false);
   };
@@ -41,9 +40,8 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
 
   const handleCloseModal = (status) => {
     if (status !== 0) {
-      console.log("status: ", status);
       setDatas([...datas, status]);
-      storeData("jobKnowledge", JSON.stringify([...datas, status]));
+      storeData("jobEducation", JSON.stringify([...datas, status]));
     } else {
       setDatas(datas);
     }
@@ -56,33 +54,31 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
   };
 
   const handleNextStep = () => {
-    // if (retrieveData("jobKnowledge") === null || retrieveData("jobKnowledge") === "[]") {
-    //   toast.error("Please add knowledge and compliance first");
+    // if (retrieveData("jobEducation") === null || retrieveData("jobEducation") === "[]") {
+    //   toast.error("Please add education first");
     //   return;
     // }
-    nextStep(45);
+    nextStep(60);
   }
 
-
   useEffect(() => {
-    if (retrieveData("jobKnowledge") !== null || retrieveData("jobKnowledge") !== "[]") {
-      setDatas(JSON.parse(retrieveData("jobKnowledge")));
+    if (retrieveData("jobEducation") !== null || retrieveData("jobEducation") !== "[]") {
+      setDatas(JSON.parse(retrieveData("jobEducation")));
     } else {
       setDatas([]);
     }
-    console.log(JSON.stringify(JSON.parse(retrieveData("jobKnowledge"))));
   }, []);
 
   return (
     <>
       <div>
         <div className='flex justify-end gap-2 mb-3'>
-          <Button variant="secondary" onClick={() => previousStep(15)} className="mt-3">Previous</Button>
+          <Button variant="secondary" onClick={() => previousStep(30)} className="mt-3">Previous</Button>
           <Button onClick={handleNextStep} className="mt-3">Next</Button>
         </div>
         <Button onClick={handleOpenModal}>
           <PlusIcon className="h-4 w-4 mr-1" />
-          Add Knowledge and Compliance
+          Add Education
         </Button>
         <Alert className="w-full mt-3">
           {datas && datas.length > 0 ? (
@@ -92,7 +88,7 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
-                      <TableHead className="w-1/12 ">Knowledge</TableHead>
+                      <TableHead className="w-1/12 ">Course category</TableHead>
                       <TableHead className="w-10/12">Description</TableHead>
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center"></TableHead>
@@ -103,10 +99,10 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
                       <TableRow key={index}>
                         <TableCell className="w-1/12">{index + 1}</TableCell>
                         <TableCell className="w-1/12">
-                          {knowledgeList.find((item) => item.value === data.knowledgeId)?.label}
+                          {courseCategory.find((item) => item.value === data.courseCategory)?.label}
                         </TableCell>
                         <TableCell className="w-10/12 whitespace-normal">
-                          {data.jobKnowledge}
+                          {data.jobEducation}
                         </TableCell>
                         <TableCell className="w-1/12 text-center">{data.points}</TableCell>
                         <TableCell className="w-1/12 text-center">
@@ -127,17 +123,17 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
                       <button
-                        className="h-4 w-4"
+                        className="h-6 w-6"
                         onClick={() => handleRemoveList(index)}
                       >
-                        <X className="h-5 w-5" />
+                        <X className="h-6 w-6" />
                       </button>
                     </div>
                     <div className="mt-2 text-sm">
                       <div className='mb-1 text-xl break-words'>
-                        {knowledgeList.find((item) => item.value === data.knowledgeId)?.label}
+                        {courseCategory.find((item) => item.value === data.courseCategory)?.label}
                       </div>
-                      {data.jobKnowledge}
+                      {data.jobEducation}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">
@@ -151,15 +147,15 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
             </>
           ) : (
             <CardDescription className="text-center">
-              No duties added yet
+              No education added yet
             </CardDescription>
           )}
         </Alert>
-        <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} />
+        <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
   )
 }
 
-export default AddJobKnowledge
+export default AddJobEducation;

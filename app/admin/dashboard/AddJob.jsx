@@ -1,17 +1,17 @@
 "use client";
 import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card'
 import React, { useEffect, useState } from 'react'
-import AddJobMaster from './AddJobStep/AddJobMaster';
-import AddDutiesMaster from './AddJobStep/AddDutiesMaster';
+import AddJobMaster from './Job/AddJobStep/AddJobMaster';
+import AddDutiesMaster from './Job/AddJobStep/AddDutiesMaster';
 import { removeData, retrieveData, storeData } from '@/app/utils/storageUtils';
-import AddJobEducation from './AddJobStep/AddJobEducation';
+import AddJobEducation from './Job/AddJobStep/AddJobEducation';
 import axios from 'axios';
 import { toast } from 'sonner';
 import Spinner from '@/components/ui/spinner';
-import AddJobTraining from './AddJobStep/AddJobTraining';
-import AddJobKnowledge from './AddJobStep/AddJobKnowledge';
-import AddJobSkill from './AddJobStep/AddJobSkill';
-import AddJobExperience from './AddJobStep/AddJobExperience';
+import AddJobTraining from './Job/AddJobStep/AddJobTraining';
+import AddJobKnowledge from './Job/AddJobStep/AddJobKnowledge';
+import AddJobSkill from './Job/AddJobStep/AddJobSkill';
+import AddJobExperience from './Job/AddJobStep/AddJobExperience';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';

@@ -6,21 +6,22 @@ import { Card, CardContent, CardDescription } from '@/components/ui/card'
 import ShowAlert from '@/components/ui/show-alert'
 import { Edit2, PlusIcon, Trash2, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import { ScrollArea } from '@/components/ui/scroll-area';
-import AddKnowledge from '../modal/AddJob/AddKnowledge';
+import AddExperience from '../../modal/AddJob/AddExperience';
+import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import { Badge } from '@/components/ui/badge';
-import UpdateKnowledgeModal from '../modal/UpdateJob/UpdateKnowledgeModal';
+import { jsx } from 'react/jsx-runtime';
+import UpdateExperienceModal from '../../modal/UpdateJob/UpdateExperienceModal';
 
 
-function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, deleteData }) {
+function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
-  const [updateData, setUpdateData] = useState({});
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [updateData, setUpdateData] = useState({});
+
   const handleShowAlert = (message) => {
     setAlertMessage(message);
     setShowAlert(true);
@@ -30,7 +31,7 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
       const jsonData = {
         id: indexToRemove
       }
-      deleteData("deleteJobKnowledge", jsonData, "getJobKnowledge");
+      deleteData("deleteJobExperience", jsonData, "getJobExperience");
     }
     setShowAlert(false);
   };
@@ -43,13 +44,13 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
 
   const handleCloseModal = (status) => {
     if (status !== 0) {
-      const jsonData ={
+      const jsonData = {
         jobId: retrieveData("jobId"),
-        knowledgeText: status.jobKnowledge,
-        knowledgeId: status.knowledgeId,
+        experienceText: status.jobExperience,
+        yearsOfExperience: status.yearsOfExperience,
         points: status.points
       }
-      handleAddData("addJobKnowledge", jsonData, "getJobKnowledge");
+      handleAddData("addJobExperience", jsonData, "getJobExperience");
     } else {
       setDatas(datas);
     }
@@ -68,41 +69,34 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
 
   const handleCloseUpdateModal = (values) => {
     if (values !== 0) {
-      const jsonData ={
+      const jsonData = {
         id: updateData.id,
-        knowledgeText: values.jobKnowledge,
-        knowledgeId: values.knowledgeId,
+        experienceText: values.jobExperience,
+        yearsOfExperience: values.yearsOfExperience,
         points: values.points
       }
-      handleUpdate("updateJobKnowledge", jsonData, "getJobKnowledge");
+      handleUpdate("updateJobExperience", jsonData, "getJobExperience");
     }
     setShowUpdateModal(false);
   }
 
-  const handleEdit = (id, knowledgeId, points, jobKnowledge) => {
-    setUpdateData({ id: id, knowledgeId: knowledgeId, points: points, jobKnowledge: jobKnowledge });
+  const handleEdit = (id, points, jobExperienceText, yearsOfExperience) => {
+    setUpdateData({ id: id, jobExperience: jobExperienceText, yearsOfExperience: yearsOfExperience, points: points });
     handleOpenUpdateModal();
   }
 
   useEffect(() => {
     if (data) {
       setDatas(data);
-      const filteredData = data.map((element) => ({
-        knowledgeId: element.jknow_knowledgeId,
-      }))
-      storeData("jobKnowledge", JSON.stringify(filteredData));
     }
-    console.log("datas ni knowledge:", data)
-    console.log("knowledge ni knowledge:", knowledgeList)
-    console.log("retrieveData ni knowledge", JSON.parse(retrieveData("knowledgeList")))
-  }, [data, knowledgeList]);
+   }, [data]);
 
   return (
     <>
       <div>
         <Button onClick={handleOpenModal}>
           <PlusIcon className="h-4 w-4 mr-1" />
-          Add Knowledge and Compliance
+          Add Experience
         </Button>
         <Card className="w-full mt-3">
           {datas && datas.length > 0 ? (
@@ -112,8 +106,8 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
-                      <TableHead className="w-1/12 ">Knowledge</TableHead>
-                      <TableHead className="w-10/12">Description</TableHead>
+                      <TableHead className="w-10/12">Experience</TableHead>
+                      <TableHead className="w-1/12 text-center">Year/s of experience</TableHead>
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center">Actions</TableHead>
                     </TableRow>
@@ -122,19 +116,17 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
                     {datas.map((data, index) => (
                       <TableRow key={index}>
                         <TableCell className="w-1/12">{index + 1}</TableCell>
-                        <TableCell className="w-1/12">
-                          {knowledgeList.find((item) => item.value === data.jknow_knowledgeId)?.label}
-                        </TableCell>
                         <TableCell className="w-10/12 whitespace-normal">
-                          {data.jknow_text}
+                          {data.jwork_responsibilities}
                         </TableCell>
-                        <TableCell className="w-1/12 text-center">{data.jknow_points}</TableCell>
+                        <TableCell className="w-1/12 text-center">{data.jwork_duration}</TableCell>
+                        <TableCell className="w-1/12 text-center">{data.jwork_points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <div className='flex justify-center'>
-                            <button onClick={() => handleEdit(data.jknow_id, data.jknow_knowledgeId, data.jknow_points, data.jknow_text)}>
+                            <button onClick={() => handleEdit(data.jwork_id, data.jwork_points, data.jwork_responsibilities, data.jwork_duration)}>
                               <Edit2 className="h-4 w-4 mr-4" />
                             </button>
-                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jknow_id)}>
+                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jwork_id)}>
                               <Trash2 className="h-4 w-4" />
                             </button>
                           </div>
@@ -148,22 +140,22 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
-                      <button onClick={() => handleEdit(data.jknow_id, data.jknow_knowledgeId, data.jknow_points, data.jknow_text)}>
+                      <button onClick={() => handleEdit(data.jwork_id, data.jwork_points, data.jwork_responsibilities, data.jwork_duration)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
-                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jknow_id)}>
+                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jwork_id)}>
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
                     <div className="mt-2 text-sm">
-                      <div className='mb-1 text-xl break-words'>
-                        {knowledgeList.find((item) => item.value === data.jknow_knowledgeId)?.label}
-                      </div>
-                      {data.jknow_text}
+                      {data.jwork_responsibilities}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">
-                        Points: {data.jknow_points}
+                        Year/s of Experience: {data.jwork_duration}
+                      </Badge>
+                      <Badge className="mt-2 text-xs font-bold ml-2">
+                        Points: {data.jwork_points}
                       </Badge>
                     </div>
                     <Separator className="mt-3" />
@@ -171,19 +163,19 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
                 ))}
               </div>
             </>
+
           ) : (
             <CardDescription className="text-center">
-              No duties added yet
+              No experience added yet
             </CardDescription>
           )}
         </Card>
-
-        {showModal && <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} />}
-        {showUpdateModal && <UpdateKnowledgeModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} knowledgeList={knowledgeList} />}
+        {showModal && <AddExperience open={showModal} onHide={handleCloseModal} />}
+        {showUpdateModal && <UpdateExperienceModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} />}
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
       </div>
     </>
   )
 }
 
-export default UpdateKnowledge
+export default UpdateExperience

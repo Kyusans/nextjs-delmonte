@@ -2,18 +2,18 @@
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { CardDescription } from '@/components/ui/card'
+import { CardContent, CardDescription } from '@/components/ui/card'
 import ShowAlert from '@/components/ui/show-alert'
 import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import AddTraining from '../modal/AddJob/AddTraining';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import AddExperience from '../../modal/AddJob/AddExperience';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 
 
-function AddJobTraining({ training, previousStep, nextStep }) {
+function AddJobExperience({ previousStep, handleSubmit }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 
@@ -27,7 +27,7 @@ function AddJobTraining({ training, previousStep, nextStep }) {
     if (status === 1) {
       const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
       setDatas(filteredDatas);
-      storeData("jobTraining", JSON.stringify(filteredDatas));
+      storeData("jobExperience", JSON.stringify(filteredDatas));
     }
     setShowAlert(false);
   };
@@ -41,7 +41,7 @@ function AddJobTraining({ training, previousStep, nextStep }) {
   const handleCloseModal = (status) => {
     if (status !== 0) {
       setDatas([...datas, status]);
-      storeData("jobTraining", JSON.stringify([...datas, status]));
+      storeData("jobExperience", JSON.stringify([...datas, status]));
     } else {
       setDatas(datas);
     }
@@ -54,31 +54,32 @@ function AddJobTraining({ training, previousStep, nextStep }) {
   };
 
   const handleNextStep = () => {
-    // if (retrieveData("jobTraining") === null || retrieveData("jobTraining") === "[]") {
-    //   toast.error("Please add training first");
+    // if (retrieveData("jobExperience") === null || retrieveData("jobExperience") === "[]") {
+    //   toast.error("Please add experience first");
     //   return;
     // }
-    nextStep(75);
+    handleSubmit();
   }
 
   useEffect(() => {
-    if (retrieveData("jobTraining") !== null || retrieveData("jobTraining") !== "[]") {
-      setDatas(JSON.parse(retrieveData("jobTraining")));
+    if (retrieveData("jobExperience") !== null || retrieveData("jobExperience") !== "[]") {
+      setDatas(JSON.parse(retrieveData("jobExperience")));
     } else {
       setDatas([]);
     }
+    console.log(JSON.stringify(JSON.parse(retrieveData("jobExperience"))));
   }, []);
 
   return (
     <>
       <div>
         <div className='flex justify-end gap-2 mb-3'>
-          <Button variant="secondary" onClick={() => previousStep(45)} className="mt-3">Previous</Button>
-          <Button onClick={handleNextStep} className="mt-3">Next</Button>
+          <Button variant="secondary" onClick={() => previousStep(80)} className="mt-3">Previous</Button>
+          <Button onClick={handleNextStep} className="mt-3">Submit</Button>
         </div>
         <Button onClick={handleOpenModal}>
           <PlusIcon className="h-4 w-4 mr-1" />
-          Add Training
+          Add Experience
         </Button>
         <Alert className="w-full mt-3">
           {datas && datas.length > 0 ? (
@@ -88,8 +89,8 @@ function AddJobTraining({ training, previousStep, nextStep }) {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
-                      <TableHead className="w-1/12 ">Training</TableHead>
-                      <TableHead className="w-10/12">Description</TableHead>
+                      <TableHead className="w-10/12">Experience</TableHead>
+                      <TableHead className="w-1/12 text-center">Year/s of experience</TableHead>
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center"></TableHead>
                     </TableRow>
@@ -98,12 +99,10 @@ function AddJobTraining({ training, previousStep, nextStep }) {
                     {datas.map((data, index) => (
                       <TableRow key={index}>
                         <TableCell className="w-1/12">{index + 1}</TableCell>
-                        <TableCell className="w-1/12">
-                          {training.find((item) => item.value === data.training)?.label}
-                        </TableCell>
                         <TableCell className="w-10/12 whitespace-normal">
-                          {data.jobTraining}
+                          {data.jobExperience}
                         </TableCell>
+                        <TableCell className="w-1/12 text-center">{data.yearsOfExperience}</TableCell>
                         <TableCell className="w-1/12 text-center">{data.points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <button
@@ -118,27 +117,23 @@ function AddJobTraining({ training, previousStep, nextStep }) {
                   </TableBody>
                 </Table>
               </div>
-
               <div className="block md:hidden">
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
                       <button
-                        className="h-4 w-4"
+                        className="h-6 w-6"
                         onClick={() => handleRemoveList(index)}
                       >
-                        <X className="h-5 w-5" />
+                        <X className="h-6 w-6" />
                       </button>
                     </div>
                     <div className="mt-2 text-sm">
-                      <div className='mb-1 text-xl break-words'>
-                        {training.find((item) => item.value === data.training)?.label}
-                      </div>
-                      {data.jobTraining}
+                      {data.jobExperience}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">
-                        Points: {data.points}
+                        Year/s of Experience: {data.yearsOfExperience}
                       </Badge>
                     </div>
                     <Separator className="mt-3" />
@@ -149,15 +144,15 @@ function AddJobTraining({ training, previousStep, nextStep }) {
 
           ) : (
             <CardDescription className="text-center">
-              No training added yet
+              No experience added yet
             </CardDescription>
           )}
         </Alert>
-        <AddTraining open={showModal} onHide={handleCloseModal} training={training} />
+        <AddExperience open={showModal} onHide={handleCloseModal} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
   )
 }
 
-export default AddJobTraining;
+export default AddJobExperience

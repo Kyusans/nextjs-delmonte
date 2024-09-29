@@ -1,16 +1,12 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer'
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
-import Spinner from '@/components/ui/spinner'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Edit2, PlusCircle, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import AddInterviewCriteria from '../modal/AddInterview/AddInterviewCriteria'
-import AddInterviewMaster from '../modal/AddInterview/AddInterviewMaster'
-import UpdateInterviewCriteria from '../modal/AddInterview/UpdateInterview/UpdateInterviewCriteria'
+import AddInterviewCriteria from '../../modal/AddInterview/AddInterviewCriteria'
+import AddInterviewMaster from '../../modal/AddInterview/AddInterviewMaster'
+import UpdateInterviewCriteria from '../../modal/AddInterview/UpdateInterview/UpdateInterviewCriteria'
 import ShowAlert from '@/components/ui/show-alert'
 import axios from 'axios'
 import { toast } from 'sonner'
@@ -101,6 +97,9 @@ function InterviewPage({ interviewData, getSelectedJob }) {
 
   return (
     <div>
+      <Button onClick={openShowModal} className='my-2'>
+        <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
+      </Button>
       {interviewData.interviewMaster === 0 ? (
         <div className='flex flex-col justify-center items-center gap-3'>
           <div className='font-bold text-xl'>No criteria for interview</div>

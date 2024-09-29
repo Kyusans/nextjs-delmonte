@@ -1,19 +1,19 @@
 "use client";
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
-import { Alert } from '@/components/ui/alert'
+import { Alert, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { CardDescription } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
 import ShowAlert from '@/components/ui/show-alert'
 import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import AddEducation from '../modal/AddJob/AddEducation';
+import AddTraining from '../../modal/AddJob/AddTraining';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { toast } from 'sonner';
 
 
-function AddJobEducation({ courseCategory, previousStep, nextStep }) {
+function AddJobTraining({ training, previousStep, nextStep }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 
@@ -27,7 +27,7 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
     if (status === 1) {
       const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
       setDatas(filteredDatas);
-      storeData("jobEducation", JSON.stringify(filteredDatas));
+      storeData("jobTraining", JSON.stringify(filteredDatas));
     }
     setShowAlert(false);
   };
@@ -41,7 +41,7 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
   const handleCloseModal = (status) => {
     if (status !== 0) {
       setDatas([...datas, status]);
-      storeData("jobEducation", JSON.stringify([...datas, status]));
+      storeData("jobTraining", JSON.stringify([...datas, status]));
     } else {
       setDatas(datas);
     }
@@ -54,16 +54,16 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
   };
 
   const handleNextStep = () => {
-    // if (retrieveData("jobEducation") === null || retrieveData("jobEducation") === "[]") {
-    //   toast.error("Please add education first");
+    // if (retrieveData("jobTraining") === null || retrieveData("jobTraining") === "[]") {
+    //   toast.error("Please add training first");
     //   return;
     // }
-    nextStep(60);
+    nextStep(75);
   }
 
   useEffect(() => {
-    if (retrieveData("jobEducation") !== null || retrieveData("jobEducation") !== "[]") {
-      setDatas(JSON.parse(retrieveData("jobEducation")));
+    if (retrieveData("jobTraining") !== null || retrieveData("jobTraining") !== "[]") {
+      setDatas(JSON.parse(retrieveData("jobTraining")));
     } else {
       setDatas([]);
     }
@@ -73,12 +73,12 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
     <>
       <div>
         <div className='flex justify-end gap-2 mb-3'>
-          <Button variant="secondary" onClick={() => previousStep(30)} className="mt-3">Previous</Button>
+          <Button variant="secondary" onClick={() => previousStep(45)} className="mt-3">Previous</Button>
           <Button onClick={handleNextStep} className="mt-3">Next</Button>
         </div>
         <Button onClick={handleOpenModal}>
           <PlusIcon className="h-4 w-4 mr-1" />
-          Add Education
+          Add Training
         </Button>
         <Alert className="w-full mt-3">
           {datas && datas.length > 0 ? (
@@ -88,7 +88,7 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
-                      <TableHead className="w-1/12 ">Course category</TableHead>
+                      <TableHead className="w-1/12 ">Training</TableHead>
                       <TableHead className="w-10/12">Description</TableHead>
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center"></TableHead>
@@ -99,10 +99,10 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
                       <TableRow key={index}>
                         <TableCell className="w-1/12">{index + 1}</TableCell>
                         <TableCell className="w-1/12">
-                          {courseCategory.find((item) => item.value === data.courseCategory)?.label}
+                          {training.find((item) => item.value === data.training)?.label}
                         </TableCell>
                         <TableCell className="w-10/12 whitespace-normal">
-                          {data.jobEducation}
+                          {data.jobTraining}
                         </TableCell>
                         <TableCell className="w-1/12 text-center">{data.points}</TableCell>
                         <TableCell className="w-1/12 text-center">
@@ -118,22 +118,23 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
                   </TableBody>
                 </Table>
               </div>
+
               <div className="block md:hidden">
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
                       <button
-                        className="h-6 w-6"
+                        className="h-4 w-4"
                         onClick={() => handleRemoveList(index)}
                       >
-                        <X className="h-6 w-6" />
+                        <X className="h-5 w-5" />
                       </button>
                     </div>
                     <div className="mt-2 text-sm">
                       <div className='mb-1 text-xl break-words'>
-                        {courseCategory.find((item) => item.value === data.courseCategory)?.label}
+                        {training.find((item) => item.value === data.training)?.label}
                       </div>
-                      {data.jobEducation}
+                      {data.jobTraining}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">
@@ -145,17 +146,18 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
                 ))}
               </div>
             </>
+
           ) : (
             <CardDescription className="text-center">
-              No education added yet
+              No training added yet
             </CardDescription>
           )}
         </Alert>
-        <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} />
+        <AddTraining open={showModal} onHide={handleCloseModal} training={training} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
   )
 }
 
-export default AddJobEducation;
+export default AddJobTraining;
