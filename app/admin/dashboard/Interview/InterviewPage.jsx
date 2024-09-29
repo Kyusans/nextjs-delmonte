@@ -11,6 +11,9 @@ import React, { useEffect, useState } from 'react'
 import AddInterviewCriteria from '../modal/AddInterview/AddInterviewCriteria'
 import AddInterviewMaster from '../modal/AddInterview/AddInterviewMaster'
 import UpdateInterviewCriteria from '../modal/AddInterview/UpdateInterview/UpdateInterviewCriteria'
+import ShowAlert from '@/components/ui/show-alert'
+import axios from 'axios'
+import { toast } from 'sonner'
 
 function InterviewPage({ interviewData, getSelectedJob }) {
   const [data, setData] = useState([]);
@@ -55,6 +58,40 @@ function InterviewPage({ interviewData, getSelectedJob }) {
     setShowUpdateModal(false);
     setSelectedIndex(0);
   }
+
+  // delete sa criteria ni diri
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [indexToRemove, setIndexToRemove] = useState(null);
+  const handleShowAlert = (message) => {
+    setAlertMessage(message);
+    setShowAlert(true);
+  };
+  const handleCloseAlert = async (status) => {
+    console.log(status);
+    if (status === 1) {
+      const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
+      const jsonData = { criteriaId: data[indexToRemove].inter_criteria_id };
+      console.log("JSON DATA: ", jsonData);
+      const formData = new FormData();
+      formData.append("operation", "deleteInterviewCriteria");
+      formData.append("json", JSON.stringify(jsonData));
+      const res = await axios.post(url, formData);
+      console.log("res.data: ", res.data);
+      if (res.data === 1) {
+        toast.success("Criteria deleted successfully");
+        const filteredData = data.filter((element) => element !== data[indexToRemove]);
+        setData(filteredData);
+      }
+    }
+    setShowAlert(false);
+  };
+
+
+  const handleRemoveList = (indexToRemove) => {
+    setIndexToRemove(indexToRemove);
+    handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
+  };
 
   useEffect(() => {
     if (interviewData.interviewCriteria) {
@@ -106,10 +143,10 @@ function InterviewPage({ interviewData, getSelectedJob }) {
                             <TableCell className="text-center">{item.inter_criteria_points}</TableCell>
                             <TableCell>
                               <div className='flex justify-center'>
-                                <button onClick={() => {openShowModalUpdate(item, index)}}>
+                                <button onClick={() => { openShowModalUpdate(item, index) }}>
                                   <Edit2 className="h-4 w-4 mr-4" />
                                 </button>
-                                <button className="h-4 w-4" onClick={() => { }}>
+                                <button className="h-4 w-4" onClick={() => { handleRemoveList(index) }}>
                                   <Trash2 className="h-4 w-4" />
                                 </button>
                               </div>
@@ -174,6 +211,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
           isMaster={false}
         />
       )}
+      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={2} />
     </div>
   );
 }

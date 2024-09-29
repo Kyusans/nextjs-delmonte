@@ -30,6 +30,8 @@ function UpdateInterviewCriteria({ open, onHide, data, criteriaList, isMaster })
       points: isMaster ? data.points.toString() : data.inter_criteria_points.toString(),
     },
   });
+
+
   const onSubmit = async (values) => {
     setIsLoading(true);
     try {
@@ -37,12 +39,16 @@ function UpdateInterviewCriteria({ open, onHide, data, criteriaList, isMaster })
         const filteredList = criteriaList.filter((element) => {
           return element.name !== values.name;
         })
-        if (filteredList.some((element) => element.name === data.name)) {
+        if (filteredList.some((element) => element.name === values.name)) {
           toast.error("Criteria already exist");
           return;
         }
-        toast.success("Criteria updated successfully");
-        onHide(values);
+        if (data.name === values.name) {
+          handleOnHide();
+        } else {
+          toast.success("Criteria updated successfully");
+          onHide(values);
+        }
       } else {
         if (criteriaList.some((element) => element.name === values.name)) {
           toast.error("Criteria already exist");
@@ -64,7 +70,7 @@ function UpdateInterviewCriteria({ open, onHide, data, criteriaList, isMaster })
         if (res.data === 1) {
           toast.success("Criteria updated successfully");
           onHide(values);
-        }else if (res.data === 0) {
+        } else if (res.data === 0) {
           handleOnHide();
         }
       }
