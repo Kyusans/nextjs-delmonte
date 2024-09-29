@@ -110,81 +110,37 @@ function InterviewPage({ interviewData, getSelectedJob }) {
         </div>
       ) : (
         <div>
-          <Drawer>
-            <DrawerTrigger asChild>
-              <Button className="mt-2">View Criteria</Button>
-            </DrawerTrigger>
-            <DrawerContent>
-              <DrawerHeader>
-                <DrawerTitle>Interview Criteria</DrawerTitle>
-                <DrawerDescription>Manage interview criteria: view, edit, or remove</DrawerDescription>
-              </DrawerHeader>
-              <Separator />
-              <ScrollArea className="w-full h-[calc(100vh-200px)]">
-                <div className='p-3'>
-                  <Button onClick={openShowModal}>
-                    <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
-                  </Button>
-                </div>
-                <Card className="mx-3">
-                  <CardContent>
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead>Criteria</TableHead>
-                          <TableHead className="text-center">Points</TableHead>
-                          <TableHead className="text-center">Actions</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {data.map((item, index) => (
-                          <TableRow key={index}>
-                            <TableCell>{item.inter_criteria_name}</TableCell>
-                            <TableCell className="text-center">{item.inter_criteria_points}</TableCell>
-                            <TableCell>
-                              <div className='flex justify-center'>
-                                <button onClick={() => { openShowModalUpdate(item, index) }}>
-                                  <Edit2 className="h-4 w-4 mr-4" />
-                                </button>
-                                <button className="h-4 w-4" onClick={() => { handleRemoveList(index) }}>
-                                  <Trash2 className="h-4 w-4" />
-                                </button>
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </CardContent>
-                </Card>
-              </ScrollArea>
-              <DrawerFooter>
-                <DrawerClose asChild>
-                  <div className="flex justify-end">
-                    <Button variant='outline'>
-                      Close
-                    </Button>
-                  </div>
-                </DrawerClose>
-              </DrawerFooter>
-            </DrawerContent>
-          </Drawer>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {interviewData.interviewCandidate.map((data, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    {data.FullName}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <ScrollArea className="w-full h-[calc(100vh-200px)]">
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Criteria</TableHead>
+                    <TableHead className="text-center">Points</TableHead>
+                    <TableHead className="text-center">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {data.map((item, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{item.inter_criteria_name}</TableCell>
+                      <TableCell className="text-center">{item.inter_criteria_points}</TableCell>
+                      <TableCell>
+                        <div className='flex justify-center'>
+                          <button onClick={() => { openShowModalUpdate(item, index) }}>
+                            <Edit2 className="h-4 w-4 mr-4" />
+                          </button>
+                          <button className="h-4 w-4" onClick={() => { handleRemoveList(index) }}>
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </ScrollArea>
         </div>
       )}
       {showAddModal && (
