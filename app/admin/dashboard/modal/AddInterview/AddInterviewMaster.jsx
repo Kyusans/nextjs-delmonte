@@ -54,22 +54,21 @@ function AddInterviewMaster({ open, onHide }) {
 
 
   const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [selectedIndex, setSelecetedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedData, setSelectedData] = useState({});
   const openUpdateModal = (index, data) => {
     setShowUpdateModal(true);
-    setSelecetedIndex(index);
+    setSelectedIndex(index);
     setSelectedData(data);
   }
   const closeUpdateModal = (status) => {
-    console.log("status", status);
     if (status !== 0) {
       let criteriaList = interviewCriteria;
       criteriaList[selectedIndex] = { name: status.name, points: status.points };
       setInterviewCriteria(criteriaList);
     }
     setShowUpdateModal(false);
-    setSelecetedIndex(0);
+    setSelectedIndex(0);
   }
 
   const formSchema = z.object({
@@ -151,7 +150,6 @@ function AddInterviewMaster({ open, onHide }) {
                   <Button type="button" onClick={openAddCriteriaMaster}>
                     <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
                   </Button>
-
                   <Card className="flex items-center justify-center">
                     <ScrollArea className="flex items-center justify-center w-full">
                       <CardContent>

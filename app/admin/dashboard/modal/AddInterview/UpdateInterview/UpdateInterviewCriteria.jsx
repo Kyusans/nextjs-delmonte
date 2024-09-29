@@ -1,6 +1,6 @@
 "use client"
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import React, { useRef } from 'react'
+import React from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
+import axios from 'axios';
 
 function UpdateInterviewCriteria({ open, onHide, data, criteriaList, isMaster }) {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -25,8 +26,8 @@ function UpdateInterviewCriteria({ open, onHide, data, criteriaList, isMaster })
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: data.name,
-      points: data.points.toString(),
+      name: isMaster ? data.name : data.inter_criteria_name,
+      points: isMaster ? data.points.toString() : data.inter_criteria_points.toString(),
     },
   });
   const onSubmit = async (values) => {
@@ -42,10 +43,34 @@ function UpdateInterviewCriteria({ open, onHide, data, criteriaList, isMaster })
         }
         toast.success("Criteria updated successfully");
         onHide(values);
+      } else {
+        if (criteriaList.some((element) => element.name === values.name)) {
+          toast.error("Criteria already exist");
+          return;
+        }
+        console.log("UpdateInterviewCriteria.jsx => onSubmit(): ", data.inter_criteria_id);
+        const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
+        const jsonData = {
+          criteriaId: data.inter_criteria_id,
+          name: values.name,
+          points: values.points
+        }
+        console.log("JSON DATA: ", jsonData);
+        const formData = new FormData();
+        formData.append("operation", "updateInterviewCriteria");
+        formData.append("json", JSON.stringify(jsonData));
+        const res = await axios.post(url, formData);
+        console.log("res.data ni onSubmit:", res.data);
+        if (res.data === 1) {
+          toast.success("Criteria updated successfully");
+          onHide(values);
+        }else if (res.data === 0) {
+          handleOnHide();
+        }
       }
     } catch (error) {
       toast.error("Network error");
-      console.log("AddInterviewMasterCriteria.jsx => onSubmit(): " + error);
+      console.log("UpdateInterviewCriteria.jsx => onSubmit(): " + error);
     } finally {
       setIsLoading(false);
     }

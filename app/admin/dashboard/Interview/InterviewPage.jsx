@@ -10,6 +10,7 @@ import { Edit2, PlusCircle, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import AddInterviewCriteria from '../modal/AddInterview/AddInterviewCriteria'
 import AddInterviewMaster from '../modal/AddInterview/AddInterviewMaster'
+import UpdateInterviewCriteria from '../modal/AddInterview/UpdateInterview/UpdateInterviewCriteria'
 
 function InterviewPage({ interviewData, getSelectedJob }) {
   const [data, setData] = useState([]);
@@ -18,11 +19,15 @@ function InterviewPage({ interviewData, getSelectedJob }) {
   const [showAddModal, setShowAddModal] = useState(false);
   const openShowModal = () => { setShowAddModal(true); };
   const closeShowModal = (status) => {
+
+    setShowAddModal(false);
+  };
+
+  const addCriteria = (status) => {
     if (status !== 0) {
       setData([...data, { inter_criteria_name: status.name, inter_criteria_points: status.points }]);
     }
-    setShowAddModal(false);
-  };
+  }
 
   // add interview master modal diri
   const [showAddInterviewMaster, setShowAddInterviewMaster] = useState(false);
@@ -31,6 +36,25 @@ function InterviewPage({ interviewData, getSelectedJob }) {
     setShowAddInterviewMaster(false);
     getSelectedJob();
   };
+
+  // update interview criteria modal diri
+  const [selectedData, setSelectedData] = useState({});
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const openShowModalUpdate = (data, index) => {
+    setShowUpdateModal(true);
+    setSelectedData(data);
+    setSelectedIndex(index);
+  };
+  const closeUpdateModal = (status) => {
+    if (status !== 0) {
+      let criteriaList = data;
+      criteriaList[selectedIndex] = { inter_criteria_name: status.name, inter_criteria_points: status.points };
+      setData(criteriaList);
+    }
+    setShowUpdateModal(false);
+    setSelectedIndex(0);
+  }
 
   useEffect(() => {
     if (interviewData.interviewCriteria) {
@@ -70,7 +94,6 @@ function InterviewPage({ interviewData, getSelectedJob }) {
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>#</TableHead>
                           <TableHead>Criteria</TableHead>
                           <TableHead className="text-center">Points</TableHead>
                           <TableHead className="text-center">Actions</TableHead>
@@ -79,12 +102,11 @@ function InterviewPage({ interviewData, getSelectedJob }) {
                       <TableBody>
                         {data.map((item, index) => (
                           <TableRow key={index}>
-                            <TableCell>{index + 1}</TableCell>
                             <TableCell>{item.inter_criteria_name}</TableCell>
                             <TableCell className="text-center">{item.inter_criteria_points}</TableCell>
                             <TableCell>
                               <div className='flex justify-center'>
-                                <button onClick={() => { }}>
+                                <button onClick={() => {openShowModalUpdate(item, index)}}>
                                   <Edit2 className="h-4 w-4 mr-4" />
                                 </button>
                                 <button className="h-4 w-4" onClick={() => { }}>
@@ -134,12 +156,22 @@ function InterviewPage({ interviewData, getSelectedJob }) {
           onHide={closeShowModal}
           interviewId={interviewData.interviewMaster[0].interviewM_id}
           interviewCriteria={data}
+          addCriteria={addCriteria}
         />
       )}
       {showAddInterviewMaster && (
         <AddInterviewMaster
           open={showAddInterviewMaster}
           onHide={closeShowModalMaster}
+        />
+      )}
+      {showUpdateModal && (
+        <UpdateInterviewCriteria
+          open={showUpdateModal}
+          onHide={closeUpdateModal}
+          data={selectedData}
+          criteriaList={data}
+          isMaster={false}
         />
       )}
     </div>

@@ -1,6 +1,6 @@
 "use client"
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import React from 'react'
+import React, { useRef } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -11,7 +11,8 @@ import { Input } from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 
-function AddInterviewCriteria({ open, onHide, interviewId, interviewCriteria }) {
+function AddInterviewCriteria({ open, onHide, interviewId, interviewCriteria, addCriteria }) {
+
   const [isLoading, setIsLoading] = React.useState(false);
   const formSchema = z.object({
     name: z.string().min(1, {
@@ -35,6 +36,8 @@ function AddInterviewCriteria({ open, onHide, interviewId, interviewCriteria }) 
     },
   });
 
+  const firstInputRef = useRef(null);
+
   const onSubmit = async (values) => {
     setIsLoading(true);
     try {
@@ -50,8 +53,9 @@ function AddInterviewCriteria({ open, onHide, interviewId, interviewCriteria }) 
       console.log("res.data ni onSubmit:", res.data);
       if (res.data === 1) {
         toast.success("Criteria added successfully");
-        onHide(values);
+        addCriteria(values);
         form.reset();
+        firstInputRef.current.focus();
       }
       console.log("values:", values);
     } catch (error) {
@@ -83,7 +87,7 @@ function AddInterviewCriteria({ open, onHide, interviewId, interviewCriteria }) 
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Interview Criteria</FormLabel>
-                        <FormControl>
+                        <FormControl ref={firstInputRef}>
                           <Input placeholder="Enter interview criteria"  {...field} />
                         </FormControl>
                         <FormMessage />
@@ -107,7 +111,7 @@ function AddInterviewCriteria({ open, onHide, interviewId, interviewCriteria }) 
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">Close</Button>
                 </DialogClose>
                 <Button type="submit" disabled={isLoading}>{isLoading && <Spinner />} Submit</Button>
               </div>
