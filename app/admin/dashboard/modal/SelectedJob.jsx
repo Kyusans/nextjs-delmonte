@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import UpdateJobModal from '../UpdateJobDetails/UpdateJobModal';
 import SelectedApplicant from './SelectedApplicant';
 import { Badge } from '@/components/ui/badge';
-import { SortAsc, SortDesc } from 'lucide-react';
+import { ChevronsUpDown, SortAsc, SortDesc } from 'lucide-react';
 import InterviewPage from '../Interview/InterviewPage';
 
 function SelectedJob({ open, onHide, jobId }) {
@@ -126,7 +126,7 @@ function SelectedJob({ open, onHide, jobId }) {
                     <TabsList>
                       <TabsTrigger value={1} >Details</TabsTrigger>
                       <TabsTrigger value={2}>Applicants</TabsTrigger>
-                      <TabsTrigger value={3}>Interview</TabsTrigger>
+                      <TabsTrigger value={3}>Interview Criteria</TabsTrigger>
                     </TabsList>
                     <TabsContent value={1}>
                       <Accordion type="multiple" collapsible="true" className="w-full" defaultValue={["item-1", "item-2"]}>
@@ -247,60 +247,64 @@ function SelectedJob({ open, onHide, jobId }) {
                       </Accordion>
                     </TabsContent>
                     <TabsContent value={2}>
-                      {data.candidates?.length > 0 ? (
-                        <Table className="w-full text-center">
-                          <TableCaption className="text-center">
-                            Passing percentage: {data.jobPassing[0].passing_percentage ? data.jobPassing[0].passing_percentage : 0}%
-                          </TableCaption>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead className="text-center">Index</TableHead>
-                              <TableHead className="cursor-pointer text-center">
-                                <div className="flex items-center justify-center gap-1" onClick={() => handleSort('FullName')}>
-                                  <span>Full Name</span>
-                                  {sortField === 'FullName' && (sortOrder === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />)}
-                                </div>
-                              </TableHead>
-                              <TableHead className="cursor-pointer text-center">
-                                <div className="flex items-center justify-center gap-1" onClick={() => handleSort('totalPoints')}>
-                                  <span>Points</span>
-                                  {sortField === 'totalPoints' && (sortOrder === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />)}
-                                </div>
-                              </TableHead>
-                              <TableHead className="cursor-pointer text-center">
-                                <div className="flex items-center justify-center gap-1" onClick={() => handleSort('percentage')}>
-                                  <span>Percentage</span>
-                                  {sortField === 'percentage' && (sortOrder === 'asc' ? <SortAsc className="h-4 w-4" /> : <SortDesc className="h-4 w-4" />)}
-                                </div>
-                              </TableHead>
-                              <TableHead className="cursor-pointer text-center">
-                                <div className="flex items-center justify-center gap-1">
-                                  <span>Status</span>
-                                </div>
-                              </TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {currentCandidates?.map((candData, index) => (
-                              <TableRow key={index} className="cursor-pointer" onClick={() => handleShowSelectedApplicant(candData.cand_id)}>
-                                <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
-                                <TableCell>{candData.FullName}</TableCell>
-                                <TableCell>{candData.points.totalPoints}/{candData.points.maxPoints}</TableCell>
-                                <TableCell className={candData.points.percentage >= data.jobPassing[0].passing_percentage ? "text-green-500" : "text-red-500"}>
-                                  {candData.points.percentage}%
-                                </TableCell>
-                                <TableCell>{candData.status_name}</TableCell>
+                      <ScrollArea className="h-[400px]">
+                        {data.candidates?.length > 0 ? (
+                          <Table className="w-full text-center">
+                            <TableCaption className="text-center">
+                              Passing percentage: {data.jobPassing[0].passing_percentage ? data.jobPassing[0].passing_percentage : 0}%
+                            </TableCaption>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead className="text-center">Index</TableHead>
+                                <TableHead className="cursor-pointer text-center">
+                                  <div className="flex items-center justify-center gap-1" onClick={() => handleSort('FullName')}>
+                                    <span>Full Name</span>
+                                    <ChevronsUpDown className="h-4 w-4" />
+                                  </div>
+                                </TableHead>
+                                <TableHead className="cursor-pointer text-center">
+                                  <div className="flex items-center justify-center gap-1" onClick={() => handleSort('totalPoints')}>
+                                    <span>Points</span>
+                                    <ChevronsUpDown className="h-4 w-4" />
+                                  </div>
+                                </TableHead>
+                                <TableHead className="cursor-pointer text-center">
+                                  <div className="flex items-center justify-center gap-1" onClick={() => handleSort('percentage')}>
+                                    <span>Percentage</span>
+                                    <ChevronsUpDown className="h-4 w-4" />
+                                  </div>
+                                </TableHead>
+                                <TableHead className="cursor-pointer text-center">
+                                  <div className="flex items-center justify-center gap-1" onClick={() => handleSort('status_name')}>
+                                    <span>Status</span>
+                                    <ChevronsUpDown className="h-4 w-4" />
+                                  </div>
+                                </TableHead>
                               </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      ) : (
-                        <Card className="text-center bg-background">
-                          <CardDescription className="p-5">
-                            No applicants applied yet
-                          </CardDescription>
-                        </Card>
-                      )}
+                            </TableHeader>
+                            <TableBody>
+                              {currentCandidates?.map((candData, index) => (
+                                <TableRow key={index} className="cursor-pointer" onClick={() => handleShowSelectedApplicant(candData.cand_id)}>
+                                  <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
+                                  <TableCell>{candData.FullName}</TableCell>
+                                  <TableCell>{candData.points.totalPoints}/{candData.points.maxPoints}</TableCell>
+                                  <TableCell className={candData.points.percentage >= data.jobPassing[0].passing_percentage ? "text-green-500" : "text-red-500"}>
+                                    {candData.points.percentage}%
+                                  </TableCell>
+                                  <TableCell>{candData.status_name}</TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        ) : (
+                          <Card className="text-center bg-background">
+                            <CardDescription className="p-5">
+                              No applicants applied yet
+                            </CardDescription>
+                          </Card>
+                        )}
+
+                      </ScrollArea>
                       {data.candidates?.length > itemsPerPage && (
                         <div className='flex justify-end items-end mt-4'>
                           <Pagination>
@@ -313,7 +317,7 @@ function SelectedJob({ open, onHide, jobId }) {
                                   <PaginationLink
                                     href="#"
                                     onClick={() => handlePageChange(index + 1)}
-                                    className={` ${currentPage === index + 1 ? "text-primary font-extrabold text-lg" : ""}`}
+                                    className={` ${currentPage === index + 1 ? "text-primary" : ""}`}
                                   >
                                     {index + 1}
                                   </PaginationLink>

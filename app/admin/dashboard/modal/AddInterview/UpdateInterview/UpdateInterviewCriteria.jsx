@@ -91,7 +91,7 @@ function UpdateInterviewCriteria({ open, onHide, data, criteriaList, isMaster })
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Interview Criteria</DialogTitle>
+            <DialogTitle>Update Interview Criteria</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
