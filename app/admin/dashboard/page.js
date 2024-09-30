@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import AdminDashboard from './AdminDashboard'
 import AdminSidebar from './AdminSidebar';
 import { CardTitle } from '@/components/ui/card';
-import AdminJobs from './AdminJobs';
+import AdminJobs from './Job/AdminJobs';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { retrieveData, storeData } from '@/app/utils/storageUtils';
 
