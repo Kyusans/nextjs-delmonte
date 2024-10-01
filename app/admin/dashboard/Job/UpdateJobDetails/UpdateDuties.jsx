@@ -2,7 +2,7 @@
 import { Card, CardDescription } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import React, { useEffect, useState } from 'react';
-import AddDuties from '../modal/AddJob/AddDuties';
+import AddDuties from '../../modal/AddJob/AddDuties';
 import ShowAlert from '@/components/ui/show-alert';
 import { Edit2, PlusIcon, Trash2 } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';

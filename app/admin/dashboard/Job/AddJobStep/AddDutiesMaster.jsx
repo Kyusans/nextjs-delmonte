@@ -1,32 +1,33 @@
-"use client";
-import { retrieveData, storeData } from '@/app/utils/storageUtils'
-import { Alert } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import { CardDescription } from '@/components/ui/card'
-import { Separator } from '@/components/ui/separator'
-import ShowAlert from '@/components/ui/show-alert'
-import { PlusIcon, X } from 'lucide-react'
-import React, { useEffect, useState } from 'react'
+"use client"
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
+import { Alert, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { CardContent, CardDescription } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import ShowAlert from '@/components/ui/show-alert';
+import { PlusIcon, X } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import AddDuties from '../../modal/AddJob/AddDuties';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import AddSkill from '../modal/AddJob/AddSkill';
 import { toast } from 'sonner';
-import { Badge } from '@/components/ui/badge';
 
-function AddJobSkill({ skill, previousStep, nextStep }) {
+function AddDutiesMaster({ previousStep, nextStep }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
-
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+
   const handleShowAlert = (message) => {
     setAlertMessage(message);
     setShowAlert(true);
   };
+
   const handleCloseAlert = (status) => {
     if (status === 1) {
       const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
       setDatas(filteredDatas);
-      storeData("jobSkill", JSON.stringify(filteredDatas));
+      storeData("duties", JSON.stringify(filteredDatas));
     }
     setShowAlert(false);
   };
@@ -40,7 +41,7 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
   const handleCloseModal = (status) => {
     if (status !== 0) {
       setDatas([...datas, status]);
-      storeData("jobSkill", JSON.stringify([...datas, status]));
+      storeData("duties", JSON.stringify([...datas, status]));
     } else {
       setDatas(datas);
     }
@@ -53,31 +54,32 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
   };
 
   const handleNextStep = () => {
-    // if (retrieveData("jobSkill") === null || retrieveData("jobSkill") === "[]") {
-    //   toast.error("Please add skill first");
-    //   return;
-    // }
-    nextStep(93);
+    if (retrieveData("duties") === null || retrieveData("duties") === "[]") {
+      toast.error("Duties is required");
+      return;
+    }
+    nextStep(30);
   }
 
   useEffect(() => {
-    if (retrieveData("jobSkill") !== null || retrieveData("jobSkill") !== "[]") {
-      setDatas(JSON.parse(retrieveData("jobSkill")));
+    if (retrieveData("duties") !== null || retrieveData("duties") !== "[]") {
+      setDatas(JSON.parse(retrieveData("duties")));
     } else {
       setDatas([]);
     }
+    console.log("dutiessss", JSON.stringify(JSON.parse(retrieveData("duties"))));
   }, []);
 
   return (
     <>
       <div>
         <div className='flex justify-end gap-2 mb-3'>
-          <Button variant="secondary" onClick={() => previousStep(60)} className="mt-3">Previous</Button>
+          <Button variant="secondary" onClick={() => previousStep(0)} className="mt-3">Previous</Button>
           <Button onClick={handleNextStep} className="mt-3">Next</Button>
         </div>
         <Button onClick={handleOpenModal}>
           <PlusIcon className="h-4 w-4 mr-1" />
-          Add Skill
+          Add Duties
         </Button>
         <Alert className="w-full mt-3">
           {datas && datas.length > 0 ? (
@@ -87,9 +89,7 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
-                      <TableHead className="w-1/12 ">Skill</TableHead>
-                      <TableHead className="w-10/12">Description</TableHead>
-                      <TableHead className="w-1/12 text-center">Points</TableHead>
+                      <TableHead className="w-10/12">Duty</TableHead>
                       <TableHead className="w-1/12 text-center"></TableHead>
                     </TableRow>
                   </TableHeader>
@@ -97,13 +97,9 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
                     {datas.map((data, index) => (
                       <TableRow key={index}>
                         <TableCell className="w-1/12">{index + 1}</TableCell>
-                        <TableCell className="w-1/12">
-                          {skill.find((item) => item.value === data.skill)?.label}
-                        </TableCell>
                         <TableCell className="w-10/12 whitespace-normal">
-                          {data.jobSkill}
+                          {data.duties}
                         </TableCell>
-                        <TableCell className="w-1/12 text-center">{data.points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <button
                             className="h-4 w-4"
@@ -118,43 +114,36 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
                 </Table>
               </div>
               <div className="block md:hidden">
-                {datas.map((data, index) => (
-                  <div key={index} className="relative w-full p-4 rounded-md shadow">
-                    <div className="flex justify-end">
-                      <button
-                        className="h-6 w-6"
-                        onClick={() => handleRemoveList(index)}
-                      >
-                        <X className="h-6 w-6" />
-                      </button>
-                    </div>
-                    <div className="mt-2 text-sm">
-                      <div className='mb-1 text-xl break-words'>
-                        {skill.find((item) => item.value === data.skill)?.label}
+                  {datas.map((data, index) => (
+                    <div key={index} className="relative w-full p-4 rounded-md shadow">
+                      <div className="flex justify-end">
+                        <button
+                          className="h-4 w-4"
+                          onClick={() => handleRemoveList(index)}
+                        >
+                          <X className="h-5 w-5" />
+                        </button>
                       </div>
-                      {data.jobSkill}
+                      <div className="mt-2 text-sm">
+                        {index + 1}.&nbsp;&nbsp;
+                        {data.duties}
+                      </div>
+                      <Separator className="mt-3" />
                     </div>
-                    <div className='text-end'>
-                      <Badge className="mt-2 text-xs font-bold">
-                        Points: {data.points}
-                      </Badge>
-                    </div>
-                    <Separator className="mt-3" />
-                  </div>
-                ))}
+                  ))}
               </div>
             </>
           ) : (
             <CardDescription className="text-center">
-              No skill added yet
+              No duties added yet
             </CardDescription>
           )}
         </Alert>
-        <AddSkill open={showModal} onHide={handleCloseModal} skill={skill} />
+        <AddDuties open={showModal} onHide={handleCloseModal} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
   )
 }
 
-export default AddJobSkill;
+export default AddDutiesMaster;

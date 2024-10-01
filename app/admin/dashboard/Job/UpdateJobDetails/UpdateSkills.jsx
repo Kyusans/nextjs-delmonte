@@ -1,37 +1,34 @@
 "use client";
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
-import { Alert, AlertTitle } from '@/components/ui/alert'
+import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription } from '@/components/ui/card'
+import { Card, CardDescription } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 import ShowAlert from '@/components/ui/show-alert'
-import { Edit2, PlusIcon, Trash2, X } from 'lucide-react'
+import { Edit2, PlusIcon, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import AddExperience from '../modal/AddJob/AddExperience';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import AddSkill from '../../modal/AddJob/AddSkill';
 import { toast } from 'sonner';
-import { jsx } from 'react/jsx-runtime';
-import UpdateExperienceModal from '../modal/UpdateJob/UpdateExperienceModal';
+import { Badge } from '@/components/ui/badge';
+import UpdateSkillModal from '../../modal/UpdateJob/UpdateSkillModal';
 
-
-function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
+function UpdateSkill({ skill, data, handleAddData, handleUpdate, deleteData }) {
   const [datas, setDatas] = useState([]);
+  const [updateData, setUpdateData] = useState({});
   const [indexToRemove, setIndexToRemove] = useState(null);
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-  const [updateData, setUpdateData] = useState({});
-
   const handleShowAlert = (message) => {
     setAlertMessage(message);
     setShowAlert(true);
   };
-  const handleCloseAlert = (status) => {
+  const handleCloseAlert = async (status) => {
     if (status === 1) {
       const jsonData = {
         id: indexToRemove
       }
-      deleteData("deleteJobExperience", jsonData, "getJobExperience");
+      await deleteData("deleteJobSkills", jsonData, "getJobSkills");
     }
     setShowAlert(false);
   };
@@ -46,11 +43,11 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
     if (status !== 0) {
       const jsonData = {
         jobId: retrieveData("jobId"),
-        experienceText: status.jobExperience,
-        yearsOfExperience: status.yearsOfExperience,
+        skillText: status.jobSkill,
+        skillId: status.skill,
         points: status.points
       }
-      handleAddData("addJobExperience", jsonData, "getJobExperience");
+      handleAddData("addJobSkills", jsonData, "getJobSkills");
     } else {
       setDatas(datas);
     }
@@ -71,32 +68,39 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
     if (values !== 0) {
       const jsonData = {
         id: updateData.id,
-        experienceText: values.jobExperience,
-        yearsOfExperience: values.yearsOfExperience,
+        skillText: values.jobSkill,
+        skillId: values.skill,
         points: values.points
       }
-      handleUpdate("updateJobExperience", jsonData, "getJobExperience");
+      handleUpdate("updateJobSkills", jsonData, "getJobSkills");
     }
     setShowUpdateModal(false);
   }
 
-  const handleEdit = (id, points, jobExperienceText, yearsOfExperience) => {
-    setUpdateData({ id: id, jobExperience: jobExperienceText, yearsOfExperience: yearsOfExperience, points: points });
+  const handleEdit = (id, skillId, points, jobSkill) => {
+    setUpdateData({ id: id, skill: skillId, points: points, jobSkill: jobSkill });
     handleOpenUpdateModal();
   }
 
   useEffect(() => {
     if (data) {
       setDatas(data);
+      const filteredData = data.map((element) => ({
+        skill: element.jskills_skillsId,
+      }))
+      storeData("jobSkill", JSON.stringify(filteredData));
     }
-   }, [data]);
+    console.log("datas ni skills:", data)
+    console.log("skills ni skills:", skill)
+    console.log("retrieveData ni skills", JSON.parse(retrieveData("jobSkill")))
+  }, [data, skill]);
 
   return (
     <>
       <div>
         <Button onClick={handleOpenModal}>
           <PlusIcon className="h-4 w-4 mr-1" />
-          Add Experience
+          Add Skill
         </Button>
         <Card className="w-full mt-3">
           {datas && datas.length > 0 ? (
@@ -106,8 +110,8 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
-                      <TableHead className="w-10/12">Experience</TableHead>
-                      <TableHead className="w-1/12 text-center">Year/s of experience</TableHead>
+                      <TableHead className="w-1/12 ">Skill</TableHead>
+                      <TableHead className="w-10/12">Description</TableHead>
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center">Actions</TableHead>
                     </TableRow>
@@ -116,17 +120,19 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
                     {datas.map((data, index) => (
                       <TableRow key={index}>
                         <TableCell className="w-1/12">{index + 1}</TableCell>
-                        <TableCell className="w-10/12 whitespace-normal">
-                          {data.jwork_responsibilities}
+                        <TableCell className="w-1/12">
+                          {skill.find((item) => item.value === data.jskills_skillsId)?.label}
                         </TableCell>
-                        <TableCell className="w-1/12 text-center">{data.jwork_duration}</TableCell>
-                        <TableCell className="w-1/12 text-center">{data.jwork_points}</TableCell>
+                        <TableCell className="w-10/12 whitespace-normal">
+                          {data.jskills_text}
+                        </TableCell>
+                        <TableCell className="w-1/12 text-center">{data.jskills_points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <div className='flex justify-center'>
-                            <button onClick={() => handleEdit(data.jwork_id, data.jwork_points, data.jwork_responsibilities, data.jwork_duration)}>
+                            <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points, data.jskills_text)}>
                               <Edit2 className="h-4 w-4 mr-4" />
                             </button>
-                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jwork_id)}>
+                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jskills_id)}>
                               <Trash2 className="h-4 w-4" />
                             </button>
                           </div>
@@ -140,22 +146,22 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
-                      <button onClick={() => handleEdit(data.jwork_id, data.jwork_points, data.jwork_responsibilities, data.jwork_duration)}>
+                      <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points, data.jskills_text)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
-                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jwork_id)}>
+                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jskills_id)}>
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
                     <div className="mt-2 text-sm">
-                      {data.jwork_responsibilities}
+                      <div className='mb-1 text-xl break-words'>
+                        {skill.find((item) => item.value === data.jskills_skillsId)?.label}
+                      </div>
+                      {data.jskills_text}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">
-                        Year/s of Experience: {data.jwork_duration}
-                      </Badge>
-                      <Badge className="mt-2 text-xs font-bold ml-2">
-                        Points: {data.jwork_points}
+                        Points: {data.jskills_points}
                       </Badge>
                     </div>
                     <Separator className="mt-3" />
@@ -163,19 +169,18 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
                 ))}
               </div>
             </>
-
           ) : (
             <CardDescription className="text-center">
-              No experience added yet
+              No skill added yet
             </CardDescription>
           )}
         </Card>
-        {showModal && <AddExperience open={showModal} onHide={handleCloseModal} />}
-        {showUpdateModal && <UpdateExperienceModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} />}
+        {showModal && <AddSkill open={showModal} onHide={handleCloseModal} skill={skill} />}
+        {showUpdateModal && <UpdateSkillModal open={showUpdateModal} onHide={handleCloseUpdateModal} skill={skill} updateData={updateData} />}
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
       </div>
     </>
   )
 }
 
-export default UpdateExperience
+export default UpdateSkill;

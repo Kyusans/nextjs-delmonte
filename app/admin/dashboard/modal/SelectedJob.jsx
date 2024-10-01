@@ -1,30 +1,23 @@
 import { removeData, storeData } from '@/app/utils/storageUtils';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Card, CardDescription } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import Spinner from '@/components/ui/spinner';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import UpdateJobModal from '../UpdateJobDetails/UpdateJobModal';
-import SelectedApplicant from './SelectedApplicant';
+import UpdateJobModal from '../Job/UpdateJobDetails/UpdateJobModal';
 import { Badge } from '@/components/ui/badge';
-import { ChevronsUpDown, SortAsc, SortDesc } from 'lucide-react';
-import InterviewPage from '../Interview/InterviewPage';
+import InterviewPage from '../Job/Interview/InterviewPage';
+import ViewApplicants from '../Job/ViewApplicants/ViewApplicants';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
-
-  const [sortField, setSortField] = useState(null);
-  const [sortOrder, setSortOrder] = useState('asc');
+  const [selectedTab, setSelectedTab] = useState(1);
 
   const getSelectedJobs = useCallback(async () => {
     setIsLoading(true);
@@ -53,55 +46,14 @@ function SelectedJob({ open, onHide, jobId }) {
     }
   }, [getSelectedJobs, jobId, open]);
 
-  const indexOfLastCandidate = currentPage * itemsPerPage;
-  const indexOfFirstCandidate = indexOfLastCandidate - itemsPerPage;
-  const currentCandidates = data.candidates?.slice(indexOfFirstCandidate, indexOfLastCandidate);
-  const totalPages = Math.ceil((data.candidates?.length || 0) / itemsPerPage);
-
-  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
-
-  const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
-
-  const handlePreviousPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
-
-  const [showSelectedApplicant, setShowSelectedApplicant] = useState(false);
-  const [selectedApplicantId, setSelectedApplicantId] = useState(0);
-
-  const handleShowSelectedApplicant = (id) => {
-    setSelectedApplicantId(id);
-    setShowSelectedApplicant(true);
-  };
-
-  const handleCloseSelectedApplicant = () => setShowSelectedApplicant(false);
-
   const handleUpdateJob = (data, type) => {
     return <UpdateJobModal jobData={data} type={type} getSelectedJobs={getSelectedJobs} />;
   };
 
   const handleClose = () => {
     removeData("jobId");
+    removeData("selectedStatus");
     onHide();
-  };
-
-  const handleSort = (field) => {
-    const order = sortField === field && sortOrder === 'asc' ? 'desc' : 'asc';
-    setSortField(field);
-    setSortOrder(order);
-
-    const sortedData = [...data.candidates].sort((a, b) => {
-      let aField = field === 'FullName' ? a.FullName.toLowerCase() : a.points[field];
-      let bField = field === 'FullName' ? b.FullName.toLowerCase() : b.points[field];
-
-      if (aField < bField) return order === 'asc' ? -1 : 1;
-      if (aField > bField) return order === 'asc' ? 1 : -1;
-      return 0;
-    });
-
-    setData({ ...data, candidates: sortedData });
   };
 
   return (
@@ -122,9 +74,9 @@ function SelectedJob({ open, onHide, jobId }) {
                 </DialogHeader>
                 <Separator className="mb-4" />
                 <Card className="w-full p-3 dark:bg-[#1c1917]">
-                  <Tabs defaultValue={1} className='mb-5'>
+                  <Tabs defaultValue={selectedTab} className='mb-5' onValueChange={(value) => setSelectedTab(value)}>
                     <TabsList>
-                      <TabsTrigger value={1} >Details</TabsTrigger>
+                      <TabsTrigger value={1}>Details</TabsTrigger>
                       <TabsTrigger value={2}>Applicants</TabsTrigger>
                       <TabsTrigger value={3}>Interview Criteria</TabsTrigger>
                     </TabsList>
@@ -247,89 +199,7 @@ function SelectedJob({ open, onHide, jobId }) {
                       </Accordion>
                     </TabsContent>
                     <TabsContent value={2}>
-                      <ScrollArea className="h-[400px]">
-                        {data.candidates?.length > 0 ? (
-                          <Table className="w-full text-center">
-                            <TableCaption className="text-center">
-                              Passing percentage: {data.jobPassing[0].passing_percentage ? data.jobPassing[0].passing_percentage : 0}%
-                            </TableCaption>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead className="text-center">Index</TableHead>
-                                <TableHead className="cursor-pointer text-center">
-                                  <div className="flex items-center justify-center gap-1" onClick={() => handleSort('FullName')}>
-                                    <span>Full Name</span>
-                                    <ChevronsUpDown className="h-4 w-4" />
-                                  </div>
-                                </TableHead>
-                                <TableHead className="cursor-pointer text-center">
-                                  <div className="flex items-center justify-center gap-1" onClick={() => handleSort('totalPoints')}>
-                                    <span>Points</span>
-                                    <ChevronsUpDown className="h-4 w-4" />
-                                  </div>
-                                </TableHead>
-                                <TableHead className="cursor-pointer text-center">
-                                  <div className="flex items-center justify-center gap-1" onClick={() => handleSort('percentage')}>
-                                    <span>Percentage</span>
-                                    <ChevronsUpDown className="h-4 w-4" />
-                                  </div>
-                                </TableHead>
-                                <TableHead className="cursor-pointer text-center">
-                                  <div className="flex items-center justify-center gap-1" onClick={() => handleSort('status_name')}>
-                                    <span>Status</span>
-                                    <ChevronsUpDown className="h-4 w-4" />
-                                  </div>
-                                </TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {currentCandidates?.map((candData, index) => (
-                                <TableRow key={index} className="cursor-pointer" onClick={() => handleShowSelectedApplicant(candData.cand_id)}>
-                                  <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
-                                  <TableCell>{candData.FullName}</TableCell>
-                                  <TableCell>{candData.points.totalPoints}/{candData.points.maxPoints}</TableCell>
-                                  <TableCell className={candData.points.percentage >= data.jobPassing[0].passing_percentage ? "text-green-500" : "text-red-500"}>
-                                    {candData.points.percentage}%
-                                  </TableCell>
-                                  <TableCell>{candData.status_name}</TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        ) : (
-                          <Card className="text-center bg-background">
-                            <CardDescription className="p-5">
-                              No applicants applied yet
-                            </CardDescription>
-                          </Card>
-                        )}
-
-                      </ScrollArea>
-                      {data.candidates?.length > itemsPerPage && (
-                        <div className='flex justify-end items-end mt-4'>
-                          <Pagination>
-                            <PaginationContent>
-                              <PaginationItem>
-                                <PaginationPrevious onClick={handlePreviousPage} href="#" className={"hover:text-primary"} />
-                              </PaginationItem>
-                              {Array.from({ length: totalPages }, (_, index) => (
-                                <PaginationItem key={index}>
-                                  <PaginationLink
-                                    href="#"
-                                    onClick={() => handlePageChange(index + 1)}
-                                    className={` ${currentPage === index + 1 ? "text-primary" : ""}`}
-                                  >
-                                    {index + 1}
-                                  </PaginationLink>
-                                </PaginationItem>
-                              ))}
-                              <PaginationItem>
-                                <PaginationNext onClick={handleNextPage} href="#" className={"hover:text-primary"} />
-                              </PaginationItem>
-                            </PaginationContent>
-                          </Pagination>
-                        </div>
-                      )}
+                      <ViewApplicants datas={data} passingPercentage={data.jobPassing[0].passing_percentage} getSelectedJob={getSelectedJobs} />
                     </TabsContent>
                     <TabsContent value={3}>
                       <>
@@ -343,9 +213,6 @@ function SelectedJob({ open, onHide, jobId }) {
           )}
         </DialogContent>
       </Dialog>
-      {showSelectedApplicant && (
-        <SelectedApplicant open={showSelectedApplicant} onHide={handleCloseSelectedApplicant} candId={selectedApplicantId} />
-      )}
     </>
   );
 }
