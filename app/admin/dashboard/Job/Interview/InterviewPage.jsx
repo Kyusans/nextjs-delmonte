@@ -97,9 +97,6 @@ function InterviewPage({ interviewData, getSelectedJob }) {
 
   return (
     <div>
-      <Button onClick={openShowModal} className='my-2'>
-        <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
-      </Button>
       {interviewData.interviewMaster === 0 ? (
         <div className='flex flex-col justify-center items-center gap-3'>
           <div className='font-bold text-xl'>No criteria for interview</div>
@@ -110,6 +107,9 @@ function InterviewPage({ interviewData, getSelectedJob }) {
       ) : (
         <div>
           <ScrollArea className="w-full h-[calc(100vh-200px)]">
+            <Button onClick={openShowModal} className='my-2'>
+              <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
+            </Button>
             <CardContent>
               <Table>
                 <TableHeader>

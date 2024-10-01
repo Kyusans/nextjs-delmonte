@@ -17,6 +17,7 @@ import axios from "axios";
 import { Check, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import ConductInterview from "./ConductInterview";
 
 function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatus }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -80,6 +81,28 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
     handleShowAlert("Are you sure you want to set this applicant for interview?");
   };
 
+  // modal for conduct interview
+  const [showConductInterview, setShowConductInterview] = useState(false);
+  const handleShowConductInterview = () => {
+    setShowConductInterview(true);
+  };
+  const handleCloseConductInterview = () => {
+    setShowConductInterview(false);
+  };
+
+  const handleInterviewChangeStatus = async (status) => {
+    setIsLoading(true);
+    try {
+      await handleChangeStatus(candId, status);
+      setStatus("Exam");
+    } catch (error) {
+      toast.error("Network error");
+      console.log("SelectedApplicant.jsx => handleChangestatus(): " + error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (open) {
       getCandidateProfile();
@@ -101,6 +124,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                 </div>
                 <div className="ml-auto px-5">
                   {status === "Process" && (<Button onClick={() => handleShowInterviewAlert()}>Set for inverview</Button>)}
+                  {status === "Interview" && (<Button onClick={() => handleShowConductInterview()}>Interview applicant</Button>)}
                 </div>
               </div>
             </SheetHeader>
@@ -616,6 +640,14 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
         </SheetContent>
       </Sheet>
       <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
+      {showConductInterview && (
+        <ConductInterview
+          open={showConductInterview}
+          onHide={handleCloseConductInterview}
+          candId={candId}
+          handleInterviewChangeStatus={handleInterviewChangeStatus}
+        />
+      )}
     </>
   );
 }
