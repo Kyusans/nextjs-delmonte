@@ -199,7 +199,7 @@ function SelectedJob({ open, onHide, jobId }) {
                       </Accordion>
                     </TabsContent>
                     <TabsContent value={2}>
-                        <ViewApplicants datas={data} passingPercentage={data.jobPassing[0].passing_percentage} getSelectedJob={getSelectedJobs} />
+                      <ViewApplicants datas={data} passingPercentage={data.jobPassing[0].passing_percentage} getSelectedJob={getSelectedJobs} />
                     </TabsContent>
                     <TabsContent value={3}>
                       <>

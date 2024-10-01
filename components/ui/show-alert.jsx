@@ -89,5 +89,9 @@ export default ShowAlert;
   //   }
   //   setShowAlert(false);
   // };
+  // const handleRemoveList = (dutyId) => {
+  //   setSelectedId(dutyId);
+  //   handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
+  // };
   // <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
 

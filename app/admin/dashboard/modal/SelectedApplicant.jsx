@@ -4,10 +4,12 @@ import { retrieveData } from "@/app/utils/storageUtils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import ShowAlert from "@/components/ui/show-alert";
 import Spinner from "@/components/ui/spinner";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -16,9 +18,10 @@ import { Check, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-function SelectedApplicant({ open, onHide, candId }) {
+function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatus }) {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
+  const [status, setStatus] = useState(statusName);
 
   const getCandidateProfile = useCallback(async () => {
     setIsLoading(true);
@@ -50,6 +53,33 @@ function SelectedApplicant({ open, onHide, candId }) {
     onHide();
   };
 
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const handleShowAlert = (message) => {
+    setAlertMessage(message);
+    setShowAlert(true);
+  };
+  const handleCloseAlert = async (status) => {
+    setIsLoading(true);
+    try {
+      if (status === 1) {
+        await handleChangeStatus(candId, 6);
+        toast.success("Applicant set for interview");
+        setStatus("Interview");
+      }
+      setShowAlert(false);
+    } catch (error) {
+      toast.error("Network error");
+      console.log("SelectedApplicant.jsx => handleCloseAlert(): " + error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleShowInterviewAlert = () => {
+    handleShowAlert("Are you sure you want to set this applicant for interview?");
+  };
+
   useEffect(() => {
     if (open) {
       getCandidateProfile();
@@ -61,11 +91,18 @@ function SelectedApplicant({ open, onHide, candId }) {
       <Sheet open={open} onOpenChange={handleHide}>
         <SheetContent side={"bottom"} className="h-full md:h-4/5">
           <ScrollArea className="h-full">
-            <SheetHeader className="text-start">
-              <SheetTitle>Applicant Profile</SheetTitle>
-              <SheetDescription>
-                View selected applicant details here.
-              </SheetDescription>
+            <SheetHeader>
+              <div className="flex justify-between mt-5">
+                <div className="text-start">
+                  <SheetTitle>Applicant Profile</SheetTitle>
+                  <SheetDescription>
+                    View selected applicant details here.
+                  </SheetDescription>
+                </div>
+                <div className="ml-auto px-5">
+                  {status === "Process" && (<Button onClick={() => handleShowInterviewAlert()}>Set for inverview</Button>)}
+                </div>
+              </div>
             </SheetHeader>
             <Separator className="my-5 w-full" />
             {isLoading ? (
@@ -424,7 +461,7 @@ function SelectedApplicant({ open, onHide, candId }) {
                           <AccordionContent>
                             {data.criteria && data.criteria.skills && data.criteria.skills.length > 0 ? (
                               <>
-                              <div className="grid grid-cols-3 gap-4 my-3">
+                                <div className="grid grid-cols-3 gap-4 my-3">
                                   <p className="col-span-2">Total points</p>
                                   <p className={`flex justify-end` + (data.pointsByCategory.skills.points
                                     >= (data.pointsByCategory.skills.maxPoints / 2) ? " text-green-500"
@@ -462,7 +499,7 @@ function SelectedApplicant({ open, onHide, candId }) {
                           <AccordionContent>
                             {data.criteria && data.criteria.training && data.criteria.training.length > 0 ? (
                               <>
-                               <div className="grid grid-cols-3 gap-4 my-3">
+                                <div className="grid grid-cols-3 gap-4 my-3">
                                   <p className="col-span-2">Total points</p>
                                   <p className={`flex justify-end` + (data.pointsByCategory.training.points
                                     >= (data.pointsByCategory.training.maxPoints / 2) ? " text-green-500"
@@ -500,7 +537,7 @@ function SelectedApplicant({ open, onHide, candId }) {
                           <AccordionContent>
                             {data.criteria && data.criteria.knowledge && data.criteria.knowledge.length > 0 ? (
                               <>
-                                    <div className="grid grid-cols-3 gap-4 my-3">
+                                <div className="grid grid-cols-3 gap-4 my-3">
                                   <p className="col-span-2">Total points</p>
                                   <p className={`flex justify-end` + (data.pointsByCategory.knowledge.points
                                     >= (data.pointsByCategory.knowledge.maxPoints / 2) ? " text-green-500"
@@ -538,7 +575,7 @@ function SelectedApplicant({ open, onHide, candId }) {
                           <AccordionContent>
                             {data.criteria && data.criteria.experience && data.criteria.experience.length > 0 ? (
                               <>
-                                    <div className="grid grid-cols-3 gap-4 my-3">
+                                <div className="grid grid-cols-3 gap-4 my-3">
                                   <p className="col-span-2">Total points</p>
                                   <p className={`flex justify-end` + (data.pointsByCategory.experience.points
                                     >= (data.pointsByCategory.experience.maxPoints / 2) ? " text-green-500"
@@ -578,6 +615,7 @@ function SelectedApplicant({ open, onHide, candId }) {
           </ScrollArea>
         </SheetContent>
       </Sheet>
+      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
     </>
   );
 }

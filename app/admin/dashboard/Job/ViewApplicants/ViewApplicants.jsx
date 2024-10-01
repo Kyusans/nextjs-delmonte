@@ -1,4 +1,3 @@
-import { Card, CardDescription } from '@/components/ui/card';
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -17,6 +16,7 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
   const [itemsPerPage] = useState(10);
   const [status, setStatus] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("0");
+  const [statusName, setStatusName] = useState("");
 
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState('desc');
@@ -42,13 +42,16 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
   const handleShowSelectedApplicant = async (id, statusName) => {
     setSelectedApplicantId(id);
     if (statusName === "Pending") {
-      handleChangeStatus(id);
+      handleChangeStatus(id, 2);
+      setStatusName("Process");
       const updatedCandidates = data.candidates.map((candidate) =>
         candidate.cand_id === id && candidate.status_name === 'Pending'
-          ? { ...candidate, status_name: 'Processed' }
+          ? { ...candidate, status_name: 'Process' }
           : candidate
       );
       setData({ ...data, candidates: updatedCandidates });
+    } else {
+      setStatusName(statusName);
     }
     setShowSelectedApplicant(true);
   };
@@ -67,13 +70,13 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
     setData({ ...data, candidates: sortedData });
   };
 
-  const handleChangeStatus = async (id) => {
+  const handleChangeStatus = async (id, status) => {
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
       const jsonData = {
         jobId: retrieveData("jobId"),
         candId: id,
-        status: 2
+        status: status
       }
       console.log("jsonData: ", jsonData);
       const formData = new FormData();
@@ -228,6 +231,8 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
           open={showSelectedApplicant}
           candId={selectedApplicantId}
           onHide={handleCloseSelectedApplicant}
+          statusName={statusName}
+          handleChangeStatus={handleChangeStatus}
         />
       )}
     </div>
