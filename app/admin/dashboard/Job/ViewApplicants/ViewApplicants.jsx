@@ -7,16 +7,19 @@ import React, { useEffect, useState } from 'react';
 import SelectedApplicant from '../../modal/SelectedApplicant';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
+import axios from 'axios';
+import { toast } from 'sonner';
 
-const ViewApplicants = ({ datas, passingPercentage }) => {
+const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
   const [data, setData] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [status, setStatus] = useState([]);
-  const [selectedStatus, setSelectedStatus] = useState("Pending");
+  const [selectedStatus, setSelectedStatus] = useState("0");
 
   const [sortField, setSortField] = useState(null);
-  const [sortOrder, setSortOrder] = useState('asc');
+  const [sortOrder, setSortOrder] = useState('desc');
 
   const indexOfLastCandidate = currentPage * itemsPerPage;
   const indexOfFirstCandidate = indexOfLastCandidate - itemsPerPage;
@@ -36,31 +39,66 @@ const ViewApplicants = ({ datas, passingPercentage }) => {
   const [showSelectedApplicant, setShowSelectedApplicant] = useState(false);
   const [selectedApplicantId, setSelectedApplicantId] = useState(0);
 
-  const handleShowSelectedApplicant = (id) => {
+  const handleShowSelectedApplicant = async (id, statusName) => {
     setSelectedApplicantId(id);
+    if (statusName === "Pending") {
+      handleChangeStatus(id);
+      const updatedCandidates = data.candidates.map((candidate) =>
+        candidate.cand_id === id && candidate.status_name === 'Pending'
+          ? { ...candidate, status_name: 'Processed' }
+          : candidate
+      );
+      setData({ ...data, candidates: updatedCandidates });
+    }
     setShowSelectedApplicant(true);
   };
 
   const handleSort = (field) => {
-    const order = sortField === field && sortOrder === 'asc' ? 'desc' : 'asc';
     setSortField(field);
+    const order = sortField === field && sortOrder === 'asc' ? 'desc' : 'asc';
     setSortOrder(order);
-
     const sortedData = [...data.candidates].sort((a, b) => {
       let aField = field === 'FullName' ? a.FullName.toLowerCase() : a.points[field];
       let bField = field === 'FullName' ? b.FullName.toLowerCase() : b.points[field];
-
       if (aField < bField) return order === 'asc' ? -1 : 1;
       if (aField > bField) return order === 'asc' ? 1 : -1;
       return 0;
     });
-
     setData({ ...data, candidates: sortedData });
+  };
+
+  const handleChangeStatus = async (id) => {
+    try {
+      const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
+      const jsonData = {
+        jobId: retrieveData("jobId"),
+        candId: id,
+        status: 2
+      }
+      console.log("jsonData: ", jsonData);
+      const formData = new FormData();
+      formData.append("json", JSON.stringify(jsonData));
+      formData.append("operation", "changeApplicantStatus");
+      const res = await axios.post(url, formData);
+      console.log("ViewApplicants.jsx => handleChangeStatus(): ", res.data);
+      if (res.data !== 1) {
+        toast.error("There's something wrong");
+      }
+    } catch (error) {
+      toast.error("Network error");
+      console.log("ViewApplicants.jsx => handleChangeStatus(): " + error);
+    }
+  }
+
+  const handleCloseSelectedApplicant = () => {
+    getSelectedJob();
+    setShowSelectedApplicant(false);
   };
 
   useEffect(() => {
     setData(datas);
     setStatus(datas.status);
+    setSelectedStatus(retrieveData("selectedStatus") || "0");
   }, [datas]);
 
   useEffect(() => {
@@ -75,8 +113,6 @@ const ViewApplicants = ({ datas, passingPercentage }) => {
     setCurrentPage(1);
     setData({ ...datas, candidates: filteredCandidates });
   }, [selectedStatus, datas]);
-
-  const handleCloseSelectedApplicant = () => setShowSelectedApplicant(false);
 
   return (
     <div>
@@ -117,7 +153,10 @@ const ViewApplicants = ({ datas, passingPercentage }) => {
                       <DropdownMenuSeparator />
                       <DropdownMenuRadioGroup
                         value={String(selectedStatus)}
-                        onValueChange={(name) => setSelectedStatus(name)}
+                        onValueChange={(name) => {
+                          setSelectedStatus(name)
+                          storeData("selectedStatus", name)
+                        }}
                       >
                         <DropdownMenuRadioItem value="0">All</DropdownMenuRadioItem>
                         {status.map((status, index) => (
@@ -136,7 +175,7 @@ const ViewApplicants = ({ datas, passingPercentage }) => {
             {data.candidates?.length > 0 ? (
               <>
                 {currentCandidates?.map((candData, index) => (
-                  <TableRow key={index} className="cursor-pointer" onClick={() => handleShowSelectedApplicant(candData.cand_id)}>
+                  <TableRow key={index} className="cursor-pointer" onClick={() => handleShowSelectedApplicant(candData.cand_id, candData.status_name)}>
                     <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
                     <TableCell>{candData.FullName}</TableCell>
                     <TableCell>{candData.points.totalPoints}/{candData.points.maxPoints}</TableCell>
@@ -150,11 +189,9 @@ const ViewApplicants = ({ datas, passingPercentage }) => {
             ) : (
               <TableRow>
                 <TableCell colSpan={5} className="text-center">
-                  <Card className="text-center bg-background col-span-4">
-                    <CardDescription className="p-5">
-                      No applicant found
-                    </CardDescription>
-                  </Card>
+                  <div className="text-center col-span-4">
+                    No applicant found
+                  </div>
                 </TableCell>
               </TableRow>
             )}

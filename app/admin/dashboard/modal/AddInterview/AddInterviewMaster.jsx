@@ -18,7 +18,7 @@ import AddInterviewMasterCriteria from './AddInterviewMasterCriteria';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import ShowAlert from '@/components/ui/show-alert';
 import { retrieveData } from '@/app/utils/storageUtils';
-import UpdateInterviewCriteria from './UpdateInterview/UpdateInterviewCriteria';
+import UpdateInterviewCriteria from '../UpdateInterview/UpdateInterviewCriteria';
 
 function AddInterviewMaster({ open, onHide }) {
   const [isLoading, setIsLoading] = useState(false);

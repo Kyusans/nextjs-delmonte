@@ -1,26 +1,23 @@
 import { removeData, storeData } from '@/app/utils/storageUtils';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Card, CardDescription } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import Spinner from '@/components/ui/spinner';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import UpdateJobModal from '../Job/UpdateJobDetails/UpdateJobModal';
-import SelectedApplicant from './SelectedApplicant';
 import { Badge } from '@/components/ui/badge';
-import { ChevronsUpDown, SortAsc, SortDesc } from 'lucide-react';
 import InterviewPage from '../Job/Interview/InterviewPage';
 import ViewApplicants from '../Job/ViewApplicants/ViewApplicants';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedTab, setSelectedTab] = useState(1);
 
   const getSelectedJobs = useCallback(async () => {
     setIsLoading(true);
@@ -55,6 +52,7 @@ function SelectedJob({ open, onHide, jobId }) {
 
   const handleClose = () => {
     removeData("jobId");
+    removeData("selectedStatus");
     onHide();
   };
 
@@ -76,9 +74,9 @@ function SelectedJob({ open, onHide, jobId }) {
                 </DialogHeader>
                 <Separator className="mb-4" />
                 <Card className="w-full p-3 dark:bg-[#1c1917]">
-                  <Tabs defaultValue={1} className='mb-5'>
+                  <Tabs defaultValue={selectedTab} className='mb-5' onValueChange={(value) => setSelectedTab(value)}>
                     <TabsList>
-                      <TabsTrigger value={1} >Details</TabsTrigger>
+                      <TabsTrigger value={1}>Details</TabsTrigger>
                       <TabsTrigger value={2}>Applicants</TabsTrigger>
                       <TabsTrigger value={3}>Interview Criteria</TabsTrigger>
                     </TabsList>
@@ -201,7 +199,7 @@ function SelectedJob({ open, onHide, jobId }) {
                       </Accordion>
                     </TabsContent>
                     <TabsContent value={2}>
-                        <ViewApplicants datas={data} passingPercentage={data.jobPassing[0].passing_percentage} />
+                        <ViewApplicants datas={data} passingPercentage={data.jobPassing[0].passing_percentage} getSelectedJob={getSelectedJobs} />
                     </TabsContent>
                     <TabsContent value={3}>
                       <>
