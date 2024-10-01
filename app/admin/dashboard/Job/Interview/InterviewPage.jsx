@@ -50,6 +50,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
       let criteriaList = data;
       criteriaList[selectedIndex] = { inter_criteria_name: status.name, inter_criteria_points: status.points };
       setData(criteriaList);
+      getSelectedJob();
     }
     setShowUpdateModal(false);
     setSelectedIndex(0);
@@ -64,7 +65,6 @@ function InterviewPage({ interviewData, getSelectedJob }) {
     setShowAlert(true);
   };
   const handleCloseAlert = async (status) => {
-    console.log(status);
     if (status === 1) {
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
       const jsonData = { criteriaId: data[indexToRemove].inter_criteria_id };
@@ -75,6 +75,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
       const res = await axios.post(url, formData);
       console.log("res.data: ", res.data);
       if (res.data === 1) {
+        getSelectedJob();
         toast.success("Criteria deleted successfully");
         const filteredData = data.filter((element) => element !== data[indexToRemove]);
         setData(filteredData);
@@ -120,22 +121,33 @@ function InterviewPage({ interviewData, getSelectedJob }) {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.map((item, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{item.inter_criteria_name}</TableCell>
-                      <TableCell className="text-center">{item.inter_criteria_points}</TableCell>
-                      <TableCell>
-                        <div className='flex justify-center'>
-                          <button onClick={() => { openShowModalUpdate(item, index) }}>
-                            <Edit2 className="h-4 w-4 mr-4" />
-                          </button>
-                          <button className="h-4 w-4" onClick={() => { handleRemoveList(index) }}>
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
+                  {data.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} className="h-24 text-center">
+                        No criteria found
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ) :
+                    (<>
+                      {data.map((item, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{item.inter_criteria_name}</TableCell>
+                          <TableCell className="text-center">{item.inter_criteria_points}</TableCell>
+                          <TableCell>
+                            <div className='flex justify-center'>
+                              <button onClick={() => { openShowModalUpdate(item, index) }}>
+                                <Edit2 className="h-4 w-4 mr-4" />
+                              </button>
+                              <button className="h-4 w-4" onClick={() => { handleRemoveList(index) }}>
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </>)
+                  }
+
                 </TableBody>
               </Table>
             </CardContent>
