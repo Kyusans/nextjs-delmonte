@@ -4,9 +4,9 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Edit2, PlusCircle, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import AddInterviewCriteria from '../../modal/AddInterview/AddInterviewCriteria'
-import AddInterviewMaster from '../../modal/AddInterview/AddInterviewMaster'
-import UpdateInterviewCriteria from '../../modal/UpdateInterview/UpdateInterviewCriteria'
+import AddInterviewCriteria from './modals/AddInterview/AddInterviewCriteria'
+import AddInterviewMaster from './modals/AddInterview/AddInterviewMaster'
+import UpdateInterviewCriteria from './modals/UpdateInterview/UpdateInterviewCriteria'
 import ShowAlert from '@/components/ui/show-alert'
 import axios from 'axios'
 import { toast } from 'sonner'
@@ -65,6 +65,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
     setShowAlert(true);
   };
   const handleCloseAlert = async (status) => {
+    console.log("status: ", status);
     if (status === 1) {
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
       const jsonData = { criteriaId: data[indexToRemove].inter_criteria_id };
@@ -111,46 +112,43 @@ function InterviewPage({ interviewData, getSelectedJob }) {
             <Button onClick={openShowModal} className='my-2'>
               <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
             </Button>
-            <CardContent>
-              <Table>
-                <TableHeader>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Criteria</TableHead>
+                  <TableHead className="text-center">Points</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.length === 0 ? (
                   <TableRow>
-                    <TableHead>Criteria</TableHead>
-                    <TableHead className="text-center">Points</TableHead>
-                    <TableHead className="text-center">Actions</TableHead>
+                    <TableCell colSpan={5} className="h-24 text-center">
+                      No criteria found
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="h-24 text-center">
-                        No criteria found
-                      </TableCell>
-                    </TableRow>
-                  ) :
-                    (<>
-                      {data.map((item, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{item.inter_criteria_name}</TableCell>
-                          <TableCell className="text-center">{item.inter_criteria_points}</TableCell>
-                          <TableCell>
-                            <div className='flex justify-center'>
-                              <button onClick={() => { openShowModalUpdate(item, index) }}>
-                                <Edit2 className="h-4 w-4 mr-4" />
-                              </button>
-                              <button className="h-4 w-4" onClick={() => { handleRemoveList(index) }}>
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </>)
-                  }
-
-                </TableBody>
-              </Table>
-            </CardContent>
+                ) :
+                  (<>
+                    {data.map((item, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{item.inter_criteria_name}</TableCell>
+                        <TableCell className="text-center">{item.inter_criteria_points}</TableCell>
+                        <TableCell>
+                          <div className='flex justify-center'>
+                            <button onClick={() => { openShowModalUpdate(item, index) }}>
+                              <Edit2 className="h-4 w-4 mr-4" />
+                            </button>
+                            <button className="h-4 w-4" onClick={() => { handleRemoveList(index) }}>
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </>)
+                }
+              </TableBody>
+            </Table>
           </ScrollArea>
         </div>
       )}

@@ -2,25 +2,25 @@
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { Card, CardDescription } from '@/components/ui/card'
+import { Card, CardContent, CardDescription } from '@/components/ui/card'
 import ShowAlert from '@/components/ui/show-alert'
 import { Edit2, PlusIcon, Trash2, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import AddTraining from '../../modal/AddJob/AddTraining';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import AddKnowledge from '../AddJob/AddKnowledge';
 import { Separator } from '@/components/ui/separator';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
-import UpdateTrainingModal from '../../modal/UpdateJob/UpdateTrainingModal';
+import { Badge } from '@/components/ui/badge';
+import UpdateKnowledgeModal from './UpdateJob/UpdateKnowledgeModal';
 
 
-function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteData }) {
+function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, deleteData }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
+  const [updateData, setUpdateData] = useState({});
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
-  const [updateData, setUpdateData] = useState({});
-
   const handleShowAlert = (message) => {
     setAlertMessage(message);
     setShowAlert(true);
@@ -30,7 +30,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
       const jsonData = {
         id: indexToRemove
       }
-      deleteData("deleteJobTraining", jsonData, "getJobTraining");
+      deleteData("deleteJobKnowledge", jsonData, "getJobKnowledge");
     }
     setShowAlert(false);
   };
@@ -41,15 +41,15 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
     setShowModal(true);
   }
 
-  const handleCloseModal = async (status) => {
+  const handleCloseModal = (status) => {
     if (status !== 0) {
-      const jsonData = {
+      const jsonData ={
         jobId: retrieveData("jobId"),
-        trainingText: status.jobTraining,
-        trainingId: status.training,
+        knowledgeText: status.jobKnowledge,
+        knowledgeId: status.knowledgeId,
         points: status.points
       }
-      await handleAddData("addJobTraining", jsonData, "getJobTraining");
+      handleAddData("addJobKnowledge", jsonData, "getJobKnowledge");
     } else {
       setDatas(datas);
     }
@@ -68,19 +68,19 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
 
   const handleCloseUpdateModal = (values) => {
     if (values !== 0) {
-      const jsonData = {
+      const jsonData ={
         id: updateData.id,
-        trainingText: values.jobTraining,
-        trainingId: values.training,
+        knowledgeText: values.jobKnowledge,
+        knowledgeId: values.knowledgeId,
         points: values.points
       }
-      handleUpdate("updateJobTraining", jsonData, "getJobTraining");
+      handleUpdate("updateJobKnowledge", jsonData, "getJobKnowledge");
     }
     setShowUpdateModal(false);
   }
 
-  const handleEdit = (id, trainingId, points, jobTrainingText) => {
-    setUpdateData({ id: id, training: trainingId, points: points, jobTraining: jobTrainingText });
+  const handleEdit = (id, knowledgeId, points, jobKnowledge) => {
+    setUpdateData({ id: id, knowledgeId: knowledgeId, points: points, jobKnowledge: jobKnowledge });
     handleOpenUpdateModal();
   }
 
@@ -88,21 +88,21 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
     if (data) {
       setDatas(data);
       const filteredData = data.map((element) => ({
-        training: element.jtrng_trainingId,
+        knowledgeId: element.jknow_knowledgeId,
       }))
-      storeData("jobTraining", JSON.stringify(filteredData));
+      storeData("jobKnowledge", JSON.stringify(filteredData));
     }
-    console.log("datas ni training:", data)
-    console.log("training ni training:", training)
-    console.log("retrieveData ni training", JSON.parse(retrieveData("jobTraining")))
-  }, [data, training]);
+    console.log("datas ni knowledge:", data)
+    console.log("knowledge ni knowledge:", knowledgeList)
+    console.log("retrieveData ni knowledge", JSON.parse(retrieveData("knowledgeList")))
+  }, [data, knowledgeList]);
 
   return (
     <>
       <div>
         <Button onClick={handleOpenModal}>
           <PlusIcon className="h-4 w-4 mr-1" />
-          Add Training
+          Add Knowledge and Compliance
         </Button>
         <Card className="w-full mt-3">
           {datas && datas.length > 0 ? (
@@ -112,7 +112,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
                   <TableHeader>
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
-                      <TableHead className="w-1/12 ">Training</TableHead>
+                      <TableHead className="w-1/12 ">Knowledge</TableHead>
                       <TableHead className="w-10/12">Description</TableHead>
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center">Actions</TableHead>
@@ -123,18 +123,18 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
                       <TableRow key={index}>
                         <TableCell className="w-1/12">{index + 1}</TableCell>
                         <TableCell className="w-1/12">
-                          {training.find((item) => item.value === data.jtrng_trainingId)?.label}
+                          {knowledgeList.find((item) => item.value === data.jknow_knowledgeId)?.label}
                         </TableCell>
                         <TableCell className="w-10/12 whitespace-normal">
-                          {data.jtrng_text}
+                          {data.jknow_text}
                         </TableCell>
-                        <TableCell className="w-1/12 text-center">{data.jtrng_points}</TableCell>
+                        <TableCell className="w-1/12 text-center">{data.jknow_points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <div className='flex justify-center'>
-                            <button onClick={() => handleEdit(data.jtrng_id, data.jtrng_trainingId, data.jtrng_points, data.jtrng_text)}>
+                            <button onClick={() => handleEdit(data.jknow_id, data.jknow_knowledgeId, data.jknow_points, data.jknow_text)}>
                               <Edit2 className="h-4 w-4 mr-4" />
                             </button>
-                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jtrng_id)}>
+                            <button className="h-4 w-4" onClick={() => handleRemoveList(data.jknow_id)}>
                               <Trash2 className="h-4 w-4" />
                             </button>
                           </div>
@@ -144,27 +144,26 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
                   </TableBody>
                 </Table>
               </div>
-
               <div className="block md:hidden">
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
-                      <button onClick={() => handleEdit(data.jtrng_id, data.jtrng_trainingId, data.jtrng_points, data.jtrng_text)}>
+                      <button onClick={() => handleEdit(data.jknow_id, data.jknow_knowledgeId, data.jknow_points, data.jknow_text)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
-                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jtrng_id)}>
+                      <button className="h-4 w-4" onClick={() => handleRemoveList(data.jknow_id)}>
                         <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
                     <div className="mt-2 text-sm">
                       <div className='mb-1 text-xl break-words'>
-                        {training.find((item) => item.value === data.jtrng_trainingId)?.label}
+                        {knowledgeList.find((item) => item.value === data.jknow_knowledgeId)?.label}
                       </div>
-                      {data.jtrng_text}
+                      {data.jknow_text}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">
-                        Points: {data.jtrng_points}
+                        Points: {data.jknow_points}
                       </Badge>
                     </div>
                     <Separator className="mt-3" />
@@ -172,19 +171,19 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
                 ))}
               </div>
             </>
-
           ) : (
             <CardDescription className="text-center">
-              No training added yet
+              No duties added yet
             </CardDescription>
           )}
         </Card>
-        {showModal && <AddTraining open={showModal} onHide={handleCloseModal} training={training} />}
-        {showUpdateModal && <UpdateTrainingModal open={showUpdateModal} onHide={handleCloseUpdateModal} training={training} updateData={updateData} />}
+
+        {showModal && <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} />}
+        {showUpdateModal && <UpdateKnowledgeModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} knowledgeList={knowledgeList} />}
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
       </div>
     </>
   )
 }
 
-export default UpdateTraining;
+export default UpdateKnowledge

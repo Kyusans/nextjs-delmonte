@@ -17,7 +17,7 @@ import axios from "axios";
 import { Check, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import ConductInterview from "./ConductInterview";
+import ConductInterview from "../Interview/modals/ConductInterview";
 
 function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatus }) {
   const [isLoading, setIsLoading] = useState(false);

@@ -9,10 +9,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import UpdateJobModal from '../Job/UpdateJobDetails/UpdateJobModal';
+import UpdateJobModal from '../AddJobStep/modals/UpdateJobDetails/UpdateJobModal';
 import { Badge } from '@/components/ui/badge';
-import InterviewPage from '../Job/Interview/InterviewPage';
-import ViewApplicants from '../Job/ViewApplicants/ViewApplicants';
+import InterviewPage from '../Interview/InterviewPage';
+import ViewApplicants from '../ViewApplicants/ViewApplicants';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
@@ -65,7 +65,7 @@ function SelectedJob({ open, onHide, jobId }) {
             <Spinner />
           ) : (
             <>
-              <ScrollArea className="h-full rounded-md md:p-2">
+              <ScrollArea className="rounded-md md:p-2">
                 <DialogHeader className="text-white">
                   <DialogTitle>{data.jobMaster[0].jobM_title}</DialogTitle>
                   <ScrollArea className="h-52 md:h-36">
@@ -73,7 +73,7 @@ function SelectedJob({ open, onHide, jobId }) {
                   </ScrollArea>
                 </DialogHeader>
                 <Separator className="mb-4" />
-                <Card className="w-full p-3 dark:bg-[#1c1917]">
+                <Card className="p-3 w-full md:p-3 dark:bg-[#1c1917]">
                   <Tabs defaultValue={selectedTab} className='mb-5' onValueChange={(value) => setSelectedTab(value)}>
                     <TabsList>
                       <TabsTrigger value={1}>Details</TabsTrigger>

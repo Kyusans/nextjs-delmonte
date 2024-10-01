@@ -3,7 +3,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ChevronsUpDown } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import SelectedApplicant from '../../modal/SelectedApplicant';
+import SelectedApplicant from '../modal/SelectedApplicant';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { retrieveData, storeData } from '@/app/utils/storageUtils';
@@ -119,14 +119,13 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
 
   return (
     <div>
-      <ScrollArea className="h-[400px]">
-        <Table className="w-full text-center">
+      <ScrollArea className="h-[400px] "> 
+        <Table className="w-full text-center"> 
           <TableCaption className="text-center">
             Passing percentage: {passingPercentage ? passingPercentage : 0}%
           </TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-center">Index</TableHead>
               <TableHead className="cursor-pointer text-center">
                 <div className="flex items-center justify-center gap-1" onClick={() => handleSort('FullName')}>
                   <span>Full Name</span>
@@ -149,7 +148,9 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
                 <div className="flex items-center justify-center gap-1">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" className="gap-1 bg-transparent border-0">Status <ChevronsUpDown className="h-4 w-4" /></Button>
+                      <Button variant="outline" className="gap-1 bg-transparent border-0">
+                        Status <ChevronsUpDown className="h-4 w-4" />
+                      </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56">
                       <DropdownMenuLabel>Select status</DropdownMenuLabel>
@@ -157,8 +158,8 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
                       <DropdownMenuRadioGroup
                         value={String(selectedStatus)}
                         onValueChange={(name) => {
-                          setSelectedStatus(name)
-                          storeData("selectedStatus", name)
+                          setSelectedStatus(name);
+                          storeData("selectedStatus", name);
                         }}
                       >
                         <DropdownMenuRadioItem value="0">All</DropdownMenuRadioItem>
@@ -178,11 +179,22 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
             {data.candidates?.length > 0 ? (
               <>
                 {currentCandidates?.map((candData, index) => (
-                  <TableRow key={index} className="cursor-pointer" onClick={() => handleShowSelectedApplicant(candData.cand_id, candData.status_name)}>
-                    <TableCell>{index + 1 + (currentPage - 1) * itemsPerPage}</TableCell>
+                  <TableRow
+                    key={index}
+                    className="cursor-pointer"
+                    onClick={() => handleShowSelectedApplicant(candData.cand_id, candData.status_name)}
+                  >
                     <TableCell>{candData.FullName}</TableCell>
-                    <TableCell>{candData.points.totalPoints}/{candData.points.maxPoints}</TableCell>
-                    <TableCell className={candData.points.percentage >= data.jobPassing[0].passing_percentage ? "text-green-500" : "text-red-500"}>
+                    <TableCell>
+                      {candData.points.totalPoints}/{candData.points.maxPoints}
+                    </TableCell>
+                    <TableCell
+                      className={
+                        candData.points.percentage >= data.jobPassing[0].passing_percentage
+                          ? "text-green-500"
+                          : "text-red-500"
+                      }
+                    >
                       {candData.points.percentage}%
                     </TableCell>
                     <TableCell>{candData.status_name}</TableCell>
@@ -192,15 +204,14 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
             ) : (
               <TableRow>
                 <TableCell colSpan={5} className="text-center">
-                  <div className="text-center col-span-4">
-                    No applicant found
-                  </div>
+                  <div className="text-center col-span-4">No applicant found</div>
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </ScrollArea>
+
       {data.candidates?.length > itemsPerPage && (
         <div className='flex justify-end items-end mt-4'>
           <Pagination>

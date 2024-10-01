@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator'
 import ShowAlert from '@/components/ui/show-alert'
 import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import AddEducation from '../../modal/AddJob/AddEducation';
+import AddEducation from './modals/AddJob/AddEducation';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';

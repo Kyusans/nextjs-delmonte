@@ -7,7 +7,7 @@ import { Separator } from '@/components/ui/separator';
 import ShowAlert from '@/components/ui/show-alert';
 import { PlusIcon, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import AddDuties from '../../modal/AddJob/AddDuties';
+import AddDuties from './modals/AddJob/AddDuties';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { toast } from 'sonner';
