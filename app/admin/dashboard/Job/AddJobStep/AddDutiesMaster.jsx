@@ -23,7 +23,7 @@ function AddDutiesMaster({ previousStep, nextStep }) {
     setShowAlert(true);
   };
 
-  const handleCloseAlert = () => {
+  const handleCloseAlert = (status) => {
     if (status === 1) {
       const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
       setDatas(filteredDatas);
