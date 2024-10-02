@@ -4,13 +4,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import AddInterviewMaster from './AddInterview/AddInterviewMaster';
-import { PlusCircle } from 'lucide-react';
 
 const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -140,12 +137,13 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
                               <div key={index}>
                                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                   {criteria.inter_criteria_name}
-                                  <span className='ml-1'>{`(${criteria.inter_criteria_points} points)`}</span>
+                                  <span className='ml-1 text-xs'>{`(${criteria.inter_criteria_points} points)`}</span>
                                 </label>
                                 <Input
                                   type="text"
                                   value={scores[criteria.inter_criteria_id] || ''}
                                   onChange={(e) => handleInputChange(criteria.inter_criteria_id, criteria.inter_criteria_points, e.target.value)}
+                                  placeholder={`Enter ${criteria.inter_criteria_name.toLowerCase()} points`}
                                   onKeyDown={(e) => {
                                     if (["e", "E", "+", "-"].includes(e.key)) {
                                       e.preventDefault();

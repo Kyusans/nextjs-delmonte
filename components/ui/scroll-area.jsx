@@ -14,6 +14,26 @@ const ScrollArea = React.forwardRef(({ className, children, ...props }, ref) => 
       {children}
     </ScrollAreaPrimitive.Viewport>
     <ScrollBar />
+    {/* 
+        </ScrollAreaViewport> */}
+    <ScrollAreaPrimitive.ScrollAreaScrollbar orientation="vertical">
+      <ScrollAreaPrimitive.ScrollAreaThumb />
+    </ScrollAreaPrimitive.ScrollAreaScrollbar>
+    <ScrollAreaPrimitive.ScrollAreaScrollbar orientation="horizontal">
+      <ScrollAreaPrimitive.ScrollAreaThumb />
+    </ScrollAreaPrimitive.ScrollAreaScrollbar>
+    <ScrollAreaPrimitive.ScrollAreaCorner />
+
+
+    {/* </ScrollAreaViewport>
+        <ScrollAreaScrollbar orientation="vertical">
+          <ScrollAreaThumb />
+        </ScrollAreaScrollbar>
+        <ScrollAreaScrollbar orientation="horizontal">
+          <ScrollAreaThumb />
+        </ScrollAreaScrollbar>
+        <ScrollAreaCorner /> */}
+
     <ScrollAreaPrimitive.Corner />
   </ScrollAreaPrimitive.Root>
 ))
@@ -26,9 +46,9 @@ const ScrollBar = React.forwardRef(({ className, orientation = "vertical", ...pr
     className={cn(
       "flex touch-none select-none transition-colors",
       orientation === "vertical" &&
-        "h-full w-2.5 border-l border-l-transparent p-[1px]",
+      "h-full w-2.5 border-l border-l-transparent p-[1px]",
       orientation === "horizontal" &&
-        "h-2.5 flex-col border-t border-t-transparent p-[1px]",
+      "h-2.5 flex-col border-t border-t-transparent p-[1px]",
       className
     )}
     {...props}>

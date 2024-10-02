@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { ScrollAreaCorner, ScrollAreaScrollbar, ScrollAreaThumb, ScrollAreaViewport } from '@radix-ui/react-scroll-area';
 
 const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
   const [data, setData] = useState({});
@@ -119,23 +120,21 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
 
   return (
     <div>
-      <ScrollArea className="h-[400px] "> 
-        <Table className="w-full text-center"> 
+      <ScrollArea className="h-[400px] whitespace-nowrap w-96 md:w-full">
+        <Table className="text-center">
           <TableCaption className="text-center">
             Passing percentage: {passingPercentage ? passingPercentage : 0}%
           </TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="cursor-pointer text-center">
-                <div className="flex items-center justify-center gap-1" onClick={() => handleSort('FullName')}>
+                <div className="flex items-center justify-center gap-1">
                   <span>Full Name</span>
-                  <ChevronsUpDown className="h-4 w-4" />
                 </div>
               </TableHead>
               <TableHead className="cursor-pointer text-center">
-                <div className="flex items-center justify-center gap-1" onClick={() => handleSort('totalPoints')}>
+                <div className="flex items-center justify-center gap-1">
                   <span>Points</span>
-                  <ChevronsUpDown className="h-4 w-4" />
                 </div>
               </TableHead>
               <TableHead className="cursor-pointer text-center">

@@ -60,18 +60,17 @@ function SelectedJob({ open, onHide, jobId }) {
     <>
       <Dialog open={open} onOpenChange={handleClose} className="text-white">
         <DialogContent className="max-w-7xl h-full md:h-4/5 bg-[#107343] dark:bg-background">
-          <DialogTitle className="hidden" />
           {isLoading ? (
             <Spinner />
           ) : (
             <>
+              <DialogHeader className="text-white">
+                <DialogTitle>{data.jobMaster[0].jobM_title}</DialogTitle>
+                <ScrollArea className="h-52 md:h-36">
+                  <DialogDescription className="text-white text-start">{data.jobMaster[0].jobM_description}</DialogDescription>
+                </ScrollArea>
+              </DialogHeader>
               <ScrollArea className="rounded-md md:p-2">
-                <DialogHeader className="text-white">
-                  <DialogTitle>{data.jobMaster[0].jobM_title}</DialogTitle>
-                  <ScrollArea className="h-52 md:h-36">
-                    <DialogDescription className="text-white">{data.jobMaster[0].jobM_description}</DialogDescription>
-                  </ScrollArea>
-                </DialogHeader>
                 <Separator className="mb-4" />
                 <Card className="p-3 w-full md:p-3 dark:bg-[#1c1917]">
                   <Tabs defaultValue={selectedTab} className='mb-5' onValueChange={(value) => setSelectedTab(value)}>

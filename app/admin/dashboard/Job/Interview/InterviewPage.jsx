@@ -18,7 +18,9 @@ function InterviewPage({ interviewData, getSelectedJob }) {
   const [showAddModal, setShowAddModal] = useState(false);
   const openShowModal = () => { setShowAddModal(true); };
   const closeShowModal = (status) => {
-
+    if (status !== 0) {
+      getSelectedJob();
+    }
     setShowAddModal(false);
   };
 
