@@ -1,6 +1,6 @@
 "use client"
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import React, { useEffect } from 'react'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import React from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,16 +8,23 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
-import { retrieveData } from '@/app/utils/storageUtils';
 
-function AddEducation({ open, onHide, courseCategory }) {
+function AddExperience({ open, onHide, handleAddList }) {
+
   const formSchema = z.object({
-    courseCategory: z.number().min(1, {
-      message: "This field is required",
-    }),
-    jobEducation: z.string().min(1, {
+    yearsOfExperience: z.string()
+      .min(1, { message: "This field is required" })
+      .refine((value) => !isNaN(Number(value)), {
+        message: "Years of experience must be a number",
+      })
+      .refine((value) => Number(value) <= 50, {
+        message: "Years of experience should not be more than 50",
+      })
+      .refine((value) => Number(value) >= 0, {
+        message: "Years of experience should not be less than 0",
+      }),
+    jobExperience: z.string().min(1, {
       message: "This field is required",
     }),
     points: z.string().min(1, {
@@ -30,72 +37,56 @@ function AddEducation({ open, onHide, courseCategory }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      yearsOfExperience: "",
+      jobExperience: "",
       points: "",
-      courseCategory: 0,
-      jobEducation: "",
     },
   });
 
   const onSubmit = (values) => {
     try {
-      const selectedEducation = JSON.parse(retrieveData("jobEducation")) || [];
-      let isValid = true;
-      selectedEducation.forEach((element) => {
-        if (element.courseCategory === values.courseCategory) {
-          toast.error("You already have this education");
-          isValid = false;
-        }
-      });
-      if (isValid) {
-        onHide(values);
-        form.reset();
-      }
+      // onHide(values);
+      handleAddList(values);
+      form.reset();
     } catch (error) {
       toast.error("Network error");
-      console.log("AddEducation.jsx => onSubmit(): " + error);
+      console.log("AddExperience.jsx => onSubmit(): " + error);
     }
   };
 
   const handleOnHide = () => {
     onHide(0);
   }
-
   return (
     <>
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold">Add Education</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Add Experience</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex justify-center items-center">
                 <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
                   <FormField
-                    name="courseCategory"
                     control={form.control}
+                    name="yearsOfExperience"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Course Category</FormLabel>
-                        <div>
-                          <ComboBox
-                            list={courseCategory}
-                            subject="course category"
-                            value={field.value}
-                            onChange={field.onChange}
-                            styles={"bg-background"}
-                          />
-                        </div>
+                        <FormLabel>Year/s of Experience</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter years of experience" {...field} />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                   <FormField
                     control={form.control}
-                    name="jobEducation"
+                    name="jobExperience"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Job Education Description</FormLabel>
+                        <FormLabel>Job Experience Description</FormLabel>
                         <FormControl>
                           <Textarea style={{ height: "200px" }} placeholder="Enter description" {...field} />
                         </FormControl>
@@ -120,9 +111,9 @@ function AddEducation({ open, onHide, courseCategory }) {
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">Close</Button>
                 </DialogClose>
-                <Button type="submit">Add Education</Button>
+                <Button type="submit">Add Job Experience</Button>
               </div>
             </form>
           </Form>
@@ -132,4 +123,4 @@ function AddEducation({ open, onHide, courseCategory }) {
   )
 }
 
-export default AddEducation
+export default AddExperience

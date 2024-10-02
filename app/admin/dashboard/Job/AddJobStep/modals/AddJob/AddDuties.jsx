@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
-function AddDuties({ open, onHide }) {
+function AddDuties({ open, onHide, handleAddList }) {
   const formSchema = z.object({
     duties: z.string().min(1, {
       message: "This field is required",
@@ -25,7 +25,8 @@ function AddDuties({ open, onHide }) {
 
   const onSubmit = (values) => {
     try {
-      onHide(values);
+      handleAddList(values);
+      // onHide(values);
       form.reset();
     } catch (error) {
       toast.error("Network error");
@@ -54,7 +55,7 @@ function AddDuties({ open, onHide }) {
                       <FormItem>
                         <FormLabel>Job Duty Description</FormLabel>
                         <FormControl>
-                          <Textarea style={{ height: "200px" }}  placeholder="Enter duty" {...field} />
+                          <Textarea style={{ height: "200px" }} placeholder="Enter duty" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -64,7 +65,7 @@ function AddDuties({ open, onHide }) {
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">Close</Button>
                 </DialogClose>
                 <Button type="submit">Add Duty</Button>
               </div>

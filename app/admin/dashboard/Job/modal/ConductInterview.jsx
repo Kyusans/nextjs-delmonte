@@ -4,7 +4,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
@@ -26,11 +25,14 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
       formData.append("operation", "getCriteriaForInterview");
       formData.append("json", JSON.stringify(jsonData));
       const res = await axios.post(url, formData);
-      if (res.data.length === 0) {
-        setHasCriteria(false);
-      } else {
+      console.log("res.data ni getInterviewCriteria: ", res.data);
+
+      if (Array.isArray(res.data) && res.data.length > 0) {
         setHasCriteria(true);
         setInterviewCriteria(res.data);
+      } else {
+        setHasCriteria(false);
+        setInterviewCriteria([]);
       }
     } catch (error) {
       toast.error("Network error");
@@ -39,6 +41,14 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
       setIsLoading(false);
     }
   };
+
+  // const [showAddInterviewMaster, setShowAddInterviewMaster] = useState(false);
+  // const openShowModalMaster = () => { setShowAddInterviewMaster(true); };
+  // const closeShowModalMaster = () => {
+  //   setShowAddInterviewMaster(false);
+  //   getInterviewCriteria();
+  // };
+
 
   useEffect(() => {
     getInterviewCriteria();
@@ -127,12 +137,13 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
                               <div key={index}>
                                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
                                   {criteria.inter_criteria_name}
-                                  <span className='ml-1'>{`(${criteria.inter_criteria_points} points)`}</span>
+                                  <span className='ml-1 text-xs'>{`(${criteria.inter_criteria_points} points)`}</span>
                                 </label>
                                 <Input
                                   type="text"
                                   value={scores[criteria.inter_criteria_id] || ''}
                                   onChange={(e) => handleInputChange(criteria.inter_criteria_id, criteria.inter_criteria_points, e.target.value)}
+                                  placeholder={`Enter ${criteria.inter_criteria_name.toLowerCase()} points`}
                                   onKeyDown={(e) => {
                                     if (["e", "E", "+", "-"].includes(e.key)) {
                                       e.preventDefault();
@@ -150,7 +161,12 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
                         </>
                       ) : (
                         <div>
-                          No interview criteria found
+                          <div className='flex flex-col justify-center items-center gap-3'>
+                            <div className='font-bold text-xl mt-3'>No interview criteria added yet</div>
+                            {/* <Button type="button" onClick={openShowModalMaster}>
+                              <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
+                            </Button> */}
+                          </div>
                         </div>
                       )}
                     </>
@@ -158,7 +174,7 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
                 </CardContent>
               </Card>
             </ScrollArea>
-            <div className="mt-4 flex justify-end gap-2">
+            <div className={`mt-4 flex justify-end gap-2 ${!hasCriteria && "hidden"}`}>
               <Button type="button" className="mt-5 btn btn-secondary" onClick={onHide} variant="outline">
                 Cancel
               </Button>
@@ -169,7 +185,13 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
           </form>
         </DialogContent>
       </Dialog>
-    </div >
+      {/* {showAddInterviewMaster && (
+        <AddInterviewMaster
+          open={showAddInterviewMaster}
+          onHide={closeShowModalMaster}
+        />
+      )} */}
+    </div>
   );
 };
 

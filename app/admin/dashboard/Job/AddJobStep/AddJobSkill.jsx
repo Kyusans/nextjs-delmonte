@@ -8,7 +8,7 @@ import ShowAlert from '@/components/ui/show-alert'
 import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import AddSkill from '../../modal/AddJob/AddSkill';
+import AddSkill from './modals/AddJob/AddSkill';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 
@@ -37,13 +37,19 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
     setShowModal(true);
   }
 
+  const handleAddList = (status) => {
+    setDatas([...datas, status]);
+    storeData("jobSkill", JSON.stringify([...datas, status]));
+    toast.success("Skill added successfully");
+  }
+
   const handleCloseModal = (status) => {
-    if (status !== 0) {
-      setDatas([...datas, status]);
-      storeData("jobSkill", JSON.stringify([...datas, status]));
-    } else {
-      setDatas(datas);
-    }
+    // if (status !== 0) {
+    //   setDatas([...datas, status]);
+    //   storeData("jobSkill", JSON.stringify([...datas, status]));
+    // } else {
+    //   setDatas(datas);
+    // }
     setShowModal(false);
   };
 
@@ -88,7 +94,7 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
                       <TableHead className="w-1/12 ">Skill</TableHead>
-                      <TableHead className="w-10/12">Description</TableHead>
+                      {/* <TableHead className="w-10/12">Description</TableHead> */}
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center"></TableHead>
                     </TableRow>
@@ -100,9 +106,9 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
                         <TableCell className="w-1/12">
                           {skill.find((item) => item.value === data.skill)?.label}
                         </TableCell>
-                        <TableCell className="w-10/12 whitespace-normal">
+                        {/* <TableCell className="w-10/12 whitespace-normal">
                           {data.jobSkill}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell className="w-1/12 text-center">{data.points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <button
@@ -125,14 +131,14 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
                         className="h-6 w-6"
                         onClick={() => handleRemoveList(index)}
                       >
-                        <X className="h-6 w-6" />
+                        <X className="h-5 w-5" />
                       </button>
                     </div>
                     <div className="mt-2 text-sm">
                       <div className='mb-1 text-xl break-words'>
                         {skill.find((item) => item.value === data.skill)?.label}
                       </div>
-                      {data.jobSkill}
+                      {/* {data.jobSkill} */}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">
@@ -150,7 +156,7 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
             </CardDescription>
           )}
         </Alert>
-        <AddSkill open={showModal} onHide={handleCloseModal} skill={skill} />
+        <AddSkill open={showModal} onHide={handleCloseModal} skill={skill} handleAddList={handleAddList} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>

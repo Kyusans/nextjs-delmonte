@@ -12,14 +12,14 @@ import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
 import { retrieveData } from '@/app/utils/storageUtils';
 
-function AddSkill({ open, onHide, skill }) {
+function AddEducation({ open, onHide, courseCategory, handleAddList}) {
   const formSchema = z.object({
-    skill: z.number().min(1, {
+    courseCategory: z.number().min(1, {
       message: "This field is required",
     }),
-    jobSkill: z.string().min(1, {
-      message: "This field is required",
-    }),
+    // jobEducation: z.string().min(1, {
+    //   message: "This field is required",
+    // }),
     points: z.string().min(1, {
       message: "This field is required",
     }).refine((value) => !isNaN(Number(value)), {
@@ -30,29 +30,30 @@ function AddSkill({ open, onHide, skill }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      skill: 0,
-      jobSkill: "",
       points: "",
+      courseCategory: 0,
+      // jobEducation: "",
     },
   });
 
   const onSubmit = (values) => {
     try {
-      const selectedSkill = JSON.parse(retrieveData("jobSkill")) || [];
+      const selectedEducation = JSON.parse(retrieveData("jobEducation")) || [];
       let isValid = true;
-      selectedSkill.forEach((element) => {
-        if (element.skill === values.skill) {
-          toast.error("You already have this skill");
+      selectedEducation.forEach((element) => {
+        if (element.courseCategory === values.courseCategory) {
+          toast.error("You already have this education");
           isValid = false;
         }
       });
       if (isValid) {
-        onHide(values);
+        // onHide(values);
+        handleAddList(values);
         form.reset();
       }
     } catch (error) {
       toast.error("Network error");
-      console.log("AddSkill.jsx => onSubmit(): " + error);
+      console.log("AddEducation.jsx => onSubmit(): " + error);
     }
   };
 
@@ -65,22 +66,22 @@ function AddSkill({ open, onHide, skill }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold">Add Skill</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Add Education</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex justify-center items-center">
                 <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
                   <FormField
-                    name="skill"
+                    name="courseCategory"
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Skill</FormLabel>
+                        <FormLabel>Course Category</FormLabel>
                         <div>
                           <ComboBox
-                            list={skill}
-                            subject="skill"
+                            list={courseCategory}
+                            subject="course category"
                             value={field.value}
                             onChange={field.onChange}
                             styles={"bg-background"}
@@ -90,19 +91,19 @@ function AddSkill({ open, onHide, skill }) {
                       </FormItem>
                     )}
                   />
-                  <FormField
+                  {/* <FormField
                     control={form.control}
-                    name="jobSkill"
+                    name="jobEducation"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Job Skill Description</FormLabel>
+                        <FormLabel>Job Education Description</FormLabel>
                         <FormControl>
                           <Textarea style={{ height: "200px" }} placeholder="Enter description" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                   <FormField
                     control={form.control}
                     name="points"
@@ -120,9 +121,9 @@ function AddSkill({ open, onHide, skill }) {
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">Close</Button>
                 </DialogClose>
-                <Button type="submit">Add job skill</Button>
+                <Button type="submit">Add Education</Button>
               </div>
             </form>
           </Form>
@@ -132,4 +133,4 @@ function AddSkill({ open, onHide, skill }) {
   )
 }
 
-export default AddSkill
+export default AddEducation

@@ -10,8 +10,8 @@ import { Edit2, PlusIcon, Trash2, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import UpdateEducationModal from '../../modal/UpdateJob/UpdateEducationModal';
-import AddEducation from '../../modal/AddJob/AddEducation';
+import UpdateEducationModal from './UpdateJob/UpdateEducationModal';
+import AddEducation from '../AddJob/AddEducation';
 
 
 function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, deleteData }) {

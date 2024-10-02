@@ -9,10 +9,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import UpdateJobModal from '../Job/UpdateJobDetails/UpdateJobModal';
+import UpdateJobModal from '../AddJobStep/modals/UpdateJobDetails/UpdateJobModal';
 import { Badge } from '@/components/ui/badge';
-import InterviewPage from '../Job/Interview/InterviewPage';
-import ViewApplicants from '../Job/ViewApplicants/ViewApplicants';
+import InterviewPage from '../Interview/InterviewPage';
+import ViewApplicants from '../ViewApplicants/ViewApplicants';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
@@ -60,21 +60,19 @@ function SelectedJob({ open, onHide, jobId }) {
     <>
       <Dialog open={open} onOpenChange={handleClose} className="text-white">
         <DialogContent className="max-w-7xl h-full md:h-4/5 bg-[#107343] dark:bg-background">
-          <DialogTitle className="hidden" />
           {isLoading ? (
             <Spinner />
           ) : (
             <>
-              <ScrollArea className="h-full rounded-md md:p-2">
-                <DialogHeader className="text-white">
-                  <DialogTitle>{data.jobMaster[0].jobM_title}</DialogTitle>
-                  <ScrollArea className="h-52 md:h-36">
-                    <DialogDescription className="text-white">{data.jobMaster[0].jobM_description}</DialogDescription>
-                  </ScrollArea>
-                </DialogHeader>
-                <Separator className="mb-4" />
-                <Card className="w-full p-3 dark:bg-[#1c1917]">
-                  <Tabs defaultValue={selectedTab} className='mb-5' onValueChange={(value) => setSelectedTab(value)}>
+              <DialogHeader className="text-white">
+                <DialogTitle>{data.jobMaster[0].jobM_title}</DialogTitle>
+                <ScrollArea className="h-64 md:h-24">
+                  <DialogDescription className="text-white text-start">{data.jobMaster[0].jobM_description}</DialogDescription>
+                </ScrollArea>
+              </DialogHeader>
+              <ScrollArea className="rounded-md h-full">
+                <Card className="p-3 w-full md:p-2 dark:bg-[#1c1917]">
+                  <Tabs defaultValue={selectedTab} className="mb-3" onValueChange={(value) => setSelectedTab(value)}>
                     <TabsList>
                       <TabsTrigger value={1}>Details</TabsTrigger>
                       <TabsTrigger value={2}>Applicants</TabsTrigger>
@@ -111,9 +109,9 @@ function SelectedJob({ open, onHide, jobId }) {
                                   </div>
                                   <div className='w-full ml-3'>
                                     {data.jobEducation.map((data, index) => (
-                                      <ul key={index} className="list-disc ml-4 mb-1">
+                                      <ul key={index} className="list-disc ml-4 mb-3">
                                         <li>
-                                          {data.jeduc_text}
+                                          Graduate of any {data.course_categoryName} courses.
                                           <Badge className='ml-2 text-xs'>{data.jeduc_points} point{data.jeduc_points > 1 ? "s" : ""}</Badge>
                                         </li>
                                       </ul>
@@ -131,7 +129,7 @@ function SelectedJob({ open, onHide, jobId }) {
                                     {data.jobSkills.map((data, index) => (
                                       <ul key={index} className="list-disc ml-4 mb-1">
                                         <li>
-                                          {data.jskills_text}
+                                          {data.perS_name}
                                           <Badge className='ml-2 text-xs'>{data.jskills_points} point{data.jskills_points > 1 ? "s" : ""}</Badge>
                                         </li>
                                       </ul>
@@ -149,7 +147,7 @@ function SelectedJob({ open, onHide, jobId }) {
                                     {data.jobTrainings.map((data, index) => (
                                       <ul key={index} className="list-disc ml-4 mb-1">
                                         <li>
-                                          {data.jtrng_text}
+                                          {data.perT_name}
                                           <Badge className='ml-2 text-xs'>{data.jtrng_points} point{data.jtrng_points > 1 ? "s" : ""}</Badge>
                                         </li>
                                       </ul>
@@ -167,7 +165,7 @@ function SelectedJob({ open, onHide, jobId }) {
                                     {data.jobExperience.map((data, index) => (
                                       <ul key={index} className="list-disc ml-4 mb-1">
                                         <li>
-                                          {data.jwork_responsibilities} {`${data.jwork_duration} year${data.jwork_duration > 1 ? "s" : ""} of experience needed`}
+                                          {data.jwork_responsibilities} {` with at least ${data.jwork_duration} year${data.jwork_duration > 1 ? "s" : ""} of experience needed`}
                                           <Badge className='ml-2 text-xs'>{data.jwork_points} point{data.jwork_points > 1 ? "s" : ""}</Badge>
                                         </li>
                                       </ul>
@@ -185,7 +183,7 @@ function SelectedJob({ open, onHide, jobId }) {
                                     {data.jobKnowledge.map((data, index) => (
                                       <ul key={index} className="list-disc ml-4 mb-1">
                                         <li>
-                                          {data.jknow_text}
+                                          {data.knowledge_name}
                                           <Badge className='ml-2 text-xs'>{data.jknow_points} point{data.jknow_points > 1 ? "s" : ""}</Badge>
                                         </li>
                                       </ul>

@@ -8,11 +8,11 @@ import Spinner from '@/components/ui/spinner';
 import AddJob from './AddJob';
 import { removeData, retrieveData } from '@/app/utils/storageUtils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import SelectedJob from '../modal/SelectedJob';
+import SelectedJob from './modal/SelectedJob';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Switch } from '@/components/ui/switch';
 import ShowAlert from '@/components/ui/show-alert';
-import UpdateJobModal from './UpdateJobDetails/UpdateJobModal';
+import UpdateJobModal from './AddJobStep/modals/UpdateJobDetails/UpdateJobModal';
 
 function AdminJobs() {
   const [allJobs, setAllJobs] = useState([]);

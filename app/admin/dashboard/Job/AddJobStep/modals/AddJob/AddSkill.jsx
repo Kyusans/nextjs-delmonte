@@ -1,6 +1,6 @@
 "use client"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import React from 'react'
+import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import React, { useEffect } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,18 +8,18 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Input } from '@/components/ui/input';
 import ComboBox from '@/app/my_components/combo-box';
+import { Input } from '@/components/ui/input';
 import { retrieveData } from '@/app/utils/storageUtils';
 
-function AddKnowledge({ open, onHide, knowledgeList }) {
+function AddSkill({ open, onHide, skill, handleAddList }) {
   const formSchema = z.object({
-    knowledgeId: z.number().min(1, {
+    skill: z.number().min(1, {
       message: "This field is required",
     }),
-    jobKnowledge: z.string().min(1, {
-      message: "This field is required",
-    }),
+    // jobSkill: z.string().min(1, {
+    //   message: "This field is required",
+    // }),
     points: z.string().min(1, {
       message: "This field is required",
     }).refine((value) => !isNaN(Number(value)), {
@@ -30,56 +30,58 @@ function AddKnowledge({ open, onHide, knowledgeList }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      knowledgeId: 0,
-      jobKnowledge: "",
+      skill: 0,
+      // jobSkill: "",
       points: "",
     },
   });
 
   const onSubmit = (values) => {
     try {
-      const selectedKnowledge = JSON.parse(retrieveData("jobKnowledge")) || [];
+      const selectedSkill = JSON.parse(retrieveData("jobSkill")) || [];
       let isValid = true;
-      selectedKnowledge.forEach((element) => {
-        if (element.knowledgeId === values.knowledgeId) {
-          toast.error("You already have this knowledge and compliance");
+      selectedSkill.forEach((element) => {
+        if (element.skill === values.skill) {
+          toast.error("You already have this skill");
           isValid = false;
         }
       });
       if (isValid) {
-        onHide(values);
+        // onHide(values);
+        handleAddList(values);
         form.reset();
       }
     } catch (error) {
       toast.error("Network error");
-      console.log("AddKnowledge.jsx => onSubmit(): " + error);
+      console.log("AddSkill.jsx => onSubmit(): " + error);
     }
   };
 
   const handleOnHide = () => {
     onHide(0);
   }
+
   return (
     <>
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold">Add Knowledge and Compliance</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Add Skill</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex justify-center items-center">
                 <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
                   <FormField
-                    name="knowledgeId"
+                    name="skill"
                     control={form.control}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Knowledge and compliance </FormLabel>
+                        <FormLabel>Skill</FormLabel>
                         <div>
                           <ComboBox
-                            list={knowledgeList}
-                            subject="knowledge and compliance"
+                            list={skill}
+                            subject="skill"
                             value={field.value}
                             onChange={field.onChange}
                             styles={"bg-background"}
@@ -89,19 +91,19 @@ function AddKnowledge({ open, onHide, knowledgeList }) {
                       </FormItem>
                     )}
                   />
-                  <FormField
+                  {/* <FormField
                     control={form.control}
-                    name="jobKnowledge"
+                    name="jobSkill"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Job Knowledge Description</FormLabel>
+                        <FormLabel>Job Skill Description</FormLabel>
                         <FormControl>
                           <Textarea style={{ height: "200px" }} placeholder="Enter description" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                   <FormField
                     control={form.control}
                     name="points"
@@ -119,9 +121,9 @@ function AddKnowledge({ open, onHide, knowledgeList }) {
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">Close</Button>
                 </DialogClose>
-                <Button type="submit">Add Job Knowledge</Button>
+                <Button type="submit">Add job skill</Button>
               </div>
             </form>
           </Form>
@@ -131,4 +133,4 @@ function AddKnowledge({ open, onHide, knowledgeList }) {
   )
 }
 
-export default AddKnowledge
+export default AddSkill

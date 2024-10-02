@@ -9,24 +9,17 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
+import ComboBox from '@/app/my_components/combo-box';
+import { retrieveData } from '@/app/utils/storageUtils';
 
-function AddExperience({ open, onHide }) {
-
+function AddKnowledge({ open, onHide, knowledgeList, handleAddList }) {
   const formSchema = z.object({
-    yearsOfExperience: z.string()
-      .min(1, { message: "This field is required" })
-      .refine((value) => !isNaN(Number(value)), {
-        message: "Years of experience must be a number",
-      })
-      .refine((value) => Number(value) <= 50, {
-        message: "Years of experience should not be more than 50",
-      })
-      .refine((value) => Number(value) >= 0, {
-        message: "Years of experience should not be less than 0",
-      }),
-    jobExperience: z.string().min(1, {
+    knowledgeId: z.number().min(1, {
       message: "This field is required",
     }),
+    // jobKnowledge: z.string().min(1, {
+    //   message: "This field is required",
+    // }),
     points: z.string().min(1, {
       message: "This field is required",
     }).refine((value) => !isNaN(Number(value)), {
@@ -37,19 +30,33 @@ function AddExperience({ open, onHide }) {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      yearsOfExperience: "",
-      jobExperience: "",
+      knowledgeId: 0,
+      // jobKnowledge: "",
       points: "",
     },
   });
 
   const onSubmit = (values) => {
     try {
-      onHide(values);
-      form.reset();
+      const selectedKnowledge = JSON.parse(retrieveData("jobKnowledge")) || [];
+      console.log("selectedKnowledge:", selectedKnowledge);
+      let isValid = true;
+      selectedKnowledge.forEach((element) => {
+        console.log("element.knowledgeId:", element.knowledgeId);
+        if (element.knowledgeId === values.knowledgeId) {
+          toast.error("You already have this knowledge and compliance");
+          isValid = false;
+        }
+      });
+      if (isValid) {
+        console.log("AddKnowledge.jsx => onSubmit():", values);
+        // onHide(values);
+        handleAddList(values);
+        form.reset();
+      }
     } catch (error) {
       toast.error("Network error");
-      console.log("AddExperience.jsx => onSubmit(): " + error);
+      console.log("AddKnowledge.jsx => onSubmit(): " + error);
     }
   };
 
@@ -61,38 +68,44 @@ function AddExperience({ open, onHide }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold">Add Experience</DialogTitle>
+            <DialogTitle className="text-center text-2xl font-bold">Add Knowledge and Compliance</DialogTitle>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex justify-center items-center">
                 <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
                   <FormField
+                    name="knowledgeId"
                     control={form.control}
-                    name="yearsOfExperience"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Year/s of Experience</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter years of experience" {...field} />
-                        </FormControl>
+                        <FormLabel>Knowledge and compliance </FormLabel>
+                        <div>
+                          <ComboBox
+                            list={knowledgeList}
+                            subject="knowledge and compliance"
+                            value={field.value}
+                            onChange={field.onChange}
+                            styles={"bg-background"}
+                          />
+                        </div>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  <FormField
+                  {/* <FormField
                     control={form.control}
-                    name="jobExperience"
+                    name="jobKnowledge"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Job Experience Description</FormLabel>
+                        <FormLabel>Job Knowledge Description</FormLabel>
                         <FormControl>
                           <Textarea style={{ height: "200px" }} placeholder="Enter description" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                   <FormField
                     control={form.control}
                     name="points"
@@ -110,9 +123,9 @@ function AddExperience({ open, onHide }) {
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">Close</Button>
                 </DialogClose>
-                <Button type="submit">Add Job Experience</Button>
+                <Button type="submit">Add Job Knowledge</Button>
               </div>
             </form>
           </Form>
@@ -122,4 +135,4 @@ function AddExperience({ open, onHide }) {
   )
 }
 
-export default AddExperience
+export default AddKnowledge

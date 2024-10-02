@@ -1,5 +1,5 @@
 "use client";
-import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import React, { useEffect, useState } from 'react'
 import AddJobMaster from './AddJobStep/AddJobMaster';
 import AddDutiesMaster from './AddJobStep/AddDutiesMaster';
@@ -12,7 +12,6 @@ import AddJobTraining from './AddJobStep/AddJobTraining';
 import AddJobKnowledge from './AddJobStep/AddJobKnowledge';
 import AddJobSkill from './AddJobStep/AddJobSkill';
 import AddJobExperience from './AddJobStep/AddJobExperience';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
@@ -145,12 +144,25 @@ function AddJob({ handleSwitchView }) {
     getDropDownForAddJobs();
   }, []);
 
+  const title = [
+    "Job Master",
+    "Duties",
+    "Knowledge and Compliance",
+    "Education",
+    "Training",
+    "Skill",
+    "Experience",
+  ]
+
   return (
     <>
       {isLoading ? <Spinner /> :
         <Card className="rounded-md border-4 border-secondary mt-4">
+          <CardHeader>
+            <CardTitle>{title[currentStep - 1]}</CardTitle>
+          </CardHeader>
           <CardContent>
-            <div className="flex justify-center ">
+            <div className="flex justify-center">
               <Progress value={progress} className="my-10 md:w-3/4" />
             </div>
             <Separator />
