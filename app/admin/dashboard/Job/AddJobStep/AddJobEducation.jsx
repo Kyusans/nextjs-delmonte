@@ -38,6 +38,12 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
     setShowModal(true);
   }
 
+  const handleAddList = (status) => {
+    setDatas([...datas, status]);
+    storeData("jobEducation", JSON.stringify([...datas, status]));
+    toast.success("Education added successfully");
+  };
+
   const handleCloseModal = (status) => {
     if (status !== 0) {
       setDatas([...datas, status]);
@@ -87,9 +93,9 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-1/12">Index</TableHead>
+                      <TableHead className="w-1/12">#</TableHead>
                       <TableHead className="w-1/12 ">Course category</TableHead>
-                      <TableHead className="w-10/12">Description</TableHead>
+                      {/* <TableHead className="w-10/12">Description</TableHead> */}
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center"></TableHead>
                     </TableRow>
@@ -101,9 +107,9 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
                         <TableCell className="w-1/12">
                           {courseCategory.find((item) => item.value === data.courseCategory)?.label}
                         </TableCell>
-                        <TableCell className="w-10/12 whitespace-normal">
+                        {/* <TableCell className="w-10/12 whitespace-normal">
                           {data.jobEducation}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell className="w-1/12 text-center">{data.points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <button
@@ -126,14 +132,14 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
                         className="h-6 w-6"
                         onClick={() => handleRemoveList(index)}
                       >
-                        <X className="h-6 w-6" />
+                        <X className="h-5 w-5" />
                       </button>
                     </div>
                     <div className="mt-2 text-sm">
                       <div className='mb-1 text-xl break-words'>
                         {courseCategory.find((item) => item.value === data.courseCategory)?.label}
                       </div>
-                      {data.jobEducation}
+                      {/* {data.jobEducation} */}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">
@@ -151,7 +157,7 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
             </CardDescription>
           )}
         </Alert>
-        <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} />
+        <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} handleAddList={handleAddList} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>

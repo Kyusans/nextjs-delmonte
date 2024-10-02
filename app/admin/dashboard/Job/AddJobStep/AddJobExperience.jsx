@@ -38,13 +38,19 @@ function AddJobExperience({ previousStep, handleSubmit }) {
     setShowModal(true);
   }
 
+  const handleAddList = (status) => {
+    setDatas([...datas, status]);
+    storeData("jobExperience", JSON.stringify([...datas, status]));
+    toast.success("Experience added successfully");
+  };
+
   const handleCloseModal = (status) => {
-    if (status !== 0) {
-      setDatas([...datas, status]);
-      storeData("jobExperience", JSON.stringify([...datas, status]));
-    } else {
-      setDatas(datas);
-    }
+    // if (status !== 0) {
+    //   setDatas([...datas, status]);
+    //   storeData("jobExperience", JSON.stringify([...datas, status]));
+    // } else {
+    //   setDatas(datas);
+    // }
     setShowModal(false);
   };
 
@@ -125,7 +131,7 @@ function AddJobExperience({ previousStep, handleSubmit }) {
                         className="h-6 w-6"
                         onClick={() => handleRemoveList(index)}
                       >
-                        <X className="h-6 w-6" />
+                        <X className="h-5 w-5" />
                       </button>
                     </div>
                     <div className="mt-2 text-sm">
@@ -148,7 +154,7 @@ function AddJobExperience({ previousStep, handleSubmit }) {
             </CardDescription>
           )}
         </Alert>
-        <AddExperience open={showModal} onHide={handleCloseModal} />
+        <AddExperience open={showModal} onHide={handleCloseModal} handleAddList={handleAddList} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>

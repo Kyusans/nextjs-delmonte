@@ -12,14 +12,14 @@ import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
 import { retrieveData } from '@/app/utils/storageUtils';
 
-function AddTraining({ open, onHide, training }) {
+function AddTraining({ open, onHide, training, handleAddList }) {
   const formSchema = z.object({
     training: z.number().min(1, {
       message: "This field is required",
     }),
-    jobTraining: z.string().min(1, {
-      message: "This field is required",
-    }),
+    // jobTraining: z.string().min(1, {
+    //   message: "This field is required",
+    // }),
     points: z.string().min(1, {
       message: "This field is required",
     }).refine((value) => !isNaN(Number(value)), {
@@ -31,7 +31,7 @@ function AddTraining({ open, onHide, training }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       training: 0,
-      jobTraining: "",
+      // jobTraining: "",
       points: "",
     },
   });
@@ -47,7 +47,8 @@ function AddTraining({ open, onHide, training }) {
         }
       });
       if (isValid) {
-        onHide(values);
+        // onHide(values);
+        handleAddList(values);
         form.reset();
       }
     } catch (error) {
@@ -90,7 +91,7 @@ function AddTraining({ open, onHide, training }) {
                       </FormItem>
                     )}
                   />
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="jobTraining"
                     render={({ field }) => (
@@ -102,7 +103,7 @@ function AddTraining({ open, onHide, training }) {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                   <FormField
                     control={form.control}
                     name="points"
@@ -120,7 +121,7 @@ function AddTraining({ open, onHide, training }) {
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">Close</Button>
                 </DialogClose>
                 <Button type="submit">Add Training</Button>
               </div>

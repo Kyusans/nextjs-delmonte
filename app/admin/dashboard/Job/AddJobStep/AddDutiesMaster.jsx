@@ -23,7 +23,7 @@ function AddDutiesMaster({ previousStep, nextStep }) {
     setShowAlert(true);
   };
 
-  const handleCloseAlert = (status) => {
+  const handleCloseAlert = () => {
     if (status === 1) {
       const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
       setDatas(filteredDatas);
@@ -32,6 +32,13 @@ function AddDutiesMaster({ previousStep, nextStep }) {
     setShowAlert(false);
   };
 
+  const handleAddList = (status) => {
+    setDatas([...datas, status]);
+    storeData("duties", JSON.stringify([...datas, status]));
+    toast.success("Duty added successfully");
+
+  }
+
   const [showModal, setShowModal] = useState(false);
 
   const handleOpenModal = () => {
@@ -39,12 +46,12 @@ function AddDutiesMaster({ previousStep, nextStep }) {
   }
 
   const handleCloseModal = (status) => {
-    if (status !== 0) {
-      setDatas([...datas, status]);
-      storeData("duties", JSON.stringify([...datas, status]));
-    } else {
-      setDatas(datas);
-    }
+    // if (status !== 0) {
+    //   setDatas([...datas, status]);
+    //   storeData("duties", JSON.stringify([...datas, status]));
+    // } else {
+    //   setDatas(datas);
+    // }
     setShowModal(false);
   };
 
@@ -88,7 +95,7 @@ function AddDutiesMaster({ previousStep, nextStep }) {
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-1/12">Index</TableHead>
+                      <TableHead className="w-1/12">#</TableHead>
                       <TableHead className="w-10/12">Duty</TableHead>
                       <TableHead className="w-1/12 text-center"></TableHead>
                     </TableRow>
@@ -114,23 +121,23 @@ function AddDutiesMaster({ previousStep, nextStep }) {
                 </Table>
               </div>
               <div className="block md:hidden">
-                  {datas.map((data, index) => (
-                    <div key={index} className="relative w-full p-4 rounded-md shadow">
-                      <div className="flex justify-end">
-                        <button
-                          className="h-4 w-4"
-                          onClick={() => handleRemoveList(index)}
-                        >
-                          <X className="h-5 w-5" />
-                        </button>
-                      </div>
-                      <div className="mt-2 text-sm">
-                        {index + 1}.&nbsp;&nbsp;
-                        {data.duties}
-                      </div>
-                      <Separator className="mt-3" />
+                {datas.map((data, index) => (
+                  <div key={index} className="relative w-full p-4 rounded-md shadow">
+                    <div className="flex justify-end">
+                      <button
+                        className="h-4 w-4"
+                        onClick={() => handleRemoveList(index)}
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
                     </div>
-                  ))}
+                    <div className="mt-2 text-sm">
+                      {index + 1}.&nbsp;&nbsp;
+                      {data.duties}
+                    </div>
+                    <Separator className="mt-3" />
+                  </div>
+                ))}
               </div>
             </>
           ) : (
@@ -139,7 +146,7 @@ function AddDutiesMaster({ previousStep, nextStep }) {
             </CardDescription>
           )}
         </Alert>
-        <AddDuties open={showModal} onHide={handleCloseModal} />
+        <AddDuties open={showModal} onHide={handleCloseModal} handleAddList={handleAddList} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>

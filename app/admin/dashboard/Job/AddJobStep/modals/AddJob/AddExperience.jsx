@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 
-function AddExperience({ open, onHide }) {
+function AddExperience({ open, onHide, handleAddList }) {
 
   const formSchema = z.object({
     yearsOfExperience: z.string()
@@ -45,7 +45,8 @@ function AddExperience({ open, onHide }) {
 
   const onSubmit = (values) => {
     try {
-      onHide(values);
+      // onHide(values);
+      handleAddList(values);
       form.reset();
     } catch (error) {
       toast.error("Network error");
@@ -110,7 +111,7 @@ function AddExperience({ open, onHide }) {
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">Close</Button>
                 </DialogClose>
                 <Button type="submit">Add Job Experience</Button>
               </div>

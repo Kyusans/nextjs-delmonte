@@ -12,14 +12,14 @@ import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
 import { retrieveData } from '@/app/utils/storageUtils';
 
-function AddEducation({ open, onHide, courseCategory }) {
+function AddEducation({ open, onHide, courseCategory, handleAddList}) {
   const formSchema = z.object({
     courseCategory: z.number().min(1, {
       message: "This field is required",
     }),
-    jobEducation: z.string().min(1, {
-      message: "This field is required",
-    }),
+    // jobEducation: z.string().min(1, {
+    //   message: "This field is required",
+    // }),
     points: z.string().min(1, {
       message: "This field is required",
     }).refine((value) => !isNaN(Number(value)), {
@@ -32,7 +32,7 @@ function AddEducation({ open, onHide, courseCategory }) {
     defaultValues: {
       points: "",
       courseCategory: 0,
-      jobEducation: "",
+      // jobEducation: "",
     },
   });
 
@@ -47,7 +47,8 @@ function AddEducation({ open, onHide, courseCategory }) {
         }
       });
       if (isValid) {
-        onHide(values);
+        // onHide(values);
+        handleAddList(values);
         form.reset();
       }
     } catch (error) {
@@ -90,7 +91,7 @@ function AddEducation({ open, onHide, courseCategory }) {
                       </FormItem>
                     )}
                   />
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="jobEducation"
                     render={({ field }) => (
@@ -102,7 +103,7 @@ function AddEducation({ open, onHide, courseCategory }) {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                   <FormField
                     control={form.control}
                     name="points"
@@ -120,7 +121,7 @@ function AddEducation({ open, onHide, courseCategory }) {
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">Close</Button>
                 </DialogClose>
                 <Button type="submit">Add Education</Button>
               </div>

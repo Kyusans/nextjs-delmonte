@@ -12,14 +12,14 @@ import { Input } from '@/components/ui/input';
 import ComboBox from '@/app/my_components/combo-box';
 import { retrieveData } from '@/app/utils/storageUtils';
 
-function AddKnowledge({ open, onHide, knowledgeList }) {
+function AddKnowledge({ open, onHide, knowledgeList, handleAddList }) {
   const formSchema = z.object({
     knowledgeId: z.number().min(1, {
       message: "This field is required",
     }),
-    jobKnowledge: z.string().min(1, {
-      message: "This field is required",
-    }),
+    // jobKnowledge: z.string().min(1, {
+    //   message: "This field is required",
+    // }),
     points: z.string().min(1, {
       message: "This field is required",
     }).refine((value) => !isNaN(Number(value)), {
@@ -31,7 +31,7 @@ function AddKnowledge({ open, onHide, knowledgeList }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       knowledgeId: 0,
-      jobKnowledge: "",
+      // jobKnowledge: "",
       points: "",
     },
   });
@@ -39,15 +39,19 @@ function AddKnowledge({ open, onHide, knowledgeList }) {
   const onSubmit = (values) => {
     try {
       const selectedKnowledge = JSON.parse(retrieveData("jobKnowledge")) || [];
+      console.log("selectedKnowledge:", selectedKnowledge);
       let isValid = true;
       selectedKnowledge.forEach((element) => {
+        console.log("element.knowledgeId:", element.knowledgeId);
         if (element.knowledgeId === values.knowledgeId) {
           toast.error("You already have this knowledge and compliance");
           isValid = false;
         }
       });
       if (isValid) {
-        onHide(values);
+        console.log("AddKnowledge.jsx => onSubmit():", values);
+        // onHide(values);
+        handleAddList(values);
         form.reset();
       }
     } catch (error) {
@@ -89,7 +93,7 @@ function AddKnowledge({ open, onHide, knowledgeList }) {
                       </FormItem>
                     )}
                   />
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="jobKnowledge"
                     render={({ field }) => (
@@ -101,7 +105,7 @@ function AddKnowledge({ open, onHide, knowledgeList }) {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                   <FormField
                     control={form.control}
                     name="points"
@@ -119,7 +123,7 @@ function AddKnowledge({ open, onHide, knowledgeList }) {
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">Close</Button>
                 </DialogClose>
                 <Button type="submit">Add Job Knowledge</Button>
               </div>

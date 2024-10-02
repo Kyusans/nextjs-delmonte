@@ -39,13 +39,19 @@ function AddJobTraining({ training, previousStep, nextStep }) {
   }
 
   const handleCloseModal = (status) => {
-    if (status !== 0) {
-      setDatas([...datas, status]);
-      storeData("jobTraining", JSON.stringify([...datas, status]));
-    } else {
-      setDatas(datas);
-    }
+    // if (status !== 0) {
+    //   setDatas([...datas, status]);
+    //   storeData("jobTraining", JSON.stringify([...datas, status]));
+    // } else {
+    //   setDatas(datas);
+    // }
     setShowModal(false);
+  };
+
+  const handleAddList = (status) => {
+    setDatas([...datas, status]);
+    storeData("jobTraining", JSON.stringify([...datas, status]));
+    toast.success("Training added successfully");
   };
 
   const handleRemoveList = (indexToRemove) => {
@@ -89,7 +95,7 @@ function AddJobTraining({ training, previousStep, nextStep }) {
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
                       <TableHead className="w-1/12 ">Training</TableHead>
-                      <TableHead className="w-10/12">Description</TableHead>
+                      {/* <TableHead className="w-10/12">Description</TableHead> */}
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center"></TableHead>
                     </TableRow>
@@ -101,9 +107,9 @@ function AddJobTraining({ training, previousStep, nextStep }) {
                         <TableCell className="w-1/12">
                           {training.find((item) => item.value === data.training)?.label}
                         </TableCell>
-                        <TableCell className="w-10/12 whitespace-normal">
+                        {/* <TableCell className="w-10/12 whitespace-normal">
                           {data.jobTraining}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell className="w-1/12 text-center">{data.points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <button
@@ -134,7 +140,7 @@ function AddJobTraining({ training, previousStep, nextStep }) {
                       <div className='mb-1 text-xl break-words'>
                         {training.find((item) => item.value === data.training)?.label}
                       </div>
-                      {data.jobTraining}
+                      {/* {data.jobTraining} */}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">
@@ -153,7 +159,7 @@ function AddJobTraining({ training, previousStep, nextStep }) {
             </CardDescription>
           )}
         </Alert>
-        <AddTraining open={showModal} onHide={handleCloseModal} training={training} />
+        <AddTraining open={showModal} onHide={handleCloseModal} training={training} handleAddList={handleAddList} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>

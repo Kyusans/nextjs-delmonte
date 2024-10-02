@@ -12,14 +12,14 @@ import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
 import { retrieveData } from '@/app/utils/storageUtils';
 
-function AddSkill({ open, onHide, skill }) {
+function AddSkill({ open, onHide, skill, handleAddList }) {
   const formSchema = z.object({
     skill: z.number().min(1, {
       message: "This field is required",
     }),
-    jobSkill: z.string().min(1, {
-      message: "This field is required",
-    }),
+    // jobSkill: z.string().min(1, {
+    //   message: "This field is required",
+    // }),
     points: z.string().min(1, {
       message: "This field is required",
     }).refine((value) => !isNaN(Number(value)), {
@@ -31,7 +31,7 @@ function AddSkill({ open, onHide, skill }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       skill: 0,
-      jobSkill: "",
+      // jobSkill: "",
       points: "",
     },
   });
@@ -47,7 +47,8 @@ function AddSkill({ open, onHide, skill }) {
         }
       });
       if (isValid) {
-        onHide(values);
+        // onHide(values);
+        handleAddList(values);
         form.reset();
       }
     } catch (error) {
@@ -90,7 +91,7 @@ function AddSkill({ open, onHide, skill }) {
                       </FormItem>
                     )}
                   />
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="jobSkill"
                     render={({ field }) => (
@@ -102,7 +103,7 @@ function AddSkill({ open, onHide, skill }) {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                   <FormField
                     control={form.control}
                     name="points"
@@ -120,7 +121,7 @@ function AddSkill({ open, onHide, skill }) {
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">Close</Button>
                 </DialogClose>
                 <Button type="submit">Add job skill</Button>
               </div>

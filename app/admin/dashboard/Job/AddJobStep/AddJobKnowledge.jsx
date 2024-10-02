@@ -40,13 +40,13 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
   }
 
   const handleCloseModal = (status) => {
-    if (status !== 0) {
-      console.log("status: ", status);
-      setDatas([...datas, status]);
-      storeData("jobKnowledge", JSON.stringify([...datas, status]));
-    } else {
-      setDatas(datas);
-    }
+    // if (status !== 0) {
+    //   console.log("status: ", status);
+    //   setDatas([...datas, status]);
+    //   storeData("jobKnowledge", JSON.stringify([...datas, status]));
+    // } else {
+    //   setDatas(datas);
+    // }
     setShowModal(false);
   };
 
@@ -62,6 +62,12 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
     // }
     nextStep(45);
   }
+
+  const handleAddList = (status) => {
+      setDatas([...datas, status]);
+      storeData("jobKnowledge", JSON.stringify([...datas, status]));
+    toast.success("Knowledge and compliance added successfully");
+  };
 
 
   useEffect(() => {
@@ -93,7 +99,7 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
                       <TableHead className="w-1/12 ">Knowledge</TableHead>
-                      <TableHead className="w-10/12">Description</TableHead>
+                      {/* <TableHead className="w-10/12">Description</TableHead> */}
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center"></TableHead>
                     </TableRow>
@@ -105,9 +111,9 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
                         <TableCell className="w-1/12">
                           {knowledgeList.find((item) => item.value === data.knowledgeId)?.label}
                         </TableCell>
-                        <TableCell className="w-10/12 whitespace-normal">
+                        {/* <TableCell className="w-10/12 whitespace-normal">
                           {data.jobKnowledge}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell className="w-1/12 text-center">{data.points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <button
@@ -137,7 +143,7 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
                       <div className='mb-1 text-xl break-words'>
                         {knowledgeList.find((item) => item.value === data.knowledgeId)?.label}
                       </div>
-                      {data.jobKnowledge}
+                      {/* {data.jobKnowledge} */}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">
@@ -155,7 +161,7 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
             </CardDescription>
           )}
         </Alert>
-        <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} />
+        <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} handleAddList={handleAddList} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
