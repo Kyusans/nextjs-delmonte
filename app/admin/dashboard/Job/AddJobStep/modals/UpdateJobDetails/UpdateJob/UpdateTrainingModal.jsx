@@ -17,9 +17,9 @@ function UpdateTrainingModal({ open, onHide, training, updateData }) {
     training: z.number().min(1, {
       message: "This field is required",
     }),
-    jobTraining: z.string().min(1, {
-      message: "This field is required",
-    }),
+    // jobTraining: z.string().min(1, {
+    //   message: "This field is required",
+    // }),
     points: z.string().min(1, {
       message: "This field is required",
     }).refine((value) => !isNaN(Number(value)), {
@@ -31,7 +31,7 @@ function UpdateTrainingModal({ open, onHide, training, updateData }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       training: 0 || updateData.training,
-      jobTraining: "" || updateData.jobTraining,
+      // jobTraining: "" || updateData.jobTraining,
       points: "" || updateData.points.toString(),
     },
   });
@@ -93,7 +93,7 @@ function UpdateTrainingModal({ open, onHide, training, updateData }) {
                       </FormItem>
                     )}
                   />
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="jobTraining"
                     render={({ field }) => (
@@ -105,7 +105,7 @@ function UpdateTrainingModal({ open, onHide, training, updateData }) {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                   <FormField
                     control={form.control}
                     name="points"
@@ -123,7 +123,7 @@ function UpdateTrainingModal({ open, onHide, training, updateData }) {
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">Close</Button>
                 </DialogClose>
                 <Button type="submit">Update</Button>
               </div>

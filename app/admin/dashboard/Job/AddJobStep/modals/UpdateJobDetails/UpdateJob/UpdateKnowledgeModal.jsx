@@ -17,9 +17,9 @@ function UpdateKnowledgeModal({ open, onHide, knowledgeList, updateData }) {
     knowledgeId: z.number().min(1, {
       message: "This field is required",
     }),
-    jobKnowledge: z.string().min(1, {
-      message: "This field is required",
-    }),
+    // jobKnowledge: z.string().min(1, {
+    //   message: "This field is required",
+    // }),
     points: z.string().min(1, {
       message: "This field is required",
     }).refine((value) => !isNaN(Number(value)), {
@@ -31,7 +31,7 @@ function UpdateKnowledgeModal({ open, onHide, knowledgeList, updateData }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       knowledgeId: updateData.knowledgeId ||  0,
-      jobKnowledge: updateData.jobKnowledge || "",
+      // jobKnowledge: updateData.jobKnowledge || "",
       points: updateData.points.toString() || "",
     },
   });
@@ -92,7 +92,7 @@ function UpdateKnowledgeModal({ open, onHide, knowledgeList, updateData }) {
                       </FormItem>
                     )}
                   />
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="jobKnowledge"
                     render={({ field }) => (
@@ -104,7 +104,7 @@ function UpdateKnowledgeModal({ open, onHide, knowledgeList, updateData }) {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                   <FormField
                     control={form.control}
                     name="points"
@@ -122,7 +122,7 @@ function UpdateKnowledgeModal({ open, onHide, knowledgeList, updateData }) {
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">Close</Button>
                 </DialogClose>
                 <Button type="submit">Update</Button>
               </div>

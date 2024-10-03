@@ -70,7 +70,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
     if (values !== 0) {
       const jsonData = {
         id: updateData.id,
-        trainingText: values.jobTraining,
+        // trainingText: values.jobTraining,
         trainingId: values.training,
         points: values.points
       }
@@ -79,8 +79,8 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
     setShowUpdateModal(false);
   }
 
-  const handleEdit = (id, trainingId, points, jobTrainingText) => {
-    setUpdateData({ id: id, training: trainingId, points: points, jobTraining: jobTrainingText });
+  const handleEdit = (id, trainingId, points) => {
+    setUpdateData({ id: id, training: trainingId, points: points});
     handleOpenUpdateModal();
   }
 
@@ -113,7 +113,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
                       <TableHead className="w-1/12 ">Training</TableHead>
-                      <TableHead className="w-10/12">Description</TableHead>
+                      {/* <TableHead className="w-10/12">Description</TableHead> */}
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center">Actions</TableHead>
                     </TableRow>
@@ -125,13 +125,13 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
                         <TableCell className="w-1/12">
                           {training.find((item) => item.value === data.jtrng_trainingId)?.label}
                         </TableCell>
-                        <TableCell className="w-10/12 whitespace-normal">
+                        {/* <TableCell className="w-10/12 whitespace-normal">
                           {data.jtrng_text}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell className="w-1/12 text-center">{data.jtrng_points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <div className='flex justify-center'>
-                            <button onClick={() => handleEdit(data.jtrng_id, data.jtrng_trainingId, data.jtrng_points, data.jtrng_text)}>
+                            <button onClick={() => handleEdit(data.jtrng_id, data.jtrng_trainingId, data.jtrng_points)}>
                               <Edit2 className="h-4 w-4 mr-4" />
                             </button>
                             <button className="h-4 w-4" onClick={() => handleRemoveList(data.jtrng_id)}>
@@ -149,7 +149,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
-                      <button onClick={() => handleEdit(data.jtrng_id, data.jtrng_trainingId, data.jtrng_points, data.jtrng_text)}>
+                      <button onClick={() => handleEdit(data.jtrng_id, data.jtrng_trainingId, data.jtrng_points)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
                       <button className="h-4 w-4" onClick={() => handleRemoveList(data.jtrng_id)}>
@@ -160,7 +160,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
                       <div className='mb-1 text-xl break-words'>
                         {training.find((item) => item.value === data.jtrng_trainingId)?.label}
                       </div>
-                      {data.jtrng_text}
+                      {/* {data.jtrng_text} */}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">

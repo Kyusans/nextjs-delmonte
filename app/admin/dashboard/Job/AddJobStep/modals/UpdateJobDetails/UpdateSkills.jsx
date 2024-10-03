@@ -1,6 +1,5 @@
 "use client";
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
-import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardDescription } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -9,7 +8,6 @@ import { Edit2, PlusIcon, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AddSkill from '../AddJob/AddSkill';
-import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import UpdateSkillModal from './UpdateJob/UpdateSkillModal';
 
@@ -43,7 +41,7 @@ function UpdateSkill({ skill, data, handleAddData, handleUpdate, deleteData }) {
     if (status !== 0) {
       const jsonData = {
         jobId: retrieveData("jobId"),
-        skillText: status.jobSkill,
+        // skillText: status.jobSkill,
         skillId: status.skill,
         points: status.points
       }
@@ -68,7 +66,7 @@ function UpdateSkill({ skill, data, handleAddData, handleUpdate, deleteData }) {
     if (values !== 0) {
       const jsonData = {
         id: updateData.id,
-        skillText: values.jobSkill,
+        // skillText: values.jobSkill,
         skillId: values.skill,
         points: values.points
       }
@@ -111,7 +109,7 @@ function UpdateSkill({ skill, data, handleAddData, handleUpdate, deleteData }) {
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
                       <TableHead className="w-1/12 ">Skill</TableHead>
-                      <TableHead className="w-10/12">Description</TableHead>
+                      {/* <TableHead className="w-10/12">Description</TableHead> */}
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center">Actions</TableHead>
                     </TableRow>
@@ -123,13 +121,13 @@ function UpdateSkill({ skill, data, handleAddData, handleUpdate, deleteData }) {
                         <TableCell className="w-1/12">
                           {skill.find((item) => item.value === data.jskills_skillsId)?.label}
                         </TableCell>
-                        <TableCell className="w-10/12 whitespace-normal">
+                        {/* <TableCell className="w-10/12 whitespace-normal">
                           {data.jskills_text}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell className="w-1/12 text-center">{data.jskills_points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <div className='flex justify-center'>
-                            <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points, data.jskills_text)}>
+                            <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points)}>
                               <Edit2 className="h-4 w-4 mr-4" />
                             </button>
                             <button className="h-4 w-4" onClick={() => handleRemoveList(data.jskills_id)}>
@@ -146,7 +144,7 @@ function UpdateSkill({ skill, data, handleAddData, handleUpdate, deleteData }) {
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
-                      <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points, data.jskills_text)}>
+                      <button onClick={() => handleEdit(data.jskills_id, data.jskills_skillsId, data.jskills_points)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
                       <button className="h-4 w-4" onClick={() => handleRemoveList(data.jskills_id)}>
@@ -157,7 +155,7 @@ function UpdateSkill({ skill, data, handleAddData, handleUpdate, deleteData }) {
                       <div className='mb-1 text-xl break-words'>
                         {skill.find((item) => item.value === data.jskills_skillsId)?.label}
                       </div>
-                      {data.jskills_text}
+                      {/* {data.jskills_text} */}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">

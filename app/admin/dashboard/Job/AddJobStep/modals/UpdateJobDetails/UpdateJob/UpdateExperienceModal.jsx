@@ -110,7 +110,7 @@ function UpdateExperienceModal({ open, onHide, updateData }) {
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
                 <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
+                  <Button variant="outline">Close</Button>
                 </DialogClose>
                 <Button type="submit">Update</Button>
               </div>
