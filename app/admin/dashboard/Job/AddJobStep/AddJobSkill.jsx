@@ -92,7 +92,7 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-1/12">Index</TableHead>
+                      {/* <TableHead className="w-1/12">Index</TableHead> */}
                       <TableHead className="w-1/12 ">Skill</TableHead>
                       {/* <TableHead className="w-10/12">Description</TableHead> */}
                       <TableHead className="w-1/12 text-center">Points</TableHead>
@@ -102,7 +102,7 @@ function AddJobSkill({ skill, previousStep, nextStep }) {
                   <TableBody>
                     {datas.map((data, index) => (
                       <TableRow key={index}>
-                        <TableCell className="w-1/12">{index + 1}</TableCell>
+                        {/* <TableCell className="w-1/12">{index + 1}</TableCell> */}
                         <TableCell className="w-1/12">
                           {skill.find((item) => item.value === data.skill)?.label}
                         </TableCell>

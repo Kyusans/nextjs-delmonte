@@ -1,8 +1,7 @@
 "use client";
-import { retrieveData, storeData } from '@/app/utils/storageUtils'
-import { Alert, AlertTitle } from '@/components/ui/alert'
+import { retrieveData } from '@/app/utils/storageUtils'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription } from '@/components/ui/card'
+import { Card, CardDescription } from '@/components/ui/card'
 import ShowAlert from '@/components/ui/show-alert'
 import { Edit2, PlusIcon, Trash2, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
@@ -10,8 +9,7 @@ import AddExperience from '../AddJob/AddExperience';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { toast } from 'sonner';
-import { jsx } from 'react/jsx-runtime';
+
 import UpdateExperienceModal from './UpdateJob/UpdateExperienceModal';
 
 
@@ -89,7 +87,7 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
     if (data) {
       setDatas(data);
     }
-   }, [data]);
+  }, [data]);
 
   return (
     <>
@@ -105,23 +103,21 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-1/12">Index</TableHead>
-                      <TableHead className="w-10/12">Experience</TableHead>
-                      <TableHead className="w-1/12 text-center">Year/s of experience</TableHead>
-                      <TableHead className="w-1/12 text-center">Points</TableHead>
-                      <TableHead className="w-1/12 text-center">Actions</TableHead>
+                      <TableHead>Experience</TableHead>
+                      <TableHead className="text-center">Year/s of experience</TableHead>
+                      <TableHead className="text-center">Points</TableHead>
+                      <TableHead className="text-center">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {datas.map((data, index) => (
                       <TableRow key={index}>
-                        <TableCell className="w-1/12">{index + 1}</TableCell>
-                        <TableCell className="w-10/12 whitespace-normal">
+                        <TableCell className="whitespace-normal">
                           {data.jwork_responsibilities}
                         </TableCell>
-                        <TableCell className="w-1/12 text-center">{data.jwork_duration}</TableCell>
-                        <TableCell className="w-1/12 text-center">{data.jwork_points}</TableCell>
-                        <TableCell className="w-1/12 text-center">
+                        <TableCell className="text-center">{data.jwork_duration}</TableCell>
+                        <TableCell className="text-center">{data.jwork_points}</TableCell>
+                        <TableCell className="text-center">
                           <div className='flex justify-center'>
                             <button onClick={() => handleEdit(data.jwork_id, data.jwork_points, data.jwork_responsibilities, data.jwork_duration)}>
                               <Edit2 className="h-4 w-4 mr-4" />

@@ -17,9 +17,9 @@ function UpdateEducationModal({ open, onHide, courseCategory, updateData }) {
     courseCategory: z.number().min(1, {
       message: "This field is required",
     }),
-    jobEducation: z.string().min(1, {
-      message: "This field is required",
-    }),
+    // jobEducation: z.string().min(1, {
+    //   message: "This field is required",
+    // }),
     points: z.string().min(1, {
       message: "This field is required",
     }).refine((value) => !isNaN(Number(value)), {
@@ -32,7 +32,7 @@ function UpdateEducationModal({ open, onHide, courseCategory, updateData }) {
     defaultValues: {
       points: updateData.points.toString() || "",
       courseCategory: updateData.categoryId || "",
-      jobEducation: updateData.educationText || "",
+      // jobEducation: updateData.educationText || "",
     },
   });
 
@@ -95,7 +95,7 @@ function UpdateEducationModal({ open, onHide, courseCategory, updateData }) {
                       </FormItem>
                     )}
                   />
-                  <FormField
+                  {/* <FormField
                     control={form.control}
                     name="jobEducation"
                     render={({ field }) => (
@@ -107,7 +107,7 @@ function UpdateEducationModal({ open, onHide, courseCategory, updateData }) {
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
                   <FormField
                     control={form.control}
                     name="points"
@@ -124,7 +124,7 @@ function UpdateEducationModal({ open, onHide, courseCategory, updateData }) {
                 </div>
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">
-                <Button type="button" variant="outline" onClick={handleOnHide}>Cancel</Button>
+                <Button type="button" variant="outline" onClick={handleOnHide}>Close</Button>
                 <Button type="submit">Update</Button>
               </div>
             </form>

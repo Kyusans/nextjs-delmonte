@@ -1,7 +1,6 @@
 
 "use client";
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
-import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardDescription } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -71,14 +70,14 @@ function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, de
         id: updateData.id,
         points: values.points,
         courseCategory: values.courseCategory,
-        educationText: values.jobEducation
+        // educationText: values.jobEducation
       }
       handleUpdate("updateJobEducation", jsonData, "getJobEducation");
     }
     setShowUpdateModal(false);
   }
-  const handleEdit = (id, categoryId, points, educationText) => {
-    setUpdateData({ id: id, categoryId: categoryId, points: points, educationText: educationText });
+  const handleEdit = (id, categoryId, points) => {
+    setUpdateData({ id: id, categoryId: categoryId, points: points });
     handleOpenUpdateModal();
   }
 
@@ -111,7 +110,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, de
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
                       <TableHead className="w-1/12 ">Course category</TableHead>
-                      <TableHead className="w-10/12">Description</TableHead>
+                      {/* <TableHead className="w-10/12">Description</TableHead> */}
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center">Actions</TableHead>
                     </TableRow>
@@ -123,13 +122,13 @@ function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, de
                         <TableCell className="w-1/12">
                           {courseCategory.find((item) => item.value === data.jeduc_categoryId)?.label}
                         </TableCell>
-                        <TableCell className="w-10/12 whitespace-normal">
+                        {/* <TableCell className="w-10/12 whitespace-normal">
                           {data.jeduc_text}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell className="w-1/12 text-center">{data.jeduc_points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <div className='flex justify-center'>
-                            <button onClick={() => handleEdit(data.jeduc_id, data.jeduc_categoryId, data.jeduc_points, data.jeduc_text)}>
+                            <button onClick={() => handleEdit(data.jeduc_id, data.jeduc_categoryId, data.jeduc_points)}>
                               <Edit2 className="h-4 w-4 mr-4" />
                             </button>
                             <button className="h-4 w-4" onClick={() => handleRemoveList(data.jeduc_id)}>
@@ -146,7 +145,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, de
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
-                      <button onClick={() => handleEdit(data.jeduc_id, data.jeduc_categoryId, data.jeduc_points, data.jeduc_text)}>
+                      <button onClick={() => handleEdit(data.jeduc_id, data.jeduc_categoryId, data.jeduc_points)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
                       <button className="h-4 w-4" onClick={() => handleRemoveList(data.jeduc_id)}>
@@ -157,7 +156,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, de
                       <div className='mb-1 text-xl break-words'>
                         {courseCategory.find((item) => item.value === data.jeduc_categoryId)?.label}
                       </div>
-                      {data.jeduc_text}
+                      {/* {data.jeduc_text} */}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">
@@ -175,7 +174,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, de
             </CardDescription>
           )}
         </Card>
-        {showModal && <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} />}
+        {showModal && <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} isUpdate={true} />}
         {showUpdateModal && <UpdateEducationModal open={showUpdateModal} onHide={handleCloseUpdateModal} courseCategory={courseCategory} updateData={updateData} selectedEducations={data} />}
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
       </div>

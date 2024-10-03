@@ -12,7 +12,7 @@ import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
 import { retrieveData } from '@/app/utils/storageUtils';
 
-function AddEducation({ open, onHide, courseCategory, handleAddList}) {
+function AddEducation({ open, onHide, courseCategory, handleAddList, isUpdate }) {
   const formSchema = z.object({
     courseCategory: z.number().min(1, {
       message: "This field is required",
@@ -47,8 +47,11 @@ function AddEducation({ open, onHide, courseCategory, handleAddList}) {
         }
       });
       if (isValid) {
-        // onHide(values);
-        handleAddList(values);
+        if (isUpdate) {
+          onHide(values);
+        } else {
+          handleAddList(values);
+        }
         form.reset();
       }
     } catch (error) {

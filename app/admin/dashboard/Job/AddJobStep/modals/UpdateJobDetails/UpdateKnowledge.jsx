@@ -1,12 +1,10 @@
 "use client";
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
-import { Alert, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription } from '@/components/ui/card'
+import { Card, CardDescription } from '@/components/ui/card'
 import ShowAlert from '@/components/ui/show-alert'
 import { Edit2, PlusIcon, Trash2, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import { ScrollArea } from '@/components/ui/scroll-area';
 import AddKnowledge from '../AddJob/AddKnowledge';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -113,7 +111,7 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
                     <TableRow>
                       <TableHead className="w-1/12">Index</TableHead>
                       <TableHead className="w-1/12 ">Knowledge</TableHead>
-                      <TableHead className="w-10/12">Description</TableHead>
+                      {/* <TableHead className="w-10/12">Description</TableHead> */}
                       <TableHead className="w-1/12 text-center">Points</TableHead>
                       <TableHead className="w-1/12 text-center">Actions</TableHead>
                     </TableRow>
@@ -125,9 +123,9 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
                         <TableCell className="w-1/12">
                           {knowledgeList.find((item) => item.value === data.jknow_knowledgeId)?.label}
                         </TableCell>
-                        <TableCell className="w-10/12 whitespace-normal">
+                        {/* <TableCell className="w-10/12 whitespace-normal">
                           {data.jknow_text}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell className="w-1/12 text-center">{data.jknow_points}</TableCell>
                         <TableCell className="w-1/12 text-center">
                           <div className='flex justify-center'>
@@ -148,7 +146,7 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
                 {datas.map((data, index) => (
                   <div key={index} className="relative w-full p-4 rounded-md shadow">
                     <div className="flex justify-end">
-                      <button onClick={() => handleEdit(data.jknow_id, data.jknow_knowledgeId, data.jknow_points, data.jknow_text)}>
+                      <button onClick={() => handleEdit(data.jknow_id, data.jknow_knowledgeId, data.jknow_points)}>
                         <Edit2 className="h-4 w-4 mr-4" />
                       </button>
                       <button className="h-4 w-4" onClick={() => handleRemoveList(data.jknow_id)}>
@@ -159,7 +157,7 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
                       <div className='mb-1 text-xl break-words'>
                         {knowledgeList.find((item) => item.value === data.jknow_knowledgeId)?.label}
                       </div>
-                      {data.jknow_text}
+                      {/* {data.jknow_text} */}
                     </div>
                     <div className='text-end'>
                       <Badge className="mt-2 text-xs font-bold">

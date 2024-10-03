@@ -93,7 +93,7 @@ function AddJobTraining({ training, previousStep, nextStep }) {
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-1/12">Index</TableHead>
+                      {/* <TableHead className="w-1/12">Index</TableHead> */}
                       <TableHead className="w-1/12 ">Training</TableHead>
                       {/* <TableHead className="w-10/12">Description</TableHead> */}
                       <TableHead className="w-1/12 text-center">Points</TableHead>
@@ -103,7 +103,7 @@ function AddJobTraining({ training, previousStep, nextStep }) {
                   <TableBody>
                     {datas.map((data, index) => (
                       <TableRow key={index}>
-                        <TableCell className="w-1/12">{index + 1}</TableCell>
+                        {/* <TableCell className="w-1/12">{index + 1}</TableCell> */}
                         <TableCell className="w-1/12">
                           {training.find((item) => item.value === data.training)?.label}
                         </TableCell>

@@ -97,7 +97,7 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-1/12">Index</TableHead>
+                      {/* <TableHead className="w-1/12">Index</TableHead> */}
                       <TableHead className="w-1/12 ">Knowledge</TableHead>
                       {/* <TableHead className="w-10/12">Description</TableHead> */}
                       <TableHead className="w-1/12 text-center">Points</TableHead>
@@ -107,7 +107,7 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
                   <TableBody>
                     {datas.map((data, index) => (
                       <TableRow key={index}>
-                        <TableCell className="w-1/12">{index + 1}</TableCell>
+                        {/* <TableCell className="w-1/12">{index + 1}</TableCell> */}
                         <TableCell className="w-1/12">
                           {knowledgeList.find((item) => item.value === data.knowledgeId)?.label}
                         </TableCell>

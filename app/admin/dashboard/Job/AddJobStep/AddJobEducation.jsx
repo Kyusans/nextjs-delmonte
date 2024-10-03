@@ -93,7 +93,7 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-1/12">#</TableHead>
+                      {/* <TableHead className="w-1/12">#</TableHead> */}
                       <TableHead className="w-1/12 ">Course category</TableHead>
                       {/* <TableHead className="w-10/12">Description</TableHead> */}
                       <TableHead className="w-1/12 text-center">Points</TableHead>
@@ -103,7 +103,7 @@ function AddJobEducation({ courseCategory, previousStep, nextStep }) {
                   <TableBody>
                     {datas.map((data, index) => (
                       <TableRow key={index}>
-                        <TableCell className="w-1/12">{index + 1}</TableCell>
+                        {/* <TableCell className="w-1/12">{index + 1}</TableCell> */}
                         <TableCell className="w-1/12">
                           {courseCategory.find((item) => item.value === data.courseCategory)?.label}
                         </TableCell>
