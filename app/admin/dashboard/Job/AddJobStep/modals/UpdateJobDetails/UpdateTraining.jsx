@@ -1,6 +1,6 @@
 "use client";
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
-import { Alert, AlertTitle } from '@/components/ui/alert'
+
 import { Button } from '@/components/ui/button'
 import { Card, CardDescription } from '@/components/ui/card'
 import ShowAlert from '@/components/ui/show-alert'
@@ -10,7 +10,6 @@ import AddTraining from '../AddJob/AddTraining';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { toast } from 'sonner';
 import UpdateTrainingModal from './UpdateJob/UpdateTrainingModal';
 
 
@@ -80,7 +79,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
   }
 
   const handleEdit = (id, trainingId, points) => {
-    setUpdateData({ id: id, training: trainingId, points: points});
+    setUpdateData({ id: id, training: trainingId, points: points });
     handleOpenUpdateModal();
   }
 

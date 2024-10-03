@@ -53,6 +53,13 @@ function SelectedJob({ open, onHide, jobId }) {
   const handleClose = () => {
     removeData("jobId");
     removeData("selectedStatus");
+    removeData("jobEducation");
+    removeData("jobTraining");
+    removeData("jobKnowledge");
+    removeData("jobSkill");
+    removeData("jobExperience");
+    removeData("jobMaster");
+    removeData("duties");
     onHide();
   };
 

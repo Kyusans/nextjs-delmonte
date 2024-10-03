@@ -91,12 +91,12 @@ function AddJob({ handleSwitchView }) {
         toast.success("Job added successfully");
         setCurrentStep(1);
         removeData("jobMaster");
-        storeData("duties", "[]");
-        storeData("jobEducation", "[]");
-        storeData("jobTraining", "[]");
-        storeData("jobKnowledge", "[]");
-        storeData("jobSkill", "[]");
-        storeData("jobExperience", "[]");
+        removeData("duties");
+        removeData("jobEducation");
+        removeData("jobTraining");
+        removeData("jobKnowledge");
+        removeData("jobSkill");
+        removeData("jobExperience");
         handleNextStep(100);
         setTimeout(() => {
           handleSwitchView();

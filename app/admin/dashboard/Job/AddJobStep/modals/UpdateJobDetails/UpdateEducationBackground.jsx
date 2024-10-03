@@ -1,7 +1,6 @@
 
 "use client";
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
-import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card, CardDescription } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
@@ -175,7 +174,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, de
             </CardDescription>
           )}
         </Card>
-        {showModal && <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} />}
+        {showModal && <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} isUpdate={true} />}
         {showUpdateModal && <UpdateEducationModal open={showUpdateModal} onHide={handleCloseUpdateModal} courseCategory={courseCategory} updateData={updateData} selectedEducations={data} />}
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
       </div>

@@ -1,8 +1,7 @@
 "use client";
-import { retrieveData, storeData } from '@/app/utils/storageUtils'
-import { Alert, AlertTitle } from '@/components/ui/alert'
+import { retrieveData } from '@/app/utils/storageUtils'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription } from '@/components/ui/card'
+import { Card, CardDescription } from '@/components/ui/card'
 import ShowAlert from '@/components/ui/show-alert'
 import { Edit2, PlusIcon, Trash2, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
@@ -10,8 +9,7 @@ import AddExperience from '../AddJob/AddExperience';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { toast } from 'sonner';
-import { jsx } from 'react/jsx-runtime';
+
 import UpdateExperienceModal from './UpdateJob/UpdateExperienceModal';
 
 
@@ -89,7 +87,7 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
     if (data) {
       setDatas(data);
     }
-   }, [data]);
+  }, [data]);
 
   return (
     <>
