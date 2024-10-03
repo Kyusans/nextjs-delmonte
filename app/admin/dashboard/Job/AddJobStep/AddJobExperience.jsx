@@ -94,7 +94,7 @@ function AddJobExperience({ previousStep, handleSubmit }) {
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-1/12">Index</TableHead>
+                      {/* <TableHead className="w-1/12">Index</TableHead> */}
                       <TableHead className="w-10/12">Experience</TableHead>
                       <TableHead className="w-1/12 text-center">Year/s of experience</TableHead>
                       <TableHead className="w-1/12 text-center">Points</TableHead>
@@ -104,7 +104,7 @@ function AddJobExperience({ previousStep, handleSubmit }) {
                   <TableBody>
                     {datas.map((data, index) => (
                       <TableRow key={index}>
-                        <TableCell className="w-1/12">{index + 1}</TableCell>
+                        {/* <TableCell className="w-1/12">{index + 1}</TableCell> */}
                         <TableCell className="w-10/12 whitespace-normal">
                           {data.jobExperience}
                         </TableCell>
