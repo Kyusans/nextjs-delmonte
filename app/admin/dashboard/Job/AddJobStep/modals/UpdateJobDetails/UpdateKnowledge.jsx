@@ -170,15 +170,15 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
               </div>
             </>
           ) : (
-            <CardDescription className="text-center">
-              No duties added yet
+            <CardDescription className="text-center p-5">
+              No Knowledge added yet
             </CardDescription>
           )}
         </Card>
 
         {showModal && <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} />}
         {showUpdateModal && <UpdateKnowledgeModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} knowledgeList={knowledgeList} />}
-        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
+        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
       </div>
     </>
   )

@@ -20,36 +20,41 @@ function UpdateDuties({ data, handleAddData, handleUpdate, deleteData }) {
   const [selectedId, setSelectedId] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
+
   const handleShowAlert = (message) => {
     setAlertMessage(message);
     setShowAlert(true);
   };
 
-  const handleCloseAlert = (status) => {
+  const handleCloseAlert = async (status) => {
+    console.log("status delete", status)
     if (status === 1) {
-      const jsonData = {dutyId: selectedId}
-      deleteData("deleteDuties", jsonData, "getDuties");
+      const jsonData = { dutyId: selectedId }
+      await deleteData("deleteDuties", jsonData, "getDuties");
     }
     setShowAlert(false);
   };
+
+  const handleAddList = async (status) => {
+    if (status !== 0) {
+      const jsonData = {
+        jobId: retrieveData("jobId"),
+        duties: status.duties
+      }
+      await handleAddData("addDuties", jsonData, "getDuties");
+      setDatas(data);
+    } else {
+      setDatas(datas);
+    }
+  }
 
   const handleOpenModal = () => {
     setShowModal(true);
   }
 
   const handleCloseModal = async (status) => {
-    if (status !== 0) {
-      const jsonData = {
-        jobId: retrieveData("jobId"),
-        duties: status.duties
-      }
-      await handleAddData("addDuties", jsonData);
-    } else {
-      setDatas(datas);
-    }
     setShowModal(false);
   };
-
   const handleRemoveList = (dutyId) => {
     setSelectedId(dutyId);
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
@@ -71,7 +76,7 @@ function UpdateDuties({ data, handleAddData, handleUpdate, deleteData }) {
     if (editedText === datas[editIndex].duties_text) {
       handleCancelEdit();
       return;
-    }else if (!editedText) {
+    } else if (!editedText) {
       toast.error("Empty field is not allowed");
     }
 
@@ -131,7 +136,7 @@ function UpdateDuties({ data, handleAddData, handleUpdate, deleteData }) {
                               <button onClick={() => handleEdit(index, data.duties_text, data.duties_id)}>
                                 <Edit2 className="h-4 w-4 mr-4" />
                               </button>
-                              <button className="h-4 w-4" onClick={() => handleRemoveList(data.duties_id)}>
+                              <button className="h-4 w-4" onClick={() => handleRemoveList(data.duties_id, index)}>
                                 <Trash2 className="h-4 w-4" />
                               </button>
                             </>
@@ -153,7 +158,7 @@ function UpdateDuties({ data, handleAddData, handleUpdate, deleteData }) {
                         </>
                       ) : (
                         <>
-                          <button onClick={() => handleEdit(index, data.duties_text, data.duties_id)}>
+                          <button onClick={() => handleEdit(index, data.duties_text)}>
                             <Edit2 className="h-4 w-4 mr-4" />
                           </button>
                           <button
@@ -181,14 +186,14 @@ function UpdateDuties({ data, handleAddData, handleUpdate, deleteData }) {
               </div>
             </>
           ) : (
-            <CardDescription className="text-center">
+            <CardDescription className="text-center p-5">
               No duties added yet
             </CardDescription>
           )}
         </Card>
       </div>
-      <AddDuties open={showModal} onHide={handleCloseModal} />
-      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
+      <AddDuties open={showModal} onHide={handleCloseModal} handleAddList={handleAddList} />
+      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
     </>
   );
 }

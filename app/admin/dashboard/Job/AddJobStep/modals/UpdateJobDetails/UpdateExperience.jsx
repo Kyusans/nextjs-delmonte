@@ -161,14 +161,14 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
             </>
 
           ) : (
-            <CardDescription className="text-center">
+            <CardDescription className="text-center p-5">
               No experience added yet
             </CardDescription>
           )}
         </Card>
         {showModal && <AddExperience open={showModal} onHide={handleCloseModal} />}
         {showUpdateModal && <UpdateExperienceModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} />}
-        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
+        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
       </div>
     </>
   )

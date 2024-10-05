@@ -41,6 +41,8 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
       const res = await axios.post(url, formData);
       if (res.data !== 0) {
         setData(res.data);
+      }else{
+        setData([]);
       }
     } catch (error) {
       toast.error("Network error");
