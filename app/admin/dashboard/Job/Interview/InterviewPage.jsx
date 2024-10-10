@@ -25,9 +25,10 @@ function InterviewPage({ interviewData, getSelectedJob }) {
     setShowAddModal(false);
   };
 
+
   const addCriteria = (status) => {
     if (status !== 0) {
-      setData([...data, { inter_criteria_name: status.name, inter_criteria_points: status.points }]);
+      getSelectedJob();
     }
   }
 
@@ -63,7 +64,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
     console.log("status: ", status);
     if (status === 1) {
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
-      const jsonData = { criteriaId: data[indexToRemove].inter_criteria_id };
+      const jsonData = { criteriaId: indexToRemove };
       console.log("JSON DATA: ", jsonData);
       const formData = new FormData();
       formData.append("operation", "deleteInterviewCriteria");
@@ -73,16 +74,14 @@ function InterviewPage({ interviewData, getSelectedJob }) {
       if (res.data === 1) {
         getSelectedJob();
         toast.success("Criteria deleted successfully");
-        const filteredData = data.filter((element) => element !== data[indexToRemove]);
-        setData(filteredData);
       }
     }
     setShowAlert(false);
   };
 
 
-  const handleRemoveList = (indexToRemove) => {
-    setIndexToRemove(indexToRemove);
+  const handleRemoveList = (idToRemove) => {
+    setIndexToRemove(idToRemove);
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
 
@@ -95,7 +94,6 @@ function InterviewPage({ interviewData, getSelectedJob }) {
   return (
     <div>
       <div>
-        <ScrollArea className="w-full h-[calc(100vh-200px)]">
           {data.length === 0 ? (
             <div className='flex flex-col justify-center items-center gap-3'>
               <div className='font-bold text-xl mt-3'>No criteria for interview</div>
@@ -115,7 +113,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
                       <CardHeader>
                         <div className='flex justify-end gap-3'>
                           <Edit2 className='h-5 w-5 mr-1 hover:cursor-pointer' />
-                          <Trash2 className='h-5 w-5 mr-1 hover:cursor-pointer' onClick={() => handleRemoveList(index)} />
+                          <Trash2 className='h-5 w-5 mr-1 hover:cursor-pointer' onClick={() => handleRemoveList(item.inter_criteria_id)} />
                         </div>
                         <CardTitle> {item.criteria_inter_name}</CardTitle>
                       </CardHeader>
@@ -129,7 +127,6 @@ function InterviewPage({ interviewData, getSelectedJob }) {
               </div>
             </div>
           )}
-        </ScrollArea>
       </div>
       {showAddModal && (
         <AddInterviewCriteria
@@ -148,7 +145,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
           isMaster={false}
         />
       )}
-      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={2} />
+      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
     </div>
   );
 }

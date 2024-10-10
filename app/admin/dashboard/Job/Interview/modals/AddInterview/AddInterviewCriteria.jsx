@@ -19,9 +19,6 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
   const [interviewCriteriaList, setInterviewCriteriaList] = React.useState([]);
 
   const formSchema = z.object({
-    name: z.string().min(1, {
-      message: "This field is required",
-    }),
     points: z.string().min(1, {
       message: "This field is required",
     }).refine((value) => !isNaN(Number(value)), {
@@ -30,13 +27,11 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
     interviewCriteria: z.number().min(1, {
       message: "This field is required",
     }),
-    interviewCategory: z.number().optional(),
   });
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
       points: "",
       interviewCriteria: 0,
       interviewCategory: 0,
@@ -77,35 +72,43 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
   };
 
   const onSubmit = async (values) => {
-    alert(JSON.stringify(values));
-    // console.log("values: ", values);
-    // setIsLoading(true);
-    // try {
-    //   const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
-    //   if (interviewCriteria.some((element) => element.inter_criteria_name === values.name)) {
-    //     toast.error("Criteria already exist");
-    //     return;
-    //   }
-    //   const jsonData = {
-    //     jobId: retrieveData("jobId"),
-    //     criteriaId: values.interviewCriteria,
-    //     points: values.points,
-    //   };
-    //   const formData = new FormData();
-    //   formData.append("operation", "addInterviewCriteriaMaster");
-    //   formData.append("json", JSON.stringify(jsonData));
-    //   const res = await axios.post(url, formData);
-    //   console.log("res.data: ", res.data);
-    //   if (res.data !== 0) {
-    //     toast.success("Criteria added successfully");
-    //     addCriteria(values);
-    //     form.reset();
-    //   }
-    // } catch (error) {
-    //   toast.error("Network error");
-    // } finally {
-    //   setIsLoading(false);
-    // }
+    setIsLoading(true);
+    try {
+      const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
+      if (interviewCriteria.some((element) => element.criteria_inter_id === values.interviewCriteria)) {
+        toast.error("Criteria already exist");
+        return;
+      }
+      const jsonData = {
+        jobId: retrieveData("jobId"),
+        criteriaId: values.interviewCriteria,
+        points: values.points,
+      };
+      const formData = new FormData();
+      formData.append("operation", "addInterviewCriteriaMaster");
+      formData.append("json", JSON.stringify(jsonData));
+      const res = await axios.post(url, formData);
+      if (res.data !== 0) {
+        toast.success("Criteria added successfully");
+        const returnData = {
+          id: res.data,
+          category: interviewCategory.find(
+            (item) => item.value === form.getValues("interviewCategory")
+          ).label,
+          name: allInterviewCriteriaList.find(
+            (item) => item.value === values.interviewCriteria
+          ).label,
+          points: values.points,
+        };
+        console.log("returnData: ", returnData);
+        addCriteria(returnData);
+        form.reset();
+      }
+    } catch (error) {
+      toast.error("Network error");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleOnHide = () => {
@@ -124,11 +127,7 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
             <DialogTitle>Add Interview Criteria</DialogTitle>
           </DialogHeader>
           <Form {...form}>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              form.handleSubmit(onSubmit);
-            }}>
-
+            <form onSubmit={form.handleSubmit(onSubmit)}>
               <div className="flex justify-center items-center">
                 <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
                   <FormField
@@ -151,23 +150,25 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    name="interviewCriteria"
-                    control={form.control}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Interview Criteria</FormLabel>
-                        <ComboBox
-                          list={interviewCriteriaList}
-                          subject="criteria"
-                          value={field.value}
-                          onChange={field.onChange}
-                          styles={"bg-background"}
-                        />
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  {form.getValues("interviewCategory") !== 0 && (
+                    <FormField
+                      name="interviewCriteria"
+                      control={form.control}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Interview Criteria</FormLabel>
+                          <ComboBox
+                            list={interviewCriteriaList}
+                            subject="criteria"
+                            value={field.value}
+                            onChange={field.onChange}
+                            styles={"bg-background"}
+                          />
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  )}
                   <FormField
                     control={form.control}
                     name="points"
@@ -187,9 +188,9 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
                 <DialogClose asChild>
                   <Button variant="outline">Close</Button>
                 </DialogClose>
-                <button type="submit" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading}>
                   {isLoading && <Spinner />} Submit
-                </button>
+                </Button>
               </div>
             </form>
           </Form>
