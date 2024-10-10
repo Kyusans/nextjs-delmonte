@@ -41,6 +41,17 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
   }
 
   const handleCloseModal = (status) => {
+    if (status !== 0) {
+      const jsonData = {
+        jobId: retrieveData("jobId"),
+        experienceText: status.jobExperience,
+        yearsOfExperience: status.yearsOfExperience,
+        points: status.points
+      }
+      handleAddData("addJobExperience", jsonData, "getJobExperience");
+    } else {
+      setDatas(datas);
+    }
     setShowModal(false);
   };
 
@@ -70,20 +81,6 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
   const handleEdit = (id, points, jobExperienceText, yearsOfExperience) => {
     setUpdateData({ id: id, jobExperience: jobExperienceText, yearsOfExperience: yearsOfExperience, points: points });
     handleOpenUpdateModal();
-  }
-
-  const handleAddList = (status) => {
-    if (status !== 0) {
-      const jsonData = {
-        jobId: retrieveData("jobId"),
-        experienceText: status.jobExperience,
-        yearsOfExperience: status.yearsOfExperience,
-        points: status.points
-      }
-      handleAddData("addJobExperience", jsonData, "getJobExperience");
-    } else {
-      setDatas(datas);
-    }
   }
 
   useEffect(() => {
@@ -164,14 +161,14 @@ function UpdateExperience({ data, handleAddData, handleUpdate, deleteData }) {
             </>
 
           ) : (
-            <CardDescription className="text-center p-5">
+            <CardDescription className="text-center">
               No experience added yet
             </CardDescription>
           )}
         </Card>
-        {showModal && <AddExperience open={showModal} onHide={handleCloseModal} handleAddList={handleAddList} />}
+        {showModal && <AddExperience open={showModal} onHide={handleCloseModal} />}
         {showUpdateModal && <UpdateExperienceModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} />}
-        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
+        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
       </div>
     </>
   )

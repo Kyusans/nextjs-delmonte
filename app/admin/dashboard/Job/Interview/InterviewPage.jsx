@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Edit2, PlusCircle, Trash2 } from 'lucide-react'
@@ -10,6 +9,8 @@ import UpdateInterviewCriteria from './modals/UpdateInterview/UpdateInterviewCri
 import ShowAlert from '@/components/ui/show-alert'
 import axios from 'axios'
 import { toast } from 'sonner'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
 
 function InterviewPage({ interviewData, getSelectedJob }) {
   const [data, setData] = useState([]);
@@ -101,20 +102,40 @@ function InterviewPage({ interviewData, getSelectedJob }) {
 
   return (
     <div>
-      {interviewData.interviewMaster === 0 ? (
-        <div className='flex flex-col justify-center items-center gap-3'>
-          <div className='font-bold text-xl'>No criteria for interview</div>
-          <Button onClick={openShowModalMaster}>
-            <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
-          </Button>
-        </div>
-      ) : (
-        <div>
-          <ScrollArea className="w-full h-[calc(100vh-200px)]">
-            <Button onClick={openShowModal} className='my-2'>
-              <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
-            </Button>
-            <Table>
+      <div>
+        <ScrollArea className="w-full h-[calc(100vh-200px)]">
+          {data.length === 0 ? (
+            <div className='flex flex-col justify-center items-center gap-3'>
+              <div className='font-bold text-xl mt-3'>No criteria for interview</div>
+              <Button onClick={openShowModalMaster}>
+                <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
+              </Button>
+            </div>
+          ) : (
+            <div className='mt-3'>
+              <Button onClick={openShowModalMaster}>
+                <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
+              </Button>
+              {data.map((item, index) => (
+                <Card key={index} className='my-2 bg-background m-5'>
+                  <CardContent>
+                    <CardHeader>
+                      <div>
+
+                      </div>
+                      <CardTitle> {item.criteria_inter_name}</CardTitle>
+                    </CardHeader>
+                    <CardFooter>
+                      <Badge variant="secondary" className="mr-2">{item.interview_categ_name}</Badge>
+                      <Badge>{item.inter_criteria_points} points</Badge>
+                    </CardFooter>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+
+          {/* <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Criteria</TableHead>
@@ -150,10 +171,9 @@ function InterviewPage({ interviewData, getSelectedJob }) {
                   </>)
                 }
               </TableBody>
-            </Table>
-          </ScrollArea>
-        </div>
-      )}
+            </Table> */}
+        </ScrollArea>
+      </div>
       {showAddModal && (
         <AddInterviewCriteria
           open={showAddModal}

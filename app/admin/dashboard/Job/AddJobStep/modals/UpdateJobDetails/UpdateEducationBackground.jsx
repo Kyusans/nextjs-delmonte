@@ -25,7 +25,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, de
     setAlertMessage(message);
     setShowAlert(true);
   };
-  const handleCloseAlert = async (status) => {
+  const handleCloseAlert = (status) => {
     if (status === 1) {
       const jsonData = {
         id: selectedId,
@@ -169,14 +169,14 @@ function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, de
               </div>
             </>
           ) : (
-            <CardDescription className="text-center p-5">
+            <CardDescription className="text-center">
               No education added yet
             </CardDescription>
           )}
         </Card>
         {showModal && <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} isUpdate={true} />}
         {showUpdateModal && <UpdateEducationModal open={showUpdateModal} onHide={handleCloseUpdateModal} courseCategory={courseCategory} updateData={updateData} selectedEducations={data} />}
-        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
+        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
       </div>
     </>
   )

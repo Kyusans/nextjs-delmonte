@@ -41,6 +41,17 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
   }
 
   const handleCloseModal = async (status) => {
+    if (status !== 0) {
+      const jsonData = {
+        jobId: retrieveData("jobId"),
+        trainingText: status.jobTraining,
+        trainingId: status.training,
+        points: status.points
+      }
+      await handleAddData("addJobTraining", jsonData, "getJobTraining");
+    } else {
+      setDatas(datas);
+    }
     setShowModal(false);
   };
 
@@ -70,20 +81,6 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
   const handleEdit = (id, trainingId, points) => {
     setUpdateData({ id: id, training: trainingId, points: points });
     handleOpenUpdateModal();
-  }
-
-  const handleAddList = async (status) =>{
-    if (status !== 0) {
-      const jsonData = {
-        jobId: retrieveData("jobId"),
-        trainingText: status.jobTraining,
-        trainingId: status.training,
-        points: status.points
-      }
-      await handleAddData("addJobTraining", jsonData, "getJobTraining");
-    } else {
-      setDatas(datas);
-    }
   }
 
   useEffect(() => {
@@ -176,14 +173,14 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
             </>
 
           ) : (
-            <CardDescription className="text-center p-5">
+            <CardDescription className="text-center">
               No training added yet
             </CardDescription>
           )}
         </Card>
-        {showModal && <AddTraining open={showModal} onHide={handleCloseModal} training={training} handleAddList={handleAddList} />}
+        {showModal && <AddTraining open={showModal} onHide={handleCloseModal} training={training} />}
         {showUpdateModal && <UpdateTrainingModal open={showUpdateModal} onHide={handleCloseUpdateModal} training={training} updateData={updateData} />}
-        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
+        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
       </div>
     </>
   )
