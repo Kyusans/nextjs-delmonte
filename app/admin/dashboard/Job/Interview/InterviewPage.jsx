@@ -31,14 +31,6 @@ function InterviewPage({ interviewData, getSelectedJob }) {
     }
   }
 
-  // add interview master modal diri
-  const [showAddInterviewMaster, setShowAddInterviewMaster] = useState(false);
-  const openShowModalMaster = () => { setShowAddInterviewMaster(true); };
-  const closeShowModalMaster = () => {
-    setShowAddInterviewMaster(false);
-    getSelectedJob();
-  };
-
   // update interview criteria modal diri
   const [selectedData, setSelectedData] = useState({});
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -107,86 +99,44 @@ function InterviewPage({ interviewData, getSelectedJob }) {
           {data.length === 0 ? (
             <div className='flex flex-col justify-center items-center gap-3'>
               <div className='font-bold text-xl mt-3'>No criteria for interview</div>
-              <Button onClick={openShowModalMaster}>
+              <Button onClick={openShowModal}>
                 <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
               </Button>
             </div>
           ) : (
             <div className='mt-3'>
-              <Button onClick={openShowModalMaster}>
+              <Button onClick={openShowModal} className='mb-3'>
                 <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
               </Button>
-              {data.map((item, index) => (
-                <Card key={index} className='my-2 bg-background m-5'>
-                  <CardContent>
-                    <CardHeader>
-                      <div>
-
-                      </div>
-                      <CardTitle> {item.criteria_inter_name}</CardTitle>
-                    </CardHeader>
-                    <CardFooter>
-                      <Badge variant="secondary" className="mr-2">{item.interview_categ_name}</Badge>
-                      <Badge>{item.inter_criteria_points} points</Badge>
-                    </CardFooter>
-                  </CardContent>
-                </Card>
-              ))}
+              <div className={`grid ${data.length > 2 ? "grid-cols-2" : "grid-cols-1"} gap-2`}>
+                {data.map((item, index) => (
+                  <Card key={index} className='bg-background'>
+                    <CardContent>
+                      <CardHeader>
+                        <div className='flex justify-end gap-3'>
+                          <Edit2 className='h-5 w-5 mr-1 hover:cursor-pointer' />
+                          <Trash2 className='h-5 w-5 mr-1 hover:cursor-pointer' onClick={() => handleRemoveList(index)} />
+                        </div>
+                        <CardTitle> {item.criteria_inter_name}</CardTitle>
+                      </CardHeader>
+                      <CardFooter>
+                        <Badge variant="secondary" className="mr-2">{item.interview_categ_name}</Badge>
+                        <Badge>{item.inter_criteria_points} points</Badge>
+                      </CardFooter>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
           )}
-
-          {/* <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Criteria</TableHead>
-                  <TableHead className="text-center">Points</TableHead>
-                  <TableHead className="text-center">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">
-                      No criteria found
-                    </TableCell>
-                  </TableRow>
-                ) :
-                  (<>
-                    {data.map((item, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{item.inter_criteria_name}</TableCell>
-                        <TableCell className="text-center">{item.inter_criteria_points}</TableCell>
-                        <TableCell>
-                          <div className='flex justify-center'>
-                            <button onClick={() => { openShowModalUpdate(item, index) }}>
-                              <Edit2 className="h-4 w-4 mr-4" />
-                            </button>
-                            <button className="h-4 w-4" onClick={() => { handleRemoveList(index) }}>
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </>)
-                }
-              </TableBody>
-            </Table> */}
         </ScrollArea>
       </div>
       {showAddModal && (
         <AddInterviewCriteria
           open={showAddModal}
           onHide={closeShowModal}
-          interviewId={interviewData.interviewMaster[0].interviewM_id}
           interviewCriteria={data}
           addCriteria={addCriteria}
-        />
-      )}
-      {showAddInterviewMaster && (
-        <AddInterviewMaster
-          open={showAddInterviewMaster}
-          onHide={closeShowModalMaster}
         />
       )}
       {showUpdateModal && (

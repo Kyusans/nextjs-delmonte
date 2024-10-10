@@ -121,6 +121,9 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
   return (
     <div>
       <ScrollArea className="h-[calc(100vh-200px)] whitespace-nowrap w-96 md:w-full">
+        {/* <div className='flex justify-end'>
+          Passing percentage: {passingPercentage ? passingPercentage : 0}%
+        </div> */}
         <Table className="text-center">
           <TableCaption className="text-center">
             Passing percentage: {passingPercentage ? passingPercentage : 0}%

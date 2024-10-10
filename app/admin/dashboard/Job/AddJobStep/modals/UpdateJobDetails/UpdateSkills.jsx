@@ -37,7 +37,7 @@ function UpdateSkill({ skill, data, handleAddData, handleUpdate, deleteData }) {
     setShowModal(true);
   }
 
-  const handleCloseModal = (status) => {
+  const handleAddList = (status) => {
     if (status !== 0) {
       const jsonData = {
         jobId: retrieveData("jobId"),
@@ -49,6 +49,9 @@ function UpdateSkill({ skill, data, handleAddData, handleUpdate, deleteData }) {
     } else {
       setDatas(datas);
     }
+  }
+
+  const handleCloseModal = (status) => {
     setShowModal(false);
   };
 
@@ -168,14 +171,14 @@ function UpdateSkill({ skill, data, handleAddData, handleUpdate, deleteData }) {
               </div>
             </>
           ) : (
-            <CardDescription className="text-center">
+            <CardDescription className="text-center p-5">
               No skill added yet
             </CardDescription>
           )}
         </Card>
-        {showModal && <AddSkill open={showModal} onHide={handleCloseModal} skill={skill} />}
+        {showModal && <AddSkill open={showModal} onHide={handleCloseModal} skill={skill} handleAddList={handleAddList} />}
         {showUpdateModal && <UpdateSkillModal open={showUpdateModal} onHide={handleCloseUpdateModal} skill={skill} updateData={updateData} />}
-        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
+        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
       </div>
     </>
   )

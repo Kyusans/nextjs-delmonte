@@ -86,12 +86,11 @@ function SelectedJob({ open, onHide, jobId }) {
                       <TabsTrigger value={3}>Interview Criteria</TabsTrigger>
                     </TabsList>
                     <TabsContent value={1}>
-
-                      <div className="flex items-center w-full">
-                        <span className='text-sm my-3 font-bold flex items-center mr-2  '>Duties and Responsibilities</span>
+                      <div className="flex items-center w-full px-3">
+                        <span className='text-sm my-3 font-bold flex items-center'>Duties and Responsibilities</span>
                         <div>{handleUpdateJob(data.jobDuties, "duties")}</div>
                       </div>
-                      <div className='w-full px-5'>
+                      <div className='w-full px-6'>
                         {data.jobDuties.map((data, index) => (
                           <ul key={index} className="list-disc ml-4 mb-1">
                             <li>{data.duties_text}</li>
@@ -99,7 +98,6 @@ function SelectedJob({ open, onHide, jobId }) {
                         ))}
                       </div>
                       <div className='w-full px-3 mt-3'>
-
                         {data.jobEducation.length > 0 && (
                           <>
                             <div className='text-sm mb-3 font-bold flex items-center'>
