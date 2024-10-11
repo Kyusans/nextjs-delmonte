@@ -25,11 +25,8 @@ function InterviewPage({ interviewData, getSelectedJob }) {
     setShowAddModal(false);
   };
 
-
-  const addCriteria = (status) => {
-    if (status !== 0) {
-      getSelectedJob();
-    }
+  const addCriteria = () => {
+    getSelectedJob();
   }
 
   // update interview criteria modal diri
@@ -93,7 +90,8 @@ function InterviewPage({ interviewData, getSelectedJob }) {
 
   return (
     <div>
-      <div>
+      <ScrollArea className="h-[calc(100vh-200px)]">
+        <div>
           {data.length === 0 ? (
             <div className='flex flex-col justify-center items-center gap-3'>
               <div className='font-bold text-xl mt-3'>No criteria for interview</div>
@@ -127,26 +125,31 @@ function InterviewPage({ interviewData, getSelectedJob }) {
               </div>
             </div>
           )}
-      </div>
-      {showAddModal && (
-        <AddInterviewCriteria
-          open={showAddModal}
-          onHide={closeShowModal}
-          interviewCriteria={data}
-          addCriteria={addCriteria}
-        />
-      )}
-      {showUpdateModal && (
-        <UpdateInterviewCriteria
-          open={showUpdateModal}
-          onHide={closeUpdateModal}
-          data={selectedData}
-          criteriaList={data}
-          isMaster={false}
-        />
-      )}
+        </div>
+      </ScrollArea>
+      {
+        showAddModal && (
+          <AddInterviewCriteria
+            open={showAddModal}
+            onHide={closeShowModal}
+            interviewCriteria={data}
+            addCriteria={addCriteria}
+          />
+        )
+      }
+      {
+        showUpdateModal && (
+          <UpdateInterviewCriteria
+            open={showUpdateModal}
+            onHide={closeUpdateModal}
+            data={selectedData}
+            criteriaList={data}
+            isMaster={false}
+          />
+        )
+      }
       <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
-    </div>
+    </div >
   );
 }
 

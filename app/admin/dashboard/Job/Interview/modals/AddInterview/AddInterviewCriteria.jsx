@@ -90,18 +90,7 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
       const res = await axios.post(url, formData);
       if (res.data !== 0) {
         toast.success("Criteria added successfully");
-        const returnData = {
-          id: res.data,
-          category: interviewCategory.find(
-            (item) => item.value === form.getValues("interviewCategory")
-          ).label,
-          name: allInterviewCriteriaList.find(
-            (item) => item.value === values.interviewCriteria
-          ).label,
-          points: values.points,
-        };
-        console.log("returnData: ", returnData);
-        addCriteria(returnData);
+        addCriteria();
         form.reset();
       }
     } catch (error) {

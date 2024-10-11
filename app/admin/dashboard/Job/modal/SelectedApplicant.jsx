@@ -446,199 +446,210 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                     </CardHeader>
                     <CardContent className="relative">
                       <ScrollArea className="h-[500px] overflow-auto">
-                        <Accordion type="multiple" collapsible="true" className="w-full p-5" defaultValue={["1", "2", "3", "4", "5"]}>
-                          <AccordionItem value="1" className="mb-5">
-                            <AccordionTrigger>
-                              Education
-                            </AccordionTrigger>
-                            <AccordionContent>
-                              {data.criteria && data.criteria.education && data.criteria.education.length > 0 ? (
-                                <>
-                                  <div className="grid grid-cols-3 gap-4 my-3">
-                                    <p className="col-span-2">Total points</p>
-                                    <p className={`flex justify-end` + (data.pointsByCategory.education.points
-                                      >= (data.pointsByCategory.education.maxPoints / 2) ? " text-green-500"
-                                      : " text-red-500")}
-                                    >
-                                      {data.pointsByCategory.education.points}
-                                      /{data.pointsByCategory.education.maxPoints}
-                                    </p>
-                                  </div>
-                                  <Separator />
-                                  {data.criteria.education.map((edu, index) => (
-                                    <React.Fragment key={index}>
+                        <Tabs defaultValue="1">
+                          <TabsList>
+                            <TabsTrigger value="1">Job Qualifications</TabsTrigger>
+                            <TabsTrigger value="2">Interview Results</TabsTrigger>
+                          </TabsList>
+                          <TabsContent value="1">
+                            <Accordion type="multiple" collapsible="true" className="w-full p-5" defaultValue={["1", "2", "3", "4", "5"]}>
+                              <AccordionItem value="1" className="mb-5">
+                                <AccordionTrigger>
+                                  Education
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  {data.criteria && data.criteria.education && data.criteria.education.length > 0 ? (
+                                    <>
                                       <div className="grid grid-cols-3 gap-4 my-3">
-                                        <p className="col-span-2">{edu.course_categoryName}</p>
-                                        <div className="flex justify-end">
-                                          {edu.meets_criteria === 1 ?
-                                            <Check className="w-5 h-5 text-green-500" />
-                                            :
-                                            <X className="w-5 h-5 text-red-500" />}
-                                        </div>
+                                        <p className="col-span-2">Total points</p>
+                                        <p className={`flex justify-end` + (data.pointsByCategory.education.points
+                                          >= (data.pointsByCategory.education.maxPoints / 2) ? " text-green-500"
+                                          : " text-red-500")}
+                                        >
+                                          {data.pointsByCategory.education.points}
+                                          /{data.pointsByCategory.education.maxPoints}
+                                        </p>
                                       </div>
-                                      <Separator className={index === data.criteria.education.length - 1 ? "hidden" : ""} />
-                                    </React.Fragment>
-                                  ))}
-                                </>
-                              ) : (
-                                <p className="text-center text-gray-500">No education added</p>
-                              )}
-                            </AccordionContent>
-                          </AccordionItem>
-                          <AccordionItem value="2" className="mb-5">
-                            <AccordionTrigger>
-                              Skills
-                            </AccordionTrigger>
-                            <AccordionContent>
-                              {data.criteria && data.criteria.skills && data.criteria.skills.length > 0 ? (
-                                <>
-                                  <div className="grid grid-cols-3 gap-4 my-3">
-                                    <p className="col-span-2">Total points</p>
-                                    <p className={`flex justify-end` + (data.pointsByCategory.skills.points
-                                      >= (data.pointsByCategory.skills.maxPoints / 2) ? " text-green-500"
-                                      : " text-red-500")}
-                                    >
-                                      {data.pointsByCategory.skills.points}
-                                      /{data.pointsByCategory.skills.maxPoints}
-                                    </p>
-                                  </div>
-                                  <Separator />
-                                  {data.criteria.skills.map((skills, index) => (
-                                    <React.Fragment key={index}>
+                                      <Separator />
+                                      {data.criteria.education.map((edu, index) => (
+                                        <React.Fragment key={index}>
+                                          <div className="grid grid-cols-3 gap-4 my-3">
+                                            <p className="col-span-2">{edu.course_categoryName}</p>
+                                            <div className="flex justify-end">
+                                              {edu.meets_criteria === 1 ?
+                                                <Check className="w-5 h-5 text-green-500" />
+                                                :
+                                                <X className="w-5 h-5 text-red-500" />}
+                                            </div>
+                                          </div>
+                                          <Separator className={index === data.criteria.education.length - 1 ? "hidden" : ""} />
+                                        </React.Fragment>
+                                      ))}
+                                    </>
+                                  ) : (
+                                    <p className="text-center text-gray-500">No education added</p>
+                                  )}
+                                </AccordionContent>
+                              </AccordionItem>
+                              <AccordionItem value="2" className="mb-5">
+                                <AccordionTrigger>
+                                  Skills
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  {data.criteria && data.criteria.skills && data.criteria.skills.length > 0 ? (
+                                    <>
                                       <div className="grid grid-cols-3 gap-4 my-3">
-                                        <p className="col-span-2">{skills.perS_name}</p>
-                                        <div className="flex justify-end">
-                                          {skills.meets_criteria === 1 ?
-                                            <Check className="w-5 h-5 text-green-500" />
-                                            :
-                                            <X className="w-5 h-5 text-red-500" />}
-                                        </div>
+                                        <p className="col-span-2">Total points</p>
+                                        <p className={`flex justify-end` + (data.pointsByCategory.skills.points
+                                          >= (data.pointsByCategory.skills.maxPoints / 2) ? " text-green-500"
+                                          : " text-red-500")}
+                                        >
+                                          {data.pointsByCategory.skills.points}
+                                          /{data.pointsByCategory.skills.maxPoints}
+                                        </p>
                                       </div>
-                                      <Separator className={index === data.criteria.skills.length - 1 ? "hidden" : ""} />
-                                    </React.Fragment>
-                                  ))}
-                                </>
-                              ) : (
-                                <p className="text-center text-gray-500">No skills added</p>
-                              )}
-                            </AccordionContent>
-                          </AccordionItem>
-                          <AccordionItem value="3" className="mb-5">
-                            <AccordionTrigger>
-                              Trainings
-                            </AccordionTrigger>
-                            <AccordionContent>
-                              {data.criteria && data.criteria.training && data.criteria.training.length > 0 ? (
-                                <>
-                                  <div className="grid grid-cols-3 gap-4 my-3">
-                                    <p className="col-span-2">Total points</p>
-                                    <p className={`flex justify-end` + (data.pointsByCategory.training.points
-                                      >= (data.pointsByCategory.training.maxPoints / 2) ? " text-green-500"
-                                      : " text-red-500")}
-                                    >
-                                      {data.pointsByCategory.training.points}
-                                      /{data.pointsByCategory.training.maxPoints}
-                                    </p>
-                                  </div>
-                                  <Separator />
-                                  {data.criteria.training.map((training, index) => (
-                                    <React.Fragment key={index}>
+                                      <Separator />
+                                      {data.criteria.skills.map((skills, index) => (
+                                        <React.Fragment key={index}>
+                                          <div className="grid grid-cols-3 gap-4 my-3">
+                                            <p className="col-span-2">{skills.perS_name}</p>
+                                            <div className="flex justify-end">
+                                              {skills.meets_criteria === 1 ?
+                                                <Check className="w-5 h-5 text-green-500" />
+                                                :
+                                                <X className="w-5 h-5 text-red-500" />}
+                                            </div>
+                                          </div>
+                                          <Separator className={index === data.criteria.skills.length - 1 ? "hidden" : ""} />
+                                        </React.Fragment>
+                                      ))}
+                                    </>
+                                  ) : (
+                                    <p className="text-center text-gray-500">No skills added</p>
+                                  )}
+                                </AccordionContent>
+                              </AccordionItem>
+                              <AccordionItem value="3" className="mb-5">
+                                <AccordionTrigger>
+                                  Trainings
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  {data.criteria && data.criteria.training && data.criteria.training.length > 0 ? (
+                                    <>
                                       <div className="grid grid-cols-3 gap-4 my-3">
-                                        <p className="col-span-2">{training.perT_name}</p>
-                                        <div className="flex justify-end">
-                                          {training.meets_criteria === 1 ?
-                                            <Check className="w-5 h-5 text-green-500" />
-                                            :
-                                            <X className="w-5 h-5 text-red-500" />}
-                                        </div>
+                                        <p className="col-span-2">Total points</p>
+                                        <p className={`flex justify-end` + (data.pointsByCategory.training.points
+                                          >= (data.pointsByCategory.training.maxPoints / 2) ? " text-green-500"
+                                          : " text-red-500")}
+                                        >
+                                          {data.pointsByCategory.training.points}
+                                          /{data.pointsByCategory.training.maxPoints}
+                                        </p>
                                       </div>
-                                      <Separator className={index === data.criteria.training.length - 1 ? "hidden" : ""} />
-                                    </React.Fragment>
-                                  ))}
-                                </>
-                              ) : (
-                                <p className="text-center text-gray-500">No training added</p>
-                              )}
-                            </AccordionContent>
-                          </AccordionItem>
-                          <AccordionItem value="4" className="mb-5">
-                            <AccordionTrigger>
-                              Knowledge and Compliance
-                            </AccordionTrigger>
-                            <AccordionContent>
-                              {data.criteria && data.criteria.knowledge && data.criteria.knowledge.length > 0 ? (
-                                <>
-                                  <div className="grid grid-cols-3 gap-4 my-3">
-                                    <p className="col-span-2">Total points</p>
-                                    <p className={`flex justify-end` + (data.pointsByCategory.knowledge.points
-                                      >= (data.pointsByCategory.knowledge.maxPoints / 2) ? " text-green-500"
-                                      : " text-red-500")}
-                                    >
-                                      {data.pointsByCategory.knowledge.points}
-                                      /{data.pointsByCategory.knowledge.maxPoints}
-                                    </p>
-                                  </div>
-                                  <Separator />
-                                  {data.criteria.knowledge.map((knowledge, index) => (
-                                    <React.Fragment key={index}>
+                                      <Separator />
+                                      {data.criteria.training.map((training, index) => (
+                                        <React.Fragment key={index}>
+                                          <div className="grid grid-cols-3 gap-4 my-3">
+                                            <p className="col-span-2">{training.perT_name}</p>
+                                            <div className="flex justify-end">
+                                              {training.meets_criteria === 1 ?
+                                                <Check className="w-5 h-5 text-green-500" />
+                                                :
+                                                <X className="w-5 h-5 text-red-500" />}
+                                            </div>
+                                          </div>
+                                          <Separator className={index === data.criteria.training.length - 1 ? "hidden" : ""} />
+                                        </React.Fragment>
+                                      ))}
+                                    </>
+                                  ) : (
+                                    <p className="text-center text-gray-500">No training added</p>
+                                  )}
+                                </AccordionContent>
+                              </AccordionItem>
+                              <AccordionItem value="4" className="mb-5">
+                                <AccordionTrigger>
+                                  Knowledge and Compliance
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  {data.criteria && data.criteria.knowledge && data.criteria.knowledge.length > 0 ? (
+                                    <>
                                       <div className="grid grid-cols-3 gap-4 my-3">
-                                        <p className="col-span-2">{knowledge.knowledge_name}</p>
-                                        <div className="flex justify-end">
-                                          {knowledge.meets_criteria === 1 ?
-                                            <Check className="w-5 h-5 text-green-500" />
-                                            :
-                                            <X className="w-5 h-5 text-red-500" />}
-                                        </div>
+                                        <p className="col-span-2">Total points</p>
+                                        <p className={`flex justify-end` + (data.pointsByCategory.knowledge.points
+                                          >= (data.pointsByCategory.knowledge.maxPoints / 2) ? " text-green-500"
+                                          : " text-red-500")}
+                                        >
+                                          {data.pointsByCategory.knowledge.points}
+                                          /{data.pointsByCategory.knowledge.maxPoints}
+                                        </p>
                                       </div>
-                                      <Separator className={index === data.criteria.knowledge.length - 1 ? "hidden" : ""} />
-                                    </React.Fragment>
-                                  ))}
-                                </>
-                              ) : (
-                                <p className="text-center text-gray-500">No knowledge and compliance added</p>
-                              )}
-                            </AccordionContent>
-                          </AccordionItem>
-                          <AccordionItem value="5" className="mb-5">
-                            <AccordionTrigger>
-                              Experience
-                            </AccordionTrigger>
-                            <AccordionContent>
-                              {data.criteria && data.criteria.experience && data.criteria.experience.length > 0 ? (
-                                <>
-                                  <div className="grid grid-cols-3 gap-4 my-3">
-                                    <p className="col-span-2">Total points</p>
-                                    <p className={`flex justify-end` + (data.pointsByCategory.experience.points
-                                      >= (data.pointsByCategory.experience.maxPoints / 2) ? " text-green-500"
-                                      : " text-red-500")}
-                                    >
-                                      {data.pointsByCategory.experience.points}
-                                      /{data.pointsByCategory.experience.maxPoints}
-                                    </p>
-                                  </div>
-                                  <Separator />
-                                  {data.criteria.experience.map((experience, index) => (
-                                    <React.Fragment key={index}>
+                                      <Separator />
+                                      {data.criteria.knowledge.map((knowledge, index) => (
+                                        <React.Fragment key={index}>
+                                          <div className="grid grid-cols-3 gap-4 my-3">
+                                            <p className="col-span-2">{knowledge.knowledge_name}</p>
+                                            <div className="flex justify-end">
+                                              {knowledge.meets_criteria === 1 ?
+                                                <Check className="w-5 h-5 text-green-500" />
+                                                :
+                                                <X className="w-5 h-5 text-red-500" />}
+                                            </div>
+                                          </div>
+                                          <Separator className={index === data.criteria.knowledge.length - 1 ? "hidden" : ""} />
+                                        </React.Fragment>
+                                      ))}
+                                    </>
+                                  ) : (
+                                    <p className="text-center text-gray-500">No knowledge and compliance added</p>
+                                  )}
+                                </AccordionContent>
+                              </AccordionItem>
+                              <AccordionItem value="5" className="mb-5">
+                                <AccordionTrigger>
+                                  Experience
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                  {data.criteria && data.criteria.experience && data.criteria.experience.length > 0 ? (
+                                    <>
                                       <div className="grid grid-cols-3 gap-4 my-3">
-                                        <p className="col-span-2">{experience.jwork_responsibilities}</p>
-                                        <div className="flex justify-end">
-                                          {experience.meets_criteria === 1 ?
-                                            <Check className="w-5 h-5 text-green-500" />
-                                            :
-                                            <X className="w-5 h-5 text-red-500" />}
-                                        </div>
+                                        <p className="col-span-2">Total points</p>
+                                        <p className={`flex justify-end` + (data.pointsByCategory.experience.points
+                                          >= (data.pointsByCategory.experience.maxPoints / 2) ? " text-green-500"
+                                          : " text-red-500")}
+                                        >
+                                          {data.pointsByCategory.experience.points}
+                                          /{data.pointsByCategory.experience.maxPoints}
+                                        </p>
                                       </div>
-                                      <Separator className={index === data.criteria.experience.length - 1 ? "hidden" : ""} />
-                                    </React.Fragment>
-                                  ))}
-                                </>
-                              ) : (
-                                <p className="text-center text-gray-500">No experience added</p>
-                              )}
-                            </AccordionContent>
-                          </AccordionItem>
-                        </Accordion>
-                      </ScrollArea>
+                                      <Separator />
+                                      {data.criteria.experience.map((experience, index) => (
+                                        <React.Fragment key={index}>
+                                          <div className="grid grid-cols-3 gap-4 my-3">
+                                            <p className="col-span-2">{experience.jwork_responsibilities}</p>
+                                            <div className="flex justify-end">
+                                              {experience.meets_criteria === 1 ?
+                                                <Check className="w-5 h-5 text-green-500" />
+                                                :
+                                                <X className="w-5 h-5 text-red-500" />}
+                                            </div>
+                                          </div>
+                                          <Separator className={index === data.criteria.experience.length - 1 ? "hidden" : ""} />
+                                        </React.Fragment>
+                                      ))}
+                                    </>
+                                  ) : (
+                                    <p className="text-center text-gray-500">No experience added</p>
+                                  )}
+                                </AccordionContent>
+                              </AccordionItem>
+                            </Accordion>
+                          </TabsContent>
+                        </Tabs>
+                        <Tabs defaultValue="2">
+                            <InterviewResult candId={candId} />
+                        </Tabs>
+                        </ScrollArea>
                     </CardContent>
                   </Card>
                 </div>
