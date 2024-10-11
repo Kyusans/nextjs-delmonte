@@ -32,22 +32,23 @@ function AddInterviewMasterCriteria({ open, onHide, addCriteria, criteriaList })
 
   const nameInputRef = useRef(null);
   const onSubmit = async (values) => {
-    setIsLoading(true);
-    try {
-      if (criteriaList.some((element) => element.name === values.name)) {
-        toast.error("Criteria already exist");
-        return;
-      }
-      addCriteria(values);
-      toast.success("Criteria added successfully");
-      form.reset();
-      nameInputRef.current.focus();
-    } catch (error) {
-      toast.error("Network error");
-      console.log("AddInterviewMasterCriteria.jsx => onSubmit(): " + error);
-    } finally {
-      setIsLoading(false);
-    }
+    alert("hello")
+    // setIsLoading(true);
+    // try {
+    //   if (criteriaList.some((element) => element.name === values.name)) {
+    //     toast.error("Criteria already exist");
+    //     return;
+    //   }
+    //   addCriteria(values);
+    //   toast.success("Criteria added successfully");
+    //   form.reset();
+    //   nameInputRef.current.focus();
+    // } catch (error) {
+    //   toast.error("Network error");
+    //   console.log("AddInterviewMasterCriteria.jsx => onSubmit(): " + error);
+    // } finally {
+    //   setIsLoading(false);
+    // }
   };
 
   return (

@@ -89,6 +89,7 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
     });
     if (valid) {
       const scoreData = interviewCriteria.map(criteria => ({
+        jobId: retrieveData("jobId"),
         criteriaId: criteria.inter_criteria_id,
         candId: candId,
         points: Number(scores[criteria.inter_criteria_id]) || 0,
@@ -136,14 +137,14 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
                             {interviewCriteria.map((criteria, index) => (
                               <div key={index}>
                                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                                  {criteria.inter_criteria_name}
-                                  <span className='ml-1 text-xs'>{`(${criteria.inter_criteria_points} points)`}</span>
+                                  {criteria.criteria_inter_name}
+                                  <span className='ml-1 text-xs'>{`(${criteria.interview_categ_name})`}</span>
                                 </label>
                                 <Input
                                   type="text"
                                   value={scores[criteria.inter_criteria_id] || ''}
                                   onChange={(e) => handleInputChange(criteria.inter_criteria_id, criteria.inter_criteria_points, e.target.value)}
-                                  placeholder={`Enter ${criteria.inter_criteria_name.toLowerCase()} points`}
+                                  placeholder={`Enter points (0-${criteria.inter_criteria_points})`}
                                   onKeyDown={(e) => {
                                     if (["e", "E", "+", "-"].includes(e.key)) {
                                       e.preventDefault();
