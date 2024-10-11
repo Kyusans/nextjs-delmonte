@@ -1,11 +1,8 @@
 import { retrieveData } from '@/app/utils/storageUtils'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import Spinner from '@/components/ui/spinner'
-import { DialogTrigger } from '@radix-ui/react-dialog'
 import axios from 'axios'
 import React, { useCallback, useEffect, useState } from 'react'
 
@@ -29,8 +26,8 @@ const InterviewResult = ({ candId }) => {
       const res = await axios.post(url, formData);
       console.log("getCandInterviewResult: ", res.data);
       if (res.data !== 0) {
-        setResultData(res.data);
-        setCriteriaScore(res.data.criteriaScore);
+        setResultData(res.data.totalPoints[0]);
+        setCriteriaScore(res.data.candCriteriaPoints);
       } else {
         setResultData([]);
       }
@@ -49,35 +46,32 @@ const InterviewResult = ({ candId }) => {
 
   return (
     <div>
-      <div className="text-2xl">Interview result</div>
       {isLoading ? <Spinner /> :
         <>
-          <Card>
-            <CardContent>
-              {/* {criteriaScore.map((element, index) => (
-                      <>
-                        <div className="mt-3" key={index}>
-                          <Label htmlFor="name" className="text-right">
-                            {element.inter_criteria_name}
-                          </Label>
-                          <Input
-                            id="name"
-                            defaultValue={`${element.candPoints} / ${element.totalPoints}`}
-                            className="col-span-3"
-                            readOnly
-                          />
-                        </div>
-                      </>
-                    ))} */}
-              <Separator className="my-3" />
-              {/* <div className='mt-3 grid grid-cols-2'>
-                      <p>Total Score</p>
-                      <p className={`text-right `}>
-                        {resultData.candTotalPoints} / {resultData.totalPoints}
-                      </p>
-                    </div> */}
-            </CardContent>
-          </Card>
+          <div>
+            <div className='mb-3 grid grid-cols-2'>
+              <p>Total Score</p>
+              <p>
+                {resultData.candTotalPoints} / {resultData.criteriaTotalPoints}
+              </p>
+            </div>
+            {criteriaScore.map((element, index) => (
+              <>
+                <div className="mt-3" key={index}>
+                  <Label htmlFor="name">
+                    {element.criteria_inter_name}
+                  </Label>
+                  <Input
+                    id="name"
+                    defaultValue={`${element.CandPoints} / ${element.CriteriaPoint}`}
+                    className="col-span-3"
+                    readOnly
+                  />
+                </div>
+              </>
+            ))}
+
+          </div>
         </>
       }
 

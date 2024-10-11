@@ -131,11 +131,6 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
           <Separator className="mt-4 w-full" />
           <ScrollArea className="h-full">
             <div className="md:p-5">
-              {status === "Exam" && (
-                <div className="my-3 text-right">
-                  <InterviewResult candId={candId} />
-                </div>
-              )}
               {isLoading ? (
                 <Spinner />
               ) : (
@@ -439,13 +434,8 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                     </div>
                   </div>
                   <Card className="w-full mt-5 lg:mt-0">
-                    <CardHeader className="flex flex-col items-center">
-                      <CardTitle className="mt-2">
-                        Job Qualifications
-                      </CardTitle>
-                    </CardHeader>
                     <CardContent className="relative">
-                      <ScrollArea className="h-[500px] overflow-auto">
+                      <ScrollArea className="h-[550px] overflow-auto mt-5">
                         <Tabs defaultValue="1">
                           <TabsList>
                             <TabsTrigger value="1">Job Qualifications</TabsTrigger>
@@ -645,11 +635,15 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                               </AccordionItem>
                             </Accordion>
                           </TabsContent>
+                          <TabsContent value="2">
+                            {status === "Exam" && (
+                              <div className="my-3">
+                                <InterviewResult candId={candId} />
+                              </div>
+                            )}
+                          </TabsContent>
                         </Tabs>
-                        <Tabs defaultValue="2">
-                            <InterviewResult candId={candId} />
-                        </Tabs>
-                        </ScrollArea>
+                      </ScrollArea>
                     </CardContent>
                   </Card>
                 </div>

@@ -1,15 +1,12 @@
 import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Edit2, PlusCircle, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import AddInterviewCriteria from './modals/AddInterview/AddInterviewCriteria'
-import AddInterviewMaster from './modals/AddInterview/AddInterviewMaster'
 import UpdateInterviewCriteria from './modals/UpdateInterview/UpdateInterviewCriteria'
 import ShowAlert from '@/components/ui/show-alert'
 import axios from 'axios'
 import { toast } from 'sonner'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
 function InterviewPage({ interviewData, getSelectedJob }) {
@@ -89,44 +86,42 @@ function InterviewPage({ interviewData, getSelectedJob }) {
   }, [interviewData.interviewCriteria]);
 
   return (
-    <div>
-      <ScrollArea className="h-[calc(100vh-200px)]">
-        <div>
-          {data.length === 0 ? (
-            <div className='flex flex-col justify-center items-center gap-3'>
-              <div className='font-bold text-xl mt-3'>No criteria for interview</div>
-              <Button onClick={openShowModal}>
-                <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
-              </Button>
+    <div className={`h-[calc(100vh-200px)]`}>
+      <div>
+        {data.length === 0 ? (
+          <div className='flex flex-col justify-center items-center gap-3'>
+            <div className='font-bold text-xl mt-3'>No criteria for interview</div>
+            <Button onClick={openShowModal}>
+              <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
+            </Button>
+          </div>
+        ) : (
+          <div className='mt-3'>
+            <Button onClick={openShowModal} className='mb-3'>
+              <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
+            </Button>
+            <div className={`grid ${data.length > 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-2`}>
+              {data.map((item, index) => (
+                <Card key={index} className='bg-background'>
+                  <CardContent>
+                    <CardHeader>
+                      <div className='flex justify-end gap-3'>
+                        <Edit2 className='h-5 w-5 mr-1 hover:cursor-pointer' />
+                        <Trash2 className='h-5 w-5 mr-1 hover:cursor-pointer' onClick={() => handleRemoveList(item.inter_criteria_id)} />
+                      </div>
+                      <CardTitle> {item.criteria_inter_name}</CardTitle>
+                    </CardHeader>
+                    <CardFooter>
+                      <Badge variant="secondary" className="mr-2">{item.interview_categ_name}</Badge>
+                      <Badge>{item.inter_criteria_points} points</Badge>
+                    </CardFooter>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-          ) : (
-            <div className='mt-3'>
-              <Button onClick={openShowModal} className='mb-3'>
-                <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
-              </Button>
-              <div className={`grid ${data.length > 2 ? "grid-cols-2" : "grid-cols-1"} gap-2`}>
-                {data.map((item, index) => (
-                  <Card key={index} className='bg-background'>
-                    <CardContent>
-                      <CardHeader>
-                        <div className='flex justify-end gap-3'>
-                          <Edit2 className='h-5 w-5 mr-1 hover:cursor-pointer' />
-                          <Trash2 className='h-5 w-5 mr-1 hover:cursor-pointer' onClick={() => handleRemoveList(item.inter_criteria_id)} />
-                        </div>
-                        <CardTitle> {item.criteria_inter_name}</CardTitle>
-                      </CardHeader>
-                      <CardFooter>
-                        <Badge variant="secondary" className="mr-2">{item.interview_categ_name}</Badge>
-                        <Badge>{item.inter_criteria_points} points</Badge>
-                      </CardFooter>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </ScrollArea>
+          </div>
+        )}
+      </div>
       {
         showAddModal && (
           <AddInterviewCriteria

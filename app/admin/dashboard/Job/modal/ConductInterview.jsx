@@ -141,7 +141,7 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
                                   <span className='ml-1 text-xs'>{`(${criteria.interview_categ_name})`}</span>
                                 </label>
                                 <Input
-                                  type="text"
+                                  type="number"
                                   value={scores[criteria.inter_criteria_id] || ''}
                                   onChange={(e) => handleInputChange(criteria.inter_criteria_id, criteria.inter_criteria_points, e.target.value)}
                                   placeholder={`Enter points (0-${criteria.inter_criteria_points})`}
