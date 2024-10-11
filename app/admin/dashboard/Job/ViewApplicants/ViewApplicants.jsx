@@ -3,6 +3,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ChevronsUpDown } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { Input } from '@/components/ui/input';
 import SelectedApplicant from '../modal/SelectedApplicant';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
@@ -22,10 +23,18 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState('desc');
 
+  const [searchTerm, setSearchTerm] = useState("");
+
   const indexOfLastCandidate = currentPage * itemsPerPage;
   const indexOfFirstCandidate = indexOfLastCandidate - itemsPerPage;
-  const currentCandidates = data.candidates?.slice(indexOfFirstCandidate, indexOfLastCandidate) || [];
-  const totalPages = Math.ceil((data.candidates?.length || 0) / itemsPerPage);
+  const currentCandidates = data.candidates
+    ?.filter((cand) =>
+      cand.FullName.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .slice(indexOfFirstCandidate, indexOfLastCandidate);
+  const totalPages = Math.ceil(
+    (data.candidates?.length || 0) / itemsPerPage
+  );
 
   const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -120,6 +129,14 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
 
   return (
     <div>
+      <div className="mt-4 mb-4">
+        <Input
+          placeholder="Search by name"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-1/2 md:w-1/4"
+        />
+      </div>
       <ScrollArea className="h-[calc(100vh-200px)] whitespace-nowrap">
         {/* <div className='flex justify-end'>
           Passing percentage: {passingPercentage ? passingPercentage : 0}%

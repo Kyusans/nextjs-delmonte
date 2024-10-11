@@ -88,7 +88,7 @@ function SelectedJob({ open, onHide, jobId }) {
                     <TabsContent value={1}>
                       <ScrollArea className="h-[calc(100vh-200px)]">
                         <div className="flex items-center w-full px-3">
-                          <span className='text-sm my-3 font-bold flex items-center'>Duties and Responsibilities</span>
+                          <span className='text-sm my-3 font-bold flex items-center mr-2'>Duties and Responsibilities</span>
                           <div>{handleUpdateJob(data.jobDuties, "duties")}</div>
                         </div>
                         <div className='w-full px-6'>

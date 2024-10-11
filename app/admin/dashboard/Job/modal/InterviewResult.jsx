@@ -1,7 +1,7 @@
 import { retrieveData } from '@/app/utils/storageUtils'
+import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
 import Spinner from '@/components/ui/spinner'
 import axios from 'axios'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -49,11 +49,8 @@ const InterviewResult = ({ candId }) => {
       {isLoading ? <Spinner /> :
         <>
           <div>
-            <div className='mb-3 grid grid-cols-2'>
-              <p>Total Score</p>
-              <p>
-                {resultData.candTotalPoints} / {resultData.criteriaTotalPoints}
-              </p>
+            <div className='mb-3'>
+              <p>Total Score: {resultData.candTotalPoints} / {resultData.criteriaTotalPoints}</p>
             </div>
             {criteriaScore.map((element, index) => (
               <>
@@ -70,11 +67,9 @@ const InterviewResult = ({ candId }) => {
                 </div>
               </>
             ))}
-
           </div>
         </>
       }
-
     </div>
   )
 }
