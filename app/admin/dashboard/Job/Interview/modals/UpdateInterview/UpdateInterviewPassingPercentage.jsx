@@ -12,7 +12,7 @@ import { retrieveData } from '@/app/utils/storageUtils';
 import { toast } from 'sonner';
 import axios from 'axios';
 
-function UpdateJobPassingPercentage({ currentPassingPercentage, getSelectedJob }) {
+function UpdateInterviewPassingPercentage({ currentPassingPercentage, getSelectedJob }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -49,18 +49,18 @@ function UpdateJobPassingPercentage({ currentPassingPercentage, getSelectedJob }
       }
       console.log("jsonData: ", JSON.stringify(jsonData));
       const formData = new FormData();
-      formData.append("operation", "updateJobPassingPercent");
+      formData.append("operation", "updateInterviewPassingPercent");
       formData.append("json", JSON.stringify(jsonData));
       const res = await axios.post(url, formData);
       console.log("res.data: ", res.data);
       if (res.data !== 0) {
-        toast.success("Job's passing percentage updated successfully");
+        toast.success("Interview's passing percentage updated successfully");
         getSelectedJob();
         handleOnHide();
       }
     } catch (error) {
       toast.error("Network error");
-      console.log("UpdateJobPassingPercentage.jsx => onSubmit(): " + error);
+      console.log("UpdateInterviewPassingPercentage.jsx => onSubmit(): " + error);
     } finally {
       setIsLoading(false);
     }
@@ -114,4 +114,4 @@ function UpdateJobPassingPercentage({ currentPassingPercentage, getSelectedJob }
   )
 }
 
-export default UpdateJobPassingPercentage
+export default UpdateInterviewPassingPercentage

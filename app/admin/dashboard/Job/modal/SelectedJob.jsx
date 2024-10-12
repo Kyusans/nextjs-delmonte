@@ -73,7 +73,9 @@ function SelectedJob({ open, onHide, jobId }) {
             <>
               <DialogHeader className="text-white">
                 <DialogTitle>{data.jobMaster[0].jobM_title}</DialogTitle>
+                <ScrollArea className="h-64 md:h-24">
                   <DialogDescription className="text-white text-start">{data.jobMaster[0].jobM_description}</DialogDescription>
+                </ScrollArea>
               </DialogHeader>
               <ScrollArea className="rounded-md">
                 <Card className="p-3 w-full md:p-2 dark:bg-[#1c1917]">
