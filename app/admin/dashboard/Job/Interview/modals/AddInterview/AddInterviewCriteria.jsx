@@ -76,7 +76,7 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
       if (interviewCriteria.some((element) => element.criteria_inter_id === values.interviewCriteria)) {
-        toast.error("Criteria already exist");
+        toast.error("Criteria already exists");
         return;
       }
       const jsonData = {
@@ -88,20 +88,35 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
       formData.append("operation", "addInterviewCriteriaMaster");
       formData.append("json", JSON.stringify(jsonData));
       const res = await axios.post(url, formData);
+
       if (res.data !== 0) {
         toast.success("Criteria added successfully");
-        addCriteria();
+
+        const returnData = {
+          category: interviewCategory.find(
+            (item) => item.value === form.getValues("interviewCategory")
+          ).label,
+          name: allInterviewCriteriaList.find(
+            (item) => item.value === form.getValues("interviewCriteria")
+          ).label,
+          points: values.points,
+        };
+
+        console.log("returnData: ", returnData);
+
+        addCriteria(returnData);
         form.reset();
       }
     } catch (error) {
       toast.error("Network error");
+      console.log("AddInterviewCriteria.jsx => onSubmit(): " + error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleOnHide = () => {
-    onHide(0);
+    onHide(1);
   };
 
   useEffect(() => {

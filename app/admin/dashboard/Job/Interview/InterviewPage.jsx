@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button'
-import { Edit2, PlusCircle, Trash2 } from 'lucide-react'
+import { Edit, Edit2, PlusCircle, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import AddInterviewCriteria from './modals/AddInterview/AddInterviewCriteria'
 import UpdateInterviewCriteria from './modals/UpdateInterview/UpdateInterviewCriteria'
@@ -8,6 +8,8 @@ import axios from 'axios'
 import { toast } from 'sonner'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import UpdateInterviewPassingPercentage from './modals/UpdateInterview/UpdateInterviewPassingPercentage'
 
 function InterviewPage({ interviewData, getSelectedJob }) {
   const [data, setData] = useState([]);
@@ -22,8 +24,13 @@ function InterviewPage({ interviewData, getSelectedJob }) {
     setShowAddModal(false);
   };
 
-  const addCriteria = () => {
-    getSelectedJob();
+  const addCriteria = (values) => {
+    setData([...data, {
+      criteria_inter_name: values.name,
+      inter_criteria_points: values.points,
+      interview_categ_name: values.category
+    }
+    ]);
   }
 
   // update interview criteria modal diri
@@ -38,7 +45,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
   const closeUpdateModal = (status) => {
     if (status !== 0) {
       let criteriaList = data;
-      criteriaList[selectedIndex] = { inter_criteria_name: status.name, inter_criteria_points: status.points };
+      criteriaList[selectedIndex] = { criteria_inter_name: status.name, inter_criteria_points: status.points };
       setData(criteriaList);
       getSelectedJob();
     }
@@ -86,7 +93,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
   }, [interviewData.interviewCriteria]);
 
   return (
-    <div className={`h-[calc(100vh-200px)]`}>
+    <div className={data.length <= 2 && "h-[calc(100vh-220px)]"}>
       <div>
         {data.length === 0 ? (
           <div className='flex flex-col justify-center items-center gap-3'>
@@ -96,10 +103,18 @@ function InterviewPage({ interviewData, getSelectedJob }) {
             </Button>
           </div>
         ) : (
-          <div className='mt-3'>
-            <Button onClick={openShowModal} className='mb-3'>
-              <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
-            </Button>
+          <div>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+              <div className="ml-2">
+                <Button onClick={openShowModal} className="md:mb-3">
+                  <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
+                </Button>
+              </div>
+              <div className='flex md:justify-end items-end ml-2 md:mx-5 mb-3'>
+                <p>Passing percentage: {interviewData.interviewPassingPercent[0].passing_percent}%</p>
+                <UpdateInterviewPassingPercentage currentPassingPercentage={interviewData.interviewPassingPercent[0].passing_percent} getSelectedJob={getSelectedJob} />
+              </div>
+            </div>
             <div className={`grid ${data.length > 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-2`}>
               {data.map((item, index) => (
                 <Card key={index} className='bg-background'>
@@ -143,8 +158,8 @@ function InterviewPage({ interviewData, getSelectedJob }) {
           />
         )
       }
-      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
-    </div >
+      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={0} />
+    </div>
   );
 }
 

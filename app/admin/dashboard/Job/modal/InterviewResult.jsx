@@ -1,15 +1,19 @@
 import { retrieveData } from '@/app/utils/storageUtils'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Separator } from '@/components/ui/separator'
 import Spinner from '@/components/ui/spinner'
 import axios from 'axios'
 import React, { useCallback, useEffect, useState } from 'react'
+import ConductInterview from './ConductInterview'
+import { toast } from 'sonner'
 
-const InterviewResult = ({ candId }) => {
+const InterviewResult = ({ candId, handleInterviewChangeStatus }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [resultData, setResultData] = useState([]);
   const [criteriaScore, setCriteriaScore] = useState([]);
+  const [hasCriteria, setHasCriteria] = useState(true);
 
   const getCandInterviewResult = useCallback(async () => {
     setIsLoading(true);
@@ -24,9 +28,12 @@ const InterviewResult = ({ candId }) => {
       formData.append("operation", "getCandInterviewResult");
       formData.append("json", JSON.stringify(jsonData));
       const res = await axios.post(url, formData);
-      console.log("getCandInterviewResult: ", res.data);
-      if (res.data !== 0) {
-        setResultData(res.data.totalPoints[0]);
+      console.log("getCandInterviewResult: ", res.data.totalPoints);
+      if (res.data === -1) {
+        setHasCriteria(false);
+      } else if (res.data !== 0) {
+        setHasCriteria(true);
+        setResultData(res.data.totalPoints);
         setCriteriaScore(res.data.candCriteriaPoints);
       } else {
         setResultData([]);
@@ -40,6 +47,15 @@ const InterviewResult = ({ candId }) => {
     }
   }, [candId])
 
+  // modal for conduct interview
+  const [showConductInterview, setShowConductInterview] = useState(false);
+  const handleShowConductInterview = () => {
+    setShowConductInterview(true);
+  };
+  const handleCloseConductInterview = () => {
+    setShowConductInterview(false);
+  };
+
   useEffect(() => {
     getCandInterviewResult();
   }, [getCandInterviewResult])
@@ -48,33 +64,44 @@ const InterviewResult = ({ candId }) => {
     <div>
       {isLoading ? <Spinner /> :
         <>
-          <div>
-            <div className='mb-3 grid grid-cols-2'>
-              <p>Total Score</p>
-              <p>
-                {resultData.candTotalPoints} / {resultData.criteriaTotalPoints}
-              </p>
+          {hasCriteria ? (
+            <div>
+              <div className='mb-3'>
+                <p>Total Score: {resultData.candTotalPoints} / {resultData.criteriaTotalPoints}</p>
+              </div>
+              {criteriaScore.map((element, index) => (
+                <>
+                  <div className="mt-3" key={index}>
+                    <Label htmlFor="name">
+                      {element.criteria_inter_name}
+                    </Label>
+                    <Input
+                      id="name"
+                      defaultValue={`${element.CandPoints} / ${element.CriteriaPoint}`}
+                      className="col-span-3"
+                      disabled
+                    />
+                  </div>
+                </>
+              ))}
             </div>
-            {criteriaScore.map((element, index) => (
-              <>
-                <div className="mt-3" key={index}>
-                  <Label htmlFor="name">
-                    {element.criteria_inter_name}
-                  </Label>
-                  <Input
-                    id="name"
-                    defaultValue={`${element.CandPoints} / ${element.CriteriaPoint}`}
-                    className="col-span-3"
-                    readOnly
-                  />
-                </div>
-              </>
-            ))}
+          ) : (
+            <div className='flex flex-col items-center'>
+              <p className="text-center mb-3">Interview criteria updated or deleted</p>
+              <Button onClick={() => handleShowConductInterview()}>Reinterview applicant</Button>
+            </div>
+          )}
 
-          </div>
         </>
       }
-
+      {showConductInterview && (
+        <ConductInterview
+          open={showConductInterview}
+          onHide={handleCloseConductInterview}
+          candId={candId}
+          handleInterviewChangeStatus={handleInterviewChangeStatus}
+        />
+      )}
     </div>
   )
 }
