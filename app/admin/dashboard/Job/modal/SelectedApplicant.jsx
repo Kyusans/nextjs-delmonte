@@ -439,7 +439,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                         <Tabs defaultValue="1">
                           <TabsList>
                             <TabsTrigger value="1">Job Qualifications</TabsTrigger>
-                            <TabsTrigger value="2">Interview Results</TabsTrigger>
+                            {status === "Exam" ? <TabsTrigger value="2">Interview Results</TabsTrigger> : null}
                           </TabsList>
                           <TabsContent value="1">
                             <Accordion type="multiple" collapsible="true" className="w-full p-5" defaultValue={["1", "2", "3", "4", "5"]}>
@@ -638,7 +638,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                           <TabsContent value="2">
                             {status === "Exam" && (
                               <div className="my-3">
-                                <InterviewResult candId={candId} />
+                                <InterviewResult candId={candId} handleInterviewChangeStatus={handleInterviewChangeStatus} />
                               </div>
                             )}
                           </TabsContent>

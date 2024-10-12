@@ -92,19 +92,23 @@ function SelectedJob({ open, onHide, jobId }) {
                           <div>{handleUpdateJob(data.jobDuties, "duties")}</div>
                         </div>
                         <div className='w-full px-6'>
-                          {data.jobDuties.map((data, index) => (
-                            <ul key={index} className="list-disc ml-4 mb-1">
-                              <li>{data.duties_text}</li>
-                            </ul>
-                          ))}
+                          {data.jobDuties.length > 0 ? (
+                            data.jobDuties.map((data, index) => (
+                              <ul key={index} className="list-disc ml-4 mb-1">
+                                <li>{data.duties_text}</li>
+                              </ul>
+                            ))
+                          ) : (
+                            <p>No duties and responsibilities found.</p>
+                          )}
                         </div>
                         <div className='w-full px-3 mt-3'>
-                          {data.jobEducation.length > 0 && (
+                          <div className='text-sm mb-3 font-bold flex items-center'>
+                            <span className='mr-2'>Educational Background </span>
+                            {handleUpdateJob(data.jobEducation, "education")}
+                          </div>
+                          {data.jobEducation.length > 0 ? (
                             <>
-                              <div className='text-sm mb-3 font-bold flex items-center'>
-                                <span className='mr-2'>Educational Background </span>
-                                {handleUpdateJob(data.jobEducation, "education")}
-                              </div>
                               <div className='w-full ml-3'>
                                 {data.jobEducation.map((data, index) => (
                                   <ul key={index} className="list-disc ml-4 mb-3">
@@ -116,13 +120,17 @@ function SelectedJob({ open, onHide, jobId }) {
                                 ))}
                               </div>
                             </>
-                          )}
-                          {data.jobSkills.length > 0 && (
+                          ) : (
                             <>
-                              <div className='text-sm my-3 font-bold flex items-center'>
-                                <span className='mr-2'>Skills</span>
-                                {handleUpdateJob(data.jobSkills, "skills")}
-                              </div>
+                              <p className="ml-3">No educational background found.</p>
+                            </>
+                          )}
+                          <div className='text-sm my-3 font-bold flex items-center'>
+                            <span className='mr-2'>Skills</span>
+                            {handleUpdateJob(data.jobSkills, "skills")}
+                          </div>
+                          {data.jobSkills.length > 0 ? (
+                            <>
                               <div className='w-full ml-3'>
                                 {data.jobSkills.map((data, index) => (
                                   <ul key={index} className="list-disc ml-4 mb-1">
@@ -134,13 +142,17 @@ function SelectedJob({ open, onHide, jobId }) {
                                 ))}
                               </div>
                             </>
-                          )}
-                          {data.jobTrainings.length > 0 && (
+                          ) : (
                             <>
-                              <div className='text-sm my-3 font-bold flex items-center'>
-                                <span className='mr-2'>Trainings</span>
-                                {handleUpdateJob(data.jobTrainings, "trainings")}
-                              </div>
+                              <p className="ml-3">No skills found.</p>
+                            </>
+                          )}
+                          <div className='text-sm my-3 font-bold flex items-center'>
+                            <span className='mr-2'>Trainings</span>
+                            {handleUpdateJob(data.jobTrainings, "trainings")}
+                          </div>
+                          {data.jobTrainings.length > 0 ? (
+                            <>
                               <div className='w-full ml-3'>
                                 {data.jobTrainings.map((data, index) => (
                                   <ul key={index} className="list-disc ml-4 mb-1">
@@ -152,13 +164,17 @@ function SelectedJob({ open, onHide, jobId }) {
                                 ))}
                               </div>
                             </>
-                          )}
-                          {data.jobExperience.length > 0 && (
+                          ) : (
                             <>
-                              <div className='text-sm my-3 font-bold flex items-center'>
-                                <span className='mr-2'>Experience</span>
-                                {handleUpdateJob(data.jobExperience, "experience")}
-                              </div>
+                              <p className="ml-3">No trainings found.</p>
+                            </>
+                          )}
+                          <div className='text-sm my-3 font-bold flex items-center'>
+                            <span className='mr-2'>Experience</span>
+                            {handleUpdateJob(data.jobExperience, "experience")}
+                          </div>
+                          {data.jobExperience.length > 0 ? (
+                            <>
                               <div className='w-full ml-3'>
                                 {data.jobExperience.map((data, index) => (
                                   <ul key={index} className="list-disc ml-4 mb-1">
@@ -170,13 +186,17 @@ function SelectedJob({ open, onHide, jobId }) {
                                 ))}
                               </div>
                             </>
-                          )}
-                          {data.jobKnowledge.length > 0 && (
+                          ) :
                             <>
-                              <div className='text-sm my-3 font-bold flex items-center'>
-                                <span className='mr-2'>Knowledge and Compliance</span>
-                                {handleUpdateJob(data.jobKnowledge, "knowledge")}
-                              </div>
+                              <p className="ml-3">No experience found.</p>
+                            </>
+                          }
+                          <div className='text-sm my-3 font-bold flex items-center'>
+                            <span className='mr-2'>Knowledge and Compliance</span>
+                            {handleUpdateJob(data.jobKnowledge, "knowledge")}
+                          </div>
+                          {data.jobKnowledge.length > 0 ? (
+                            <>
                               <div className='w-full ml-3'>
                                 {data.jobKnowledge.map((data, index) => (
                                   <ul key={index} className="list-disc ml-4 mb-1">
@@ -187,6 +207,10 @@ function SelectedJob({ open, onHide, jobId }) {
                                   </ul>
                                 ))}
                               </div>
+                            </>
+                          ) : (
+                            <>
+                              <p className="ml-3">No knowledge and compliance found.</p>
                             </>
                           )}
                         </div>

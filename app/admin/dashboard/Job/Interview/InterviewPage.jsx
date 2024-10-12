@@ -24,8 +24,13 @@ function InterviewPage({ interviewData, getSelectedJob }) {
     setShowAddModal(false);
   };
 
-  const addCriteria = () => {
-    getSelectedJob();
+  const addCriteria = (values) => {
+    setData([...data, {
+      criteria_inter_name: values.name,
+      inter_criteria_points: values.points,
+      interview_categ_name: values.category
+    }
+    ]);
   }
 
   // update interview criteria modal diri
@@ -40,7 +45,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
   const closeUpdateModal = (status) => {
     if (status !== 0) {
       let criteriaList = data;
-      criteriaList[selectedIndex] = { inter_criteria_name: status.name, inter_criteria_points: status.points };
+      criteriaList[selectedIndex] = { criteria_inter_name: status.name, inter_criteria_points: status.points };
       setData(criteriaList);
       getSelectedJob();
     }
@@ -153,7 +158,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
           />
         )
       }
-      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
+      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={0} />
     </div>
   );
 }
