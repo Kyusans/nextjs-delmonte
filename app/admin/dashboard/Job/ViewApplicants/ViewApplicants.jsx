@@ -1,7 +1,7 @@
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ChevronsUpDown } from 'lucide-react';
+import { ChevronsUpDown, Edit } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import SelectedApplicant from '../modal/SelectedApplicant';
@@ -11,6 +11,7 @@ import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { ScrollAreaCorner, ScrollAreaScrollbar, ScrollAreaThumb, ScrollAreaViewport } from '@radix-ui/react-scroll-area';
+import UpdateJobPassingPercentage from './modal/UpdateJobPassingPercentage';
 
 const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
   const [data, setData] = useState({});
@@ -19,6 +20,7 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
   const [status, setStatus] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("0");
   const [statusName, setStatusName] = useState("");
+  const [jobPassingPercent, setJobPassingPercent] = useState(0);
 
   const [sortField, setSortField] = useState(null);
   const [sortOrder, setSortOrder] = useState('desc');
@@ -109,10 +111,15 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
   };
 
   useEffect(() => {
+    setJobPassingPercent(passingPercentage);
     setData(datas);
     setStatus(datas.status);
     setSelectedStatus(retrieveData("selectedStatus") || "0");
-  }, [datas]);
+  }, [datas, passingPercentage]);
+
+  const handleChangePercent = (value) => {
+    setJobPassingPercent(value);
+  }
 
   useEffect(() => {
     let filteredCandidates;
@@ -129,22 +136,24 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
 
   return (
     <div>
-      <div className="mt-4 mb-4">
+      <div className="mt-4 mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 px-3">
         <Input
-          placeholder="Search by name"
+          placeholder="Search by name" 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-1/2 md:w-1/4"
+          className="w-2/3 md:w-1/2"
         />
+        <div className="flex items-center md:justify-end">
+          <p >Passing percentage: {passingPercentage ? jobPassingPercent : 0}%</p>
+          <UpdateJobPassingPercentage  currentPassingPercentage={jobPassingPercent} handleChangePercent={handleChangePercent}/>
+        </div>
       </div>
-      <ScrollArea className="h-[calc(100vh-200px)] whitespace-nowrap">
-        {/* <div className='flex justify-end'>
-          Passing percentage: {passingPercentage ? passingPercentage : 0}%
-        </div> */}
+      <div className="h-[calc(100vh-200px)] whitespace-nowrap">
+
         <Table className="text-center">
-          <TableCaption className="text-center">
+          {/* <TableCaption className="text-center">
             Passing percentage: {passingPercentage ? passingPercentage : 0}%
-          </TableCaption>
+          </TableCaption> */}
           <TableHeader>
             <TableRow>
               <TableHead className="cursor-pointer text-center">
@@ -229,7 +238,7 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
             )}
           </TableBody>
         </Table>
-      </ScrollArea>
+      </div>
 
       {data.candidates?.length > itemsPerPage && (
         <div className='flex justify-end items-end mt-4'>

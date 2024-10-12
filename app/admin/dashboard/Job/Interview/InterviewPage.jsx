@@ -8,6 +8,7 @@ import axios from 'axios'
 import { toast } from 'sonner'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 function InterviewPage({ interviewData, getSelectedJob }) {
   const [data, setData] = useState([]);
@@ -86,7 +87,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
   }, [interviewData.interviewCriteria]);
 
   return (
-    <div className={`h-[calc(100vh-200px)]`}>
+    <div className={data.length <= 2 && "h-[calc(100vh-220px)]"}>
       <div>
         {data.length === 0 ? (
           <div className='flex flex-col justify-center items-center gap-3'>
@@ -144,7 +145,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
         )
       }
       <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
-    </div >
+    </div>
   );
 }
 
