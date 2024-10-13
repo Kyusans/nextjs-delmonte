@@ -28,7 +28,7 @@ const InterviewResult = ({ candId, handleInterviewChangeStatus }) => {
       formData.append("operation", "getCandInterviewResult");
       formData.append("json", JSON.stringify(jsonData));
       const res = await axios.post(url, formData);
-      console.log("getCandInterviewResult: ", res.data.totalPoints);
+      console.log("getCandInterviewResult: ", res.data);
       if (res.data === -1) {
         setHasCriteria(false);
       } else if (res.data !== 0) {

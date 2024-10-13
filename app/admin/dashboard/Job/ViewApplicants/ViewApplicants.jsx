@@ -134,15 +134,14 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
           placeholder="Search by name" 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-2/3 md:w-1/2"
+          className="w-2/3 md:w-1/2 ml-2"
         />
         <div className="flex items-center md:justify-end ml-1 md:mx-3 ">
           <p>Passing percentage: {passingPercentage ? passingPercentage : 0}%</p>
           <UpdateJobPassingPercentage  currentPassingPercentage={passingPercentage} getSelectedJob={getSelectedJob} />
         </div>
       </div>
-      <div className="h-[calc(100vh-200px)] whitespace-nowrap">
-
+      <div className="whitespace-nowrap">
         <Table className="text-center">
           {/* <TableCaption className="text-center">
             Passing percentage: {passingPercentage ? passingPercentage : 0}%

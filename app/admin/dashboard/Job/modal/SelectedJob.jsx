@@ -13,6 +13,8 @@ import UpdateJobModal from '../AddJobStep/modals/UpdateJobDetails/UpdateJobModal
 import { Badge } from '@/components/ui/badge';
 import InterviewPage from '../Interview/InterviewPage';
 import ViewApplicants from '../ViewApplicants/ViewApplicants';
+import ExamPage from '../Exam/ExamPage';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
@@ -65,28 +67,29 @@ function SelectedJob({ open, onHide, jobId }) {
 
   return (
     <>
-      <Dialog open={open} onOpenChange={handleClose} className="text-white">
-        <DialogContent className="max-w-7xl h-full md:h-4/5 bg-[#107343] dark:bg-background">
+      <Sheet open={open} onOpenChange={handleClose} className="text-white h-full">
+        <SheetContent side="bottom" className="bg-[#107343] dark:bg-background">
           {isLoading ? (
             <Spinner />
           ) : (
             <>
-              <DialogHeader className="text-white">
-                <DialogTitle>{data.jobMaster[0].jobM_title}</DialogTitle>
+              <SheetHeader className="text-white">
+                <SheetTitle>{data.jobMaster[0].jobM_title}</SheetTitle>
                 <ScrollArea className="h-64 md:h-24">
-                  <DialogDescription className="text-white text-start">{data.jobMaster[0].jobM_description}</DialogDescription>
+                  <SheetDescription className="text-white text-start">{data.jobMaster[0].jobM_description}</SheetDescription>
                 </ScrollArea>
-              </DialogHeader>
-              <ScrollArea className="rounded-md">
-                <Card className="p-3 w-full md:p-2 dark:bg-[#1c1917]">
-                  <Tabs defaultValue={selectedTab} className="mb-3" onValueChange={(value) => setSelectedTab(value)}>
-                    <TabsList>
-                      <TabsTrigger value={1}>Details</TabsTrigger>
-                      <TabsTrigger value={2}>Applicants</TabsTrigger>
-                      <TabsTrigger value={3}>Interview Criteria</TabsTrigger>
-                    </TabsList>
+              </SheetHeader>
+              <Card className="p-1 w-full md:p-2 dark:bg-[#1c1917]">
+                <Tabs defaultValue={selectedTab} className="mb-3" onValueChange={(value) => setSelectedTab(value)}>
+                  <TabsList>
+                    <TabsTrigger value={1}>Details</TabsTrigger>
+                    <TabsTrigger value={2}>Applicants</TabsTrigger>
+                    <TabsTrigger value={3}>Interview</TabsTrigger>
+                    <TabsTrigger value={4}>Exam</TabsTrigger>
+                  </TabsList>
+                  <ScrollArea className="overflow-y-auto h-[calc(100vh-400px)]">
                     <TabsContent value={1}>
-                      <ScrollArea className="h-[calc(100vh-200px)]">
+                      <div>
                         <div className="flex items-center w-full px-3">
                           <span className='text-sm my-3 font-bold flex items-center mr-2'>Duties and Responsibilities</span>
                           <div>{handleUpdateJob(data.jobDuties, "duties")}</div>
@@ -214,23 +217,24 @@ function SelectedJob({ open, onHide, jobId }) {
                             </>
                           )}
                         </div>
-                      </ScrollArea>
+                      </div>
                     </TabsContent>
                     <TabsContent value={2}>
                       <ViewApplicants datas={data} passingPercentage={data.jobPassing[0].passing_percentage} getSelectedJob={getSelectedJobs} />
                     </TabsContent>
                     <TabsContent value={3}>
-                      <>
-                        <InterviewPage interviewData={data.interview} getSelectedJob={getSelectedJobs} />
-                      </>
+                      <InterviewPage interviewData={data.interview} getSelectedJob={getSelectedJobs} />
                     </TabsContent>
-                  </Tabs>
-                </Card>
-              </ScrollArea>
+                    <TabsContent value={4}>
+                      <ExamPage examData={data.exam} getSelectedJob={getSelectedJobs} />
+                    </TabsContent>
+                  </ScrollArea>
+                </Tabs>
+              </Card>
             </>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }
