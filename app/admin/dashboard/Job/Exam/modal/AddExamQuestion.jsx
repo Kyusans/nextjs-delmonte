@@ -60,7 +60,7 @@ function AddExamQuestion({examId, getSelectedJob}) {
       newErrors.questions = "At least one question is required";
     } else {
       questions.forEach((question, index) => {
-        if (!question.question.trim()) newErrors[`question-${index}`] = "Question text is required";
+        if (!question.question.trim()) newErrors[`question-${index}`] = "Question is required";
         if (question.options.filter(opt => opt.trim()).length < 2) newErrors[`options-${index}`] = "At least two non-empty options are required";
         if (!question.correctAnswer) newErrors[`correctAnswer-${index}`] = "A correct answer must be selected";
         if (question.points <= 0) newErrors[`points-${index}`] = "Points must be greater than 0";

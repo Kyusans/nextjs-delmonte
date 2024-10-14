@@ -7,6 +7,8 @@ import { Edit2, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 import CreateExamMaster from './modal/CreateExamMaster';
 import AddExamQuestion from './modal/AddExamQuestion';
+import UpdateExamQuestion from './modal/UpdateExamQuestion';
+import UpdateExamMaster from './modal/UpdateExamMaster';
 
 function ExamPage({ examData, getSelectedJob }) {
   const [examMaster, setExamMaster] = useState([]);
@@ -34,9 +36,12 @@ function ExamPage({ examData, getSelectedJob }) {
             <div className='flex md:justify-center'>
               <Card className='mb-3 flex flex-col gap-1 bg-background w-full md:w-1/2'>
                 <CardContent className='p-3'>
-                  <h1 className='text-2xl font-boldtext-start'>
-                    {examMaster.exam_name}
-                  </h1>
+                  <div className='flex flex-row justify-between'>
+                    <h1 className='text-2xl font-boldtext-start'>
+                      {examMaster.exam_name}
+                    </h1>
+                    <UpdateExamMaster examMasterData={examMaster} getSelectedJob={getSelectedJob} />
+                  </div>
                   <p>Exam duration: {examMaster.exam_duration} minutes</p>
                   <p className='text-sm'>Date created: {examMaster.exam_createdAt ? formatDate(examMaster.exam_createdAt) : 'N/A'}</p>
                   <p className='text-sm'>Date updated: {examMaster.exam_updatedAt ? formatDate(examMaster.exam_updatedAt) : 'N/A'}</p>
@@ -53,9 +58,9 @@ function ExamPage({ examData, getSelectedJob }) {
                   <Card key={index} className='mb-3 bg-background w-full flex flex-col'>
                     <CardContent className="p-3 flex-grow">
                       <div className='grid grid-cols-3 gap-2'>
-                        <p className='mb-4 text-lg font-bold col-span-2'>{question.examQ_text}</p>
+                        <p className='mb-4 text-lg font-bold col-span-2'>{index + 1}. {question.examQ_text}</p>
                         <div className='flex flex-row gap-4 justify-end'>
-                          <Edit2 size={20} className='cursor-pointer' />
+                          <UpdateExamQuestion examQuestionData={question} getSelectedJob={getSelectedJob} />
                           <Trash2 size={20} className='cursor-pointer' />
                         </div>
                       </div>
