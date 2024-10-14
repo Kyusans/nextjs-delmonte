@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Edit2, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 import CreateExamMaster from './modal/CreateExamMaster';
+import AddExamQuestion from './modal/AddExamQuestion';
 
 function ExamPage({ examData, getSelectedJob }) {
   const [examMaster, setExamMaster] = useState([]);
@@ -28,6 +29,7 @@ function ExamPage({ examData, getSelectedJob }) {
         </div>
       ) : (
         <>
+          <AddExamQuestion examId={examMaster.exam_id} getSelectedJob={getSelectedJob} />
           <div className='flex flex-col'>
             <div className='flex md:justify-center'>
               <Card className='mb-3 flex flex-col gap-1 bg-background w-full md:w-1/2'>

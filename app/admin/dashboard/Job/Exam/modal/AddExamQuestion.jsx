@@ -12,11 +12,9 @@ import { Separator } from '@/components/ui/separator'
 import { Card, CardContent } from '@/components/ui/card'
 import Spinner from '@/components/ui/spinner'
 
-const CreateExamMaster = (getSelectedJob) => {
+function AddExamQuestion({examId, getSelectedJob}) {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [examName, setExamName] = useState("");
-  const [examDuration, setExamDuration] = useState(0);
   const [questions, setQuestions] = useState([
     { question: "", options: ["", ""], correctAnswer: "", points: 1 }
   ]);
@@ -57,8 +55,6 @@ const CreateExamMaster = (getSelectedJob) => {
 
   const validateForm = () => {
     let newErrors = {};
-    if (!examName.trim()) newErrors.examName = "Exam name is required";
-    if (examDuration <= 0) newErrors.examDuration = "Duration must be greater than 0";
 
     if (questions.length === 0) {
       newErrors.questions = "At least one question is required";
@@ -86,56 +82,46 @@ const CreateExamMaster = (getSelectedJob) => {
   }, [errors]);
 
   const handleSaveExam = async (e) => {
-    setIsLoading(true);
     e.preventDefault();
+    setIsLoading(true);
     if (!validateForm()) {
+      setIsLoading(false);
       return;
     }
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
-      const jobId = retrieveData("jobId");
 
       const examData = {
-        master: {
-          name: examName,
-          typeId: 2,
-          jobId: jobId,
-          duration: examDuration
-        },
-        questions: {
-          questionMaster: questions.map(q => ({
-            text: q.question,
-            typeId: 1,
-            points: q.points,
-            options: q.options.filter(option => option.trim() !== '').map((option) => ({
-              text: option,
-              isCorrect: option === q.correctAnswer ? 1 : 0
-            }))
+        examId: examId,
+        questions: questions.map(q => ({
+          text: q.question,
+          typeId: 1,
+          points: q.points,
+          options: q.options.filter(option => option.trim() !== '').map((option) => ({
+            text: option,
+            isCorrect: option === q.correctAnswer ? 1 : 0
           }))
-        }
+        }))
       };
 
       const formData = new FormData();
-      formData.append("operation", "addExam");
+      formData.append("operation", "addExamQuestions");
       formData.append("json", JSON.stringify(examData));
 
       const response = await axios.post(url, formData);
-      console.log(response)
+      console.log(response);
       if (response.data === 1) {
-        toast.success("Exam created successfully");
+        toast.success("Questions added successfully");
         setIsOpen(false);
-        // Reset form
-        setExamName("");
-        setExamDuration(0);
         setQuestions([{ question: "", options: ["", ""], correctAnswer: "", points: 1 }]);
         setErrors({});
         getSelectedJob();
       } else {
-        toast.error("Failed to create exam");
+        toast.error("Failed to add questions");
       }
     } catch (error) {
-      console.error("Error creating exam:", error);
-      toast.error("An error occurred while creating the exam");
+      console.error("Error adding questions:", error);
+      toast.error("An error occurred while adding the questions");
     } finally {
       setIsLoading(false);
     }
@@ -144,34 +130,11 @@ const CreateExamMaster = (getSelectedJob) => {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger>
-        <Button>Create Exam</Button>
+        <Button className="mb-3"><PlusCircle className='mr-1 h-5 w-5' /> Add Questions</Button>
       </SheetTrigger>
       <SheetContent side="bottom" className='h-full overflow-y-auto'>
-        <h1 className="text-2xl font-bold mb-4">Create Exam</h1>
+        <h1 className="text-2xl font-bold mb-4">Add Questions</h1>
         <form onSubmit={handleSaveExam} className='flex flex-col gap-4'>
-          <div className="mb-2">
-            <Label htmlFor="examName">Exam Name</Label>
-            <Input
-              id="examName"
-              value={examName}
-              onChange={(e) => setExamName(e.target.value)}
-              placeholder="Exam Name"
-              className="mt-1"
-            />
-            {errors.examName && <p ref={el => errorRefs.current['examName'] = el} className="text-red-500 text-sm mt-1">{errors.examName}</p>}
-          </div>
-          <div className="mb-2">
-            <Label htmlFor="examDuration">Duration (minutes)</Label>
-            <Input
-              id="examDuration"
-              type="number"
-              value={examDuration}
-              onChange={(e) => setExamDuration(parseInt(e.target.value))}
-              placeholder="Duration"
-              className="mt-1"
-            />
-            {errors.examDuration && <p ref={el => errorRefs.current['examDuration'] = el} className="text-red-500 text-sm mt-1">{errors.examDuration}</p>}
-          </div>
           {errors.questions && <p ref={el => errorRefs.current['questions'] = el} className="text-red-500 text-sm mt-1">{errors.questions}</p>}
           {questions.map((question, index) => (
             <Card key={index} className="p-4 mb-4">
@@ -255,7 +218,7 @@ const CreateExamMaster = (getSelectedJob) => {
           <Separator />
           <div className='flex justify-end gap-2'>
             <Button type="button" onClick={() => setIsOpen(false)} variant="outline">Close</Button>
-            <Button type="submit" disabled={isLoading}>{isLoading && <Spinner />} {isLoading ? "Saving..." : "Save Exam"}</Button>
+            <Button type="submit" disabled={isLoading}>{isLoading && <Spinner />} {isLoading ? "Saving..." : "Submit"}</Button>
           </div>
         </form>
       </SheetContent>
@@ -263,4 +226,4 @@ const CreateExamMaster = (getSelectedJob) => {
   )
 }
 
-export default CreateExamMaster
+export default AddExamQuestion
