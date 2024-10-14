@@ -439,7 +439,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                         <Tabs defaultValue="1" className='h-full flex flex-col'>
                           <TabsList>
                             <TabsTrigger value="1">Qualifications</TabsTrigger>
-                            {status !== "Pending" || status !== "Process" ? <TabsTrigger value="2">Interview Results</TabsTrigger> : null}
+                            {status !== "Pending" && status !== "Process" && <TabsTrigger value="2">Interview Results</TabsTrigger>}
                           </TabsList>
                           <TabsContent value="1">
                             <Accordion type="multiple" collapsible="true" className="w-full p-5" defaultValue={["1", "2", "3", "4", "5"]}>
