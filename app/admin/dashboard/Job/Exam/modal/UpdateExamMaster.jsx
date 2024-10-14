@@ -20,6 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 
 const formSchema = z.object({
   name: z.string().min(1, { message: "Exam name is required" }),
@@ -59,13 +60,13 @@ const UpdateExamMaster = ({ examMasterData, getSelectedJob }) => {
       const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
       const formData = new FormData();
       formData.append("operation", "updateExamMaster");
-      
+
       const examData = {
         examId: examMasterData.exam_id,
         name: values.name,
         duration: values.duration
       };
-      
+
       formData.append("json", JSON.stringify(examData));
 
       const response = await axios.post(url, formData);
@@ -85,55 +86,52 @@ const UpdateExamMaster = ({ examMasterData, getSelectedJob }) => {
   };
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
         <div>
           <button><Edit2 className='cursor-pointer w-5 h-5 md:mr-2' /></button>
         </div>
-      </SheetTrigger>
-      <SheetContent side="bottom" className='h-full overflow-y-auto'>
-        <h1 className="text-2xl font-bold mb-4">Update Exam</h1>
+      </DialogTrigger>
+      <DialogContent className='overflow-y-auto'>
+        <DialogHeader>
+          <DialogTitle>Update exam master</DialogTitle>
+        </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleUpdateExamMaster)} className='flex flex-col gap-4'>
-            <Card className="p-4 mb-4">
-              <CardContent>
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Exam Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Exam Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="duration"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Exam Duration (minutes)</FormLabel>
-                      <FormControl>
-                        <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-            <Separator />
+          <form onSubmit={form.handleSubmit(handleUpdateExamMaster)} className='flex flex-col gap-2'>
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Exam Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Exam Name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="duration"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Exam Duration (minutes)</FormLabel>
+                  <FormControl>
+                    <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <div className='flex justify-end gap-2'>
               <Button type="button" onClick={() => setIsOpen(false)} variant="outline">Close</Button>
               <Button type="submit" disabled={isLoading}>{isLoading && <Spinner />} {isLoading ? "Updating..." : "Update Exam"}</Button>
             </div>
           </form>
         </Form>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   )
 }
 
