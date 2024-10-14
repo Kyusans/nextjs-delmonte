@@ -89,6 +89,7 @@ const CreateExamMaster = (getSelectedJob) => {
     setIsLoading(true);
     e.preventDefault();
     if (!validateForm()) {
+      setIsLoading(false);
       return;
     }
     try {

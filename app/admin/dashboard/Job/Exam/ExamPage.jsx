@@ -9,6 +9,7 @@ import CreateExamMaster from './modal/CreateExamMaster';
 import AddExamQuestion from './modal/AddExamQuestion';
 import UpdateExamQuestion from './modal/UpdateExamQuestion';
 import UpdateExamMaster from './modal/UpdateExamMaster';
+import ShowAlert from '@/components/ui/show-alert';
 
 function ExamPage({ examData, getSelectedJob }) {
   const [examMaster, setExamMaster] = useState([]);
@@ -22,12 +23,34 @@ function ExamPage({ examData, getSelectedJob }) {
     console.log("examData: ", examData);
   }, [examData]);
 
+  // // delete question
+  // const [alertMessage, setAlertMessage] = useState("");
+  // const [showAlert, setShowAlert] = useState(false);
+  // const [selectedId, setSelectedId] = useState(null);
+  // const handleShowAlert = (message) => {
+  // setAlertMessage(message);
+  //   setShowAlert(true);
+  // };
+  // const handleCloseAlert = (status) => {
+  //   if (status === 1) {
+  //     // delete question
+  //   }
+  //   setShowAlert(false);
+  // };
+  // const handleRemoveList = (id) => {
+  //   setSelectedId(id);
+  //   handleShowAlert("This action cannot be undone. It will permanently delete the question");
+  // };
+
+  // const handleDeleteQuestion = () => {}
+
+
   return (
     <div className='rounded-md p-4'>
       {examData === 0 ? (
         <div className='flex flex-col justify-center items-center gap-4'>
           <p>No exam created yet</p>
-          <CreateExamMaster />
+          <CreateExamMaster getSelectedJob={getSelectedJob} />
         </div>
       ) : (
         <>
@@ -59,9 +82,9 @@ function ExamPage({ examData, getSelectedJob }) {
                     <CardContent className="p-3 flex-grow">
                       <div className='grid grid-cols-3 gap-2'>
                         <p className='mb-4 text-lg font-bold col-span-2'>{index + 1}. {question.examQ_text}</p>
-                        <div className='flex flex-row gap-4 justify-end'>
+                        <div className='flex flex-row gap-4 justify-end md:mr-2'>
                           <UpdateExamQuestion examQuestionData={question} getSelectedJob={getSelectedJob} />
-                          <Trash2 size={20} className='cursor-pointer' />
+                          {/* <Trash2 size={20} onClick={() => handleRemoveList(question.examQ_id)} className='cursor-pointer' /> */}
                         </div>
                       </div>
                       <RadioGroup defaultValue={question.options.find(opt => opt.examC_isCorrect === 1)?.examC_id.toString()}>
@@ -88,6 +111,7 @@ function ExamPage({ examData, getSelectedJob }) {
           </div>
         </>
       )}
+      {/* <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} /> */}
     </div>
   )
 }
