@@ -9,6 +9,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Separator } from '@/components/ui/separator';
 
 function AdminSidebar({ changeView }) {
   const [view, setView] = useState(0);
@@ -148,28 +149,32 @@ function AdminSidebar({ changeView }) {
               ) : (
                 <Popover key={index}>
                   <PopoverTrigger asChild>
-                    <div 
+                    <div
                       className={`flex h-9 w-9 ${view === index ? "bg-primary text-black hover:text-white transition-all duration-500 ease-in-out" : "bg-transparent transition-colors text-white hover:text-black"} items-center justify-center rounded-lg hover:bg-primary transition-colors md:h-8 md:w-8 cursor-pointer`}
                     >
                       {tab.icon}
                     </div>
                   </PopoverTrigger>
                   <PopoverContent className="w-[400px] md:w-[500px] lg:w-[600px]">
-                    <div className="grid gap-3 p-4 md:grid-cols-2">
-                      {masterFiles.map((file, fileIndex) => (
-                        <div key={fileIndex} className="group">
-                          <a
-                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors group-hover:bg-accent group-hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                            href="#"
-                            onClick={() => handleChangeView(index)}
-                          >
-                            <div className="flex items-center">
-                              {file.icon}
-                              <div className="ml-2 text-sm font-medium leading-none">{file.name}</div>
-                            </div>
-                          </a>
-                        </div>
-                      ))}
+                    <div className="flex flex-col gap-2 ml-4">
+                      <h1 className="text-xl font-semibold">Master Files</h1>
+                      <Separator className="w-full" />
+                      <div className="grid gap-3 md:grid-cols-2">
+                        {masterFiles.map((file, fileIndex) => (
+                          <div key={fileIndex} className="group">
+                            <a
+                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors group-hover:bg-accent group-hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                              href="#"
+                              onClick={() => handleChangeView(index)}
+                            >
+                              <div className="flex items-center">
+                                {file.icon}
+                                <div className="ml-2 text-sm font-medium leading-none">{file.name}</div>
+                              </div>
+                            </a>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </PopoverContent>
                 </Popover>
