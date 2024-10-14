@@ -229,7 +229,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                       <Card className="w-full">
                         <ScrollArea className="h-80">
                           <CardContent>
-                            <Tabs defaultValue={1} className="my-3">
+                            <Tabs defaultValue={1} className="my-3 h-full flex flex-col">
                               <TabsList>
                                 <TabsTrigger value={1}>Education</TabsTrigger>
                                 <TabsTrigger value={2}>Trainings</TabsTrigger>
@@ -436,10 +436,10 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                   <Card className="w-full mt-5 lg:mt-0">
                     <CardContent className="relative">
                       <ScrollArea className="h-[550px] overflow-auto mt-5">
-                        <Tabs defaultValue="1">
+                        <Tabs defaultValue="1" className='h-full flex flex-col'>
                           <TabsList>
-                            <TabsTrigger value="1">Job Qualifications</TabsTrigger>
-                            {status === "Exam" ? <TabsTrigger value="2">Interview Results</TabsTrigger> : null}
+                            <TabsTrigger value="1">Qualifications</TabsTrigger>
+                            {status !== "Pending" || status !== "Process" ? <TabsTrigger value="2">Interview Results</TabsTrigger> : null}
                           </TabsList>
                           <TabsContent value="1">
                             <Accordion type="multiple" collapsible="true" className="w-full p-5" defaultValue={["1", "2", "3", "4", "5"]}>
@@ -636,11 +636,13 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                             </Accordion>
                           </TabsContent>
                           <TabsContent value="2">
-                            {status === "Exam" && (
+                            {status === "Exam" ? (
                               <div className="my-3">
                                 <InterviewResult candId={candId} handleInterviewChangeStatus={handleInterviewChangeStatus} />
                               </div>
-                            )}
+                            ) :
+                              <p className="text-center text-gray-500">No interview results yet</p>
+                            }
                           </TabsContent>
                         </Tabs>
                       </ScrollArea>

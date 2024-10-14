@@ -67,28 +67,28 @@ function SelectedJob({ open, onHide, jobId }) {
 
   return (
     <>
-      <Sheet open={open} onOpenChange={handleClose} className="text-white h-full">
-        <SheetContent side="bottom" className="bg-[#107343] dark:bg-background">
+      <Sheet open={open} onOpenChange={handleClose}>
+        <SheetContent side="bottom" className="bg-[#107343] dark:bg-background flex flex-col h-[80vh]">
           {isLoading ? (
             <Spinner />
           ) : (
             <>
-              <SheetHeader className="text-white">
+              <SheetHeader className="text-white mb-4">
                 <SheetTitle>{data.jobMaster[0].jobM_title}</SheetTitle>
-                <ScrollArea className="h-64 md:h-24">
-                  <SheetDescription className="text-white text-start">{data.jobMaster[0].jobM_description}</SheetDescription>
-                </ScrollArea>
+                <SheetDescription className="text-white text-start">
+                  {data.jobMaster[0].jobM_description}
+                </SheetDescription>
               </SheetHeader>
-              <Card className="p-1 w-full md:p-2 dark:bg-[#1c1917]">
-                <Tabs defaultValue={selectedTab} className="mb-3" onValueChange={(value) => setSelectedTab(value)}>
+              <Card className="p-1 w-full md:p-2 dark:bg-[#1c1917] flex-grow overflow-hidden">
+                <Tabs defaultValue={selectedTab} className="h-full flex flex-col" onValueChange={(value) => setSelectedTab(value)}>
                   <TabsList>
                     <TabsTrigger value={1}>Details</TabsTrigger>
                     <TabsTrigger value={2}>Applicants</TabsTrigger>
                     <TabsTrigger value={3}>Interview</TabsTrigger>
                     <TabsTrigger value={4}>Exam</TabsTrigger>
                   </TabsList>
-                  <ScrollArea className="overflow-y-auto h-[calc(100vh-400px)]">
-                    <TabsContent value={1}>
+                  <ScrollArea className="flex-grow">
+                    <TabsContent value={1} className="h-full">
                       <div>
                         <div className="flex items-center w-full px-3">
                           <span className='text-sm my-3 font-bold flex items-center mr-2'>Duties and Responsibilities</span>
