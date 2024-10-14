@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react'
 import CreateExamMaster from './modal/CreateExamMaster';
 import AddExamQuestion from './modal/AddExamQuestion';
 import UpdateExamQuestion from './modal/UpdateExamQuestion';
+import UpdateExamMaster from './modal/UpdateExamMaster';
 
 function ExamPage({ examData, getSelectedJob }) {
   const [examMaster, setExamMaster] = useState([]);
@@ -39,7 +40,7 @@ function ExamPage({ examData, getSelectedJob }) {
                     <h1 className='text-2xl font-boldtext-start'>
                       {examMaster.exam_name}
                     </h1>
-                    <Edit2 className='cursor-pointer w-5 h-5 md:mr-2' />
+                    <UpdateExamMaster examMasterData={examMaster} getSelectedJob={getSelectedJob} />
                   </div>
                   <p>Exam duration: {examMaster.exam_duration} minutes</p>
                   <p className='text-sm'>Date created: {examMaster.exam_createdAt ? formatDate(examMaster.exam_createdAt) : 'N/A'}</p>
