@@ -103,9 +103,7 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
         };
 
         console.log("returnData: ", returnData);
-
         addCriteria(returnData);
-        form.reset();
       }
     } catch (error) {
       toast.error("Network error");

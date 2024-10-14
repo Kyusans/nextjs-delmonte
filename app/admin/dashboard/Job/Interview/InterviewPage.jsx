@@ -93,7 +93,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
   }, [interviewData.interviewCriteria]);
 
   return (
-    <div className={data.length <= 2 && "h-[calc(100vh-220px)]"}>
+    <div>
       <div>
         {data.length === 0 ? (
           <div className='flex flex-col justify-center items-center gap-3'>
