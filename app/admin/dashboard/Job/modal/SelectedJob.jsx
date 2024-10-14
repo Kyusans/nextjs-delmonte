@@ -64,18 +64,18 @@ function SelectedJob({ open, onHide, jobId }) {
     removeData("duties");
     onHide();
   };
-
+// bg-[#107343] dark:bg-background
   return (
     <>
       <Sheet open={open} onOpenChange={handleClose}>
-        <SheetContent side="bottom" className="bg-[#107343] dark:bg-background flex flex-col h-[80vh]">
+        <SheetContent side="bottom" className="flex flex-col h-screen md:h-[80vh]">
           {isLoading ? (
             <Spinner />
           ) : (
             <>
-              <SheetHeader className="text-white mb-4">
+              <SheetHeader className="mb-4">
                 <SheetTitle>{data.jobMaster[0].jobM_title}</SheetTitle>
-                <SheetDescription className="text-white text-start">
+                <SheetDescription className="text-start">
                   {data.jobMaster[0].jobM_description}
                 </SheetDescription>
               </SheetHeader>
