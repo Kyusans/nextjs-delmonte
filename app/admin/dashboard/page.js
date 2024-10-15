@@ -11,19 +11,26 @@ import MasterFiles from './Masterfiles/MasterFiles';
 
 export default function Page() {
   const [viewIndex, setViewIndex] = useState(0);
+  const [masterFileIndex, setMasterFileIndex] = useState(0);
+
+  const adminViews = [
+    { view: <AdminDashboard /> },
+    { view: <AdminJobs /> },
+    { view: <MasterFiles index={masterFileIndex} /> },
+  ]
+
 
   const handleChangeView = (index) => {
     setViewIndex(index);
   }
 
-  const adminViews = [
-    { view: <AdminDashboard /> },
-    { view: <AdminJobs /> },
-    { view: <MasterFiles index={viewIndex} /> },
-  ]
+  const handleChangeMasterFile = (index) => {
+    setMasterFileIndex(index);
+    setViewIndex(2);
+  }
   return (
     <div className='bg-background h-screen'>
-      <AdminSidebar changeView={handleChangeView} />
+      <AdminSidebar changeView={handleChangeView} changeMasterFile={handleChangeMasterFile} />
       <main className="sm:ps-20 px-5 py-3">
         <div className='flex justify-end'>
           <ModeToggle />

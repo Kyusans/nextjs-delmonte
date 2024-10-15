@@ -57,6 +57,7 @@ const DataTable = ({ columns, data, itemsPerPage = 10, autoIndex = false, title 
             <PaginationLink
               onClick={() => handlePageChange(i)}
               isActive={currentPage === i}
+              className="cursor-pointer"
             >
               {i}
             </PaginationLink>
@@ -69,6 +70,7 @@ const DataTable = ({ columns, data, itemsPerPage = 10, autoIndex = false, title 
           <PaginationLink
             onClick={() => handlePageChange(1)}
             isActive={currentPage === 1}
+            className="cursor-pointer"
           >
             1
           </PaginationLink>
@@ -88,6 +90,7 @@ const DataTable = ({ columns, data, itemsPerPage = 10, autoIndex = false, title 
             <PaginationLink
               onClick={() => handlePageChange(i)}
               isActive={currentPage === i}
+              className="cursor-pointer"
             >
               {i}
             </PaginationLink>
@@ -104,6 +107,7 @@ const DataTable = ({ columns, data, itemsPerPage = 10, autoIndex = false, title 
           <PaginationLink
             onClick={() => handlePageChange(totalPages)}
             isActive={currentPage === totalPages}
+            className="cursor-pointer"
           >
             {totalPages}
           </PaginationLink>

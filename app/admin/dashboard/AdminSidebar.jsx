@@ -11,7 +11,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Separator } from '@/components/ui/separator';
 import { PopoverClose } from '@radix-ui/react-popover';
 
-function AdminSidebar({ changeView }) {
+function AdminSidebar({ changeView, changeMasterFile }) {
   const [view, setView] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const sideTabs = [
@@ -36,6 +36,13 @@ function AdminSidebar({ changeView }) {
     setView(index);
     setIsOpen(false);
     console.log("index: ", index);
+  }
+
+  const handleChangeMasterFile = (index) => {
+    changeMasterFile(index);
+    setView(index);
+    setIsOpen(false);
+    console.log("indexMaster: ", index);
   }
   return (
     <>
@@ -167,7 +174,7 @@ function AdminSidebar({ changeView }) {
                               <a
                                 className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors group-hover:bg-accent group-hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                                 href="#"
-                                onClick={() => handleChangeView(index)}
+                                onClick={() => handleChangeMasterFile(fileIndex)}
                               >
                                 <div className="flex items-center">
                                   {file.icon}
