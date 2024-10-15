@@ -7,6 +7,7 @@ import AdminJobs from './Job/AdminJobs';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import CourseCategoryMaster from './Masterfiles/CourseCategoryMaster';
+import MasterFiles from './Masterfiles/MasterFiles';
 
 export default function Page() {
   const [viewIndex, setViewIndex] = useState(0);
@@ -18,8 +19,7 @@ export default function Page() {
   const adminViews = [
     { view: <AdminDashboard /> },
     { view: <AdminJobs /> },
-    //masterfiles
-    { view: <CourseCategoryMaster /> },
+    { view: <MasterFiles index={viewIndex} /> },
   ]
   return (
     <div className='bg-background h-screen'>
