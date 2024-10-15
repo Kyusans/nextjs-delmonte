@@ -49,7 +49,6 @@ const MasterFiles = ({ index }) => {
         }
       ]
     },
-
     {
       title: "Institution", operation: "getInstitution", columns: [
         { header: "Institution", accessor: "institution_name" },
@@ -68,7 +67,97 @@ const MasterFiles = ({ index }) => {
         }
       ]
     },
-
+    {
+      title: "Knowledge and Compliance", operation: "getKnowledge", columns: [
+        { header: "Knowledge and Compliance", accessor: "knowledge_name" },
+        {
+          header: "",
+          cell: (row) => (
+            <div className="flex gap-2">
+              <UpdateMasterfile
+                title="knowledge and compliance"
+                data={row}
+                subject="knowledge"
+                id={row.knowledge_id}
+              />
+            </div>
+          )
+        }
+      ]
+    },
+    {
+      title: "License Master", operation: "getLicenseMaster", columns: [
+        { header: "License Master", accessor: "license_master_name" },
+        { header: "License Type", accessor: "license_type_name" },
+        {
+          header: "",
+          cell: (row) => (
+            <div className="flex gap-2">
+              <UpdateMasterfile
+                title="license master"
+                data={row}
+                subject="licenseMaster"
+                id={row.license_master_id}
+              />
+            </div>
+          )
+        }
+      ]
+    },
+    {
+      title: "License type", operation: "getLicenseType", columns: [
+        { header: "License type", accessor: "license_type_name" },
+        {
+          header: "",
+          cell: (row) => (
+            <div className="flex gap-2">
+              <UpdateMasterfile
+                title="license type"
+                data={row}
+                subject="licenseType"
+                id={row.license_type_id}
+              />
+            </div>
+          )
+        }
+      ]
+    },
+    {
+      title: "Skills", operation: "getSkills", columns: [
+        { header: "Skills", accessor: "perS_name" },
+        {
+          header: "",
+          cell: (row) => (
+            <div className="flex gap-2">
+              <UpdateMasterfile
+                title="skills"
+                data={row}
+                subject="skills"
+                id={row.perS_id}
+              />
+            </div>
+          )
+        }
+      ]
+    },
+    {
+      title: "Training", operation: "getTraining", columns: [
+        { header: "Training", accessor: "perT_name" },
+        {
+          header: "",
+          cell: (row) => (
+            <div className="flex gap-2">
+              <UpdateMasterfile
+                title="training"
+                data={row}
+                subject="training"
+                id={row.perT_id}
+              />
+            </div>
+          )
+        }
+      ]
+    },
   ], []);
 
   const getData = useCallback(async () => {
