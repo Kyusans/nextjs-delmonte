@@ -84,6 +84,25 @@ const MasterFiles = ({ index }) => {
           )
         }
       ]
+    }, 
+    {
+      title: "License Master", operation: "getLicenseMaster", columns: [
+        { header: "License Master", accessor: "license_master_name" },
+        { header: "License Type", accessor: "license_type_name" },
+        {
+          header: "",
+          cell: (row) => (
+            <div className="flex gap-2">
+              <UpdateMasterfile
+                title="license master"
+                data={row}
+                subject="licenseMaster"
+                id={row.license_master_id}
+              />
+            </div>
+          )
+        }
+      ]
     },
   ], []);
 
