@@ -122,6 +122,24 @@ const MasterFiles = ({ index }) => {
         }
       ]
     },
+    {
+      title: "Skills", operation: "getSkills", columns: [
+        { header: "Skills", accessor: "perS_name" },
+        {
+          header: "",
+          cell: (row) => (
+            <div className="flex gap-2">
+              <UpdateMasterfile
+                title="skills"
+                data={row}
+                subject="skills"
+                id={row.perS_id}
+              />
+            </div>
+          )
+        }
+      ]
+    },
   ], []);
 
   const getData = useCallback(async () => {
