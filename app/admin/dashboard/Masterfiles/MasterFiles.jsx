@@ -49,7 +49,6 @@ const MasterFiles = ({ index }) => {
         }
       ]
     },
-
     {
       title: "Institution", operation: "getInstitution", columns: [
         { header: "Institution", accessor: "institution_name" },
@@ -68,7 +67,24 @@ const MasterFiles = ({ index }) => {
         }
       ]
     },
-
+    {
+      title: "Knowledge and Compliance", operation: "getKnowledge", columns: [
+        { header: "Knowledge and Compliance", accessor: "knowledge_name" },
+        {
+          header: "",
+          cell: (row) => (
+            <div className="flex gap-2">
+              <UpdateMasterfile
+                title="knowledge and compliance"
+                data={row}
+                subject="knowledge"
+                id={row.knowledge_id}
+              />
+            </div>
+          )
+        }
+      ]
+    },
   ], []);
 
   const getData = useCallback(async () => {
