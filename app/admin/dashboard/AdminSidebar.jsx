@@ -3,13 +3,13 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu"
 import { BookOpen, Brain, Briefcase, Building, CircleUser, FileCheck, FileCheck2, FileText, GraduationCap, Home, Lightbulb, LogOut, Menu, Settings, Settings2, Users, ChevronDown } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
+import { PopoverClose } from '@radix-ui/react-popover';
 
 function AdminSidebar({ changeView }) {
   const [view, setView] = useState(0);
@@ -25,7 +25,7 @@ function AdminSidebar({ changeView }) {
     { name: "Course", icon: <GraduationCap className="h-5 w-5" /> },
     { name: "Experience", icon: <Briefcase className="h-5 w-5" /> },
     { name: "Institution", icon: <Building className="h-5 w-5" /> },
-    { name: "Knowledge", icon: <Brain className="h-5 w-5" /> },
+    { name: "Knowledge and Compliance", icon: <Brain className="h-5 w-5" /> },
     { name: "License master", icon: <FileCheck className="h-5 w-5" /> },
     { name: "License type", icon: <FileCheck2 className="h-5 w-5" /> },
     { name: "Skills", icon: <Lightbulb className="h-5 w-5" /> },
@@ -35,6 +35,7 @@ function AdminSidebar({ changeView }) {
     changeView(index);
     setView(index);
     setIsOpen(false);
+    console.log("index: ", index);
   }
   return (
     <>
@@ -162,16 +163,18 @@ function AdminSidebar({ changeView }) {
                       <div className="grid gap-3 md:grid-cols-2">
                         {masterFiles.map((file, fileIndex) => (
                           <div key={fileIndex} className="group">
-                            <a
-                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors group-hover:bg-accent group-hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                              href="#"
-                              onClick={() => handleChangeView(index)}
-                            >
-                              <div className="flex items-center">
-                                {file.icon}
-                                <div className="ml-2 text-sm font-medium leading-none">{file.name}</div>
-                              </div>
-                            </a>
+                            <PopoverClose asChild>
+                              <a
+                                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors group-hover:bg-accent group-hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                href="#"
+                                onClick={() => handleChangeView(index)}
+                              >
+                                <div className="flex items-center">
+                                  {file.icon}
+                                  <div className="ml-2 text-sm font-medium leading-none">{file.name}</div>
+                                </div>
+                              </a>
+                            </PopoverClose>
                           </div>
                         ))}
                       </div>
