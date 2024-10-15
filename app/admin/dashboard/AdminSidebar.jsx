@@ -23,7 +23,6 @@ function AdminSidebar({ changeView, changeMasterFile }) {
   const masterFiles = [
     { name: "Course category", icon: <BookOpen className="h-5 w-5" /> },
     { name: "Course", icon: <GraduationCap className="h-5 w-5" /> },
-    { name: "Experience", icon: <Briefcase className="h-5 w-5" /> },
     { name: "Institution", icon: <Building className="h-5 w-5" /> },
     { name: "Knowledge and Compliance", icon: <Brain className="h-5 w-5" /> },
     { name: "License master", icon: <FileCheck className="h-5 w-5" /> },

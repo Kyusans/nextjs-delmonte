@@ -28,7 +28,7 @@ const MasterFiles = ({ index }) => {
           )
         }
       ]
-    },    
+    },
     {
       title: "Course", operation: "getCourse", columns: [
         { header: "Course", accessor: "courses_name" },
@@ -43,6 +43,25 @@ const MasterFiles = ({ index }) => {
                 data={row}
                 subject="course"
                 id={row.courses_id}
+              />
+            </div>
+          )
+        }
+      ]
+    },
+
+    {
+      title: "Institution", operation: "getInstitution", columns: [
+        { header: "Institution", accessor: "institution_name" },
+        {
+          header: "",
+          cell: (row) => (
+            <div className="flex gap-2">
+              <UpdateMasterfile
+                title="institution"
+                data={row}
+                subject="institution"
+                id={row.institution_id}
               />
             </div>
           )
@@ -76,10 +95,10 @@ const MasterFiles = ({ index }) => {
 
   useEffect(() => {
     const newIndex = index;
-      setSelectedIndex(newIndex);
-      setData([]); 
-      getData(); 
-      console.log("selectedIndex ni : ", selectedIndex);
+    setSelectedIndex(newIndex);
+    setData([]);
+    getData();
+    console.log("selectedIndex ni : ", selectedIndex);
   }, [getData, index, selectedIndex]);
 
   return (
