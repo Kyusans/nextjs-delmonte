@@ -13,6 +13,8 @@ import UpdateJobModal from '../AddJobStep/modals/UpdateJobDetails/UpdateJobModal
 import { Badge } from '@/components/ui/badge';
 import InterviewPage from '../Interview/InterviewPage';
 import ViewApplicants from '../ViewApplicants/ViewApplicants';
+import ExamPage from '../Exam/ExamPage';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
@@ -62,151 +64,177 @@ function SelectedJob({ open, onHide, jobId }) {
     removeData("duties");
     onHide();
   };
-
+// bg-[#107343] dark:bg-background
   return (
     <>
-      <Dialog open={open} onOpenChange={handleClose} className="text-white">
-        <DialogContent className="max-w-7xl h-full md:h-4/5 bg-[#107343] dark:bg-background">
+      <Sheet open={open} onOpenChange={handleClose}>
+        <SheetContent side="bottom" className="flex flex-col h-screen md:h-[80vh]">
           {isLoading ? (
             <Spinner />
           ) : (
             <>
-              <DialogHeader className="text-white">
-                <DialogTitle>{data.jobMaster[0].jobM_title}</DialogTitle>
-                <ScrollArea className="h-64 md:h-24">
-                  <DialogDescription className="text-white text-start">{data.jobMaster[0].jobM_description}</DialogDescription>
-                </ScrollArea>
-              </DialogHeader>
-              <ScrollArea className="rounded-md h-full">
-                <Card className="p-3 w-full md:p-2 dark:bg-[#1c1917]">
-                  <Tabs defaultValue={selectedTab} className="mb-3" onValueChange={(value) => setSelectedTab(value)}>
-                    <TabsList>
-                      <TabsTrigger value={1}>Details</TabsTrigger>
-                      <TabsTrigger value={2}>Applicants</TabsTrigger>
-                      <TabsTrigger value={3}>Interview Criteria</TabsTrigger>
-                    </TabsList>
-                    <TabsContent value={1}>
-
-                      <div className="flex items-center w-full">
-                        <span className='text-sm my-3 font-bold flex items-center mr-2  '>Duties and Responsibilities</span>
-                        <div>{handleUpdateJob(data.jobDuties, "duties")}</div>
-                      </div>
-                      <div className='w-full px-5'>
-                        {data.jobDuties.map((data, index) => (
-                          <ul key={index} className="list-disc ml-4 mb-1">
-                            <li>{data.duties_text}</li>
-                          </ul>
-                        ))}
-                      </div>
-                      <div className='w-full px-3 mt-3'>
-
-                        {data.jobEducation.length > 0 && (
-                          <>
-                            <div className='text-sm mb-3 font-bold flex items-center'>
-                              <span className='mr-2'>Educational Background </span>
-                              {handleUpdateJob(data.jobEducation, "education")}
-                            </div>
-                            <div className='w-full ml-3'>
-                              {data.jobEducation.map((data, index) => (
-                                <ul key={index} className="list-disc ml-4 mb-3">
-                                  <li>
-                                    Graduate of any {data.course_categoryName} courses.
-                                    <Badge className='ml-2 text-xs'>{data.jeduc_points} point{data.jeduc_points > 1 ? "s" : ""}</Badge>
-                                  </li>
-                                </ul>
-                              ))}
-                            </div>
-                          </>
-                        )}
-                        {data.jobSkills.length > 0 && (
-                          <>
-                            <div className='text-sm my-3 font-bold flex items-center'>
-                              <span className='mr-2'>Skills</span>
-                              {handleUpdateJob(data.jobSkills, "skills")}
-                            </div>
-                            <div className='w-full ml-3'>
-                              {data.jobSkills.map((data, index) => (
-                                <ul key={index} className="list-disc ml-4 mb-1">
-                                  <li>
-                                    {data.perS_name}
-                                    <Badge className='ml-2 text-xs'>{data.jskills_points} point{data.jskills_points > 1 ? "s" : ""}</Badge>
-                                  </li>
-                                </ul>
-                              ))}
-                            </div>
-                          </>
-                        )}
-                        {data.jobTrainings.length > 0 && (
-                          <>
-                            <div className='text-sm my-3 font-bold flex items-center'>
-                              <span className='mr-2'>Trainings</span>
-                              {handleUpdateJob(data.jobTrainings, "trainings")}
-                            </div>
-                            <div className='w-full ml-3'>
-                              {data.jobTrainings.map((data, index) => (
-                                <ul key={index} className="list-disc ml-4 mb-1">
-                                  <li>
-                                    {data.perT_name}
-                                    <Badge className='ml-2 text-xs'>{data.jtrng_points} point{data.jtrng_points > 1 ? "s" : ""}</Badge>
-                                  </li>
-                                </ul>
-                              ))}
-                            </div>
-                          </>
-                        )}
-                        {data.jobExperience.length > 0 && (
-                          <>
-                            <div className='text-sm my-3 font-bold flex items-center'>
-                              <span className='mr-2'>Experience</span>
-                              {handleUpdateJob(data.jobExperience, "experience")}
-                            </div>
-                            <div className='w-full ml-3'>
-                              {data.jobExperience.map((data, index) => (
-                                <ul key={index} className="list-disc ml-4 mb-1">
-                                  <li>
-                                    {data.jwork_responsibilities} {` with at least ${data.jwork_duration} year${data.jwork_duration > 1 ? "s" : ""} of experience needed`}
-                                    <Badge className='ml-2 text-xs'>{data.jwork_points} point{data.jwork_points > 1 ? "s" : ""}</Badge>
-                                  </li>
-                                </ul>
-                              ))}
-                            </div>
-                          </>
-                        )}
-                        {data.jobKnowledge.length > 0 && (
-                          <>
-                            <div className='text-sm my-3 font-bold flex items-center'>
-                              <span className='mr-2'>Knowledge and Compliance</span>
-                              {handleUpdateJob(data.jobKnowledge, "knowledge")}
-                            </div>
-                            <div className='w-full ml-3'>
-                              {data.jobKnowledge.map((data, index) => (
-                                <ul key={index} className="list-disc ml-4 mb-1">
-                                  <li>
-                                    {data.knowledge_name}
-                                    <Badge className='ml-2 text-xs'>{data.jknow_points} point{data.jknow_points > 1 ? "s" : ""}</Badge>
-                                  </li>
-                                </ul>
-                              ))}
-                            </div>
-                          </>
-                        )}
+              <SheetHeader className="mb-4">
+                <SheetTitle>{data.jobMaster[0].jobM_title}</SheetTitle>
+                <SheetDescription className="text-start">
+                  {data.jobMaster[0].jobM_description}
+                </SheetDescription>
+              </SheetHeader>
+              <Card className="p-1 w-full md:p-2 dark:bg-[#1c1917] flex-grow overflow-hidden">
+                <Tabs defaultValue={selectedTab} className="h-full flex flex-col" onValueChange={(value) => setSelectedTab(value)}>
+                  <TabsList>
+                    <TabsTrigger value={1}>Details</TabsTrigger>
+                    <TabsTrigger value={2}>Applicants</TabsTrigger>
+                    <TabsTrigger value={3}>Interview</TabsTrigger>
+                    <TabsTrigger value={4}>Exam</TabsTrigger>
+                  </TabsList>
+                  <ScrollArea className="flex-grow">
+                    <TabsContent value={1} className="h-full">
+                      <div>
+                        <div className="flex items-center w-full px-3">
+                          <span className='text-sm my-3 font-bold flex items-center mr-2'>Duties and Responsibilities</span>
+                          <div>{handleUpdateJob(data.jobDuties, "duties")}</div>
+                        </div>
+                        <div className='w-full px-6'>
+                          {data.jobDuties.length > 0 ? (
+                            data.jobDuties.map((data, index) => (
+                              <ul key={index} className="list-disc ml-4 mb-1">
+                                <li>{data.duties_text}</li>
+                              </ul>
+                            ))
+                          ) : (
+                            <p>No duties and responsibilities found.</p>
+                          )}
+                        </div>
+                        <div className='w-full px-3 mt-3'>
+                          <div className='text-sm mb-3 font-bold flex items-center'>
+                            <span className='mr-2'>Educational Background </span>
+                            {handleUpdateJob(data.jobEducation, "education")}
+                          </div>
+                          {data.jobEducation.length > 0 ? (
+                            <>
+                              <div className='w-full ml-3'>
+                                {data.jobEducation.map((data, index) => (
+                                  <ul key={index} className="list-disc ml-4 mb-3">
+                                    <li>
+                                      Graduate of any {data.course_categoryName} courses.
+                                      <Badge className='ml-2 text-xs'>{data.jeduc_points} point{data.jeduc_points > 1 ? "s" : ""}</Badge>
+                                    </li>
+                                  </ul>
+                                ))}
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <p className="ml-3">No educational background found.</p>
+                            </>
+                          )}
+                          <div className='text-sm my-3 font-bold flex items-center'>
+                            <span className='mr-2'>Skills</span>
+                            {handleUpdateJob(data.jobSkills, "skills")}
+                          </div>
+                          {data.jobSkills.length > 0 ? (
+                            <>
+                              <div className='w-full ml-3'>
+                                {data.jobSkills.map((data, index) => (
+                                  <ul key={index} className="list-disc ml-4 mb-1">
+                                    <li>
+                                      {data.perS_name}
+                                      <Badge className='ml-2 text-xs'>{data.jskills_points} point{data.jskills_points > 1 ? "s" : ""}</Badge>
+                                    </li>
+                                  </ul>
+                                ))}
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <p className="ml-3">No skills found.</p>
+                            </>
+                          )}
+                          <div className='text-sm my-3 font-bold flex items-center'>
+                            <span className='mr-2'>Trainings</span>
+                            {handleUpdateJob(data.jobTrainings, "trainings")}
+                          </div>
+                          {data.jobTrainings.length > 0 ? (
+                            <>
+                              <div className='w-full ml-3'>
+                                {data.jobTrainings.map((data, index) => (
+                                  <ul key={index} className="list-disc ml-4 mb-1">
+                                    <li>
+                                      {data.perT_name}
+                                      <Badge className='ml-2 text-xs'>{data.jtrng_points} point{data.jtrng_points > 1 ? "s" : ""}</Badge>
+                                    </li>
+                                  </ul>
+                                ))}
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <p className="ml-3">No trainings found.</p>
+                            </>
+                          )}
+                          <div className='text-sm my-3 font-bold flex items-center'>
+                            <span className='mr-2'>Experience</span>
+                            {handleUpdateJob(data.jobExperience, "experience")}
+                          </div>
+                          {data.jobExperience.length > 0 ? (
+                            <>
+                              <div className='w-full ml-3'>
+                                {data.jobExperience.map((data, index) => (
+                                  <ul key={index} className="list-disc ml-4 mb-1">
+                                    <li>
+                                      {data.jwork_responsibilities} {` with at least ${data.jwork_duration} year${data.jwork_duration > 1 ? "s" : ""} of experience needed`}
+                                      <Badge className='ml-2 text-xs'>{data.jwork_points} point{data.jwork_points > 1 ? "s" : ""}</Badge>
+                                    </li>
+                                  </ul>
+                                ))}
+                              </div>
+                            </>
+                          ) :
+                            <>
+                              <p className="ml-3">No experience found.</p>
+                            </>
+                          }
+                          <div className='text-sm my-3 font-bold flex items-center'>
+                            <span className='mr-2'>Knowledge and Compliance</span>
+                            {handleUpdateJob(data.jobKnowledge, "knowledge")}
+                          </div>
+                          {data.jobKnowledge.length > 0 ? (
+                            <>
+                              <div className='w-full ml-3'>
+                                {data.jobKnowledge.map((data, index) => (
+                                  <ul key={index} className="list-disc ml-4 mb-1">
+                                    <li>
+                                      {data.knowledge_name}
+                                      <Badge className='ml-2 text-xs'>{data.jknow_points} point{data.jknow_points > 1 ? "s" : ""}</Badge>
+                                    </li>
+                                  </ul>
+                                ))}
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <p className="ml-3">No knowledge and compliance found.</p>
+                            </>
+                          )}
+                        </div>
                       </div>
                     </TabsContent>
                     <TabsContent value={2}>
                       <ViewApplicants datas={data} passingPercentage={data.jobPassing[0].passing_percentage} getSelectedJob={getSelectedJobs} />
                     </TabsContent>
                     <TabsContent value={3}>
-                      <>
-                        <InterviewPage interviewData={data.interview} getSelectedJob={getSelectedJobs} />
-                      </>
+                      <InterviewPage interviewData={data.interview} getSelectedJob={getSelectedJobs} />
                     </TabsContent>
-                  </Tabs>
-                </Card>
-              </ScrollArea>
+                    <TabsContent value={4}>
+                      <ExamPage examData={data.exam} getSelectedJob={getSelectedJobs} />
+                    </TabsContent>
+                  </ScrollArea>
+                </Tabs>
+              </Card>
             </>
           )}
-        </DialogContent>
-      </Dialog>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }

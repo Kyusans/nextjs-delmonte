@@ -40,17 +40,6 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
   }
 
   const handleCloseModal = (status) => {
-    if (status !== 0) {
-      const jsonData ={
-        jobId: retrieveData("jobId"),
-        knowledgeText: status.jobKnowledge,
-        knowledgeId: status.knowledgeId,
-        points: status.points
-      }
-      handleAddData("addJobKnowledge", jsonData, "getJobKnowledge");
-    } else {
-      setDatas(datas);
-    }
     setShowModal(false);
   };
 
@@ -66,7 +55,7 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
 
   const handleCloseUpdateModal = (values) => {
     if (values !== 0) {
-      const jsonData ={
+      const jsonData = {
         id: updateData.id,
         knowledgeText: values.jobKnowledge,
         knowledgeId: values.knowledgeId,
@@ -80,6 +69,20 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
   const handleEdit = (id, knowledgeId, points, jobKnowledge) => {
     setUpdateData({ id: id, knowledgeId: knowledgeId, points: points, jobKnowledge: jobKnowledge });
     handleOpenUpdateModal();
+  }
+
+  const handleAddList = (status) => {
+    if (status !== 0) {
+      const jsonData = {
+        jobId: retrieveData("jobId"),
+        knowledgeText: status.jobKnowledge,
+        knowledgeId: status.knowledgeId,
+        points: status.points
+      }
+      handleAddData("addJobKnowledge", jsonData, "getJobKnowledge");
+    } else {
+      setDatas(datas);
+    }
   }
 
   useEffect(() => {
@@ -170,15 +173,15 @@ function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, del
               </div>
             </>
           ) : (
-            <CardDescription className="text-center">
-              No duties added yet
+            <CardDescription className="text-center p-5">
+              No Knowledge added yet
             </CardDescription>
           )}
         </Card>
 
-        {showModal && <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} />}
+        {showModal && <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} handleAddList={handleAddList} />}
         {showUpdateModal && <UpdateKnowledgeModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} knowledgeList={knowledgeList} />}
-        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={3} />
+        <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
       </div>
     </>
   )

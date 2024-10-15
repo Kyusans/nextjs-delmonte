@@ -1,20 +1,19 @@
 import { retrieveData } from '@/app/utils/storageUtils'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
 import Spinner from '@/components/ui/spinner'
-import { DialogTrigger } from '@radix-ui/react-dialog'
 import axios from 'axios'
 import React, { useCallback, useEffect, useState } from 'react'
+import ConductInterview from './ConductInterview'
+import { toast } from 'sonner'
 
-const InterviewResult = ({ candId }) => {
+const InterviewResult = ({ candId, handleInterviewChangeStatus }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [resultData, setResultData] = useState([]);
   const [criteriaScore, setCriteriaScore] = useState([]);
+  const [hasCriteria, setHasCriteria] = useState(true);
 
   const getCandInterviewResult = useCallback(async () => {
     setIsLoading(true);
@@ -29,11 +28,15 @@ const InterviewResult = ({ candId }) => {
       formData.append("operation", "getCandInterviewResult");
       formData.append("json", JSON.stringify(jsonData));
       const res = await axios.post(url, formData);
-      if (res.data !== 0) {
-        setResultData(res.data);
-        setCriteriaScore(res.data.criteriaScore);
+      console.log("getCandInterviewResult: ", res.data);
+      if (res.data === -1) {
+        setHasCriteria(false);
+      } else if (res.data !== 0) {
+        setHasCriteria(true);
+        setResultData(res.data.totalPoints);
+        setCriteriaScore(res.data.candCriteriaPoints);
       } else {
-        setResultData({});
+        setResultData([]);
       }
       console.log("getCandInterviewResult: ", res.data);
     } catch (error) {
@@ -44,54 +47,61 @@ const InterviewResult = ({ candId }) => {
     }
   }, [candId])
 
+  // modal for conduct interview
+  const [showConductInterview, setShowConductInterview] = useState(false);
+  const handleShowConductInterview = () => {
+    setShowConductInterview(true);
+  };
+  const handleCloseConductInterview = () => {
+    setShowConductInterview(false);
+  };
+
   useEffect(() => {
     getCandInterviewResult();
   }, [getCandInterviewResult])
 
   return (
     <div>
-      <Dialog>
-        <DialogTrigger>
-          <Button>Interview result</Button>
-        </DialogTrigger>
-        <DialogContent>
-          <ScrollArea>
-            <DialogTitle className="mb-3">Interview result</DialogTitle>
-            <DialogDescription></DialogDescription>
-            {isLoading ? <Spinner /> :
-              <>
-                <Card>
-                  <CardContent>
-                    {/* <pre>{JSON.stringify(resultData, null, 2)}</pre> */}
-                    {criteriaScore.map((element, index) => (
-                      <>
-                        <div className="mt-3" key={index}>
-                          <Label htmlFor="name" className="text-right">
-                            {element.inter_criteria_name}
-                          </Label>
-                          <Input
-                            id="name"
-                            defaultValue={`${element.candPoints} / ${element.totalPoints}`}
-                            className="col-span-3"
-                            readOnly
-                          />
-                        </div>
-                      </>
-                    ))}
-                    <Separator className="my-3" />
-                    <div className='mt-3 grid grid-cols-2'>
-                      <p>Total Score</p>
-                      <p className={`text-right `}>
-                        {resultData.candTotalPoints} / {resultData.totalPoints}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </>
-            }
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
+      {isLoading ? <Spinner /> :
+        <>
+          {hasCriteria ? (
+            <div>
+              <div className='mb-3'>
+                <p>Total Score: {resultData.candTotalPoints} / {resultData.criteriaTotalPoints}</p>
+              </div>
+              {criteriaScore.map((element, index) => (
+                <>
+                  <div className="mt-3" key={index}>
+                    <Label htmlFor="name">
+                      {element.criteria_inter_name}
+                    </Label>
+                    <Input
+                      id="name"
+                      defaultValue={`${element.CandPoints} / ${element.CriteriaPoint}`}
+                      className="col-span-3"
+                      disabled
+                    />
+                  </div>
+                </>
+              ))}
+            </div>
+          ) : (
+            <div className='flex flex-col items-center'>
+              <p className="text-center mb-3">Interview criteria updated or deleted</p>
+              <Button onClick={() => handleShowConductInterview()}>Reinterview applicant</Button>
+            </div>
+          )}
+
+        </>
+      }
+      {showConductInterview && (
+        <ConductInterview
+          open={showConductInterview}
+          onHide={handleCloseConductInterview}
+          candId={candId}
+          handleInterviewChangeStatus={handleInterviewChangeStatus}
+        />
+      )}
     </div>
   )
 }

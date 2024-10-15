@@ -70,28 +70,3 @@ function ShowAlert({ open, onHide, message, duration }) {
 }
 
 export default ShowAlert;
-
-
-
-
-  //how to use it
-  // const [alertMessage, setAlertMessage] = useState("");
-  // const [showAlert, setShowAlert] = useState(false);
-  // const handleShowAlert = (message) => {
-  // setAlertMessage(message);
-  //   setShowAlert(true);
-  // };
-  // const handleCloseAlert = (status) => {
-  //   if (status === 1) {
-  //     const filteredPosition = position.filter((_, index) => index !== indexToRemove);
-  //     setPosition(filteredPosition);
-  //     localStorage.setItem("employmentHistory", JSON.stringify(filteredPosition));
-  //   }
-  //   setShowAlert(false);
-  // };
-  // const handleRemoveList = (dutyId) => {
-  //   setSelectedId(dutyId);
-  //   handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
-  // };
-  // <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
-

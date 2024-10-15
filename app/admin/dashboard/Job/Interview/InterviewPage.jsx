@@ -1,16 +1,15 @@
 import { Button } from '@/components/ui/button'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { Edit2, PlusCircle, Trash2 } from 'lucide-react'
+import { Edit, Edit2, PlusCircle, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import AddInterviewCriteria from './modals/AddInterview/AddInterviewCriteria'
-import AddInterviewMaster from './modals/AddInterview/AddInterviewMaster'
 import UpdateInterviewCriteria from './modals/UpdateInterview/UpdateInterviewCriteria'
 import ShowAlert from '@/components/ui/show-alert'
 import axios from 'axios'
 import { toast } from 'sonner'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import UpdateInterviewPassingPercentage from './modals/UpdateInterview/UpdateInterviewPassingPercentage'
 
 function InterviewPage({ interviewData, getSelectedJob }) {
   const [data, setData] = useState([]);
@@ -25,19 +24,14 @@ function InterviewPage({ interviewData, getSelectedJob }) {
     setShowAddModal(false);
   };
 
-  const addCriteria = (status) => {
-    if (status !== 0) {
-      setData([...data, { inter_criteria_name: status.name, inter_criteria_points: status.points }]);
+  const addCriteria = (values) => {
+    setData([...data, {
+      criteria_inter_name: values.name,
+      inter_criteria_points: values.points,
+      interview_categ_name: values.category
     }
+    ]);
   }
-
-  // add interview master modal diri
-  const [showAddInterviewMaster, setShowAddInterviewMaster] = useState(false);
-  const openShowModalMaster = () => { setShowAddInterviewMaster(true); };
-  const closeShowModalMaster = () => {
-    setShowAddInterviewMaster(false);
-    getSelectedJob();
-  };
 
   // update interview criteria modal diri
   const [selectedData, setSelectedData] = useState({});
@@ -51,7 +45,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
   const closeUpdateModal = (status) => {
     if (status !== 0) {
       let criteriaList = data;
-      criteriaList[selectedIndex] = { inter_criteria_name: status.name, inter_criteria_points: status.points };
+      criteriaList[selectedIndex] = { criteria_inter_name: status.name, inter_criteria_points: status.points };
       setData(criteriaList);
       getSelectedJob();
     }
@@ -71,7 +65,7 @@ function InterviewPage({ interviewData, getSelectedJob }) {
     console.log("status: ", status);
     if (status === 1) {
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
-      const jsonData = { criteriaId: data[indexToRemove].inter_criteria_id };
+      const jsonData = { criteriaId: indexToRemove };
       console.log("JSON DATA: ", jsonData);
       const formData = new FormData();
       formData.append("operation", "deleteInterviewCriteria");
@@ -81,16 +75,14 @@ function InterviewPage({ interviewData, getSelectedJob }) {
       if (res.data === 1) {
         getSelectedJob();
         toast.success("Criteria deleted successfully");
-        const filteredData = data.filter((element) => element !== data[indexToRemove]);
-        setData(filteredData);
       }
     }
     setShowAlert(false);
   };
 
 
-  const handleRemoveList = (indexToRemove) => {
-    setIndexToRemove(indexToRemove);
+  const handleRemoveList = (idToRemove) => {
+    setIndexToRemove(idToRemove);
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
 
@@ -103,25 +95,34 @@ function InterviewPage({ interviewData, getSelectedJob }) {
   return (
     <div>
       <div>
-        <ScrollArea className="w-full h-[calc(100vh-200px)]">
-          {data.length === 0 ? (
-            <div className='flex flex-col justify-center items-center gap-3'>
-              <div className='font-bold text-xl mt-3'>No criteria for interview</div>
-              <Button onClick={openShowModalMaster}>
-                <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
-              </Button>
+        {data.length === 0 ? (
+          <div className='flex flex-col justify-center items-center gap-3'>
+            <div className='font-bold text-xl mt-3'>No criteria for interview</div>
+            <Button onClick={openShowModal}>
+              <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
+            </Button>
+          </div>
+        ) : (
+          <div>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+              <div className="ml-2">
+                <Button onClick={openShowModal} className="md:mb-3">
+                  <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
+                </Button>
+              </div>
+              <div className='flex md:justify-end items-end ml-2 md:mx-5 mb-3'>
+                <p>Passing percentage: {interviewData.interviewPassingPercent[0].passing_percent}%</p>
+                <UpdateInterviewPassingPercentage currentPassingPercentage={interviewData.interviewPassingPercent[0].passing_percent} getSelectedJob={getSelectedJob} />
+              </div>
             </div>
-          ) : (
-            <div className='mt-3'>
-              <Button onClick={openShowModalMaster}>
-                <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
-              </Button>
+            <div className={`grid ${data.length > 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-2`}>
               {data.map((item, index) => (
-                <Card key={index} className='my-2 bg-background m-5'>
+                <Card key={index} className='bg-background'>
                   <CardContent>
                     <CardHeader>
-                      <div>
-
+                      <div className='flex justify-end gap-3'>
+                        <Edit2 className='h-5 w-5 mr-1 hover:cursor-pointer' />
+                        <Trash2 className='h-5 w-5 mr-1 hover:cursor-pointer' onClick={() => handleRemoveList(item.inter_criteria_id)} />
                       </div>
                       <CardTitle> {item.criteria_inter_name}</CardTitle>
                     </CardHeader>
@@ -133,72 +134,31 @@ function InterviewPage({ interviewData, getSelectedJob }) {
                 </Card>
               ))}
             </div>
-          )}
-
-          {/* <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Criteria</TableHead>
-                  <TableHead className="text-center">Points</TableHead>
-                  <TableHead className="text-center">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">
-                      No criteria found
-                    </TableCell>
-                  </TableRow>
-                ) :
-                  (<>
-                    {data.map((item, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{item.inter_criteria_name}</TableCell>
-                        <TableCell className="text-center">{item.inter_criteria_points}</TableCell>
-                        <TableCell>
-                          <div className='flex justify-center'>
-                            <button onClick={() => { openShowModalUpdate(item, index) }}>
-                              <Edit2 className="h-4 w-4 mr-4" />
-                            </button>
-                            <button className="h-4 w-4" onClick={() => { handleRemoveList(index) }}>
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </>)
-                }
-              </TableBody>
-            </Table> */}
-        </ScrollArea>
+          </div>
+        )}
       </div>
-      {showAddModal && (
-        <AddInterviewCriteria
-          open={showAddModal}
-          onHide={closeShowModal}
-          interviewId={interviewData.interviewMaster[0].interviewM_id}
-          interviewCriteria={data}
-          addCriteria={addCriteria}
-        />
-      )}
-      {showAddInterviewMaster && (
-        <AddInterviewMaster
-          open={showAddInterviewMaster}
-          onHide={closeShowModalMaster}
-        />
-      )}
-      {showUpdateModal && (
-        <UpdateInterviewCriteria
-          open={showUpdateModal}
-          onHide={closeUpdateModal}
-          data={selectedData}
-          criteriaList={data}
-          isMaster={false}
-        />
-      )}
-      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={2} />
+      {
+        showAddModal && (
+          <AddInterviewCriteria
+            open={showAddModal}
+            onHide={closeShowModal}
+            interviewCriteria={data}
+            addCriteria={addCriteria}
+          />
+        )
+      }
+      {
+        showUpdateModal && (
+          <UpdateInterviewCriteria
+            open={showUpdateModal}
+            onHide={closeUpdateModal}
+            data={selectedData}
+            criteriaList={data}
+            isMaster={false}
+          />
+        )
+      }
+      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={0} />
     </div>
   );
 }
