@@ -140,6 +140,24 @@ const MasterFiles = ({ index }) => {
         }
       ]
     },
+    {
+      title: "Training", operation: "getTraining", columns: [
+        { header: "Training", accessor: "perT_name" },
+        {
+          header: "",
+          cell: (row) => (
+            <div className="flex gap-2">
+              <UpdateMasterfile
+                title="training"
+                data={row}
+                subject="training"
+                id={row.perT_id}
+              />
+            </div>
+          )
+        }
+      ]
+    },
   ], []);
 
   const getData = useCallback(async () => {
