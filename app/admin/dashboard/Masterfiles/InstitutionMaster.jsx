@@ -3,10 +3,18 @@ import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
+import AddInstitution from './modal/AddMasterfileForms/AddInstitution';
 
 const InstitutionMaster = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const addColumn = (values, newId) => {
+    setData([...data, {
+      institution_id: newId,
+      institution_name: values.institutionName
+    }]);
+  }
 
   const columns = [
     { header: "Institution", accessor: "institution_name" },
@@ -59,7 +67,14 @@ const InstitutionMaster = () => {
             data={data}
             columns={columns}
             autoIndex={true}
-            // add={<AddMasterfile title="institution" subject="institution" />}
+            add={
+              <AddInstitution
+                title="institution"
+                subject="institution"
+                getData={getData}
+                data={data}
+                addColumn={addColumn}
+              />}
           />
         </>
       )}
