@@ -10,6 +10,7 @@ import CourseMaster from './Masterfiles/CourseMaster';
 import InstitutionMaster from './Masterfiles/InstitutionMaster';
 import KnowledgeMaster from './Masterfiles/KnowledgeMaster';
 import LicenseMaster from './Masterfiles/LicenseMaster';
+import LicenseTypeMaster from './Masterfiles/LicenseTypeMaster';
 
 export default function Page() {
   const [viewIndex, setViewIndex] = useState(0);
@@ -23,6 +24,7 @@ export default function Page() {
     { view: <InstitutionMaster /> },
     { view: <KnowledgeMaster /> },
     { view: <LicenseMaster /> },
+    { view: <LicenseTypeMaster /> },
 
   ]
 
