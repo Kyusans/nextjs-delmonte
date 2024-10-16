@@ -8,6 +8,7 @@ import { ModeToggle } from '@/components/ui/mode-toggle';
 import CourseCategoryMaster from './Masterfiles/CourseCategoryMaster';
 import CourseMaster from './Masterfiles/CourseMaster';
 import InstitutionMaster from './Masterfiles/InstitutionMaster';
+import KnowledgeMaster from './Masterfiles/KnowledgeMaster';
 
 export default function Page() {
   const [viewIndex, setViewIndex] = useState(0);
@@ -19,7 +20,8 @@ export default function Page() {
     { view: <CourseCategoryMaster /> },
     { view: <CourseMaster /> },
     { view: <InstitutionMaster /> },
-    
+    { view: <KnowledgeMaster /> },
+
   ]
 
 
