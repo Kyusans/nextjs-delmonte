@@ -3,9 +3,18 @@ import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
+import AddKnowledge from './modal/AddMasterfileForms/AddKnowledge';
+
 const KnowledgeMaster = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const addColumn = (values, newId) => {
+    setData([...data, {
+      knowledge_id: newId,
+      knowledge_name: values.knowledgeName
+    }]);
+  }
 
   const columns = [
     { header: "Knowledge and Compliance", accessor: "knowledge_name" },
@@ -58,7 +67,15 @@ const KnowledgeMaster = () => {
             data={data}
             columns={columns}
             autoIndex={true}
-            // add={<AddMasterfile title="knowledge and compliance" subject="knowledge" />}
+            add={
+              <AddKnowledge
+                title="knowledge and compliance"
+                subject="knowledge"
+                getData={getData}
+                data={data}
+                addColumn={addColumn}
+              />
+            }
           />
         </>
       )}

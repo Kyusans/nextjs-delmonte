@@ -1,6 +1,6 @@
 "use client"
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -20,6 +20,8 @@ const AddCourse = ({ title, getData, data, addColumn }) => {
   const [courseType, setCourseType] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isSubmit, setIsSubmit] = useState(false);
+  const inputRef = useRef(null);
 
   const formSchema = z.object({
     courseCategory: z.number().min(1, {
@@ -43,9 +45,9 @@ const AddCourse = ({ title, getData, data, addColumn }) => {
   });
 
   const onSubmit = async (values) => {
-    setIsLoading(true);
+    setIsSubmit(true);
     try {
-      const courseExists = data.some(course => 
+      const courseExists = data.some(course =>
         course.courses_name.toLowerCase() === values.courseName.toLowerCase() &&
         course.course_categoryName === courseCategory.find(cat => cat.value === values.courseCategory)?.label &&
         course.crs_type_name === courseType.find(type => type.value === values.courseType)?.label
@@ -54,6 +56,7 @@ const AddCourse = ({ title, getData, data, addColumn }) => {
       if (courseExists) {
         toast.error("This course already exists");
         setIsLoading(false);
+        setIsSubmit(false);
         return;
       }
 
@@ -77,6 +80,9 @@ const AddCourse = ({ title, getData, data, addColumn }) => {
           courseCategory: categoryName,
           courseType: typeName
         }, res.data);
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
       } else {
         toast.error("Failed to add course");
       }
@@ -84,7 +90,7 @@ const AddCourse = ({ title, getData, data, addColumn }) => {
       toast.error("Network error");
       console.log("AddCourse.jsx => onSubmit(): " + error);
     } finally {
-      setIsLoading(false);
+      setIsSubmit(false);
     }
   };
 
@@ -136,16 +142,18 @@ const AddCourse = ({ title, getData, data, addColumn }) => {
 
   return (
     <div>
-      {isLoading ? <Spinner /> : (
-        <>
-          <Dialog open={isOpen} onOpenChange={(open) => {
-            setIsOpen(open);
-            if (!open) handleClose();
-          }}>
-            <DialogTrigger>
-              <button><PlusSquare className="h-5 w-5 text-primary" /></button>
-            </DialogTrigger>
-            <DialogContent>
+      <Dialog open={isOpen} onOpenChange={(open) => {
+        setIsOpen(open);
+        if (!open) handleClose();
+      }}>
+        <DialogTrigger>
+          <button><PlusSquare className="h-5 w-5 text-primary" /></button>
+        </DialogTrigger>
+        <DialogContent>
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <>
               <DialogHeader className="mb-3">
                 <DialogTitle>Add {title}</DialogTitle>
               </DialogHeader>
@@ -198,7 +206,7 @@ const AddCourse = ({ title, getData, data, addColumn }) => {
                           <FormItem>
                             <FormLabel>Course Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter course name" {...field} />
+                              <Input placeholder="Enter course name" {...field} ref={inputRef} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -210,15 +218,14 @@ const AddCourse = ({ title, getData, data, addColumn }) => {
                     <DialogClose asChild>
                       <Button variant="outline" onClick={handleClose}>Close</Button>
                     </DialogClose>
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit">{isSubmit && <Spinner />} {isSubmit ? 'Submitting...' : 'Submit'}</Button>
                   </div>
                 </form>
               </Form>
-            </DialogContent>
-          </Dialog>
-
-        </>
-      )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

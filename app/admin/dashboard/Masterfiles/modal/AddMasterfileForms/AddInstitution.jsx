@@ -1,6 +1,6 @@
 "use client"
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -19,6 +19,8 @@ const formSchema = z.object({
 const AddInstitution = ({ title, getData, data, addColumn }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isSubmit, setIsSubmit] = useState(false);
+  const inputRef = useRef(null);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -27,9 +29,15 @@ const AddInstitution = ({ title, getData, data, addColumn }) => {
     },
   });
 
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isOpen]);
+
   const onSubmit = async (values) => {
     console.log("values ni institution: ", values);
-    setIsLoading(true);
+    setIsSubmit(true);
     try {
       const institutionExists = data.some(institution => 
         institution.institution_name.toLowerCase() === values.institutionName.toLowerCase()
@@ -38,6 +46,7 @@ const AddInstitution = ({ title, getData, data, addColumn }) => {
       if (institutionExists) {
         toast.error("This institution already exists");
         setIsLoading(false);
+        setIsSubmit(false);
         return;
       }
 
@@ -51,6 +60,10 @@ const AddInstitution = ({ title, getData, data, addColumn }) => {
       if (res.data !== 1) {
         toast.success('Institution added successfully');
         addColumn(values, res.data);
+        form.reset();
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
       } else {
         toast.error('Failed to add institution');
       }
@@ -58,7 +71,7 @@ const AddInstitution = ({ title, getData, data, addColumn }) => {
       toast.error('Network error');
       console.error('AddInstitution.jsx ~ onSubmit ~ error:', error);
     } finally {
-      setIsLoading(false);
+      setIsSubmit(false);
     }
   };
 
@@ -69,16 +82,18 @@ const AddInstitution = ({ title, getData, data, addColumn }) => {
 
   return (
     <div>
-      {isLoading ? <Spinner /> : (
-        <>
-          <Dialog open={isOpen} onOpenChange={(open) => {
-            setIsOpen(open);
-            if (!open) handleClose();
-          }}>
-            <DialogTrigger>
-              <button><PlusSquare className="h-5 w-5 text-primary" /></button>
-            </DialogTrigger>
-            <DialogContent>
+      <Dialog open={isOpen} onOpenChange={(open) => {
+        setIsOpen(open);
+        if (!open) handleClose();
+      }}>
+        <DialogTrigger>
+          <button><PlusSquare className="h-5 w-5 text-primary" /></button>
+        </DialogTrigger>
+        <DialogContent>
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <>
               <DialogHeader className="mb-3">
                 <DialogTitle>Add {title}</DialogTitle>
               </DialogHeader>
@@ -93,7 +108,7 @@ const AddInstitution = ({ title, getData, data, addColumn }) => {
                           <FormItem>
                             <FormLabel>Institution Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter institution name" {...field} />
+                              <Input placeholder="Enter institution name" {...field} ref={inputRef} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -105,14 +120,14 @@ const AddInstitution = ({ title, getData, data, addColumn }) => {
                     <DialogClose asChild>
                       <Button variant="outline" onClick={handleClose}>Close</Button>
                     </DialogClose>
-                    <Button type="submit">Submit</Button>
+                    <Button type="submit">{isSubmit && <Spinner />} {isSubmit ? 'Submitting...' : 'Submit'}</Button>
                   </div>
                 </form>
               </Form>
-            </DialogContent>
-          </Dialog>
-        </>
-      )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
