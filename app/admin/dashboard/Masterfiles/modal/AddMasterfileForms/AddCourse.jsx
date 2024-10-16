@@ -45,7 +45,6 @@ const AddCourse = ({ title, getData, data, addColumn }) => {
   const onSubmit = async (values) => {
     setIsLoading(true);
     try {
-      // Check if the course already exists
       const courseExists = data.some(course => 
         course.courses_name.toLowerCase() === values.courseName.toLowerCase() &&
         course.course_categoryName === courseCategory.find(cat => cat.value === values.courseCategory)?.label &&

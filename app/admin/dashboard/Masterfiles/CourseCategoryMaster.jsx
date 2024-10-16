@@ -3,10 +3,18 @@ import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
+import AddCourseCategory from './modal/AddMasterfileForms/AddCourseCategory';
 
 const CourseCategoryMaster = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const addColumn = (values, newId) => {
+    setData([...data, {
+      course_categoryId: newId,
+      course_categoryName: values.courseCategoryName
+    }]);
+  }
 
   const columns = [
     { header: "Course Category", accessor: "course_categoryName" },
@@ -59,12 +67,15 @@ const CourseCategoryMaster = () => {
             data={data}
             columns={columns}
             autoIndex={true}
-            // add={<AddMasterfile
-            //   title="course category"
-            //   subject="courseCategory"
-            //   data={data}
-            //   getData={getData}
-            // />}
+            add={
+              <AddCourseCategory
+                title="course category"
+                subject="courseCategory"
+                data={data}
+                getData={getData}
+                addColumn={addColumn}
+              />
+            }
           />
         </>
       )}
