@@ -12,6 +12,7 @@ import KnowledgeMaster from './Masterfiles/KnowledgeMaster';
 import LicenseMaster from './Masterfiles/LicenseMaster';
 import LicenseTypeMaster from './Masterfiles/LicenseTypeMaster';
 import SkillsMaster from './Masterfiles/SkillsMaster';
+import TrainingMaster from './Masterfiles/TrainingMaster';
 
 export default function Page() {
   const [viewIndex, setViewIndex] = useState(0);
@@ -27,7 +28,7 @@ export default function Page() {
     { view: <LicenseMaster /> },
     { view: <LicenseTypeMaster /> },
     { view: <SkillsMaster /> },
-
+    { view: <TrainingMaster /> },
   ]
 
 
