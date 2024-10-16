@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 
-const DataTable = ({ columns, data, itemsPerPage = 10, autoIndex = false, title }) => {
+const DataTable = ({ columns, data, itemsPerPage = 10, autoIndex = false, title, add }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
@@ -23,14 +23,18 @@ const DataTable = ({ columns, data, itemsPerPage = 10, autoIndex = false, title 
     );
   }, [data, columns, searchTerm]);
 
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / itemsPerPage));
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filteredData.length]);
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-
   const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    setCurrentPage(Math.max(1, Math.min(pageNumber, totalPages)));
   };
 
   const handleSearch = (e) => {
@@ -118,46 +122,53 @@ const DataTable = ({ columns, data, itemsPerPage = 10, autoIndex = false, title 
     return items;
   };
 
+  const isMobile = windowWidth < 640;
+
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        {title && <h2 className="text-2xl font-bold">{title}</h2>}
+      <div className={`flex ${isMobile ? 'flex-col' : 'justify-between'} items-start sm:items-center mb-4`}>
+        <div className="flex items-center gap-2 mb-2 sm:mb-0">
+          {title && <h2 className="text-lg font-bold">{title}</h2>}
+          {add && add}
+        </div>
         <Input
           type="text"
           placeholder="Search..."
           value={searchTerm}
           onChange={handleSearch}
-          className="max-w-xs"
+          className={`${isMobile ? 'w-full' : 'max-w-xs'}`}
         />
       </div>
       {filteredData.length > 0 ? (
         <>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {autoIndex && <TableHead>#</TableHead>}
-                {columns.map((column, index) => (
-                  <TableHead key={index}>{column.header}</TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {currentItems.map((row, rowIndex) => (
-                <TableRow key={rowIndex}>
-                  {autoIndex && (
-                    <TableCell>
-                      {(currentPage - 1) * itemsPerPage + rowIndex + 1}
-                    </TableCell>
-                  )}
-                  {columns.map((column, colIndex) => (
-                    <TableCell key={colIndex}>
-                      {column.accessor ? row[column.accessor] : column.cell(row)}
-                    </TableCell>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {autoIndex && <TableHead>#</TableHead>}
+                  {columns.map((column, index) => (
+                    <TableHead key={index}>{column.header}</TableHead>
                   ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {currentItems.map((row, rowIndex) => (
+                  <TableRow key={rowIndex}>
+                    {autoIndex && (
+                      <TableCell>
+                        {(currentPage - 1) * itemsPerPage + rowIndex + 1}
+                      </TableCell>
+                    )}
+                    {columns.map((column, colIndex) => (
+                      <TableCell key={colIndex}>
+                        {column.accessor ? row[column.accessor] : column.cell(row)}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
           <div className='overflow-x-auto'>
             <Pagination className="mt-4">
               <PaginationContent>
