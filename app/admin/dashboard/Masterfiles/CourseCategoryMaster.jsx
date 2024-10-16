@@ -61,7 +61,12 @@ const CourseCategoryMaster = () => {
             data={data}
             columns={columns}
             autoIndex={true}
-            add={<AddMasterfile title="course category" subject="courseCategory" />}
+            add={<AddMasterfile
+              title="course category"
+              subject="courseCategory"
+              data={data}
+              getData={getData}
+            />}
           />
         </>
       )}

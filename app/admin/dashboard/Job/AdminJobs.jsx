@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter, CardTitle } from '@/components/ui/card';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner';
-import { Briefcase, CheckCircle, Circle, Edit, EllipsisVertical, Filter, Plus, Settings, XCircle } from 'lucide-react';
+import { Briefcase, CheckCircle, Circle, Filter, PlusCircle, Settings, XCircle } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 import AddJob from './AddJob';
 import { removeData, retrieveData } from '@/app/utils/storageUtils';
@@ -39,9 +39,11 @@ function AdminJobs() {
   }
 
   const getAllJobs = async () => {
+    console.log("getAllJobs");
     setIsLoading(true);
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
+      console.log("URL: ", url);
       const formData = new FormData();
       formData.append("operation", "getAllJobs");
       const res = await axios.post(url, formData);
@@ -124,7 +126,7 @@ function AdminJobs() {
         <Button className="mb-3" onClick={handleSwitchView}>
           {/* {isAddJob ? <ArrowLeft className="h-4 w-4 mr-1" /> : <PlusCircle className="h-4 w-4 mr-1" />} */}
           {/* {isAddJob ? "Back" : "Add Job"} */}
-          <Plus className="h-4 w-4 mr-1" />
+          <PlusCircle className="h-4 w-4 mr-1" />
           Add Job
         </Button>
         <DropdownMenu className="mb-3 mx-3">
