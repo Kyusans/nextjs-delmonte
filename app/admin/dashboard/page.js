@@ -6,6 +6,7 @@ import { CardTitle } from '@/components/ui/card';
 import AdminJobs from './Job/AdminJobs';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import CourseCategoryMaster from './Masterfiles/CourseCategoryMaster';
+import CourseMaster from './Masterfiles/CourseMaster';
 
 export default function Page() {
   const [viewIndex, setViewIndex] = useState(0);
@@ -14,6 +15,7 @@ export default function Page() {
     { view: <AdminDashboard /> },
     { view: <AdminJobs /> },
     { view: <CourseCategoryMaster /> },
+    { view: <CourseMaster /> },
   ]
 
 
