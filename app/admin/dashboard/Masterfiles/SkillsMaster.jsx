@@ -6,21 +6,21 @@ import { toast } from 'sonner';
 import UpdateMasterfile from './modal/UpdateMasterfile';
 import AddMasterfile from './modal/AddMasterfile';
 
-const LicenseTypeMaster = () => {
+const SkillsMaster = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const columns = [
-    { header: "License type", accessor: "license_type_name" },
+    { header: "Skills", accessor: "perS_name" },
     {
       header: "",
       cell: (row) => (
         <div className="flex gap-2">
           <UpdateMasterfile
-            title="license type"
+            title="skills"
             data={row}
-            subject="licenseType"
-            id={row.license_type_id}
+            subject="skills"
+            id={row.perS_id}
           />
         </div>
       )
@@ -32,7 +32,7 @@ const LicenseTypeMaster = () => {
       setIsLoading(true);
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
       const formData = new FormData();
-      formData.append("operation", "getLicenseType");
+      formData.append("operation", "getSkills");
       const res = await axios.post(url, formData);
       console.log("res.data ni getData: ", res.data);
       if (res.data !== 0) {
@@ -42,7 +42,7 @@ const LicenseTypeMaster = () => {
       }
     } catch (error) {
       toast.error("Network error");
-      console.log("LicenseTypeMaster.jsx ~ getData ~ error:", error);
+      console.log("SkillsMaster.jsx ~ getData ~ error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -57,17 +57,17 @@ const LicenseTypeMaster = () => {
       {isLoading ? <Spinner /> : (
         <>
           <DataTable
-            title="License Type"
+            title="Skills"
             data={data}
             columns={columns}
             autoIndex={true}
-            add={<AddMasterfile title="license type" subject="licenseType" />}
+            add={<AddMasterfile title="skills" subject="skills" />}
           />
         </>
       )}
-
+      
     </div>
   )
 }
 
-export default LicenseTypeMaster
+export default SkillsMaster
