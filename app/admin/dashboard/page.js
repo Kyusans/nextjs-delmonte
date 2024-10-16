@@ -5,18 +5,15 @@ import AdminSidebar from './AdminSidebar';
 import { CardTitle } from '@/components/ui/card';
 import AdminJobs from './Job/AdminJobs';
 import { ModeToggle } from '@/components/ui/mode-toggle';
-import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import CourseCategoryMaster from './Masterfiles/CourseCategoryMaster';
-import MasterFiles from './Masterfiles/MasterFiles';
 
 export default function Page() {
   const [viewIndex, setViewIndex] = useState(0);
-  const [masterFileIndex, setMasterFileIndex] = useState(0);
 
   const adminViews = [
     { view: <AdminDashboard /> },
     { view: <AdminJobs /> },
-    { view: <MasterFiles index={masterFileIndex} /> },
+    { view: <CourseCategoryMaster /> },
   ]
 
 
@@ -24,13 +21,9 @@ export default function Page() {
     setViewIndex(index);
   }
 
-  const handleChangeMasterFile = (index) => {
-    setMasterFileIndex(index);
-    setViewIndex(2);
-  }
   return (
     <div className='bg-background h-screen'>
-      <AdminSidebar changeView={handleChangeView} changeMasterFile={handleChangeMasterFile} />
+      <AdminSidebar changeView={handleChangeView} />
       <main className="sm:ps-20 px-5 py-3">
         <div className='flex justify-end'>
           <ModeToggle />

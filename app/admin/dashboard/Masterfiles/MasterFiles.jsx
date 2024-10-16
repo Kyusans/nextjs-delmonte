@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import axios from 'axios';
 import Spinner from '@/components/ui/spinner';
 import DataTable from '@/app/my_components/DataTable';
+import AddMasterfile from './modal/AddMasterfile';
 
 const MasterFiles = ({ index }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -12,7 +13,7 @@ const MasterFiles = ({ index }) => {
 
   const masterFiles = useMemo(() => [
     {
-      title: "Course Category", operation: "getCourseCategory", columns: [
+      title: "Course Category", operation: "getCourseCategory", add: <AddMasterfile title="course category" subject="courseCategory" />, columns: [
         { header: "Course Category", accessor: "course_categoryName" },
         {
           header: "",
@@ -30,7 +31,7 @@ const MasterFiles = ({ index }) => {
       ]
     },
     {
-      title: "Course", operation: "getCourse", columns: [
+      title: "Course", operation: "getCourse", add: <AddMasterfile title="course" subject="course" />, columns: [
         { header: "Course", accessor: "courses_name" },
         { header: "Course Category", accessor: "course_categoryName" },
         { header: "Course Description", accessor: "crs_type_name" },
@@ -50,7 +51,7 @@ const MasterFiles = ({ index }) => {
       ]
     },
     {
-      title: "Institution", operation: "getInstitution", columns: [
+      title: "Institution", operation: "getInstitution", add: <AddMasterfile title="institution" subject="institution" />, columns: [
         { header: "Institution", accessor: "institution_name" },
         {
           header: "",
@@ -68,7 +69,7 @@ const MasterFiles = ({ index }) => {
       ]
     },
     {
-      title: "Knowledge and Compliance", operation: "getKnowledge", columns: [
+      title: "Knowledge and Compliance", operation: "getKnowledge", add: <AddMasterfile title="knowledge and compliance" subject="knowledge" />, columns: [
         { header: "Knowledge and Compliance", accessor: "knowledge_name" },
         {
           header: "",
@@ -86,7 +87,7 @@ const MasterFiles = ({ index }) => {
       ]
     },
     {
-      title: "License Master", operation: "getLicenseMaster", columns: [
+      title: "License Master", operation: "getLicenseMaster", add: <AddMasterfile title="license master" subject="licenseMaster" />, columns: [
         { header: "License Master", accessor: "license_master_name" },
         { header: "License Type", accessor: "license_type_name" },
         {
@@ -105,7 +106,7 @@ const MasterFiles = ({ index }) => {
       ]
     },
     {
-      title: "License type", operation: "getLicenseType", columns: [
+      title: "License type", operation: "getLicenseType", add: <AddMasterfile title="license type" subject="licenseType" />, columns: [
         { header: "License type", accessor: "license_type_name" },
         {
           header: "",
@@ -123,7 +124,7 @@ const MasterFiles = ({ index }) => {
       ]
     },
     {
-      title: "Skills", operation: "getSkills", columns: [
+      title: "Skills", operation: "getSkills", add: <AddMasterfile title="skills" subject="skills" />, columns: [
         { header: "Skills", accessor: "perS_name" },
         {
           header: "",
@@ -141,7 +142,7 @@ const MasterFiles = ({ index }) => {
       ]
     },
     {
-      title: "Training", operation: "getTraining", columns: [
+      title: "Training", operation: "getTraining", add: <AddMasterfile title="training" subject="training" />, columns: [
         { header: "Training", accessor: "perT_name" },
         {
           header: "",
@@ -160,35 +161,35 @@ const MasterFiles = ({ index }) => {
     },
   ], []);
 
-  const getData = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
-      const formData = new FormData();
-      formData.append("operation", masterFiles[selectedIndex].operation);
-      console.log("operation ni : ", masterFiles[selectedIndex].operation);
-      const res = await axios.post(url, formData);
-      console.log("res.data ni : ", res.data);
-      if (res.data !== 0) {
-        setData(res.data);
-      } else {
-        setData([]);
-      }
-    } catch (error) {
-      toast.error("Network error");
-      console.log("MasterFileView.jsx ~ getData ~ error:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [selectedIndex, masterFiles]);
+
 
   useEffect(() => {
-    const newIndex = index;
-    setSelectedIndex(newIndex);
+    const getData = async () => {
+      setIsLoading(true);
+      try {
+        const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
+        const formData = new FormData();
+        formData.append("operation", masterFiles[index].operation);
+        console.log("operation ni : ", masterFiles[index].operation);
+        const res = await axios.post(url, formData);
+        console.log("res.data ni : ", res.data);
+        if (res.data !== 0) {
+          setData(res.data);
+        } else {
+          setData([]);
+        }
+      } catch (error) {
+        toast.error("Network error");
+        console.log("MasterFileView.jsx ~ getData ~ error:", error);
+      } finally {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 500);
+      }
+    };
     setData([]);
     getData();
-    console.log("selectedIndex ni : ", selectedIndex);
-  }, [getData, index, selectedIndex]);
+  }, [index]);
 
   return (
     <div>
@@ -201,6 +202,7 @@ const MasterFiles = ({ index }) => {
               columns={masterFiles[selectedIndex].columns}
               autoIndex={true}
               key={selectedIndex}
+              add={masterFiles[selectedIndex].add}
             />
           </>
         )

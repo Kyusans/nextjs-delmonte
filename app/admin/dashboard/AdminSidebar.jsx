@@ -21,27 +21,20 @@ function AdminSidebar({ changeView, changeMasterFile }) {
   ]
 
   const masterFiles = [
-    { name: "Course category", icon: <BookOpen className="h-5 w-5" /> },
-    { name: "Course", icon: <GraduationCap className="h-5 w-5" /> },
-    { name: "Institution", icon: <Building className="h-5 w-5" /> },
-    { name: "Knowledge and Compliance", icon: <Brain className="h-5 w-5" /> },
-    { name: "License master", icon: <FileCheck className="h-5 w-5" /> },
-    { name: "License type", icon: <FileCheck2 className="h-5 w-5" /> },
-    { name: "Skills", icon: <Lightbulb className="h-5 w-5" /> },
-    { name: "Trainings", icon: <Users className="h-5 w-5" /> },
+    { name: "Course category", icon: <BookOpen className="h-5 w-5" />, index: 2 },
+    { name: "Course", icon: <GraduationCap className="h-5 w-5" />, index: 3 },
+    { name: "Institution", icon: <Building className="h-5 w-5" />, index: 4 },
+    { name: "Knowledge and Compliance", icon: <Brain className="h-5 w-5" />, index: 5 },
+    { name: "License master", icon: <FileCheck className="h-5 w-5" />, index: 6 },
+    { name: "License type", icon: <FileCheck2 className="h-5 w-5" />, index: 7 },
+    { name: "Skills", icon: <Lightbulb className="h-5 w-5" />, index: 8 },
+    { name: "Trainings", icon: <Users className="h-5 w-5" />, index: 9 },
   ]
   const handleChangeView = (index) => {
     changeView(index);
     setView(index);
     setIsOpen(false);
     console.log("index: ", index);
-  }
-
-  const handleChangeMasterFile = (index) => {
-    changeMasterFile(index);
-    setView(index);
-    setIsOpen(false);
-    console.log("indexMaster: ", index);
   }
   return (
     <>
@@ -87,7 +80,7 @@ function AdminSidebar({ changeView, changeMasterFile }) {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
                       {masterFiles.map((file, fileIndex) => (
-                        <DropdownMenuItem key={fileIndex} onClick={() => handleChangeView(index)}>
+                        <DropdownMenuItem key={fileIndex} onClick={() => handleChangeView(file.index)}>
                           {file.icon}
                           <span className="ml-2">{file.name}</span>
                         </DropdownMenuItem>
@@ -157,7 +150,7 @@ function AdminSidebar({ changeView, changeMasterFile }) {
                 <Popover key={index}>
                   <PopoverTrigger asChild>
                     <div
-                      className={`flex h-9 w-9 ${view === index ? "bg-primary text-black hover:text-white transition-all duration-500 ease-in-out" : "bg-transparent transition-colors text-white hover:text-black"} items-center justify-center rounded-lg hover:bg-primary transition-colors md:h-8 md:w-8 cursor-pointer`}
+                      className={`flex h-9 w-9 ${view >= 2 && view <= 9 ? "bg-primary text-black hover:text-white transition-all duration-500 ease-in-out" : "bg-transparent transition-colors text-white hover:text-black"} items-center justify-center rounded-lg hover:bg-primary transition-colors md:h-8 md:w-8 cursor-pointer`}
                     >
                       {tab.icon}
                     </div>
@@ -173,7 +166,7 @@ function AdminSidebar({ changeView, changeMasterFile }) {
                               <a
                                 className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors group-hover:bg-accent group-hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
                                 href="#"
-                                onClick={() => handleChangeMasterFile(fileIndex)}
+                                onClick={() => handleChangeView(file.index)}
                               >
                                 <div className="flex items-center">
                                   {file.icon}
