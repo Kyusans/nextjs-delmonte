@@ -3,8 +3,6 @@ import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
-import UpdateMasterfile from './modal/UpdateMasterfile';
-import AddMasterfile from './modal/AddMasterfile';
 
 const LicenseMaster = () => {
   const [data, setData] = useState([]);
@@ -17,12 +15,12 @@ const LicenseMaster = () => {
       header: "",
       cell: (row) => (
         <div className="flex gap-2">
-          <UpdateMasterfile
+          {/* <UpdateMasterfile
             title="license master"
             data={row}
             subject="licenseMaster"
             id={row.license_master_id}
-          />
+          /> */}
         </div>
       )
     }
@@ -62,7 +60,7 @@ const LicenseMaster = () => {
             data={data}
             columns={columns}
             autoIndex={true}
-            add={<AddMasterfile title="license master" subject="licenseMaster" />}
+            // add={<AddMasterfile title="license master" subject="licenseMaster" />}
           />
         </>
       )}

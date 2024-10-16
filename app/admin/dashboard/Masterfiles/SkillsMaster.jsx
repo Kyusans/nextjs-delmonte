@@ -3,8 +3,6 @@ import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
-import UpdateMasterfile from './modal/UpdateMasterfile';
-import AddMasterfile from './modal/AddMasterfile';
 
 const SkillsMaster = () => {
   const [data, setData] = useState([]);
@@ -16,12 +14,12 @@ const SkillsMaster = () => {
       header: "",
       cell: (row) => (
         <div className="flex gap-2">
-          <UpdateMasterfile
+          {/* <UpdateMasterfile
             title="skills"
             data={row}
             subject="skills"
             id={row.perS_id}
-          />
+          /> */}
         </div>
       )
     }
@@ -61,7 +59,7 @@ const SkillsMaster = () => {
             data={data}
             columns={columns}
             autoIndex={true}
-            add={<AddMasterfile title="skills" subject="skills" />}
+            // add={<AddMasterfile title="skills" subject="skills" />}
           />
         </>
       )}
