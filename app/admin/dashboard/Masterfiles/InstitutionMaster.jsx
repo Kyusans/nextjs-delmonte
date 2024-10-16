@@ -6,23 +6,21 @@ import { toast } from 'sonner';
 import UpdateMasterfile from './modal/UpdateMasterfile';
 import AddMasterfile from './modal/AddMasterfile';
 
-const CourseMaster = () => {
+const InstitutionMaster = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const columns = [
-    { header: "Course", accessor: "courses_name" },
-    { header: "Course Category", accessor: "course_categoryName" },
-    { header: "Course Description", accessor: "crs_type_name" },
+    { header: "Institution", accessor: "institution_name" },
     {
       header: "",
       cell: (row) => (
         <div className="flex gap-2">
           <UpdateMasterfile
-            title="course"
+            title="institution"
             data={row}
-            subject="course"
-            id={row.courses_id}
+            subject="institution"
+            id={row.institution_id}
           />
         </div>
       )
@@ -34,7 +32,7 @@ const CourseMaster = () => {
       setIsLoading(true);
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
       const formData = new FormData();
-      formData.append("operation", "getCourse");
+      formData.append("operation", "getInstitution");
       const res = await axios.post(url, formData);
       console.log("res.data ni getData: ", res.data);
       if (res.data !== 0) {
@@ -44,7 +42,7 @@ const CourseMaster = () => {
       }
     } catch (error) {
       toast.error("Network error");
-      console.log("CourseMaster.jsx ~ getData ~ error:", error);
+      console.log("InstitutionMaster.jsx ~ getData ~ error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -59,11 +57,11 @@ const CourseMaster = () => {
       {isLoading ? <Spinner /> : (
         <>
           <DataTable
-            title="Course"
+            title="Institution"
             data={data}
             columns={columns}
             autoIndex={true}
-            add={<AddMasterfile title="course" subject="course" />}
+            add={<AddMasterfile title="institution" subject="institution" />}
           />
         </>
       )}
@@ -71,4 +69,4 @@ const CourseMaster = () => {
   )
 }
 
-export default CourseMaster
+export default InstitutionMaster

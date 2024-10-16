@@ -7,6 +7,7 @@ import AdminJobs from './Job/AdminJobs';
 import { ModeToggle } from '@/components/ui/mode-toggle';
 import CourseCategoryMaster from './Masterfiles/CourseCategoryMaster';
 import CourseMaster from './Masterfiles/CourseMaster';
+import InstitutionMaster from './Masterfiles/InstitutionMaster';
 
 export default function Page() {
   const [viewIndex, setViewIndex] = useState(0);
@@ -14,8 +15,11 @@ export default function Page() {
   const adminViews = [
     { view: <AdminDashboard /> },
     { view: <AdminJobs /> },
+    // Masterfiles
     { view: <CourseCategoryMaster /> },
     { view: <CourseMaster /> },
+    { view: <InstitutionMaster /> },
+    
   ]
 
 

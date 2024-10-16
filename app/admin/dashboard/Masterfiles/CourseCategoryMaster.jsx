@@ -1,11 +1,9 @@
 import DataTable from '@/app/my_components/DataTable';
 import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
-import { Edit2, Plus, PlusCircle, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
 import UpdateMasterfile from './modal/UpdateMasterfile';
-import { Button } from '@/components/ui/button';
 import AddMasterfile from './modal/AddMasterfile';
 
 const CourseCategoryMaster = () => {
