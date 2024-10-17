@@ -3,10 +3,16 @@ import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
+import AddSkill from './modal/AddMasterfileForms/AddSkill';
 
 const SkillsMaster = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const addColumn = (values, id) => {
+    console.log("values", values);
+    setData([...data, { ...values, skill_id: id }]);
+  }
 
   const columns = [
     { header: "Skills", accessor: "perS_name" },
@@ -59,7 +65,15 @@ const SkillsMaster = () => {
             data={data}
             columns={columns}
             autoIndex={true}
-            // add={<AddMasterfile title="skills" subject="skills" />}
+            add={
+            <AddSkill 
+              title="skills" 
+              subject="skills" 
+              getData={getData} 
+              data={data} 
+              addColumn={addColumn} 
+            />
+            }
           />
         </>
       )}
