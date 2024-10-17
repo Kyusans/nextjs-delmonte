@@ -3,10 +3,15 @@ import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
+import AddLicense from './modal/AddMasterfileForms/AddLicense';
 
 const LicenseMaster = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const addColumn = (column, id) => {
+    setData([...data, { ...column, license_master_id: id }]);
+  }
 
   const columns = [
     { header: "License Master", accessor: "license_master_name" },
@@ -56,11 +61,17 @@ const LicenseMaster = () => {
       {isLoading ? <Spinner /> : (
         <>
           <DataTable
-            title="License Master"
+            title="License Masterss"
             data={data}
             columns={columns}
             autoIndex={true}
-            // add={<AddMasterfile title="license master" subject="licenseMaster" />}
+            add={
+              <AddLicense
+                title={"License Master"}
+                data={data}
+                addColumn={addColumn}
+              />
+            }
           />
         </>
       )}
