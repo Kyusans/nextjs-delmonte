@@ -3,10 +3,16 @@ import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
+import AddTraining from './modal/AddMasterfileForms/AddTraining';
 
 const TrainingMaster = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const addColumn = (values, id) => {
+    console.log("values", values);
+    setData([...data, { ...values, perT_id: id }]);
+  }
 
   const columns = [
     { header: "Training", accessor: "perT_name" },
@@ -59,7 +65,13 @@ const TrainingMaster = () => {
             data={data}
             columns={columns}
             autoIndex={true}
-            // add={<AddMasterfile title="training" subject="training" />}
+            add={<AddTraining
+              title="training"
+              subject="training"
+              getData={getData}
+              data={data}
+              addColumn={addColumn}
+            />}
           />
         </>
       )}
