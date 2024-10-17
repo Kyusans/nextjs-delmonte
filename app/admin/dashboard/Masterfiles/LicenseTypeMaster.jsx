@@ -3,10 +3,15 @@ import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
+import AddLicenseType from './modal/AddMasterfileForms/AddLicenseType';
 
 const LicenseTypeMaster = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const addColumn = (values, id) => {
+    setData([...data, { ...values, license_type_id: id }]);
+  }
 
   const columns = [
     { header: "License type", accessor: "license_type_name" },
@@ -59,7 +64,15 @@ const LicenseTypeMaster = () => {
             data={data}
             columns={columns}
             autoIndex={true}
-            // add={<AddMasterfile title="license type" subject="licenseType" />}
+            add={
+              <AddLicenseType
+                title="license type"
+                subject="licenseType"
+                getData={getData}
+                data={data}
+                addColumn={addColumn}
+              />
+            }
           />
         </>
       )}
