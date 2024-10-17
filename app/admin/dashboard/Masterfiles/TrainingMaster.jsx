@@ -65,13 +65,15 @@ const TrainingMaster = () => {
             data={data}
             columns={columns}
             autoIndex={true}
-            add={<AddTraining
-              title="training"
-              subject="training"
-              getData={getData}
-              data={data}
-              addColumn={addColumn}
-            />}
+            add={
+              <AddTraining
+                title="training"
+                subject="training"
+                getData={getData}
+                data={data}
+                addColumn={addColumn}
+              />
+            }
           />
         </>
       )}

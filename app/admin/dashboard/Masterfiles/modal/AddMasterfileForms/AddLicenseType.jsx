@@ -35,7 +35,7 @@ const AddLicenseType = ({ title, getData, data, addColumn }) => {
     setIsSubmit(true);
     try {
       const licenseTypeExists = data.some(licenseType =>
-        licenseType.license_type_name?.toLowerCase() === values.licenseTypeName.toLowerCase()
+        licenseType.license_type_name?.trim().toLowerCase() === values.licenseTypeName.trim().toLowerCase()
       );
 
       if (licenseTypeExists) {

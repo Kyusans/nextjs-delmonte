@@ -36,7 +36,7 @@ const AddSkill = ({ title, getData, data, addColumn }) => {
     setIsSubmit(true);
     try {
       const skillExists = data.some(skill =>
-        skill.skill_name?.trim().toLowerCase() === values.skillName.trim().toLowerCase()
+        skill.perS_name?.trim().toLowerCase() === values.skillName.trim().toLowerCase()
       );
 
       if (skillExists) {

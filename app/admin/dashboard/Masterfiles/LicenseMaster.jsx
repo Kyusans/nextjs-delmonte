@@ -61,7 +61,7 @@ const LicenseMaster = () => {
       {isLoading ? <Spinner /> : (
         <>
           <DataTable
-            title="License Masterss"
+            title="License Masters"
             data={data}
             columns={columns}
             autoIndex={true}

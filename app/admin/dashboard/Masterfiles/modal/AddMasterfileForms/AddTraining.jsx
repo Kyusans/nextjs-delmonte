@@ -35,7 +35,7 @@ const AddTraining = ({ title, getData, data, addColumn }) => {
     setIsSubmit(true);
     try {
       const trainingExists = data.some(training =>
-        training.training_name?.toLowerCase() === values.trainingName.toLowerCase()
+        training.perT_name?.trim().toLowerCase() === values.trainingName.trim().toLowerCase()
       );
 
       if (trainingExists) {
