@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
 import AddCourseCategory from './modal/AddMasterfileForms/AddCourseCategory';
+import UpdateCourseCategory from './modal/UpdateMasterfileForms/UpdateCourseCategory';
 
 const CourseCategoryMaster = () => {
   const [data, setData] = useState([]);
@@ -22,6 +23,12 @@ const CourseCategoryMaster = () => {
       header: "",
       cell: (row) => (
         <div className="flex gap-2">
+          <UpdateCourseCategory
+            data={data}
+            id={row.course_categoryId}
+            currentName={row.course_categoryName}
+            getData={getData}
+          />
           {/* <UpdateMasterfile
             title="course category"
             data={row}
