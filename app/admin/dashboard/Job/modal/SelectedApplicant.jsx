@@ -19,6 +19,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import ConductInterview from "./ConductInterview";
 import InterviewResult from "./InterviewResult";
+import ExamResult from "./ExamResult";
 
 function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatus }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -130,7 +131,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
           </SheetHeader>
           <Separator className="mt-4 w-full" />
           <ScrollArea className="h-full">
-            <div className="md:p-5">
+            <div className="mt-3">
               {isLoading ? (
                 <Spinner />
               ) : (
@@ -440,6 +441,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                           <TabsList>
                             <TabsTrigger value="1">Qualifications</TabsTrigger>
                             {status !== "Pending" && status !== "Process" && <TabsTrigger value="2">Interview Results</TabsTrigger>}
+                            {status !== "Pending" && status !== "Process" && status !== "Background Check" && status !== "Interview" && <TabsTrigger value="3">Exam Results</TabsTrigger>}
                           </TabsList>
                           <TabsContent value="1">
                             <Accordion type="multiple" collapsible="true" className="w-full p-5" defaultValue={["1", "2", "3", "4", "5"]}>
@@ -643,6 +645,9 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                             ) :
                               <p className="text-center text-gray-500">No interview results yet</p>
                             }
+                          </TabsContent>
+                          <TabsContent value="3">
+                            <ExamResult candId={candId} handleInterviewChangeStatus={handleInterviewChangeStatus} />
                           </TabsContent>
                         </Tabs>
                       </ScrollArea>
