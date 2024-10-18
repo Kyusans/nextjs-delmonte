@@ -12,7 +12,7 @@ import { Separator } from '@/components/ui/separator'
 import { Card, CardContent } from '@/components/ui/card'
 import Spinner from '@/components/ui/spinner'
 
-const CreateExamMaster = (getSelectedJob) => {
+const CreateExamMaster = ({getSelectedJob, type}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [examName, setExamName] = useState("");
@@ -99,8 +99,8 @@ const CreateExamMaster = (getSelectedJob) => {
       const examData = {
         master: {
           name: examName,
-          typeId: 2,
-          jobId: jobId,
+          typeId: type,
+          jobId: type === 2 ? jobId : null,
           duration: examDuration
         },
         questions: {
@@ -115,6 +115,8 @@ const CreateExamMaster = (getSelectedJob) => {
           }))
         }
       };
+
+      console.log("examData: ", examData);
 
       const formData = new FormData();
       formData.append("operation", "addExam");
