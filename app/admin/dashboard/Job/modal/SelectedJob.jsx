@@ -33,6 +33,10 @@ function SelectedJob({ open, onHide, jobId }) {
       console.log("RES DATA ni getSelectedJobs: ", res.data);
       if (res.data !== 0) {
         setData(res.data);
+        if (res.data.exam !== 0) {
+          const response = res.data.exam
+          storeData("examId", response.examMaster[0].exam_id)
+        }
       }
     } catch (error) {
       toast.error("Network error");
@@ -64,7 +68,7 @@ function SelectedJob({ open, onHide, jobId }) {
     removeData("duties");
     onHide();
   };
-// bg-[#107343] dark:bg-background
+  // bg-[#107343] dark:bg-background
   return (
     <>
       <Sheet open={open} onOpenChange={handleClose}>
