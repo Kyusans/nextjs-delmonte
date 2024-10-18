@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -32,7 +32,7 @@ const UpdateCourseCategory = ({ data, id, currentName, getData }) => {
     setIsSubmit(true);
     try {
       if (values.courseCategoryName === currentName) {
-        toast.success('No changes made');
+        toast.info('No changes made');
         setIsSubmit(false);
         return;
       }
@@ -73,6 +73,13 @@ const UpdateCourseCategory = ({ data, id, currentName, getData }) => {
     }
   }
 
+  useEffect(() => {
+    if (!isOpen) {
+      form.reset({
+        courseCategoryName: currentName,
+      });
+    }
+  }, [isOpen, currentName, form]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

@@ -29,12 +29,7 @@ const CourseCategoryMaster = () => {
             currentName={row.course_categoryName}
             getData={getData}
           />
-          {/* <UpdateMasterfile
-            title="course category"
-            data={row}
-            subject="courseCategory"
-            id={row.course_categoryId}
-          /> */}
+          
         </div>
       )
     }
