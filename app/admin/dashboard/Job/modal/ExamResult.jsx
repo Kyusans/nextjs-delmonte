@@ -47,30 +47,24 @@ const ExamResult = ({ candId }) => {
       {isLoading ? (
         <Spinner />
       ) : examResult ? (
-        <Card className='w-full'>
-          <CardHeader>
-            <CardTitle>Exam Result</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div>
-                <p className="text-sm font-medium">Score</p>
-                <p className="text-2xl font-bold">{examResult.examR_score} / {examResult.examR_totalscore}</p>
-              </div>
-              <Progress value={calculatePercentage(examResult.examR_score, examResult.examR_totalscore)} className="w-full" />
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm font-medium">Date Taken</p>
-                  <p>{formatDate(examResult.examR_date)}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Status</p>
-                  <p>{examResult.examR_status === 1 ? 'Passed' : 'Failed'}</p>
-                </div>
-              </div>
+        <div className="space-y-4">
+          <h2 className="text-xl font-bold">Exam Result</h2>
+          <div>
+            <p className="text-sm font-medium">Score</p>
+            <p className="text-2xl font-bold">{examResult.examR_score} / {examResult.examR_totalscore}</p>
+          </div>
+          <Progress value={calculatePercentage(examResult.examR_score, examResult.examR_totalscore)} className="w-full" />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm font-medium">Date Taken</p>
+              <p>{formatDate(examResult.examR_date)}</p>
             </div>
-          </CardContent>
-        </Card>
+            <div>
+              <p className="text-sm font-medium">Status</p>
+              <p>{examResult.examR_status === 1 ? 'Passed' : 'Failed'}</p>
+            </div>
+          </div>
+        </div>
       ) : (
         <p className="text-center text-gray-500">No exam result found</p>
       )}
