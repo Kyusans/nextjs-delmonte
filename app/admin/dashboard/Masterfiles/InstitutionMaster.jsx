@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
 import AddInstitution from './modal/AddMasterfileForms/AddInstitution';
 import UpdateInstitution from './modal/UpdateMasterfileForms/UpdateInstitution';
+import { Trash2 } from 'lucide-react';
 
 const InstitutionMaster = () => {
   const [data, setData] = useState([]);
@@ -20,21 +21,16 @@ const InstitutionMaster = () => {
   const columns = [
     { header: "Institution", accessor: "institution_name" },
     {
-      header: "",
+      header: "Actions",
       cell: (row) => (
-        <div className="flex gap-2">
+        <div className="flex gap-4">
           <UpdateInstitution
             data={data}
             id={row.institution_id}
             currentName={row.institution_name}
             getData={getData}
           />
-          {/* <UpdateMasterfile
-            title="institution"
-            data={row}
-            subject="institution"
-            id={row.institution_id}
-          /> */}
+          <Trash2 className="h-5 w-5 cursor-pointer" />
         </div>
       )
     }

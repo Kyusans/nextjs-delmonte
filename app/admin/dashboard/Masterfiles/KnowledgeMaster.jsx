@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
 import AddKnowledge from './modal/AddMasterfileForms/AddKnowledge';
 import UpdateKnowledge from './modal/UpdateMasterfileForms/UpdateKnowledge';
+import { Trash2 } from 'lucide-react';
 
 const KnowledgeMaster = () => {
   const [data, setData] = useState([]);
@@ -20,21 +21,16 @@ const KnowledgeMaster = () => {
   const columns = [
     { header: "Knowledge and Compliance", accessor: "knowledge_name" },
     {
-      header: "",
+      header: "Actions",
       cell: (row) => (
-        <div className="flex gap-2">
+        <div className="flex gap-4">
           <UpdateKnowledge
             data={data}
             id={row.knowledge_id}
             currentName={row.knowledge_name}
             getData={getData}
           />
-          {/* <UpdateMasterfile
-            title="knowledge and compliance"
-            data={row}
-            subject="knowledge"
-            id={row.knowledge_id}
-          /> */}
+          <Trash2 className="h-5 w-5 cursor-pointer" />
         </div>
       )
     }

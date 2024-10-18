@@ -4,7 +4,8 @@ import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
 import AddSkill from './modal/AddMasterfileForms/AddSkill';
-
+import UpdateMasterfile from './modal/UpdateMasterfile';
+import { Trash2 } from 'lucide-react';
 const SkillsMaster = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -19,13 +20,14 @@ const SkillsMaster = () => {
     {
       header: "",
       cell: (row) => (
-        <div className="flex gap-2">
-          {/* <UpdateMasterfile
+        <div className="flex gap-4">
+          <UpdateMasterfile
             title="skills"
             data={row}
             subject="skills"
             id={row.perS_id}
-          /> */}
+          />
+          <Trash2 className="h-5 w-5 cursor-pointer" />
         </div>
       )
     }

@@ -4,7 +4,8 @@ import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
 import AddLicenseType from './modal/AddMasterfileForms/AddLicenseType';
-
+import UpdateMasterfile from './modal/UpdateMasterfile';
+import { Trash2 } from 'lucide-react';
 const LicenseTypeMaster = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -16,15 +17,16 @@ const LicenseTypeMaster = () => {
   const columns = [
     { header: "License type", accessor: "license_type_name" },
     {
-      header: "",
+      header: "Actions",
       cell: (row) => (
-        <div className="flex gap-2">
-          {/* <UpdateMasterfile
+        <div className="flex gap-4">
+          <UpdateMasterfile
             title="license type"
             data={row}
             subject="licenseType"
             id={row.license_type_id}
-          /> */}
+          />
+          <Trash2 className="h-5 w-5 cursor-pointer" />
         </div>
       )
     }

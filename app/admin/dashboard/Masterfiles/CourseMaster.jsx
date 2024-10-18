@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import AddCourse from './modal/AddMasterfileForms/AddCourse';
 import UpdateMasterfile from './modal/UpdateMasterfile';
 import UpdateCourse from './modal/UpdateMasterfileForms/UpdateCourse';
+import { Trash2 } from 'lucide-react';
 
 const CourseMaster = () => {
   const [data, setData] = useState([]);
@@ -25,9 +26,9 @@ const CourseMaster = () => {
     { header: "Course Category", accessor: "course_categoryName" },
     { header: "Course Description", accessor: "crs_type_name" },
     {
-      header: "",
+      header: "Actions",
       cell: (row) => (
-        <div className="flex gap-2">
+        <div className="flex gap-4">
           <UpdateCourse
             data={data}
             id={row.courses_id}
@@ -36,6 +37,7 @@ const CourseMaster = () => {
             currentName={row.courses_name}
             getData={getData}
           />
+          <Trash2 className="h-5 w-5 cursor-pointer" />
         </div>
       )
     }
