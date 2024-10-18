@@ -124,8 +124,6 @@ function AdminJobs() {
     <>
       <div className={`flex justify-between ${isAddJob ? "hidden" : ""}`}>
         <Button className="mb-3" onClick={handleSwitchView}>
-          {/* {isAddJob ? <ArrowLeft className="h-4 w-4 mr-1" /> : <PlusCircle className="h-4 w-4 mr-1" />} */}
-          {/* {isAddJob ? "Back" : "Add Job"} */}
           <PlusCircle className="h-4 w-4 mr-1" />
           Add Job
         </Button>
@@ -164,66 +162,67 @@ function AdminJobs() {
       </div>
       {isLoading ? <Spinner /> :
         isAddJob ? <AddJob handleSwitchView={handleSwitchView} /> :
-          <Card className='w-full'>
-            <CardContent className="grid grid-cols-1 gap-3 xl:grid-cols-3 mt-3">
-              {jobs.map((job, index) => (
-                <Card key={index} className='flex flex-col justify-between h-full border-2 border-secondary shadow-lg dark:border-[#0c0a09]'>
-                  <CardTitle className="relative bg-[#0e5a35] dark:bg-[#0e4028] w-full p-10 rounded-t-lg text-white">
-                    {job.jobM_title}
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button size="icon" className="absolute top-3 right-3 hover:text-primary hover:bg-transparent  bg-trasparent text-white">
-                          <Settings className="cursor-pointer" />
-                          <span className="sr-only">Toggle user menu</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel> Actions </DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        {/* <DropdownMenuItem>
-                          <Edit className="mr-2 h-4 w-4" />
-
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator /> */}
-                        <DropdownMenuItem
-                          className="cursor-pointer flex items-center"
-                          onClick={() => handleShowAlert(`Are you sure you want to ${job.jobM_status === 0 ? 'activate' : 'deactivate'} ${job.jobM_title}?`, job.jobM_status, job.jobM_id)}>
-                          <Switch
-                            className="mr-2"
-                            checked={job.jobM_status === 1}
-                          />
+          jobs.length === 0 ? (
+            <Card className='w-full'>
+              <CardContent className="text-center py-5">
+                <p className="text-lg">No jobs found</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className='w-full'>
+              <CardContent className="grid grid-cols-1 gap-3 xl:grid-cols-3 mt-3">
+                {jobs.map((job, index) => (
+                  <Card key={index} className='flex flex-col justify-between h-full border-2 border-secondary shadow-lg dark:border-[#0c0a09]'>
+                    <CardTitle className="relative bg-[#0e5a35] dark:bg-[#0e4028] w-full p-10 rounded-t-lg text-white">
+                      {job.jobM_title}
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button size="icon" className="absolute top-3 right-3 hover:text-primary hover:bg-transparent  bg-trasparent text-white">
+                            <Settings className="cursor-pointer" />
+                            <span className="sr-only">Toggle user menu</span>
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel> Actions </DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            className="cursor-pointer flex items-center"
+                            onClick={() => handleShowAlert(`Are you sure you want to ${job.jobM_status === 0 ? 'activate' : 'deactivate'} ${job.jobM_title}?`, job.jobM_status, job.jobM_id)}>
+                            <Switch
+                              className="mr-2"
+                              checked={job.jobM_status === 1}
+                            />
+                            {job.jobM_status === 1 ? 'Active' : 'Inactive'}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </CardTitle>
+                    <CardContent className="flex-grow bg-[#def6db] dark:bg-[#1c1917]">
+                      <div className="flex items-center gap-2 mb-2 mt-4">
+                        <Circle
+                          className={`h-4 w-4 ${job.Total_Applied === 0 ? 'text-gray-400' : 'text-green-500'}`}
+                        />
+                        <span className={`text-sm font-bold ${job.Total_Applied === 0 ? 'text-gray-400' : 'text-green-500'}`}>
+                          {job.Total_Applied > 0 ? `${job.Total_Applied} Applicants` : 'No Applicants'}
+                        </span>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="flex justify-between bg-[#def6db] dark:bg-[#1c1917] rounded-b-lg">
+                      <Button className="bg-[#188c54] text-white" onClick={() => openShowSelectedJobModal(job.jobM_id)}>View</Button>
+                      <div className="flex items-center gap-2 mb-2">
+                        <Circle
+                          className={`h-4 w-4 ${job.jobM_status === 1 ? 'text-green-500' : 'text-gray-400'}`}
+                        />
+                        <span className={`text-sm ${job.jobM_status === 1 ? 'text-green-500' : 'text-gray-400'}`}>
                           {job.jobM_status === 1 ? 'Active' : 'Inactive'}
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </CardTitle>
-
-                  <CardContent className="flex-grow bg-[#def6db] dark:bg-[#1c1917]">
-                    <div className="flex items-center gap-2 mb-2 mt-4">
-                      <Circle
-                        className={`h-4 w-4 ${job.Total_Applied === 0 ? 'text-gray-400' : 'text-green-500'}`}
-                      />
-                      <span className={`text-sm font-bold ${job.Total_Applied === 0 ? 'text-gray-400' : 'text-green-500'}`}>
-                        {job.Total_Applied > 0 ? `${job.Total_Applied} Applicants` : 'No Applicants'}
-                      </span>
-                    </div>
-                  </CardContent>
-                  <CardFooter className="flex justify-between bg-[#def6db] dark:bg-[#1c1917] rounded-b-lg">
-                    <Button className="bg-[#188c54] text-white" onClick={() => openShowSelectedJobModal(job.jobM_id)}>View</Button>
-                    <div className="flex items-center gap-2 mb-2">
-                      <Circle
-                        className={`h-4 w-4 ${job.jobM_status === 1 ? 'text-green-500' : 'text-gray-400'}`}
-                      />
-                      <span className={`text-sm ${job.jobM_status === 1 ? 'text-green-500' : 'text-gray-400'}`}>
-                        {job.jobM_status === 1 ? 'Active' : 'Inactive'}
-                      </span>
-                    </div>
-                  </CardFooter>
-                </Card>
-              ))}
-            </CardContent >
-          </Card >
-
+                        </span>
+                      </div>
+                    </CardFooter>
+                  </Card>
+                ))}
+              </CardContent >
+            </Card >
+          )
       }
       {showSelectedJobModal && <SelectedJob open={showSelectedJobModal} onHide={closeShowSelectedJobModal} jobId={selectedJobId} />}
       <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
