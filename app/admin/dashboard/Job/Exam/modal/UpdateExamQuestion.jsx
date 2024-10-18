@@ -76,6 +76,19 @@ const UpdateExamQuestion = ({ examQuestionData, getSelectedJob }) => {
       setIsLoading(false);
       return;
     }
+
+    if (
+      question === examQuestionData.examQ_text &&
+      options.length === examQuestionData.options.length &&
+      options.every((opt, index) => opt === examQuestionData.options[index].examC_text) &&
+      correctAnswer === examQuestionData.options.find(opt => opt.examC_isCorrect === 1)?.examC_text &&
+      points === examQuestionData.examQ_points
+    ) {
+      toast.info("No changes made");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
       const formData = new FormData();

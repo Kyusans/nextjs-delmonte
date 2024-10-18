@@ -49,9 +49,9 @@ const UpdateExamMaster = ({ examMasterData, getSelectedJob }) => {
   }, [examMasterData, form])
 
   const handleUpdateExamMaster = async (values) => {
-    // Check if values are unchanged
     if (values.name === examMasterData.exam_name && values.duration === examMasterData.exam_duration) {
-      setIsOpen(false);
+      // setIsOpen(false);
+      toast.info("No changes made");
       return;
     }
 
