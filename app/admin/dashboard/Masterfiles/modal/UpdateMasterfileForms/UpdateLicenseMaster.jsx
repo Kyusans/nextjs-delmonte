@@ -115,12 +115,10 @@ const UpdateLicenseMaster = ({ data, id, licenseTypeId, currentName, getData }) 
   }
 
   useEffect(() => {
-    console.log("data: ", data);
-    console.log("licenseTypeId: ", licenseTypeId);
     if (isOpen) {
       getLicenseTypeDropdown();
     }
-  }, [licenseTypeId, data, isOpen]);
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) {
