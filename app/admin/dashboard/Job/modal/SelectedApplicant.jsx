@@ -66,9 +66,15 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
     setIsLoading(true);
     try {
       if (status === 1) {
-        await handleChangeStatus(candId, 6);
-        toast.success("Applicant set for interview");
-        setStatus("Interview");
+        if (alertMessage === "Are you sure you want to set this applicant for interview?") {
+          await handleChangeStatus(candId, 6);
+          toast.success("Applicant set for interview");
+          setStatus("Interview");
+        } else if (alertMessage === "Are you sure you want to proceed with the background check?") {
+          await handleChangeStatus(candId, 8);
+          toast.success("Applicant proceeded to Job Offer");
+          setStatus("Job Offer");
+        }
       }
       setShowAlert(false);
     } catch (error) {
@@ -81,6 +87,10 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
 
   const handleShowInterviewAlert = () => {
     handleShowAlert("Are you sure you want to set this applicant for interview?");
+  };
+
+  const handleShowBackgroundCheckAlert = () => {
+    handleShowAlert("Are you sure you want to proceed with the background check?");
   };
 
   // modal for conduct interview
@@ -126,6 +136,8 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
               <div className="ml-auto px-5">
                 {status === "Process" && (<Button onClick={() => handleShowInterviewAlert()}>Set for inverview</Button>)}
                 {status === "Interview" && (<Button onClick={() => handleShowConductInterview()}>Interview applicant</Button>)}
+                {status === "Background Check" && (<Button onClick={() => handleShowBackgroundCheckAlert()}>Background check</Button>)}
+                {status === "Job Offer" && (<Button onClick={() => handleShowBackgroundCheckAlert()}>Job Offer</Button>)}
               </div>
             </div>
           </SheetHeader>
