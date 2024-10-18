@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
 import AddInstitution from './modal/AddMasterfileForms/AddInstitution';
+import UpdateInstitution from './modal/UpdateMasterfileForms/UpdateInstitution';
 
 const InstitutionMaster = () => {
   const [data, setData] = useState([]);
@@ -22,6 +23,12 @@ const InstitutionMaster = () => {
       header: "",
       cell: (row) => (
         <div className="flex gap-2">
+          <UpdateInstitution
+            data={data}
+            id={row.institution_id}
+            currentName={row.institution_name}
+            getData={getData}
+          />
           {/* <UpdateMasterfile
             title="institution"
             data={row}
