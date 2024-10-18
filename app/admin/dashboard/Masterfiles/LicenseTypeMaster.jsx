@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import AddLicenseType from './modal/AddMasterfileForms/AddLicenseType';
 import UpdateMasterfile from './modal/UpdateMasterfile';
 import { Trash2 } from 'lucide-react';
+import UpdateLicenseType from './modal/UpdateMasterfileForms/UpdateLicenseType';
 const LicenseTypeMaster = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -20,11 +21,11 @@ const LicenseTypeMaster = () => {
       header: "Actions",
       cell: (row) => (
         <div className="flex gap-4">
-          <UpdateMasterfile
-            title="license type"
-            data={row}
-            subject="licenseType"
+          <UpdateLicenseType
+            data={data}
             id={row.license_type_id}
+            currentName={row.license_type_name}
+            getData={getData}
           />
           <Trash2 className="h-5 w-5 cursor-pointer" />
         </div>
