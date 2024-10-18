@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
 import AddKnowledge from './modal/AddMasterfileForms/AddKnowledge';
+import UpdateKnowledge from './modal/UpdateMasterfileForms/UpdateKnowledge';
 
 const KnowledgeMaster = () => {
   const [data, setData] = useState([]);
@@ -22,6 +23,12 @@ const KnowledgeMaster = () => {
       header: "",
       cell: (row) => (
         <div className="flex gap-2">
+          <UpdateKnowledge
+            data={data}
+            id={row.knowledge_id}
+            currentName={row.knowledge_name}
+            getData={getData}
+          />
           {/* <UpdateMasterfile
             title="knowledge and compliance"
             data={row}
