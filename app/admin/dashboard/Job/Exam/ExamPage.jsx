@@ -50,7 +50,7 @@ function ExamPage({ examData, getSelectedJob }) {
       {examData === 0 ? (
         <div className='flex flex-col justify-center items-center gap-4'>
           <p>No exam created yet</p>
-          <CreateExamMaster getSelectedJob={getSelectedJob} />
+          <CreateExamMaster getSelectedJob={getSelectedJob} type={1} />
         </div>
       ) : (
         <>

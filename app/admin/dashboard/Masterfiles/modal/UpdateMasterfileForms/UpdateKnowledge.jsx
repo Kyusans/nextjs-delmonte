@@ -11,63 +11,61 @@ import { toast } from 'sonner';
 import axios from 'axios';
 
 const formSchema = z.object({
-  courseCategoryName: z.string().min(1, "Course category name is required"),
+  knowledgeName: z.string().min(1, "Knowledge name is required"),
 });
 
-const UpdateCourseCategory = ({ data, id, currentName, getData }) => {
-  const [isLoading, setIsLoading] = useState(false);
+const UpdateKnowledge = ({ data, id, currentName, getData }) => {
   const [isSubmit, setIsSubmit] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      courseCategoryName: currentName,
+      knowledgeName: currentName,
     },
   });
 
   const onSubmit = async (values) => {
-    console.log("values ni update course category: ", values);
-    console.log("data ni update course category: ", data);
+    console.log("values for update knowledge: ", values);
     setIsSubmit(true);
     try {
-      if (values.courseCategoryName === currentName) {
+      if (values.knowledgeName === currentName) {
         toast.info('No changes made');
         setIsSubmit(false);
         return;
       }
-      const isCategoryExists = data.some(category =>
-        category.course_categoryName.trim().toLowerCase() === values.courseCategoryName.trim().toLowerCase()
+      const isKnowledgeExists = data.some(knowledge =>
+        knowledge.knowledge_name.trim().toLowerCase() === values.knowledgeName.trim().toLowerCase()
       );
 
-      if (isCategoryExists) {
-        toast.error('This category already exists');
+      if (isKnowledgeExists) {
+        toast.error('This knowledge already exists');
         setIsSubmit(false);
         return;
       }
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
 
       const jsonData = {
-        courseCategoryName: values.courseCategoryName,
-        courseCategoryId: id,
+        knowledgeName: values.knowledgeName,
+        knowledgeId: id,
       }
 
       const formData = new FormData();
-      formData.append("operation", "updateCourseCategory");
+      formData.append("operation", "updateKnowledge");
       formData.append("json", JSON.stringify(jsonData));
 
       const res = await axios.post(url, formData);
-      console.log("res.data ni update course category: ", res.data);
+      console.log("res.data for update knowledge: ", res);
       if (res.data === 1) {
-        toast.success('Course category updated successfully');
+        toast.success('Knowledge updated successfully');
         setIsOpen(false);
         getData();
       } else {
-        toast.error('Failed to update course category');
+        toast.error('Failed to update knowledge');
       }
     } catch (error) {
-      toast.error('Failed to update course category');
-      console.error('UpdateCourseCategory.jsx ~ onSubmit ~ error:', error);
+      toast.error('Failed to update knowledge');
+      console.error('UpdateKnowledge.jsx ~ onSubmit ~ error:', error);
     } finally {
       setIsSubmit(false);
     }
@@ -76,7 +74,7 @@ const UpdateCourseCategory = ({ data, id, currentName, getData }) => {
   useEffect(() => {
     if (!isOpen) {
       form.reset({
-        courseCategoryName: currentName,
+        knowledgeName: currentName,
       });
     }
   }, [isOpen, currentName, form]);
@@ -88,19 +86,19 @@ const UpdateCourseCategory = ({ data, id, currentName, getData }) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Update Course Category</DialogTitle>
+          <DialogTitle>Update Knowledge</DialogTitle>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <Form {...form}>
             <FormField
               control={form.control}
-              name="courseCategoryName"
+              name="knowledgeName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Course Category Name</FormLabel>
+                  <FormLabel>Knowledge Name</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Enter course category name"
+                      placeholder="Enter knowledge name"
                       {...field}
                     />
                   </FormControl>
@@ -121,4 +119,4 @@ const UpdateCourseCategory = ({ data, id, currentName, getData }) => {
   )
 }
 
-export default UpdateCourseCategory
+export default UpdateKnowledge

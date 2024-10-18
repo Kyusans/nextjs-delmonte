@@ -13,6 +13,7 @@ import LicenseMaster from './Masterfiles/LicenseMaster';
 import LicenseTypeMaster from './Masterfiles/LicenseTypeMaster';
 import SkillsMaster from './Masterfiles/SkillsMaster';
 import TrainingMaster from './Masterfiles/TrainingMaster';
+import GeneralExam from './Masterfiles/GeneralExam';
 
 export default function Page() {
   const [viewIndex, setViewIndex] = useState(0);
@@ -29,6 +30,7 @@ export default function Page() {
     { view: <LicenseTypeMaster /> },
     { view: <SkillsMaster /> },
     { view: <TrainingMaster /> },
+    { view: <GeneralExam /> },
   ]
 
 
