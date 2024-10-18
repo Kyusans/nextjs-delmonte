@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import AddTraining from './modal/AddMasterfileForms/AddTraining';
 import UpdateMasterfile from './modal/UpdateMasterfile';
 import { Trash2 } from 'lucide-react';
+import UpdateTraining from './modal/UpdateMasterfileForms/UpdateTraining';
 const TrainingMaster = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -21,11 +22,11 @@ const TrainingMaster = () => {
       header: "",
       cell: (row) => (
         <div className="flex gap-4">
-          <UpdateMasterfile
-            title="training"
-            data={row}
-            subject="training"
+          <UpdateTraining
+            data={data}
             id={row.perT_id}
+            currentName={row.perT_name}
+            getData={getData}
           />
           <Trash2 className="h-5 w-5 cursor-pointer" />
         </div>
