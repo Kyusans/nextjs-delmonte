@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import ConductInterview from "./ConductInterview";
 import InterviewResult from "./InterviewResult";
 import ExamResult from "./ExamResult";
+import JobOffer from "./JobOffer";
 
 function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatus }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -66,9 +67,15 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
     setIsLoading(true);
     try {
       if (status === 1) {
-        await handleChangeStatus(candId, 6);
-        toast.success("Applicant set for interview");
-        setStatus("Interview");
+        if (alertMessage === "Are you sure you want to set this applicant for interview?") {
+          await handleChangeStatus(candId, 6);
+          toast.success("Applicant set for interview");
+          setStatus("Interview");
+        } else if (alertMessage === "Are you sure you want to proceed with the background check?") {
+          await handleChangeStatus(candId, 8);
+          toast.success("Applicant proceeded to Job Offer");
+          setStatus("Job Offer");
+        }
       }
       setShowAlert(false);
     } catch (error) {
@@ -81,6 +88,10 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
 
   const handleShowInterviewAlert = () => {
     handleShowAlert("Are you sure you want to set this applicant for interview?");
+  };
+
+  const handleShowBackgroundCheckAlert = () => {
+    handleShowAlert("Are you sure you want to proceed with the background check?");
   };
 
   // modal for conduct interview
@@ -97,6 +108,19 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
     try {
       await handleChangeStatus(candId, status);
       setStatus("Exam");
+    } catch (error) {
+      toast.error("Network error");
+      console.log("SelectedApplicant.jsx => handleChangestatus(): " + error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleJobOfferChangeStatus = async (status) => {
+    setIsLoading(true);
+    try {
+      await handleChangeStatus(candId, status === 1 ? 3 : 2);
+      setStatus(status === 1 ? "Accept" : "Decline");
     } catch (error) {
       toast.error("Network error");
       console.log("SelectedApplicant.jsx => handleChangestatus(): " + error);
@@ -126,6 +150,8 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
               <div className="ml-auto px-5">
                 {status === "Process" && (<Button onClick={() => handleShowInterviewAlert()}>Set for inverview</Button>)}
                 {status === "Interview" && (<Button onClick={() => handleShowConductInterview()}>Interview applicant</Button>)}
+                {status === "Background Check" && (<Button onClick={() => handleShowBackgroundCheckAlert()}>Background check</Button>)}
+                {status === "Job Offer" && (<JobOffer candId={candId} changeStatus={handleJobOfferChangeStatus} />)}
               </div>
             </div>
           </SheetHeader>
@@ -151,6 +177,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                             <Spinner />
                           </AvatarFallback>
                         </Avatar>
+                        <Badge className="my-4">Status: {status}</Badge>
                         <CardTitle className="mt-2">
                           {data.candidateInformation
                             ? `${data.candidateInformation.cand_firstname} ${data.candidateInformation.cand_lastname}`
@@ -440,8 +467,8 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                         <Tabs defaultValue="1" className='h-full flex flex-col'>
                           <TabsList>
                             <TabsTrigger value="1">Qualifications</TabsTrigger>
-                            {status !== "Pending" && status !== "Process" && <TabsTrigger value="2">Interview Results</TabsTrigger>}
-                            {status !== "Pending" && status !== "Process" && status !== "Background Check" && status !== "Interview" && <TabsTrigger value="3">Exam Results</TabsTrigger>}
+                            {status !== "Pending" && status !== "Process" && <TabsTrigger value="2">Interview</TabsTrigger>}
+                            {status !== "Pending" && status !== "Process" && status !== "Background Check" && status !== "Interview" && <TabsTrigger value="3">Exam</TabsTrigger>}
                           </TabsList>
                           <TabsContent value="1">
                             <Accordion type="multiple" collapsible="true" className="w-full p-5" defaultValue={["1", "2", "3", "4", "5"]}>
