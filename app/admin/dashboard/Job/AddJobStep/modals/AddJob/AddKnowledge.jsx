@@ -36,6 +36,11 @@ function AddKnowledge({ open, onHide, knowledgeList, handleAddList }) {
     },
   });
 
+  const handleOthers = () => {
+    console.log("others");
+  }
+
+
   const onSubmit = (values) => {
     try {
       const selectedKnowledge = JSON.parse(retrieveData("jobKnowledge")) || [];
@@ -87,6 +92,7 @@ function AddKnowledge({ open, onHide, knowledgeList, handleAddList }) {
                             value={field.value}
                             onChange={field.onChange}
                             styles={"bg-background"}
+                            others={handleOthers}
                           />
                         </div>
                         <FormMessage />
