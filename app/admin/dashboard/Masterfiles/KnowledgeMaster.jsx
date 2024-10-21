@@ -3,10 +3,10 @@ import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
-import AddKnowledge from './modal/AddMasterfileForms/AddKnowledge';
 import UpdateKnowledge from './modal/UpdateMasterfileForms/UpdateKnowledge';
 import { Trash2 } from 'lucide-react';
 import ShowAlert from '@/components/ui/show-alert';
+import AddKnowledgeMaster from './modal/AddMasterfileForms/AddKnowledge';
 
 const KnowledgeMaster = () => {
   const [data, setData] = useState([]);
@@ -117,7 +117,7 @@ const KnowledgeMaster = () => {
             columns={columns}
             autoIndex={true}
             add={
-              <AddKnowledge
+              <AddKnowledgeMaster
                 title="knowledge and compliance"
                 subject="knowledge"
                 getData={getData}

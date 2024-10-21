@@ -17,6 +17,7 @@ import { Badge } from '@/components/ui/badge';
 function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
+  const [knowledgeData, setKnowledgeData] = useState([]);
 
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
@@ -63,6 +64,10 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
     nextStep(45);
   }
 
+  const handleAddData = (data, id) => {
+    setKnowledgeData([...knowledgeData, {value: id, label: data.knowledgeName}]);
+  }
+
   const handleAddList = (status) => {
       setDatas([...datas, status]);
       storeData("jobKnowledge", JSON.stringify([...datas, status]));
@@ -71,13 +76,14 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
 
 
   useEffect(() => {
+    setKnowledgeData(knowledgeList);
     if (retrieveData("jobKnowledge") !== null || retrieveData("jobKnowledge") !== "[]") {
       setDatas(JSON.parse(retrieveData("jobKnowledge")));
     } else {
       setDatas([]);
     }
     console.log(JSON.stringify(JSON.parse(retrieveData("jobKnowledge"))));
-  }, []);
+  }, [knowledgeList]);
 
   return (
     <>
@@ -109,7 +115,7 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
                       <TableRow key={index}>
                         {/* <TableCell className="w-1/12">{index + 1}</TableCell> */}
                         <TableCell className="w-1/12">
-                          {knowledgeList.find((item) => item.value === data.knowledgeId)?.label}
+                          {knowledgeData.find((item) => item.value === data.knowledgeId)?.label}
                         </TableCell>
                         {/* <TableCell className="w-10/12 whitespace-normal">
                           {data.jobKnowledge}
@@ -141,7 +147,7 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
                     </div>
                     <div className="mt-2 text-sm">
                       <div className='mb-1 text-xl break-words'>
-                        {knowledgeList.find((item) => item.value === data.knowledgeId)?.label}
+                        {knowledgeData.find((item) => item.value === data.knowledgeId)?.label}
                       </div>
                       {/* {data.jobKnowledge} */}
                     </div>
@@ -157,11 +163,11 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
             </>
           ) : (
             <CardDescription className="text-center">
-              No duties added yet
+              No knowledge added yet
             </CardDescription>
           )}
         </Alert>
-        <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} handleAddList={handleAddList} />
+        <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} handleAddList={handleAddList} handleAddData={handleAddData} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>

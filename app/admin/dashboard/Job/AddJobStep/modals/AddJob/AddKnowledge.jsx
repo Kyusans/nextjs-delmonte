@@ -1,6 +1,6 @@
 "use client"
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,8 +11,11 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import ComboBox from '@/app/my_components/combo-box';
 import { retrieveData } from '@/app/utils/storageUtils';
+import AddKnowledgeMaster from '@/app/admin/dashboard/Masterfiles/modal/AddMasterfileForms/AddKnowledge';
 
-function AddKnowledge({ open, onHide, knowledgeList, handleAddList }) {
+function AddKnowledge({ open, onHide, knowledgeList, handleAddList, handleAddData }) {
+  const [openState, setOpenState] = useState(false);
+  const [knowledgeData, setKnowledgeData] = useState([]);
   const formSchema = z.object({
     knowledgeId: z.number().min(1, {
       message: "This field is required",
@@ -37,9 +40,17 @@ function AddKnowledge({ open, onHide, knowledgeList, handleAddList }) {
   });
 
   const handleOthers = () => {
-    console.log("others");
+    setOpenState(true);
   }
 
+  const handleCloseState = () => {
+    setOpenState(false);
+  }
+
+  const addColumn = (values, id) => {
+    setKnowledgeData([...knowledgeData, { value: id, label: values.knowledgeName }]);
+    handleAddData(values, id);
+  }
 
   const onSubmit = (values) => {
     try {
@@ -68,6 +79,11 @@ function AddKnowledge({ open, onHide, knowledgeList, handleAddList }) {
   const handleOnHide = () => {
     onHide(0);
   }
+
+  useEffect(() => {
+    setKnowledgeData(knowledgeList);
+  }, [knowledgeList]);
+
   return (
     <>
       <Dialog open={open} onOpenChange={handleOnHide}>
@@ -87,7 +103,7 @@ function AddKnowledge({ open, onHide, knowledgeList, handleAddList }) {
                         <FormLabel>Knowledge and compliance </FormLabel>
                         <div>
                           <ComboBox
-                            list={knowledgeList}
+                            list={knowledgeData}
                             subject="knowledge and compliance"
                             value={field.value}
                             onChange={field.onChange}
@@ -137,6 +153,12 @@ function AddKnowledge({ open, onHide, knowledgeList, handleAddList }) {
           </Form>
         </DialogContent>
       </Dialog>
+      <AddKnowledgeMaster
+        data={knowledgeData}
+        addColumn={addColumn}
+        openState={openState}
+        closeState={handleCloseState}
+      />
     </>
   )
 }

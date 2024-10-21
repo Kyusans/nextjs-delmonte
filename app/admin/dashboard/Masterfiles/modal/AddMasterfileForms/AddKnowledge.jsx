@@ -16,7 +16,7 @@ const formSchema = z.object({
   knowledgeName: z.string().min(1, 'Knowledge name is required'),
 });
 
-const AddKnowledge = ({ title, getData, data, addColumn }) => {
+const AddKnowledgeMaster = ({ title, getData, data, addColumn, openState, closeState }) => {
   const [isSubmit, setIsSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -41,8 +41,8 @@ const AddKnowledge = ({ title, getData, data, addColumn }) => {
     try {
       console.log("data ni knowledge: ", data);
       console.log("values ni knowledgename: ", values.knowledgeName);
-      const knowledgeExists = data.some(knowledge =>
-        knowledge.knowledge_name.trim().toLowerCase() === values.knowledgeName.trim().toLowerCase()
+      const knowledgeExists = Array.isArray(data) && data.some(knowledge =>
+        knowledge.knowledge_name && knowledge.knowledge_name.trim().toLowerCase() === values.knowledgeName.trim().toLowerCase()
       );
 
       if (knowledgeExists) {
@@ -83,13 +83,15 @@ const AddKnowledge = ({ title, getData, data, addColumn }) => {
 
   return (
     <div>
-      <Dialog open={isOpen} onOpenChange={(open) => {
-        setIsOpen(open);
-        if (!open) handleClose();
+      <Dialog open={openState ? openState : isOpen} onOpenChange={(open) => {
+        closeState ? closeState() : (setIsOpen(open), !open && handleClose());
       }}>
-        <DialogTrigger>
-          <button><PlusSquare className="h-5 w-5 text-primary" /></button>
-        </DialogTrigger>
+        {openState === undefined && (
+          <DialogTrigger asChild>
+            <button><PlusSquare className="h-5 w-5 text-primary" /></button>
+          </DialogTrigger>
+        )}
+
         <DialogContent>
           {isLoading ? (
             <Spinner />
@@ -109,9 +111,9 @@ const AddKnowledge = ({ title, getData, data, addColumn }) => {
                           <FormItem>
                             <FormLabel>Knowledge Name</FormLabel>
                             <FormControl>
-                              <Input 
-                                placeholder="Enter knowledge name" 
-                                {...field} 
+                              <Input
+                                placeholder="Enter knowledge name"
+                                {...field}
                                 ref={inputRef}
                               />
                             </FormControl>
@@ -137,4 +139,4 @@ const AddKnowledge = ({ title, getData, data, addColumn }) => {
   );
 };
 
-export default AddKnowledge;
+export default AddKnowledgeMaster;
