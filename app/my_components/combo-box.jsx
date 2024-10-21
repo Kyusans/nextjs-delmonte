@@ -3,12 +3,13 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { Check, ChevronsUpDown } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const ComboBox = ({ list, subject, value, onChange, styles }) => {
+const ComboBox = ({ list, subject, value, onChange, styles, others }) => {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState('');
   const [filteredItems, setFilteredItems] = useState(list.slice(0, 200));
+  const scrollRef = useRef(null);
 
   useEffect(() => {
     if (inputValue === '') {
@@ -22,9 +23,34 @@ const ComboBox = ({ list, subject, value, onChange, styles }) => {
       setFilteredItems(list.slice(0, 200));
     } else {
       const newFilteredItems = list
-        .filter(item => item.label.toLowerCase().includes(newInputValue.toLowerCase()))
+        .filter(item => item && item.label && typeof item.label === 'string' && item.label.toLowerCase().includes(newInputValue.toLowerCase()))
         .slice(0, 200);
       setFilteredItems(newFilteredItems);
+    }
+  };
+
+  const handleWheel = (event) => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop += event.deltaY;
+    }
+  };
+
+  const handleTouchMove = (event) => {
+    if (scrollRef.current) {
+      const touch = event.touches[0];
+      const newY = touch.clientY;
+      
+      if (scrollRef.current.lastY) {
+        scrollRef.current.scrollTop += scrollRef.current.lastY - newY;
+      }
+      
+      scrollRef.current.lastY = newY;
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (scrollRef.current) {
+      scrollRef.current.lastY = null;
     }
   };
 
@@ -48,25 +74,44 @@ const ComboBox = ({ list, subject, value, onChange, styles }) => {
             onValueChange={handleInputChange}
             placeholder={`Select ${subject}...`}
           />
-          <CommandList>
+          <CommandList 
+            onWheel={handleWheel} 
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            ref={scrollRef}
+          >
             <CommandEmpty>No {subject} found.</CommandEmpty>
             <CommandGroup>
               {filteredItems.length > 0 ? (
-                filteredItems.map((item, index) => (
-                  <CommandItem
-                    key={index}
-                    value={item.value}
-                    onSelect={() => {
-                      onChange(item.value);
-                      setOpen(false);
-                    }}
-                  >
-                    <Check
-                      className={cn("mr-2 h-4 w-4", value === item.value ? "opacity-100" : "opacity-0")}
-                    />
-                    {item.label}
-                  </CommandItem>
-                ))
+                <>
+                  {others && (
+                    <CommandItem
+                      className='cursor-pointer'
+                      onSelect={() => {
+                        others();
+                      }}
+                    >
+                      <Check className="mr-2 h-4 w-4 opacity-0" />
+                      Others
+                    </CommandItem>
+                  )}
+                  {filteredItems.map((item, index) => (
+                    <CommandItem
+                      className='cursor-pointer'
+                      key={index}
+                      value={item.value}
+                      onSelect={() => {
+                        onChange(item.value);
+                        setOpen(false);
+                      }}
+                    >
+                      <Check
+                        className={cn("mr-2 h-4 w-4", value === item.value ? "opacity-100" : "opacity-0")}
+                      />
+                      {item.label}
+                    </CommandItem>
+                  ))}
+                </>
               ) : (
                 <CommandEmpty>No items found.</CommandEmpty>
               )}

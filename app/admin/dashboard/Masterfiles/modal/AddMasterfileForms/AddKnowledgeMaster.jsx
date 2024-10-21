@@ -11,63 +11,79 @@ import { Input } from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { PlusSquare } from 'lucide-react';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
 
 const formSchema = z.object({
-  courseCategoryName: z.string().min(1, 'Course category name is required'),
+  knowledgeName: z.string().min(1, 'Knowledge name is required'),
 });
 
-const AddCourseCategory = ({ title, getData, data, addColumn }) => {
+const AddKnowledgeMaster = ({ title, getData, data, addColumn, openState, closeState }) => {
+  const [isSubmit, setIsSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [isSubmit, setIsSubmit] = useState(false);
   const inputRef = useRef(null);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      courseCategoryName: '',
+      knowledgeName: '',
     },
   });
 
   useEffect(() => {
-    if (isOpen && !isSubmit) {
-      inputRef.current?.focus();
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
     }
-  }, [isOpen, isSubmit]);
+  }, [isOpen]);
 
   const onSubmit = async (values) => {
-    console.log("values ni course category: ", values);
+    console.log("values ni knowledge: ", values);
     setIsSubmit(true);
     try {
-      const categoryExists = data.some(category => 
-        category.course_categoryName.toLowerCase() === values.courseCategoryName.toLowerCase()
-      );
+      console.log("data ni knowledge: ", data);
+      console.log("values ni knowledgename: ", values.knowledgeName);
+      console.log("data === null: ", data === undefined);
+      const knowledgeList = JSON.parse(retrieveData("knowledgeList")) || [];
+      let knowledgeExists = false;
+      if (data === undefined || data === null) {
+        console.log("knowledgeList: ", knowledgeList);
+        knowledgeExists = knowledgeList.some(knowledge =>
+          knowledge.label.trim().toLowerCase() === values.knowledgeName.trim().toLowerCase()
+        );
+      } else {
+        knowledgeExists = Array.isArray(data) && data.some(knowledge =>
+          knowledge.knowledge_name && knowledge.knowledge_name.trim().toLowerCase() === values.knowledgeName.trim().toLowerCase()
+        );
+      }
 
-      if (categoryExists) {
-        toast.error("This category already exists");
-        setIsLoading(false);
-        setIsSubmit(false);
+      if (knowledgeExists) {
+        toast.error("This knowledge and compliance already exists");
         return;
       }
 
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
       const formData = new FormData();
-      formData.append('operation', 'addCourseCategory');
+      formData.append('operation', 'addKnowledge');
       formData.append('json', JSON.stringify(values));
 
       const res = await axios.post(url, formData);
-      console.log("res.data ni course category: ", res.data);
+      console.log("res.data ni knowledge: ", res.data);
       if (res.data !== 1) {
-        toast.success('Course category added successfully');
-        // getData();
+        if (data === undefined || data === null) {
+          storeData("knowledgeList", JSON.stringify([...knowledgeList, { value: res.data, label: values.knowledgeName }]));
+        }
+        toast.success('Knowledge added successfully');
         addColumn(values, res.data);
-        // handleClose();
+        form.reset();
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
       } else {
-        toast.error('Failed to add course category');
+        toast.error('Failed to add knowledge');
       }
     } catch (error) {
       toast.error('Network error');
-      console.error('AddCourseCategory.jsx ~ onSubmit ~ error:', error);
+      console.error('AddKnowledge.jsx ~ onSubmit ~ error:', error);
     } finally {
       setIsSubmit(false);
     }
@@ -80,13 +96,15 @@ const AddCourseCategory = ({ title, getData, data, addColumn }) => {
 
   return (
     <div>
-      <Dialog open={isOpen} onOpenChange={(open) => {
-        setIsOpen(open);
-        if (!open) handleClose();
+      <Dialog open={openState ? openState : isOpen} onOpenChange={(open) => {
+        closeState ? closeState() : (setIsOpen(open), !open && handleClose());
       }}>
-        <DialogTrigger>
-          <button><PlusSquare className="h-5 w-5 text-primary" /></button>
-        </DialogTrigger>
+        {openState === undefined && (
+          <DialogTrigger asChild>
+            <button><PlusSquare className="h-5 w-5 text-primary" /></button>
+          </DialogTrigger>
+        )}
+
         <DialogContent>
           {isLoading ? (
             <Spinner />
@@ -101,12 +119,16 @@ const AddCourseCategory = ({ title, getData, data, addColumn }) => {
                     <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
                       <FormField
                         control={form.control}
-                        name="courseCategoryName"
+                        name="knowledgeName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Course Category Name</FormLabel>
+                            <FormLabel>Knowledge Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter course category name" {...field} ref={inputRef} />
+                              <Input
+                                placeholder="Enter knowledge name"
+                                {...field}
+                                ref={inputRef}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -130,4 +152,4 @@ const AddCourseCategory = ({ title, getData, data, addColumn }) => {
   );
 };
 
-export default AddCourseCategory;
+export default AddKnowledgeMaster;

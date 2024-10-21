@@ -53,10 +53,15 @@ function AddJob({ handleSwitchView }) {
           label: item.knowledge_name,
         }))
 
-        setCourseCategory(formattedCourse);
-        setTraining(formattedTraining);
-        setSkills(formattedSkills);
-        setKnowledgeList(formattedKnowledge);
+        storeData("knowledgeList", JSON.stringify(formattedKnowledge));
+        storeData("courseCategoryList", JSON.stringify(formattedCourse));
+        storeData("trainingList", JSON.stringify(formattedTraining));
+        storeData("skillsList", JSON.stringify(formattedSkills));
+
+        // setCourseCategory(formattedCourse);
+        // setTraining(formattedTraining);
+        // setSkills(formattedSkills);
+        // setKnowledgeList(formattedKnowledge);
         console.log("res ni getDropDownForAddJobs", res.data);
       }
 

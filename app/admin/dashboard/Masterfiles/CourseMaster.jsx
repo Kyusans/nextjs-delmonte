@@ -3,10 +3,10 @@ import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
-import AddCourse from './modal/AddMasterfileForms/AddCourse';
 import UpdateCourse from './modal/UpdateMasterfileForms/UpdateCourse';
 import { Trash2 } from 'lucide-react';
 import ShowAlert from '@/components/ui/show-alert';
+import AddCourseMaster from './modal/AddMasterfileForms/AddCourseMaster';
 
 const CourseMaster = () => {
   const [data, setData] = useState([]);
@@ -123,7 +123,7 @@ const CourseMaster = () => {
             columns={columns}
             autoIndex={false}
             add={
-              <AddCourse
+              <AddCourseMaster
                 title="course"
                 getData={getData}
                 data={data}

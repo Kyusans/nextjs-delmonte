@@ -3,7 +3,7 @@ import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
-import AddCourseCategory from './modal/AddMasterfileForms/AddCourseCategory';
+import AddCourseCategoryMaster from './modal/AddMasterfileForms/AddCourseCategoryMaster';
 import UpdateCourseCategory from './modal/UpdateMasterfileForms/UpdateCourseCategory';
 import { Trash2 } from 'lucide-react';
 import ShowAlert from '@/components/ui/show-alert';
@@ -117,7 +117,7 @@ const CourseCategoryMaster = () => {
             columns={columns}
             autoIndex={true}
             add={
-              <AddCourseCategory
+              <AddCourseCategoryMaster
                 title="course category"
                 subject="courseCategory"
                 data={data}
