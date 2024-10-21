@@ -15,7 +15,7 @@ import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { PlusSquare } from 'lucide-react';
 
-const AddCourse = ({ title, getData, data, addColumn }) => {
+const AddCourseMaster = ({ title, getData, data, addColumn }) => {
   const [courseCategory, setCourseCategory] = useState([]);
   const [courseType, setCourseType] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -230,4 +230,4 @@ const AddCourse = ({ title, getData, data, addColumn }) => {
   )
 }
 
-export default AddCourse
+export default AddCourseMaster

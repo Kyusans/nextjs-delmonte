@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import UpdateKnowledge from './modal/UpdateMasterfileForms/UpdateKnowledge';
 import { Trash2 } from 'lucide-react';
 import ShowAlert from '@/components/ui/show-alert';
-import AddKnowledgeMaster from './modal/AddMasterfileForms/AddKnowledge';
+import AddKnowledgeMaster from './modal/AddMasterfileForms/AddKnowledgeMaster';
 
 const KnowledgeMaster = () => {
   const [data, setData] = useState([]);

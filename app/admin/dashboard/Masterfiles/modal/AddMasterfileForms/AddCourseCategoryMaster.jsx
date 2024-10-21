@@ -11,15 +11,16 @@ import { Input } from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { PlusSquare } from 'lucide-react';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
 
 const formSchema = z.object({
   courseCategoryName: z.string().min(1, 'Course category name is required'),
 });
 
-const AddCourseCategory = ({ title, getData, data, addColumn }) => {
+const AddCourseCategoryMaster = ({ title, getData, data, addColumn, openState, closeState }) => {
+  const [isSubmit, setIsSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [isSubmit, setIsSubmit] = useState(false);
   const inputRef = useRef(null);
 
   const form = useForm({
@@ -30,23 +31,33 @@ const AddCourseCategory = ({ title, getData, data, addColumn }) => {
   });
 
   useEffect(() => {
-    if (isOpen && !isSubmit) {
-      inputRef.current?.focus();
+    if (isOpen && inputRef.current) {
+      inputRef.current.focus();
     }
-  }, [isOpen, isSubmit]);
+  }, [isOpen]);
 
   const onSubmit = async (values) => {
     console.log("values ni course category: ", values);
     setIsSubmit(true);
     try {
-      const categoryExists = data.some(category => 
-        category.course_categoryName.toLowerCase() === values.courseCategoryName.toLowerCase()
-      );
+      console.log("data ni course category: ", data);
+      console.log("values ni courseCategoryName: ", values.courseCategoryName);
+      console.log("data === null: ", data === undefined);
+      const courseCategoryList = JSON.parse(retrieveData("courseCategoryList")) || [];
+      let categoryExists = false;
+      if (data === undefined || data === null) {
+        console.log("courseCategoryList: ", courseCategoryList);
+        categoryExists = courseCategoryList.some(category =>
+          category.label.trim().toLowerCase() === values.courseCategoryName.trim().toLowerCase()
+        );
+      } else {
+        categoryExists = Array.isArray(data) && data.some(category =>
+          category.course_categoryName && category.course_categoryName.trim().toLowerCase() === values.courseCategoryName.trim().toLowerCase()
+        );
+      }
 
       if (categoryExists) {
-        toast.error("This category already exists");
-        setIsLoading(false);
-        setIsSubmit(false);
+        toast.error("This course category already exists");
         return;
       }
 
@@ -58,16 +69,21 @@ const AddCourseCategory = ({ title, getData, data, addColumn }) => {
       const res = await axios.post(url, formData);
       console.log("res.data ni course category: ", res.data);
       if (res.data !== 1) {
+        if (data === undefined || data === null) {
+          storeData("courseCategoryList", JSON.stringify([...courseCategoryList, { value: res.data, label: values.courseCategoryName }]));
+        }
         toast.success('Course category added successfully');
-        // getData();
         addColumn(values, res.data);
-        // handleClose();
+        form.reset();
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
       } else {
         toast.error('Failed to add course category');
       }
     } catch (error) {
       toast.error('Network error');
-      console.error('AddCourseCategory.jsx ~ onSubmit ~ error:', error);
+      console.error('AddCourseCategoryMaster.jsx ~ onSubmit ~ error:', error);
     } finally {
       setIsSubmit(false);
     }
@@ -80,13 +96,15 @@ const AddCourseCategory = ({ title, getData, data, addColumn }) => {
 
   return (
     <div>
-      <Dialog open={isOpen} onOpenChange={(open) => {
-        setIsOpen(open);
-        if (!open) handleClose();
+      <Dialog open={openState ? openState : isOpen} onOpenChange={(open) => {
+        closeState ? closeState() : (setIsOpen(open), !open && handleClose());
       }}>
-        <DialogTrigger>
-          <button><PlusSquare className="h-5 w-5 text-primary" /></button>
-        </DialogTrigger>
+        {openState === undefined && (
+          <DialogTrigger asChild>
+            <button><PlusSquare className="h-5 w-5 text-primary" /></button>
+          </DialogTrigger>
+        )}
+
         <DialogContent>
           {isLoading ? (
             <Spinner />
@@ -106,7 +124,11 @@ const AddCourseCategory = ({ title, getData, data, addColumn }) => {
                           <FormItem>
                             <FormLabel>Course Category Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter course category name" {...field} ref={inputRef} />
+                              <Input
+                                placeholder="Enter course category name"
+                                {...field}
+                                ref={inputRef}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -130,4 +152,4 @@ const AddCourseCategory = ({ title, getData, data, addColumn }) => {
   );
 };
 
-export default AddCourseCategory;
+export default AddCourseCategoryMaster;

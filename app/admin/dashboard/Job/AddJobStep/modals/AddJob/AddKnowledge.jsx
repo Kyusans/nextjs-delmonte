@@ -2,7 +2,6 @@
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import React, { useEffect, useState } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -11,7 +10,7 @@ import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import ComboBox from '@/app/my_components/combo-box';
 import { retrieveData, storeData } from '@/app/utils/storageUtils';
-import AddKnowledgeMaster from '@/app/admin/dashboard/Masterfiles/modal/AddMasterfileForms/AddKnowledge';
+import AddKnowledgeMaster from '@/app/admin/dashboard/Masterfiles/modal/AddMasterfileForms/AddKnowledgeMaster';
 
 function AddKnowledge({ open, onHide, handleAddList, handleAddData }) {
   const [openState, setOpenState] = useState(false);

@@ -23,7 +23,7 @@ const ComboBox = ({ list, subject, value, onChange, styles, others }) => {
       setFilteredItems(list.slice(0, 200));
     } else {
       const newFilteredItems = list
-        .filter(item => item.label.toLowerCase().includes(newInputValue.toLowerCase()))
+        .filter(item => item && item.label && typeof item.label === 'string' && item.label.toLowerCase().includes(newInputValue.toLowerCase()))
         .slice(0, 200);
       setFilteredItems(newFilteredItems);
     }

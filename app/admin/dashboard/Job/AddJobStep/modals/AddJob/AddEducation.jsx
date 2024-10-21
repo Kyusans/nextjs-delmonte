@@ -1,6 +1,6 @@
 "use client"
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -10,9 +10,13 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
-import { retrieveData } from '@/app/utils/storageUtils';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
+import AddCourseMaster from '@/app/admin/dashboard/Masterfiles/modal/AddMasterfileForms/AddCourseMaster';
+import AddCourseCategoryMaster from '@/app/admin/dashboard/Masterfiles/modal/AddMasterfileForms/AddCourseCategoryMaster';
 
-function AddEducation({ open, onHide, courseCategory, handleAddList, isUpdate }) {
+function AddEducation({ open, onHide, handleAddList, isUpdate, handleAddData }) {
+  const [courseCategory, setCourseCategory] = useState(JSON.parse(retrieveData("courseCategoryList")));
+  const [openState, setOpenState] = useState(false);
   const formSchema = z.object({
     courseCategory: z.number().min(1, {
       message: "This field is required",
@@ -35,6 +39,21 @@ function AddEducation({ open, onHide, courseCategory, handleAddList, isUpdate })
       // jobEducation: "",
     },
   });
+
+  const handleOthers = () => {
+    setOpenState(true);
+  }
+
+  const handleCloseState = () => {
+    setOpenState(false);
+  }
+
+  const addColumn = (values, id) => {
+    console.log("values ni addColumn: ", values);
+    storeData("courseCategoryList", JSON.stringify([...courseCategory, { value: id, label: values.courseCategoryName }]));
+    setCourseCategory([...courseCategory, { value: id, label: values.courseCategoryName }]);
+    handleAddData(values, id);
+  }
 
   const onSubmit = (values) => {
     try {
@@ -88,6 +107,7 @@ function AddEducation({ open, onHide, courseCategory, handleAddList, isUpdate })
                             value={field.value}
                             onChange={field.onChange}
                             styles={"bg-background"}
+                            others={handleOthers}
                           />
                         </div>
                         <FormMessage />
@@ -132,6 +152,12 @@ function AddEducation({ open, onHide, courseCategory, handleAddList, isUpdate })
           </Form>
         </DialogContent>
       </Dialog>
+      <AddCourseCategoryMaster
+        title={"course category masterfile"}
+        addColumn={addColumn}
+        openState={openState}
+        closeState={handleCloseState}
+      />
     </>
   )
 }

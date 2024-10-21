@@ -6,7 +6,6 @@ import { CardContent, CardDescription } from '@/components/ui/card'
 import ShowAlert from '@/components/ui/show-alert'
 import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import { ScrollArea } from '@/components/ui/scroll-area';
 import AddKnowledge from './modals/AddJob/AddKnowledge';
 import { Separator } from '@/components/ui/separator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -65,12 +64,12 @@ function AddJobKnowledge({ previousStep, nextStep }) {
   }
 
   const handleAddData = (data, id) => {
-    setKnowledgeData([...knowledgeData, {value: id, label: data.knowledgeName}]);
+    setKnowledgeData([...knowledgeData, { value: id, label: data.knowledgeName }]);
   }
 
   const handleAddList = (status) => {
-      setDatas([...datas, status]);
-      storeData("jobKnowledge", JSON.stringify([...datas, status]));
+    setDatas([...datas, status]);
+    storeData("jobKnowledge", JSON.stringify([...datas, status]));
     toast.success("Knowledge and compliance added successfully");
   };
 
@@ -168,7 +167,12 @@ function AddJobKnowledge({ previousStep, nextStep }) {
             </CardDescription>
           )}
         </Alert>
-        <AddKnowledge open={showModal} onHide={handleCloseModal} handleAddList={handleAddList} handleAddData={handleAddData} />
+        <AddKnowledge
+          open={showModal}
+          onHide={handleCloseModal}
+          handleAddList={handleAddList}
+          handleAddData={handleAddData}
+        />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
