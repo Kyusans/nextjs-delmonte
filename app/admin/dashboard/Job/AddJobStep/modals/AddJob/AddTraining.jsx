@@ -1,8 +1,7 @@
 "use client"
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -10,9 +9,13 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
-import { retrieveData } from '@/app/utils/storageUtils';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
+import AddTrainingMaster from '@/app/admin/dashboard/Masterfiles/modal/AddMasterfileForms/AddTrainingMaster';
 
-function AddTraining({ open, onHide, training, handleAddList }) {
+function AddTraining({ open, onHide, handleAddList, handleAddData }) {
+  const [openState, setOpenState] = useState(false);
+  const [trainingData, setTrainingData] = useState(JSON.parse(retrieveData("trainingList")));
+
   const formSchema = z.object({
     training: z.number().min(1, {
       message: "This field is required",
@@ -35,6 +38,20 @@ function AddTraining({ open, onHide, training, handleAddList }) {
       points: "",
     },
   });
+
+  const handleOthers = () => {
+    setOpenState(true);
+  }
+
+  const handleCloseState = () => {
+    setOpenState(false);
+  }
+
+  const addColumn = (values, id) => {
+    storeData("trainingList", JSON.stringify([...trainingData, { value: id, label: values.trainingName }]));
+    setTrainingData([...trainingData, { value: id, label: values.trainingName }]);
+    handleAddData(values, id);
+  }
 
   const onSubmit = (values) => {
     try {
@@ -80,11 +97,12 @@ function AddTraining({ open, onHide, training, handleAddList }) {
                         <FormLabel>Training</FormLabel>
                         <div>
                           <ComboBox
-                            list={training}
+                            list={trainingData}
                             subject="training"
                             value={field.value}
                             onChange={field.onChange}
                             styles={"bg-background"}
+                            others={handleOthers}
                           />
                         </div>
                         <FormMessage />
@@ -129,6 +147,12 @@ function AddTraining({ open, onHide, training, handleAddList }) {
           </Form>
         </DialogContent>
       </Dialog>
+      <AddTrainingMaster
+        title={"training masterfile"}
+        addColumn={addColumn}
+        openState={openState}
+        closeState={handleCloseState}
+      />
     </>
   )
 }
