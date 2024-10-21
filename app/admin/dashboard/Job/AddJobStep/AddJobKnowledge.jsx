@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 
 
-function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
+function AddJobKnowledge({ previousStep, nextStep }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
   const [knowledgeData, setKnowledgeData] = useState([]);
@@ -76,6 +76,7 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
 
 
   useEffect(() => {
+    const knowledgeList = JSON.parse(retrieveData("knowledgeList"));
     setKnowledgeData(knowledgeList);
     if (retrieveData("jobKnowledge") !== null || retrieveData("jobKnowledge") !== "[]") {
       setDatas(JSON.parse(retrieveData("jobKnowledge")));
@@ -83,7 +84,7 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
       setDatas([]);
     }
     console.log(JSON.stringify(JSON.parse(retrieveData("jobKnowledge"))));
-  }, [knowledgeList]);
+  }, []);
 
   return (
     <>
@@ -167,7 +168,7 @@ function AddJobKnowledge({ previousStep, nextStep, knowledgeList }) {
             </CardDescription>
           )}
         </Alert>
-        <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} handleAddList={handleAddList} handleAddData={handleAddData} />
+        <AddKnowledge open={showModal} onHide={handleCloseModal} handleAddList={handleAddList} handleAddData={handleAddData} />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>

@@ -53,6 +53,8 @@ function AddJob({ handleSwitchView }) {
           label: item.knowledge_name,
         }))
 
+        storeData("knowledgeList", JSON.stringify(formattedKnowledge));
+
         setCourseCategory(formattedCourse);
         setTraining(formattedTraining);
         setSkills(formattedSkills);

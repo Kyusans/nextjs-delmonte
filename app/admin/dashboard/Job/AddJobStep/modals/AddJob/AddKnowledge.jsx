@@ -10,12 +10,12 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 import ComboBox from '@/app/my_components/combo-box';
-import { retrieveData } from '@/app/utils/storageUtils';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import AddKnowledgeMaster from '@/app/admin/dashboard/Masterfiles/modal/AddMasterfileForms/AddKnowledge';
 
-function AddKnowledge({ open, onHide, knowledgeList, handleAddList, handleAddData }) {
+function AddKnowledge({ open, onHide, handleAddList, handleAddData }) {
   const [openState, setOpenState] = useState(false);
-  const [knowledgeData, setKnowledgeData] = useState([]);
+  const [knowledgeData, setKnowledgeData] = useState(JSON.parse(retrieveData("knowledgeList")));
   const formSchema = z.object({
     knowledgeId: z.number().min(1, {
       message: "This field is required",
@@ -48,6 +48,7 @@ function AddKnowledge({ open, onHide, knowledgeList, handleAddList, handleAddDat
   }
 
   const addColumn = (values, id) => {
+    storeData("knowledgeList", JSON.stringify([...knowledgeData, { value: id, label: values.knowledgeName }]));
     setKnowledgeData([...knowledgeData, { value: id, label: values.knowledgeName }]);
     handleAddData(values, id);
   }
@@ -79,10 +80,6 @@ function AddKnowledge({ open, onHide, knowledgeList, handleAddList, handleAddDat
   const handleOnHide = () => {
     onHide(0);
   }
-
-  useEffect(() => {
-    setKnowledgeData(knowledgeList);
-  }, [knowledgeList]);
 
   return (
     <>
@@ -154,7 +151,7 @@ function AddKnowledge({ open, onHide, knowledgeList, handleAddList, handleAddDat
         </DialogContent>
       </Dialog>
       <AddKnowledgeMaster
-        data={knowledgeData}
+        title={"knowledge and compliance masterfile"}
         addColumn={addColumn}
         openState={openState}
         closeState={handleCloseState}

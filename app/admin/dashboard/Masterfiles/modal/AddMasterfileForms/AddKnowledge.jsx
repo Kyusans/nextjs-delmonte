@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { PlusSquare } from 'lucide-react';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
 
 const formSchema = z.object({
   knowledgeName: z.string().min(1, 'Knowledge name is required'),
@@ -41,13 +42,22 @@ const AddKnowledgeMaster = ({ title, getData, data, addColumn, openState, closeS
     try {
       console.log("data ni knowledge: ", data);
       console.log("values ni knowledgename: ", values.knowledgeName);
-      const knowledgeExists = Array.isArray(data) && data.some(knowledge =>
-        knowledge.knowledge_name && knowledge.knowledge_name.trim().toLowerCase() === values.knowledgeName.trim().toLowerCase()
-      );
+      console.log("data === null: ", data === undefined);
+      const knowledgeList = JSON.parse(retrieveData("knowledgeList")) || [];
+      let knowledgeExists = false;
+      if (data === undefined || data === null) {
+        console.log("knowledgeList: ", knowledgeList);
+        knowledgeExists = knowledgeList.some(knowledge =>
+          knowledge.label.trim().toLowerCase() === values.knowledgeName.trim().toLowerCase()
+        );
+      } else {
+        knowledgeExists = Array.isArray(data) && data.some(knowledge =>
+          knowledge.knowledge_name && knowledge.knowledge_name.trim().toLowerCase() === values.knowledgeName.trim().toLowerCase()
+        );
+      }
 
       if (knowledgeExists) {
         toast.error("This knowledge and compliance already exists");
-        setIsLoading(false);
         return;
       }
 
@@ -59,6 +69,9 @@ const AddKnowledgeMaster = ({ title, getData, data, addColumn, openState, closeS
       const res = await axios.post(url, formData);
       console.log("res.data ni knowledge: ", res.data);
       if (res.data !== 1) {
+        if (data === undefined || data === null) {
+          storeData("knowledgeList", JSON.stringify([...knowledgeList, { value: res.data, label: values.knowledgeName }]));
+        }
         toast.success('Knowledge added successfully');
         addColumn(values, res.data);
         form.reset();
