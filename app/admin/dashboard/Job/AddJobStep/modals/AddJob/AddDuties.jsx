@@ -67,7 +67,7 @@ function AddDuties({ open, onHide, handleAddList }) {
                 <DialogClose asChild>
                   <Button variant="outline">Close</Button>
                 </DialogClose>
-                <Button type="submit">Add Duty</Button>
+                <Button type="submit">Submit</Button>
               </div>
             </form>
           </Form>

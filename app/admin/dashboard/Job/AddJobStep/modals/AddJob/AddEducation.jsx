@@ -146,7 +146,7 @@ function AddEducation({ open, onHide, handleAddList, isUpdate, handleAddData }) 
                 <DialogClose asChild>
                   <Button variant="outline">Close</Button>
                 </DialogClose>
-                <Button type="submit">Add Education</Button>
+                <Button type="submit">Submit</Button>
               </div>
             </form>
           </Form>

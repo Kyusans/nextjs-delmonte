@@ -141,7 +141,7 @@ function AddTraining({ open, onHide, handleAddList, handleAddData }) {
                 <DialogClose asChild>
                   <Button variant="outline">Close</Button>
                 </DialogClose>
-                <Button type="submit">Add Training</Button>
+                <Button type="submit">Submit</Button>
               </div>
             </form>
           </Form>

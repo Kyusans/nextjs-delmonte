@@ -11,75 +11,24 @@ import { Input } from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { PlusSquare } from 'lucide-react';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
 
-const AddSkill = ({ title, getData, data, addColumn }) => {
+const formSchema = z.object({
+  skillName: z.string().min(1, 'Skill name is required'),
+});
+
+const AddSkillMaster = ({ title, getData, data, addColumn, openState, closeState }) => {
+  const [isSubmit, setIsSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [isSubmit, setIsSubmit] = useState(false);
   const inputRef = useRef(null);
-
-  const formSchema = z.object({
-    skillName: z.string().min(1, {
-      message: "This field is required",
-    }),
-  });
 
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      skillName: "",
+      skillName: '',
     },
   });
-
-  const onSubmit = async (values) => {
-    console.log("values", values);
-    setIsSubmit(true);
-    try {
-      const skillExists = data.some(skill =>
-        skill.perS_name?.trim().toLowerCase() === values.skillName.trim().toLowerCase()
-      );
-
-      if (skillExists) {
-        toast.error("This skill already exists");
-        setIsLoading(false);
-        setIsSubmit(false);
-        return;
-      }
-
-      const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
-      const formData = new FormData();
-      formData.append("operation", "addSkills");
-      formData.append("json", JSON.stringify(values));
-      const res = await axios.post(url, formData);
-      console.log("res", res);
-      if (res.data !== 0) {
-        toast.success("Skill added successfully");
-        addColumn({
-          perS_name: values.skillName,
-        }, res.data);
-        form.reset({
-          skillName: "",
-        });
-        if (inputRef.current) {
-          inputRef.current.focus();
-        }
-      } else {
-        toast.error("Failed to add skill");
-      }
-    } catch (error) {
-      toast.error("Network error");
-      console.log("AddSkill.jsx => onSubmit(): " + error);
-    } finally {
-      setIsSubmit(false);
-    }
-  };
-
-  const handleClose = () => {
-    setIsOpen(false);
-    form.reset({
-      skillName: "",
-    });
-  }
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -87,15 +36,76 @@ const AddSkill = ({ title, getData, data, addColumn }) => {
     }
   }, [isOpen]);
 
+  const onSubmit = async (values) => {
+    console.log("values ni skill: ", values);
+    setIsSubmit(true);
+    try {
+      console.log("data ni skill: ", data);
+      console.log("values ni skillname: ", values.skillName);
+      console.log("data === null: ", data === undefined);
+      const skillsList = JSON.parse(retrieveData("skillsList")) || [];
+      console.log("skillsList: ", skillsList);
+      let skillExists = false;
+      if (data === undefined || data === null) {
+        console.log("skillsList: ", skillsList);
+        skillExists = skillsList.some(skill =>
+          skill.label.trim().toLowerCase() === values.skillName.trim().toLowerCase()
+        );
+      } else {
+        skillExists = Array.isArray(data) && data.some(skill =>
+          skill.perS_name && skill.perS_name.trim().toLowerCase() === values.skillName.trim().toLowerCase()
+        );
+      }
+
+      if (skillExists) {
+        toast.error("This skill already exists");
+        return;
+      }
+
+      const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
+      const formData = new FormData();
+      formData.append('operation', 'addSkills');
+      formData.append('json', JSON.stringify(values));
+
+      const res = await axios.post(url, formData);
+      console.log("res.data ni skill: ", res.data);
+      if (res.data !== 1) {
+        if (data === undefined || data === null) {
+          storeData("skillsList", JSON.stringify([...skillsList, { value: res.data, label: values.skillName }]));
+        }
+        toast.success('Skill added successfully');
+        addColumn(values, res.data);
+        form.reset();
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      } else {
+        toast.error('Failed to add skill');
+      }
+    } catch (error) {
+      toast.error('Network error');
+      console.error('AddSkill.jsx ~ onSubmit ~ error:', error);
+    } finally {
+      setIsSubmit(false);
+    }
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    form.reset();
+  }
+
   return (
     <div>
-      <Dialog open={isOpen} onOpenChange={(open) => {
-        setIsOpen(open);
-        if (!open) handleClose();
+      <Dialog open={openState ? openState : isOpen} onOpenChange={(open) => {
+        closeState ? closeState() : (setIsOpen(open), !open && handleClose());
       }}>
-        <DialogTrigger>
-          <button><PlusSquare className="h-5 w-5 text-primary" /></button>
-        </DialogTrigger>
+        {openState === undefined && (
+          <DialogTrigger asChild>
+            <button><PlusSquare className="h-5 w-5 text-primary" /></button>
+          </DialogTrigger>
+        )}
+
         <DialogContent>
           {isLoading ? (
             <Spinner />
@@ -115,7 +125,11 @@ const AddSkill = ({ title, getData, data, addColumn }) => {
                           <FormItem>
                             <FormLabel>Skill Name</FormLabel>
                             <FormControl>
-                              <Input placeholder="Enter skill name" {...field} ref={inputRef} />
+                              <Input
+                                placeholder="Enter skill name"
+                                {...field}
+                                ref={inputRef}
+                              />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -136,7 +150,7 @@ const AddSkill = ({ title, getData, data, addColumn }) => {
         </DialogContent>
       </Dialog>
     </div>
-  )
-}
+  );
+};
 
-export default AddSkill
+export default AddSkillMaster;
