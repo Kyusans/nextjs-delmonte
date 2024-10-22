@@ -1,28 +1,22 @@
 "use client"
 import { Button } from '@/components/ui/button';
-import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from '@/components/ui/drawer';
+import { Sheet, SheetContent, SheetFooter, SheetHeader, SheetClose, SheetTitle } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Edit } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { Popover } from '@/components/ui/popover';
 import UpdateDuties from './UpdateDuties';
 import { toast } from 'sonner';
 import axios from 'axios';
 import Spinner from '@/components/ui/spinner';
-import { retrieveData } from '@/app/utils/storageUtils';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import UpdateEducation from './UpdateEducationBackground';
 import UpdateSkill from './UpdateSkills';
 import UpdateTraining from './UpdateTraining';
 import UpdateExperience from './UpdateExperience';
 import UpdateKnowledge from './UpdateKnowledge';
 
-function UpdateJobModal({ jobData, type, getSelectedJobs }) {
+function UpdateJobModal({ open, onClose, jobData, type, getSelectedJobs }) {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [courseCategory, setCourseCategory] = useState([]);
-  const [training, setTraining] = useState([]);
-  const [skills, setSkills] = useState([]);
-  const [knowledgeList, setKnowledgeList] = useState([]);
 
   const handleClose = () => {
     getSelectedJobs();
@@ -41,7 +35,7 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
       const res = await axios.post(url, formData);
       if (res.data !== 0) {
         setData(res.data);
-      }else{
+      } else {
         setData([]);
       }
     } catch (error) {
@@ -126,6 +120,7 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
       const formData = new FormData();
       formData.append("operation", "getAllDataForDropdownUpdate");
       const res = await axios.post(url, formData);
+      console.log("res.data ni getAllDropdownData: ", res.data)
       if (res.data !== 0) {
         const formattedCourse = res.data.courseCategory.map((item) => ({
           value: item.course_categoryId,
@@ -147,11 +142,16 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
           label: item.knowledge_name,
         }))
 
-        setCourseCategory(formattedCourse);
-        setTraining(formattedTraining);
-        setSkills(formattedSkills);
-        setKnowledgeList(formattedKnowledge);
-        // console.log("res ni getDropDownForAddJobs", res.data);
+        storeData("courseCategoryList", JSON.stringify(formattedCourse));
+        storeData("trainingList", JSON.stringify(formattedTraining));
+        storeData("skillsList", JSON.stringify(formattedSkills));
+        storeData("knowledgeList", JSON.stringify(formattedKnowledge));
+
+        // setCourseCategory(formattedCourse);
+        // setTraining(formattedTraining);
+        // setSkills(formattedSkills);
+        // setKnowledgeList(formattedKnowledge);
+        console.log("res ni getDropDownForAddJobs", res.data);
       }
     } catch (error) {
       toast.error("Network error");
@@ -176,7 +176,7 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
       case "education":
         return (
           <UpdateEducation
-            courseCategory={courseCategory}
+            // courseCategory={courseCategory}
             data={data}
             handleAddData={handleAddData}
             handleUpdate={handleUpdate}
@@ -186,7 +186,7 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
       case "skills":
         return (
           <UpdateSkill
-            skill={skills}
+            // skill={skills}
             data={data}
             handleAddData={handleAddData}
             handleUpdate={handleUpdate}
@@ -196,7 +196,7 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
       case "trainings":
         return (
           <UpdateTraining
-            training={training}
+            // training={training}
             data={data}
             handleAddData={handleAddData}
             handleUpdate={handleUpdate}
@@ -215,7 +215,7 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
       case "knowledge":
         return (
           <UpdateKnowledge
-            knowledgeList={knowledgeList}
+            // knowledgeList={knowledgeList}
             data={data}
             handleAddData={handleAddData}
             handleUpdate={handleUpdate}
@@ -228,42 +228,32 @@ function UpdateJobModal({ jobData, type, getSelectedJobs }) {
   }
 
   useEffect(() => {
-    setData(jobData);
-    if (jobData) {
+    if (jobData && open) {
+      setData(jobData);
       getAllDropdownData();
     }
-  }, [jobData]);
+  }, [jobData, open]);
 
   return (
-    <Drawer onClose={handleClose}>
-      <DrawerTrigger asChild>
-        <button variant="transparent">
-          <Popover>
-            <Edit className="mr-2 h-4 w-4" />
-          </Popover>
-        </button>
-      </DrawerTrigger>
-      <DrawerContent className="h-full">
-        <DrawerHeader>
-          <DrawerTitle>Update {type}</DrawerTitle>
-          <DrawerDescription>Update the job {type}</DrawerDescription>
-        </DrawerHeader>
-        <ScrollArea className="w-full h-[calc(100vh-200px)] p-4">
+    <Sheet open={open} onOpenChange={onClose}>
+      <SheetContent side="bottom">
+        <SheetHeader className="mb-3">
+          <SheetTitle>Update {type}</SheetTitle>
+        </SheetHeader>
+        <ScrollArea className="h-[calc(100vh-200px)] pr-4">
           {isLoading ? <Spinner /> : (
             <>
               {updatePage()}
             </>
           )}
         </ScrollArea>
-        <DrawerFooter>
-          <DrawerClose asChild>
-            <div className="flex justify-end p-3">
-              <Button variant="secondary">Close</Button>
-            </div>
-          </DrawerClose>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
+        <SheetFooter>
+          <SheetClose asChild>
+            <Button variant="secondary">Close</Button>
+          </SheetClose>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
   );
 }
 

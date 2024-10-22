@@ -113,7 +113,7 @@ function AddExperience({ open, onHide, handleAddList }) {
                 <DialogClose asChild>
                   <Button variant="outline">Close</Button>
                 </DialogClose>
-                <Button type="submit">Add Job Experience</Button>
+                <Button type="submit">Submit</Button>
               </div>
             </form>
           </Form>

@@ -13,7 +13,8 @@ import { Separator } from '@/components/ui/separator';
 import UpdateTrainingModal from './UpdateJob/UpdateTrainingModal';
 
 
-function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteData }) {
+function UpdateTraining({ data, handleAddData, handleUpdate, deleteData }) {
+  const training = JSON.parse(retrieveData("trainingList"));
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
   const [alertMessage, setAlertMessage] = useState("");
@@ -72,7 +73,7 @@ function UpdateTraining({ training, data, handleAddData, handleUpdate, deleteDat
     handleOpenUpdateModal();
   }
 
-  const handleAddList = async (status) =>{
+  const handleAddList = async (status) => {
     if (status !== 0) {
       const jsonData = {
         jobId: retrieveData("jobId"),

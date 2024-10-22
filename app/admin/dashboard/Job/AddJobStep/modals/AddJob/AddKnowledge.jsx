@@ -143,7 +143,7 @@ function AddKnowledge({ open, onHide, handleAddList, handleAddData }) {
                 <DialogClose asChild>
                   <Button variant="outline">Close</Button>
                 </DialogClose>
-                <Button type="submit">Add Job Knowledge</Button>
+                <Button type="submit">Submit</Button>
               </div>
             </form>
           </Form>

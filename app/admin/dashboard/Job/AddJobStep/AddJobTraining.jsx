@@ -13,9 +13,10 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 
 
-function AddJobTraining({ training, previousStep, nextStep }) {
+function AddJobTraining({ previousStep, nextStep }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
+  const [trainingData, setTrainingData] = useState([]);
 
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
@@ -23,6 +24,7 @@ function AddJobTraining({ training, previousStep, nextStep }) {
     setAlertMessage(message);
     setShowAlert(true);
   };
+
   const handleCloseAlert = (status) => {
     if (status === 1) {
       const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
@@ -54,6 +56,10 @@ function AddJobTraining({ training, previousStep, nextStep }) {
     toast.success("Training added successfully");
   };
 
+  const handleAddData = (values, id) => {
+    setTrainingData([...trainingData, { value: id, label: values.trainingName }]);
+  }
+
   const handleRemoveList = (indexToRemove) => {
     setIndexToRemove(indexToRemove);
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
@@ -68,6 +74,8 @@ function AddJobTraining({ training, previousStep, nextStep }) {
   }
 
   useEffect(() => {
+    const trainingList = JSON.parse(retrieveData("trainingList"));
+    setTrainingData(trainingList);
     if (retrieveData("jobTraining") !== null || retrieveData("jobTraining") !== "[]") {
       setDatas(JSON.parse(retrieveData("jobTraining")));
     } else {
@@ -105,7 +113,7 @@ function AddJobTraining({ training, previousStep, nextStep }) {
                       <TableRow key={index}>
                         {/* <TableCell className="w-1/12">{index + 1}</TableCell> */}
                         <TableCell className="w-1/12">
-                          {training.find((item) => item.value === data.training)?.label}
+                          {trainingData.find((item) => item.value === data.training)?.label}
                         </TableCell>
                         {/* <TableCell className="w-10/12 whitespace-normal">
                           {data.jobTraining}
@@ -138,7 +146,7 @@ function AddJobTraining({ training, previousStep, nextStep }) {
                     </div>
                     <div className="mt-2 text-sm">
                       <div className='mb-1 text-xl break-words'>
-                        {training.find((item) => item.value === data.training)?.label}
+                        {trainingData.find((item) => item.value === data.training)?.label}
                       </div>
                       {/* {data.jobTraining} */}
                     </div>
@@ -159,7 +167,12 @@ function AddJobTraining({ training, previousStep, nextStep }) {
             </CardDescription>
           )}
         </Alert>
-        <AddTraining open={showModal} onHide={handleCloseModal} training={training} handleAddList={handleAddList} />
+        <AddTraining
+          open={showModal}
+          onHide={handleCloseModal}
+          handleAddList={handleAddList}
+          handleAddData={handleAddData}
+        />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>

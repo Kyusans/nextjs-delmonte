@@ -3,11 +3,12 @@ import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
-import AddTraining from './modal/AddMasterfileForms/AddTraining';
+import AddTraining from './modal/AddMasterfileForms/AddTrainingMaster';
 import UpdateMasterfile from './modal/UpdateMasterfile';
 import { Trash2 } from 'lucide-react';
 import UpdateTraining from './modal/UpdateMasterfileForms/UpdateTraining';
 import ShowAlert from '@/components/ui/show-alert';
+import AddTrainingMaster from './modal/AddMasterfileForms/AddTrainingMaster';
 
 const TrainingMaster = () => {
   const [data, setData] = useState([]);
@@ -117,7 +118,7 @@ const TrainingMaster = () => {
             columns={columns}
             autoIndex={true}
             add={
-              <AddTraining
+              <AddTrainingMaster
                 title="training"
                 subject="training"
                 getData={getData}

@@ -1,25 +1,24 @@
 "use client"
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import React, { useEffect } from 'react'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import React, { useEffect, useState } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
-import { retrieveData } from '@/app/utils/storageUtils';
+import ComboBox from '@/app/my_components/combo-box';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
+import AddSkillMaster from '@/app/admin/dashboard/Masterfiles/modal/AddMasterfileForms/AddSkillMaster';
 
-function AddSkill({ open, onHide, skill, handleAddList }) {
+function AddSkill({ open, onHide, handleAddList, handleAddData }) {
+  const [openState, setOpenState] = useState(false);
+  const [skillData, setSkillData] = useState(JSON.parse(retrieveData("skillsList")));
   const formSchema = z.object({
     skill: z.number().min(1, {
       message: "This field is required",
     }),
-    // jobSkill: z.string().min(1, {
-    //   message: "This field is required",
-    // }),
     points: z.string().min(1, {
       message: "This field is required",
     }).refine((value) => !isNaN(Number(value)), {
@@ -31,10 +30,23 @@ function AddSkill({ open, onHide, skill, handleAddList }) {
     resolver: zodResolver(formSchema),
     defaultValues: {
       skill: 0,
-      // jobSkill: "",
       points: "",
     },
   });
+
+  const handleOthers = () => {
+    setOpenState(true);
+  }
+
+  const handleCloseState = () => {
+    setOpenState(false);
+  }
+
+  const addColumn = (values, id) => {
+    storeData("skillsList", JSON.stringify([...skillData, { value: id, label: values.skillName }]));
+    setSkillData([...skillData, { value: id, label: values.skillName }]);
+    handleAddData(values, id);
+  }
 
   const onSubmit = (values) => {
     try {
@@ -47,7 +59,6 @@ function AddSkill({ open, onHide, skill, handleAddList }) {
         }
       });
       if (isValid) {
-        // onHide(values);
         handleAddList(values);
         form.reset();
       }
@@ -80,30 +91,18 @@ function AddSkill({ open, onHide, skill, handleAddList }) {
                         <FormLabel>Skill</FormLabel>
                         <div>
                           <ComboBox
-                            list={skill}
+                            list={skillData}
                             subject="skill"
                             value={field.value}
                             onChange={field.onChange}
                             styles={"bg-background"}
+                            others={handleOthers}
                           />
                         </div>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-                  {/* <FormField
-                    control={form.control}
-                    name="jobSkill"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Job Skill Description</FormLabel>
-                        <FormControl>
-                          <Textarea style={{ height: "200px" }} placeholder="Enter description" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  /> */}
                   <FormField
                     control={form.control}
                     name="points"
@@ -123,12 +122,18 @@ function AddSkill({ open, onHide, skill, handleAddList }) {
                 <DialogClose asChild>
                   <Button variant="outline">Close</Button>
                 </DialogClose>
-                <Button type="submit">Add job skill</Button>
+                <Button type="submit">Submit</Button>
               </div>
             </form>
           </Form>
         </DialogContent>
       </Dialog>
+      <AddSkillMaster
+        title={"skill masterfile"}
+        addColumn={addColumn}
+        openState={openState}
+        closeState={handleCloseState}
+      />
     </>
   )
 }

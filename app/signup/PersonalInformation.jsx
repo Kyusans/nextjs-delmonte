@@ -10,16 +10,18 @@ import { Button } from "@/components/ui/button";
 import ComboBox from "../my_components/combo-box";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon } from "lucide-react";
+import { ArrowLeftCircle, CalendarIcon } from "lucide-react";
 import { format, formatISO, set } from "date-fns";
 import { cn } from "@/lib/utils";
 import EnterPin from "./modals/EnterPin";
 import axios from "axios";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Spinner from "@/components/ui/spinner";
 import { retrieveData, storeData } from "../utils/storageUtils";
 import { formatDate } from "./page";
+import ShowAlert from "@/components/ui/show-alert";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   firstName: z.string().min(1, {
@@ -61,22 +63,10 @@ const formSchema = z.object({
       const parsedEndDate = Date.parse(date);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      return parsedEndDate <= today.getTime();
+      return parsedEndDate < today.getTime();
     }, {
-      message: "Date cannot be in the future",
+      message: "Invalid date",
     }),
-  sss: z.string().min(1, {
-    message: "This field is required",
-  }),
-  tin: z.string().min(1, {
-    message: "This field is required",
-  }),
-  philhealth: z.string().min(1, {
-    message: "This field is required",
-  }),
-  pagibig: z.string().min(1, {
-    message: "This field is required",
-  }),
   password: z.string().min(5, {
     message: "Password must be at least 5 characters",
   }),
@@ -85,8 +75,9 @@ const formSchema = z.object({
   }),
 });
 
-const PersonalInformation = ({ nextPage }) => {
+const PersonalInformation = ({ handleSubmit }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const genders = [
     { label: "Male", value: "Male" },
     { label: "Female", value: "Female" },
@@ -104,10 +95,6 @@ const PersonalInformation = ({ nextPage }) => {
     { label: "Alternate Contact", value: "alternateContact" },
     { label: "Present Address", value: "presentAddress" },
     { label: "Permanent Address", value: "permanentAddress" },
-    { label: "SSS", value: "sss" },
-    { label: "TIN", value: "tin" },
-    { label: "Philhealth", value: "philhealth" },
-    { label: "Pag-ibig", value: "pagibig" },
     { label: "Password", value: "password" },
     { label: "Confirm Password", value: "confirmPassword" },
   ]
@@ -126,28 +113,42 @@ const PersonalInformation = ({ nextPage }) => {
       permanentAddress: "",
       gender: "",
       dob: "",
-      sss: "",
-      tin: "",
-      philhealth: "",
-      pagibig: "",
       password: "",
       confirmPassword: "",
     },
   });
 
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  // const [selectedId, setSelectedId] = useState(null);
+  const handleShowAlert = () => {
+    setAlertMessage("Do you want to go back to the login page?");
+    setShowAlert(true);
+  };
+
+  const handleCloseAlert = (status) => {
+    if (status === 1) {
+      router.push("/login");
+    }
+    setShowAlert(false);
+  };
+
   const onSubmit = async (values) => {
+    setIsLoading(true);
+    const userEmail = JSON.parse(retrieveData("personalInfo")).email;
+
     if (values.password !== values.confirmPassword) {
       toast.error("Passwords do not match");
+      setIsLoading(false);
       return;
-    } else if (retrieveData("personalInfo")) {
-      const data = JSON.parse(retrieveData("personalInfo"));
-      if (data.email === values.email) {
-        nextPage();
-        return;
-      }
+    }
+    if (userEmail === values.email) {
+      handleSubmit(1);
+      console.log("status submit: ", 1);
+      setIsLoading(false);
+      return;
     }
     try {
-      setIsLoading(true);
       const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
       const jsonData = { email: values.email };
       const formData = new FormData();
@@ -160,7 +161,8 @@ const PersonalInformation = ({ nextPage }) => {
         return;
       } else {
         storeData("personalInfo", JSON.stringify(values));
-        nextPage();
+        handleSubmit(2);
+        console.log("status submit: ", 2);
       }
     } catch (error) {
       toast.error("Network error");
@@ -171,10 +173,11 @@ const PersonalInformation = ({ nextPage }) => {
   };
 
   const [showDOB, setShowDOB] = useState(false);
+
   const handleDateChange = (date) => {
     if (date) {
       form.setValue("dob", formatISO(date, { representation: 'date' }));
-      form.trigger("dob"); 
+      form.trigger("dob");
       setTimeout(() => {
         setShowDOB(false);
       }, 50);
@@ -193,113 +196,114 @@ const PersonalInformation = ({ nextPage }) => {
       <div className="w-full max-w-4xl mt-7">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} >
-            <ScrollArea className="h-[calc(100vh-25rem)]">
-              <Card className="w-full h-full flex flex-col bg-[#0e5a35]  xs:border-[#0e4028]">
-                <CardHeader>
-                  <CardTitle className="text-lg sm:text-xl text-center">{"Personal Information"}</CardTitle>
-                </CardHeader>
-                <CardContent className="h-full">
-                  {isLoading ? (
-                    <Spinner />
-                  ) : (
-                    <div className="flex justify-center items-center p-4 sm:p-6">
-                      <div className="space-y-2 sm:space-y-6 w-full max-w-2xl">
-                        <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-3">
-                          {personalInformation.map((data) => (
-                            <FormField
-                              key={data.value}
-                              control={form.control}
-                              name={data.value}
-                              render={({ field }) => (
-                                <FormItem>
-                                  <FormLabel>{data.label}</FormLabel>
-                                  <FormControl>
-                                    <Input type={data.value.match(/password/i) ? "password" : "text"} className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder={data.label} {...field} />
-                                  </FormControl>
-                                  <FormMessage />
-                                </FormItem>
-                              )}
-                            />
-                          ))}
+            <Card className="w-full h-full flex flex-col bg-[#0e5a35]">
+              <CardHeader>
+                <CardTitle className="text-2xl text-center">Sign up</CardTitle>
+              </CardHeader>
+              <CardContent className="h-full">
+                {isLoading ? (
+                  <Spinner />
+                ) : (
+                  <div className="flex justify-center items-center p-4 sm:p-6">
+                    <div className="space-y-2 sm:space-y-6 w-full max-w-2xl">
+                      <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-3">
+                        {personalInformation.map((data) => (
                           <FormField
-                            name="gender"
+                            key={data.value}
                             control={form.control}
+                            name={data.value}
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Gender</FormLabel>
-                                <div>
-                                  <ComboBox
-                                    list={genders}
-                                    subject="Gender"
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                  />
-                                </div>
+                                <FormLabel>{data.label}</FormLabel>
+                                <FormControl>
+                                  <Input type={data.value.match(/password/i) ? "password" : "text"} className="bg-[#0e4028] border-2 border-[#0b864a]" placeholder={data.label} {...field} />
+                                </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
-                          <FormField
-                            control={form.control}
-                            name="dob"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel>Date of Birth</FormLabel>
-                                <div>
-                                  <Popover open={showDOB}>
-                                    <PopoverTrigger asChild>
-                                      <Button
-                                        onClick={() => setShowDOB(!showDOB)}
-                                        variant={"outline"}
-                                        className={cn("justify-start w-full text-left font-normal bg-[#0e4028] hover:bg-[#0e5a35] border-2 border-[#0b864a]", !field.value && "text-muted-foreground")}
-                                      >
-                                        <CalendarIcon className="mr-2 h-4 w-4" />
-                                        {field.value ? formatDate(new Date(field.value), "yyyy-MM-dd") : <span>Pick a date</span>}
-                                      </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent align="start" className=" w-auto p-0">
-                                      <Calendar
-                                        mode="single"
-                                        captionLayout="dropdown-buttons"
-                                        selected={field.value ? new Date(field.value) : undefined}
-                                        onSelect={handleDateChange}
-                                        fromYear={1960}
-                                        toYear={new Date().getFullYear()}
-                                      />
-                                    </PopoverContent>
-                                  </Popover>
-                                </div>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
+                        ))}
+                        <FormField
+                          name="gender"
+                          control={form.control}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Gender</FormLabel>
+                              <div>
+                                <ComboBox
+                                  list={genders}
+                                  subject="Gender"
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                />
+                              </div>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="dob"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Date of Birth</FormLabel>
+                              <div>
+                                <Popover open={showDOB}>
+                                  <PopoverTrigger asChild>
+                                    <Button
+                                      onClick={() => setShowDOB(!showDOB)}
+                                      variant={"outline"}
+                                      className={cn("justify-start w-full text-left font-normal bg-[#0e4028] hover:bg-[#0e5a35] border-2 border-[#0b864a]", !field.value && "text-muted-foreground")}
+                                    >
+                                      <CalendarIcon className="mr-2 h-4 w-4" />
+                                      {field.value ? formatDate(new Date(field.value), "yyyy-MM-dd") : <span>Pick a date</span>}
+                                    </Button>
+                                  </PopoverTrigger>
+                                  <PopoverContent align="start" className=" w-auto p-0">
+                                    <Calendar
+                                      mode="single"
+                                      captionLayout="dropdown-buttons"
+                                      selected={field.value ? new Date(field.value) : undefined}
+                                      onSelect={handleDateChange}
+                                      fromYear={1960}
+                                      toYear={new Date().getFullYear()}
+                                      disabled={(date) => date > new Date()}
+                                    />
+                                  </PopoverContent>
+                                </Popover>
+                              </div>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
                       </div>
                     </div>
-                  )}
-                </CardContent>
-              </Card>
-            </ScrollArea>
-            <div className="flex flex-row gap-4 w-full max-w-4xl mt-3 justify-end p-3">
-              <Button
-                className="px-4 py-2 rounded w-full sm:w-auto bg-[#0e5a35]"
-                variant="secondary"
-                disabled
-              >
-                Previous
-              </Button>
-              <Button
-                type="submit"
-                className="px-4 py-2 text-white rounded dark:bg-[#f5f5f5] dark:text-[#0e4028] w-full sm:w-auto"
-                disabled={isLoading}
-              >
-                {isLoading && <Spinner />}
-                Next
-              </Button>
-            </div>
+                  </div>
+                )}
+                <div className="flex flex-row gap-4 w-full max-w-4xl mt-3 justify-end p-3">
+                  <Button
+                    type="button"
+                    className="px-4 py-2 rounded bg-[#0e4028]"
+                    variant="secondary"
+                    onClick={handleShowAlert}
+                  >
+                    Back to login
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="px-4 py-2 text-white rounded dark:bg-[#f5f5f5] dark:text-[#0e4028] w-full sm:w-auto"
+                    disabled={isLoading}
+                  >
+                    {isLoading && <Spinner />}
+                    Submit
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </form>
         </Form>
       </div>
+      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
     </>
   );
 };
