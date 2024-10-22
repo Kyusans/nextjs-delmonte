@@ -17,10 +17,6 @@ import UpdateKnowledge from './UpdateKnowledge';
 function UpdateJobModal({ open, onClose, jobData, type, getSelectedJobs }) {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [courseCategory, setCourseCategory] = useState([]);
-  const [training, setTraining] = useState([]);
-  const [skills, setSkills] = useState([]);
-  const [knowledgeList, setKnowledgeList] = useState([]);
 
   const handleClose = () => {
     getSelectedJobs();

@@ -9,20 +9,20 @@ import {
   DialogOverlay,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-export default function EnterPin({ open, onHide, pincode, expirationDate }) {
+export default function EnterPin({ open, onHide, pin, expirationDate }) {
   const [code, setCode] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [pinCode, setPinCode] = useState("");
+  const [expirationDateTime, setExpirationDateTime] = useState("");
 
   const handleSubmit = () => {
-    setIsLoading(true);
     try {
-      const expirationDateTime = new Date(expirationDate);
+      const expiredDate = new Date(expirationDateTime);
       const currentDateTime = new Date();
-      if (code === pincode) {
-        if (expirationDateTime < currentDateTime) {
+      if (code === pinCode) {
+        if (expiredDate < currentDateTime) {
           toast.error("Pin code has expired. Please try again.");
           handleResendPin();
         } else {
@@ -40,21 +40,21 @@ export default function EnterPin({ open, onHide, pincode, expirationDate }) {
   };
 
   const handleResendPin = () => {
-    setIsLoading(true);
-    try {
-      onHide(2);
-    } catch (error) {
-      toast.error("Network error");
-      console.log("EnterPin.jsx => handleResendPin(): " + error);
-    } finally {
-      setIsLoading(false);
-    }
-
+    onHide(2);
   };
 
   const handleHide = () => {
+    console.log("Normal hide")
     onHide(0);
   };
+
+  useEffect(() => {
+    if (open) {
+      setPinCode(pin);
+      setExpirationDateTime(expirationDate);
+    }
+  }, [open, pin, expirationDate]);
+
   return (
     <Dialog open={open} onOpenChange={handleHide}>
       <DialogOverlay className="bg-black/5" />
