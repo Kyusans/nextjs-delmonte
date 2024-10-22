@@ -15,6 +15,8 @@ import InterviewPage from '../Interview/InterviewPage';
 import ViewApplicants from '../ViewApplicants/ViewApplicants';
 import ExamPage from '../Exam/ExamPage';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { Edit } from 'lucide-react';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
@@ -52,9 +54,24 @@ function SelectedJob({ open, onHide, jobId }) {
     }
   }, [getSelectedJobs, jobId, open]);
 
-  const handleUpdateJob = (data, type) => {
-    return <UpdateJobModal jobData={data} type={type} getSelectedJobs={getSelectedJobs} />;
-  };
+  const [openUpdateJob, setOpenUpdateJob] = useState(false);
+  const [type, setType] = useState("");
+  const [jobData, setJobData] = useState([]);
+
+  const handleOpenUpdateJob = (data, type) => {
+    setJobData(data);
+    setType(type);
+    setOpenUpdateJob(true);
+  }
+
+  const handleCloseUpdateJob = () => {
+    setOpenUpdateJob(false);
+    getSelectedJobs();
+  }
+
+  // const handleUpdateJob = () => {
+  //   return <UpdateJobModal open={openUpdateJob} onClose={handleCloseUpdateJob} jobData={jobData} type={type} getSelectedJobs={getSelectedJobs} />;
+  // };
 
   const handleClose = () => {
     removeData("jobId");
@@ -96,7 +113,9 @@ function SelectedJob({ open, onHide, jobId }) {
                       <div>
                         <div className="flex items-center w-full px-3">
                           <span className='text-sm my-3 font-bold flex items-center mr-2'>Duties and Responsibilities</span>
-                          <div>{handleUpdateJob(data.jobDuties, "duties")}</div>
+                          <div>
+                            <Edit className="h-4 w-4 cursor-pointer ml-1" onClick={() => handleOpenUpdateJob(data.jobDuties, "duties")} />
+                          </div>
                         </div>
                         <div className='w-full px-6'>
                           {data.jobDuties.length > 0 ? (
@@ -112,7 +131,7 @@ function SelectedJob({ open, onHide, jobId }) {
                         <div className='w-full px-3 mt-3'>
                           <div className='text-sm mb-3 font-bold flex items-center'>
                             <span className='mr-2'>Educational Background </span>
-                            {handleUpdateJob(data.jobEducation, "education")}
+                            <Edit className="h-4 w-4 cursor-pointer ml-1" onClick={() => handleOpenUpdateJob(data.jobEducation, "education")} />
                           </div>
                           {data.jobEducation.length > 0 ? (
                             <>
@@ -134,7 +153,7 @@ function SelectedJob({ open, onHide, jobId }) {
                           )}
                           <div className='text-sm my-3 font-bold flex items-center'>
                             <span className='mr-2'>Skills</span>
-                            {handleUpdateJob(data.jobSkills, "skills")}
+                            <Edit className="h-4 w-4 cursor-pointer ml-1" onClick={() => handleOpenUpdateJob(data.jobSkills, "skills")} />
                           </div>
                           {data.jobSkills.length > 0 ? (
                             <>
@@ -156,7 +175,7 @@ function SelectedJob({ open, onHide, jobId }) {
                           )}
                           <div className='text-sm my-3 font-bold flex items-center'>
                             <span className='mr-2'>Trainings</span>
-                            {handleUpdateJob(data.jobTrainings, "trainings")}
+                            <Edit className="h-4 w-4 cursor-pointer ml-1" onClick={() => handleOpenUpdateJob(data.jobTrainings, "trainings")} />
                           </div>
                           {data.jobTrainings.length > 0 ? (
                             <>
@@ -178,7 +197,7 @@ function SelectedJob({ open, onHide, jobId }) {
                           )}
                           <div className='text-sm my-3 font-bold flex items-center'>
                             <span className='mr-2'>Experience</span>
-                            {handleUpdateJob(data.jobExperience, "experience")}
+                            <Edit className="h-4 w-4 cursor-pointer ml-1" onClick={() => handleOpenUpdateJob(data.jobExperience, "experience")} />
                           </div>
                           {data.jobExperience.length > 0 ? (
                             <>
@@ -200,7 +219,7 @@ function SelectedJob({ open, onHide, jobId }) {
                           }
                           <div className='text-sm my-3 font-bold flex items-center'>
                             <span className='mr-2'>Knowledge and Compliance</span>
-                            {handleUpdateJob(data.jobKnowledge, "knowledge")}
+                            <Edit className="h-4 w-4 cursor-pointer ml-1" onClick={() => handleOpenUpdateJob(data.jobKnowledge, "knowledge")} />
                           </div>
                           {data.jobKnowledge.length > 0 ? (
                             <>
@@ -239,6 +258,7 @@ function SelectedJob({ open, onHide, jobId }) {
           )}
         </SheetContent>
       </Sheet>
+      <UpdateJobModal open={openUpdateJob} onClose={handleCloseUpdateJob} jobData={jobData} type={type} getSelectedJobs={getSelectedJobs} />
     </>
   );
 }

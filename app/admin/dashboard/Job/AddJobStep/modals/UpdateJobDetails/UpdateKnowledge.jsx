@@ -13,7 +13,8 @@ import { Badge } from '@/components/ui/badge';
 import UpdateKnowledgeModal from './UpdateJob/UpdateKnowledgeModal';
 
 
-function UpdateKnowledge({ knowledgeList, data, handleAddData, handleUpdate, deleteData }) {
+function UpdateKnowledge({ data, handleAddData, handleUpdate, deleteData }) {
+  const knowledgeList = JSON.parse(retrieveData("knowledgeList"));
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
   const [updateData, setUpdateData] = useState({});

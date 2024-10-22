@@ -10,6 +10,7 @@ import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { retrieveData } from '@/app/utils/storageUtils';
+import { toast } from 'sonner';
 
 function UpdateDuties({ data, handleAddData, handleUpdate, deleteData }) {
   const [datas, setDatas] = useState([]);
@@ -76,12 +77,13 @@ function UpdateDuties({ data, handleAddData, handleUpdate, deleteData }) {
     if (editedText === datas[editIndex].duties_text) {
       handleCancelEdit();
       return;
-    } else if (!editedText) {
-      toast.error("Empty field is not allowed");
+    } else if (!editedText.trim()) {
+      toast.error("Empty description is not allowed");
+      return;
     }
 
     const jsonData = {
-      duties: editedText,
+      duties: editedText.trim(),
       dutyId: selectedId,
     }
     handleUpdate("updateDuties", jsonData, "getDuties");

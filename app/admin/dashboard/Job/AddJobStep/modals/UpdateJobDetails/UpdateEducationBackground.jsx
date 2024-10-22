@@ -13,7 +13,8 @@ import UpdateEducationModal from './UpdateJob/UpdateEducationModal';
 import AddEducation from '../AddJob/AddEducation';
 
 
-function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, deleteData }) {
+function UpdateEducation({ data, handleAddData, handleUpdate, deleteData }) {
+  const courseCategory = JSON.parse(retrieveData("courseCategoryList"));
   const [datas, setDatas] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [updateData, setUpdateData] = useState({});
@@ -92,7 +93,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, handleUpdate, de
     console.log("data ni education useEffect: ", data)
     console.log("courseCategory ni education useEffect: ", courseCategory)
     console.log("datas ni retrieveData: ", retrieveData("jobEducation"))
-  }, [courseCategory, data]);
+  }, [data]);
 
   return (
     <>
