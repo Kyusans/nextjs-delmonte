@@ -26,13 +26,13 @@ import { useRouter } from "next/navigation";
 const formSchema = z.object({
   firstName: z.string().min(1, {
     message: "This field is required",
-  }),
+  }).transform(value => value.charAt(0).toUpperCase() + value.slice(1)),
   lastName: z.string().min(1, {
     message: "This field is required",
-  }),
+  }).transform(value => value.charAt(0).toUpperCase() + value.slice(1)),
   middleName: z.string().min(1, {
     message: "This field is required",
-  }),
+  }).transform(value => value.charAt(0).toUpperCase() + value.slice(1)),
   email: z.string().email({
     message: "Invalid email address",
   }),
@@ -135,7 +135,8 @@ const PersonalInformation = ({ handleSubmit }) => {
 
   const onSubmit = async (values) => {
     setIsLoading(true);
-    const userEmail = JSON.parse(retrieveData("personalInfo")).email;
+    const storedPersonalInfo = retrieveData("personalInfo");
+    const userEmail = storedPersonalInfo ? JSON.parse(storedPersonalInfo).email : "";
 
     if (values.password !== values.confirmPassword) {
       toast.error("Passwords do not match");
@@ -185,10 +186,11 @@ const PersonalInformation = ({ handleSubmit }) => {
   };
 
   useEffect(() => {
-    if (retrieveData("personalInfo") !== null) {
-      form.reset(JSON.parse(retrieveData("personalInfo")));
+    const storedPersonalInfo = retrieveData("personalInfo");
+    if (storedPersonalInfo !== null) {
+      form.reset(JSON.parse(storedPersonalInfo));
     }
-    console.log("personalInfo", retrieveData("personalInfo"));
+    console.log("personalInfo", storedPersonalInfo);
   }, [form])
 
   return (
