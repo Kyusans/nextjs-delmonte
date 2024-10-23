@@ -26,6 +26,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
   const [status, setStatus] = useState(statusName);
+  const [isJobOffer, setIsJobOffer] = useState(0);
 
   const getCandidateProfile = useCallback(async () => {
     setIsLoading(true);
@@ -44,6 +45,8 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
       console.log("RES DATA ni getCandidateProfile: ", res.data);
       if (res.data !== 0) {
         setData(res.data);
+        const jobOfferStatus = res.data.jobOffered;
+        setIsJobOffer(jobOfferStatus.isJobOffered);
       }
     } catch (error) {
       toast.error("Network error");
@@ -71,10 +74,11 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
           await handleChangeStatus(candId, 6);
           toast.success("Applicant set for interview");
           setStatus("Interview");
-        } else if (alertMessage === "Are you sure you want to proceed with the background check?") {
+        } else if (alertMessage === "Are you sure you want to proceed to job offer?") {
           await handleChangeStatus(candId, 8);
           toast.success("Applicant proceeded to Job Offer");
           setStatus("Job Offer");
+          setIsJobOffer(1);
         }
       }
       setShowAlert(false);
@@ -91,7 +95,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
   };
 
   const handleShowBackgroundCheckAlert = () => {
-    handleShowAlert("Are you sure you want to proceed with the background check?");
+    handleShowAlert("Are you sure you want to proceed to job offer?");
   };
 
   // modal for conduct interview
@@ -151,7 +155,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                 {status === "Process" && (<Button onClick={() => handleShowInterviewAlert()}>Set for inverview</Button>)}
                 {status === "Interview" && (<Button onClick={() => handleShowConductInterview()}>Interview applicant</Button>)}
                 {status === "Background Check" && (<Button onClick={() => handleShowBackgroundCheckAlert()}>Background check</Button>)}
-                {status === "Job Offer" && (<JobOffer candId={candId} changeStatus={handleJobOfferChangeStatus} />)}
+                {status === "Job Offer" && isJobOffer === 0 && (<JobOffer candId={candId} changeStatus={handleJobOfferChangeStatus} />)}
               </div>
             </div>
           </SheetHeader>
