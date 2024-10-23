@@ -1,21 +1,19 @@
-"use client"
-import { Button } from "@/components/ui/button";
+"use client";
 import { ModeToggle } from "@/components/ui/mode-toggle";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import secureLocalStorage from "react-secure-storage";
+import LandingArea from "./landingArea/page";
+import Signup from "./signup/Signup";
+
+import { storeData, retrieveData } from "./utils/storageUtils";
+import { ThemeProvider } from "./candidatesDashboard/components/ThemeContext";
 
 export default function Home() {
-  const router = useRouter();
-
-  const goToAdmin = () => {
-    router.push("/admin/dashboard/")
-  }
   return (
     <>
-      <header className="p-4">
-        <ModeToggle />
-      </header>
-      <Button onClick={goToAdmin}> Go to Admin</Button>
+      <div className="bg-[#f4f7fc]">
+        <LandingArea />
+      </div>
     </>
   );
 }

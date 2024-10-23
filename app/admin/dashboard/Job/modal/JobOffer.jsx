@@ -1,20 +1,37 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
-import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
-import { retrieveData } from '@/app/utils/storageUtils';
-import { Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
-import axios from 'axios';
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+import { retrieveData } from "@/app/utils/storageUtils";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import axios from "axios";
 
 const formSchema = z.object({
   joboffer_salary: z.number().positive(),
@@ -31,22 +48,22 @@ const JobOffer = ({ candId, changeStatus }) => {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      joboffer_salary: '',
-      joboffer_document: '',
+      joboffer_salary: "",
+      joboffer_document: "",
       joboffer_expiryDate: undefined,
     },
   });
 
   const onSubmit = async (data, status) => {
     setIsSubmitting(true);
-    const formattedDate = format(data.joboffer_expiryDate, 'yyyy-MM-dd');
+    const formattedDate = format(data.joboffer_expiryDate, "yyyy-MM-dd");
     const jsonData = {
       candId: candId,
-      jobId: retrieveData('jobId'),
+      jobId: retrieveData("jobId"),
       statusId: status,
       salary: data.joboffer_salary,
       document: data.joboffer_document,
-      expiryDate: formattedDate
+      expiryDate: formattedDate,
     };
 
     try {
@@ -90,7 +107,14 @@ const JobOffer = ({ candId, changeStatus }) => {
                 <FormItem>
                   <FormLabel>Salary</FormLabel>
                   <FormControl>
-                    <Input type="number" step="0.01" {...field} onChange={(e) => field.onChange(parseFloat(e.target.value))} />
+                    <Input
+                      type="number"
+                      step="0.01"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(parseFloat(e.target.value))
+                      }
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -150,23 +174,24 @@ const JobOffer = ({ candId, changeStatus }) => {
                 </FormItem>
               )}
             />
-            <div className="flex justify-between">
+            <div className="flex justify-end gap-1">
               <Button
                 type="button"
-                variant="destructive"
-                onClick={() => form.handleSubmit((data) => onSubmit(data, 2))()}
+                variant="outline"
+                onClick={() => setOpen(false)}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                Reject
+                Close
               </Button>
               <Button
                 type="button"
-                onClick={() => form.handleSubmit((data) => onSubmit(data, 1))()}
+                onClick={() => form.handleSubmit((data) => onSubmit(data, 3))()}
                 disabled={isSubmitting}
               >
-                {isSubmitting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                Accept
+                {isSubmitting ? (
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : null}
+                Submit
               </Button>
             </div>
           </form>
