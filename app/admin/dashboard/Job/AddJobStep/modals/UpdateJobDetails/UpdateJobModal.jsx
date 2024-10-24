@@ -14,12 +14,12 @@ import UpdateTraining from './UpdateTraining';
 import UpdateExperience from './UpdateExperience';
 import UpdateKnowledge from './UpdateKnowledge';
 
-function UpdateJobModal({ open, onClose, jobData, type, getSelectedJobs }) {
+function UpdateJobModal({ open, onClose, jobData, type, getJobDetails }) {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
 
   const handleClose = () => {
-    getSelectedJobs();
+    getJobDetails();
   };
 
   const getData = async (operation) => {

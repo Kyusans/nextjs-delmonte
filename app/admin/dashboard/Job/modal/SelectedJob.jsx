@@ -17,6 +17,7 @@ import ExamPage from '../Exam/ExamPage';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Edit } from 'lucide-react';
+import JobDetails from './JobDetails/JobDetails';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
@@ -53,21 +54,6 @@ function SelectedJob({ open, onHide, jobId }) {
       storeData("jobId", jobId);
     }
   }, [getSelectedJobs, jobId, open]);
-
-  const [openUpdateJob, setOpenUpdateJob] = useState(false);
-  const [type, setType] = useState("");
-  const [jobData, setJobData] = useState([]);
-
-  const handleOpenUpdateJob = (data, type) => {
-    setJobData(data);
-    setType(type);
-    setOpenUpdateJob(true);
-  }
-
-  const handleCloseUpdateJob = () => {
-    setOpenUpdateJob(false);
-    getSelectedJobs();
-  }
 
   // const handleUpdateJob = () => {
   //   return <UpdateJobModal open={openUpdateJob} onClose={handleCloseUpdateJob} jobData={jobData} type={type} getSelectedJobs={getSelectedJobs} />;
@@ -110,137 +96,7 @@ function SelectedJob({ open, onHide, jobId }) {
                   </TabsList>
                   <ScrollArea className="flex-grow">
                     <TabsContent value={1} className="h-full">
-                      <div>
-                        <div className="flex items-center w-full px-3">
-                          <span className='text-sm my-3 font-bold flex items-center mr-2'>Duties and Responsibilities</span>
-                          <div>
-                            <Edit className="h-4 w-4 cursor-pointer ml-1" onClick={() => handleOpenUpdateJob(data.jobDuties, "duties")} />
-                          </div>
-                        </div>
-                        <div className='w-full px-6'>
-                          {data.jobDuties.length > 0 ? (
-                            data.jobDuties.map((data, index) => (
-                              <ul key={index} className="list-disc ml-4 mb-1">
-                                <li>{data.duties_text}</li>
-                              </ul>
-                            ))
-                          ) : (
-                            <p>No duties and responsibilities found.</p>
-                          )}
-                        </div>
-                        <div className='w-full px-3 mt-3'>
-                          <div className='text-sm mb-3 font-bold flex items-center'>
-                            <span className='mr-2'>Educational Background </span>
-                            <Edit className="h-4 w-4 cursor-pointer ml-1" onClick={() => handleOpenUpdateJob(data.jobEducation, "education")} />
-                          </div>
-                          {data.jobEducation.length > 0 ? (
-                            <>
-                              <div className='w-full ml-3'>
-                                {data.jobEducation.map((data, index) => (
-                                  <ul key={index} className="list-disc ml-4 mb-3">
-                                    <li>
-                                      Graduate of any {data.course_categoryName} courses.
-                                      <Badge className='ml-2 text-xs'>{data.jeduc_points} point{data.jeduc_points > 1 ? "s" : ""}</Badge>
-                                    </li>
-                                  </ul>
-                                ))}
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              <p className="ml-3">No educational background found.</p>
-                            </>
-                          )}
-                          <div className='text-sm my-3 font-bold flex items-center'>
-                            <span className='mr-2'>Skills</span>
-                            <Edit className="h-4 w-4 cursor-pointer ml-1" onClick={() => handleOpenUpdateJob(data.jobSkills, "skills")} />
-                          </div>
-                          {data.jobSkills.length > 0 ? (
-                            <>
-                              <div className='w-full ml-3'>
-                                {data.jobSkills.map((data, index) => (
-                                  <ul key={index} className="list-disc ml-4 mb-1">
-                                    <li>
-                                      {data.perS_name}
-                                      <Badge className='ml-2 text-xs'>{data.jskills_points} point{data.jskills_points > 1 ? "s" : ""}</Badge>
-                                    </li>
-                                  </ul>
-                                ))}
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              <p className="ml-3">No skills found.</p>
-                            </>
-                          )}
-                          <div className='text-sm my-3 font-bold flex items-center'>
-                            <span className='mr-2'>Trainings</span>
-                            <Edit className="h-4 w-4 cursor-pointer ml-1" onClick={() => handleOpenUpdateJob(data.jobTrainings, "trainings")} />
-                          </div>
-                          {data.jobTrainings.length > 0 ? (
-                            <>
-                              <div className='w-full ml-3'>
-                                {data.jobTrainings.map((data, index) => (
-                                  <ul key={index} className="list-disc ml-4 mb-1">
-                                    <li>
-                                      {data.perT_name}
-                                      <Badge className='ml-2 text-xs'>{data.jtrng_points} point{data.jtrng_points > 1 ? "s" : ""}</Badge>
-                                    </li>
-                                  </ul>
-                                ))}
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              <p className="ml-3">No trainings found.</p>
-                            </>
-                          )}
-                          <div className='text-sm my-3 font-bold flex items-center'>
-                            <span className='mr-2'>Experience</span>
-                            <Edit className="h-4 w-4 cursor-pointer ml-1" onClick={() => handleOpenUpdateJob(data.jobExperience, "experience")} />
-                          </div>
-                          {data.jobExperience.length > 0 ? (
-                            <>
-                              <div className='w-full ml-3'>
-                                {data.jobExperience.map((data, index) => (
-                                  <ul key={index} className="list-disc ml-4 mb-1">
-                                    <li>
-                                      {data.jwork_responsibilities} {` with at least ${data.jwork_duration} year${data.jwork_duration > 1 ? "s" : ""} of experience needed`}
-                                      <Badge className='ml-2 text-xs'>{data.jwork_points} point{data.jwork_points > 1 ? "s" : ""}</Badge>
-                                    </li>
-                                  </ul>
-                                ))}
-                              </div>
-                            </>
-                          ) :
-                            <>
-                              <p className="ml-3">No experience found.</p>
-                            </>
-                          }
-                          <div className='text-sm my-3 font-bold flex items-center'>
-                            <span className='mr-2'>Knowledge and Compliance</span>
-                            <Edit className="h-4 w-4 cursor-pointer ml-1" onClick={() => handleOpenUpdateJob(data.jobKnowledge, "knowledge")} />
-                          </div>
-                          {data.jobKnowledge.length > 0 ? (
-                            <>
-                              <div className='w-full ml-3'>
-                                {data.jobKnowledge.map((data, index) => (
-                                  <ul key={index} className="list-disc ml-4 mb-1">
-                                    <li>
-                                      {data.knowledge_name}
-                                      <Badge className='ml-2 text-xs'>{data.jknow_points} point{data.jknow_points > 1 ? "s" : ""}</Badge>
-                                    </li>
-                                  </ul>
-                                ))}
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              <p className="ml-3">No knowledge and compliance found.</p>
-                            </>
-                          )}
-                        </div>
-                      </div>
+                      <JobDetails />
                     </TabsContent>
                     <TabsContent value={2}>
                       <ViewApplicants datas={data} passingPercentage={data.jobPassing[0].passing_percentage} getSelectedJob={getSelectedJobs} />
@@ -258,7 +114,6 @@ function SelectedJob({ open, onHide, jobId }) {
           )}
         </SheetContent>
       </Sheet>
-      <UpdateJobModal open={openUpdateJob} onClose={handleCloseUpdateJob} jobData={jobData} type={type} getSelectedJobs={getSelectedJobs} />
     </>
   );
 }
