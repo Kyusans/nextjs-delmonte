@@ -43,6 +43,7 @@ function SelectedJob({ open, onHide, jobId }) {
       }
     } catch (error) {
       toast.error("Network error");
+      console.log("error: ", error);
     } finally {
       setIsLoading(false);
     }

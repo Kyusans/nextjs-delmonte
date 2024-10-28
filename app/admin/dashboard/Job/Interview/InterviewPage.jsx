@@ -1,167 +1,55 @@
-import { Button } from '@/components/ui/button'
-import { Edit, Edit2, PlusCircle, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import AddInterviewCriteria from './modals/AddInterview/AddInterviewCriteria'
-import UpdateInterviewCriteria from './modals/UpdateInterview/UpdateInterviewCriteria'
-import ShowAlert from '@/components/ui/show-alert'
-import axios from 'axios'
-import { toast } from 'sonner'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import UpdateInterviewPassingPercentage from './modals/UpdateInterview/UpdateInterviewPassingPercentage'
+import ViewInterviewCriteria from './modals/ViewInterviewCriteria'
+import { retrieveData } from '@/app/utils/storageUtils';
+import axios from 'axios';
+import { toast } from 'sonner';
+import Spinner from '@/components/ui/spinner';
+import DataTable from '@/app/my_components/DataTable';
+import { Card, CardContent } from '@/components/ui/card';
 
-function InterviewPage({ interviewData, getSelectedJob }) {
-  const [data, setData] = useState([]);
+const InterviewPage = () => {
+  const [candidates, setCandidates] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // add interview criteria modal diri
-  const [showAddModal, setShowAddModal] = useState(false);
-  const openShowModal = () => { setShowAddModal(true); };
-  const closeShowModal = (status) => {
-    if (status !== 0) {
-      getSelectedJob();
-    }
-    setShowAddModal(false);
-  };
-
-  const addCriteria = (values) => {
-    setData([...data, {
-      criteria_inter_name: values.name,
-      inter_criteria_points: values.points,
-      interview_categ_name: values.category
-    }
-    ]);
-  }
-
-  // update interview criteria modal diri
-  const [selectedData, setSelectedData] = useState({});
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const openShowModalUpdate = (data, index) => {
-    setShowUpdateModal(true);
-    setSelectedData(data);
-    setSelectedIndex(index);
-  };
-  const closeUpdateModal = (status) => {
-    if (status !== 0) {
-      let criteriaList = data;
-      criteriaList[selectedIndex] = { criteria_inter_name: status.name, inter_criteria_points: status.points };
-      setData(criteriaList);
-      getSelectedJob();
-    }
-    setShowUpdateModal(false);
-    setSelectedIndex(0);
-  }
-
-  // delete sa criteria ni diri
-  const [alertMessage, setAlertMessage] = useState("");
-  const [showAlert, setShowAlert] = useState(false);
-  const [indexToRemove, setIndexToRemove] = useState(null);
-  const handleShowAlert = (message) => {
-    setAlertMessage(message);
-    setShowAlert(true);
-  };
-  const handleCloseAlert = async (status) => {
-    console.log("status: ", status);
-    if (status === 1) {
+  const getInterviewCandidates = async () => {
+    setIsLoading(true);
+    try {
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
-      const jsonData = { criteriaId: indexToRemove };
-      console.log("JSON DATA: ", jsonData);
+      const jsonData = { jobId: retrieveData('jobId') };
       const formData = new FormData();
-      formData.append("operation", "deleteInterviewCriteria");
+      formData.append("operation", "getInterviewCandidates");
       formData.append("json", JSON.stringify(jsonData));
       const res = await axios.post(url, formData);
-      console.log("res.data: ", res.data);
-      if (res.data === 1) {
-        getSelectedJob();
-        toast.success("Criteria deleted successfully");
-      }
+      console.log("res.data ni getInterviewCandidates: ", res);
+      setCandidates(res.data !== 0 ? res.data : []);
+    } catch (error) {
+      toast.error("Network error");
+      console.log("InterviewPage.jsx ~ getInterviewCandidates(): " + error);
+    } finally {
+      setIsLoading(false);
     }
-    setShowAlert(false);
-  };
+  }
 
-
-  const handleRemoveList = (idToRemove) => {
-    setIndexToRemove(idToRemove);
-    handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
-  };
+  const columns = [
+    { header: "Full Name", accessor: "fullName" },
+  ]
 
   useEffect(() => {
-    if (interviewData.interviewCriteria) {
-      setData(interviewData.interviewCriteria);
-    }
-  }, [interviewData.interviewCriteria]);
+    getInterviewCandidates();
+  }, [])
 
   return (
     <div>
-      <div>
-        {data.length === 0 ? (
-          <div className='flex flex-col justify-center items-center gap-3'>
-            <div className='font-bold text-xl mt-3'>No criteria for interview</div>
-            <Button onClick={openShowModal}>
-              <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
-            </Button>
+      <ViewInterviewCriteria />
+      {isLoading ? <Spinner /> :
+        (<>
+          <div className='p-3'>
+            <DataTable columns={columns} data={candidates} autoIndex={true}  />
           </div>
-        ) : (
-          <div>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
-              <div className="ml-2">
-                <Button onClick={openShowModal} className="md:mb-3">
-                  <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
-                </Button>
-              </div>
-              <div className='flex md:justify-end items-end ml-2 md:mx-5 mb-3'>
-                <p>Passing percentage: {interviewData.interviewPassingPercent[0].passing_percent}%</p>
-                <UpdateInterviewPassingPercentage currentPassingPercentage={interviewData.interviewPassingPercent[0].passing_percent} getSelectedJob={getSelectedJob} />
-              </div>
-            </div>
-            <div className={`grid ${data.length > 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-2`}>
-              {data.map((item, index) => (
-                <Card key={index} className='bg-background'>
-                  <CardContent>
-                    <CardHeader>
-                      <div className='flex justify-end gap-3'>
-                        <Edit2 className='h-5 w-5 mr-1 hover:cursor-pointer' />
-                        <Trash2 className='h-5 w-5 mr-1 hover:cursor-pointer' onClick={() => handleRemoveList(item.inter_criteria_id)} />
-                      </div>
-                      <CardTitle> {item.criteria_inter_name}</CardTitle>
-                    </CardHeader>
-                    <CardFooter>
-                      <Badge variant="secondary" className="mr-2">{item.interview_categ_name}</Badge>
-                      <Badge>{item.inter_criteria_points} points</Badge>
-                    </CardFooter>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-      {
-        showAddModal && (
-          <AddInterviewCriteria
-            open={showAddModal}
-            onHide={closeShowModal}
-            interviewCriteria={data}
-            addCriteria={addCriteria}
-          />
-        )
+        </>)
       }
-      {
-        showUpdateModal && (
-          <UpdateInterviewCriteria
-            open={showUpdateModal}
-            onHide={closeUpdateModal}
-            data={selectedData}
-            criteriaList={data}
-            isMaster={false}
-          />
-        )
-      }
-      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={0} />
     </div>
-  );
+  )
 }
-
 
 export default InterviewPage
