@@ -12,7 +12,7 @@ import { retrieveData } from '@/app/utils/storageUtils';
 import { toast } from 'sonner';
 import axios from 'axios';
 
-function UpdateInterviewPassingPercentage({ currentPassingPercentage, getSelectedJob }) {
+function UpdateInterviewPassingPercentage({ currentPassingPercentage, getJobInterviewDetails }) {
   const [isLoading, setIsLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -55,7 +55,7 @@ function UpdateInterviewPassingPercentage({ currentPassingPercentage, getSelecte
       console.log("res.data: ", res.data);
       if (res.data !== 0) {
         toast.success("Interview's passing percentage updated successfully");
-        getSelectedJob();
+        getJobInterviewDetails();
         handleOnHide();
       }
     } catch (error) {
