@@ -27,7 +27,7 @@ const formSchema = z.object({
   duration: z.number().min(1, { message: "Duration must be greater than 0" }),
 })
 
-const UpdateExamMaster = ({ examMasterData, getSelectedJob }) => {
+const UpdateExamMaster = ({ examMasterData, getExamDetails }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -73,7 +73,7 @@ const UpdateExamMaster = ({ examMasterData, getSelectedJob }) => {
       if (response.data === 1) {
         toast.success("Exam updated successfully");
         setIsOpen(false);
-        getSelectedJob();
+        getExamDetails();
       } else {
         toast.error("Failed to update exam");
       }

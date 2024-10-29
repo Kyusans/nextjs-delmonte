@@ -32,6 +32,7 @@ const InterviewPage = () => {
 
   const columns = [
     { header: "Full Name", accessor: "fullName" },
+    { header: "Status", accessor: "status_name" },
   ]
 
   useEffect(() => {

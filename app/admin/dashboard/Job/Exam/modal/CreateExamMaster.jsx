@@ -12,7 +12,7 @@ import { Separator } from '@/components/ui/separator'
 import { Card, CardContent } from '@/components/ui/card'
 import Spinner from '@/components/ui/spinner'
 
-const CreateExamMaster = ({getSelectedJob, type}) => {
+const CreateExamMaster = ({getExamDetails, type}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [examName, setExamName] = useState("");
@@ -132,7 +132,7 @@ const CreateExamMaster = ({getSelectedJob, type}) => {
         setExamDuration(0);
         setQuestions([{ question: "", options: ["", ""], correctAnswer: "", points: 1 }]);
         setErrors({});
-        getSelectedJob();
+        getExamDetails();
       } else {
         toast.error("Failed to create exam");
       }

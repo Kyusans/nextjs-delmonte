@@ -1,117 +1,51 @@
-import { formatDate } from '@/app/signup/page';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardFooter, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Edit2, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
-import CreateExamMaster from './modal/CreateExamMaster';
-import AddExamQuestion from './modal/AddExamQuestion';
-import UpdateExamQuestion from './modal/UpdateExamQuestion';
-import UpdateExamMaster from './modal/UpdateExamMaster';
-import ShowAlert from '@/components/ui/show-alert';
+import ViewExam from './modal/ViewExam'
+import axios from 'axios';
+import { retrieveData } from '@/app/utils/storageUtils';
+import { toast } from 'sonner';
+import Spinner from '@/components/ui/spinner';
+import DataTable from '@/app/my_components/DataTable';
 
-function ExamPage({ examData, getSelectedJob }) {
-  const [examMaster, setExamMaster] = useState([]);
-  const [questionMaster, setQuestionMaster] = useState([]);
+const ExamPage = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [candidates, setCandidates] = useState([]);
+  const getExamCandidates = async () => {
+    setIsLoading(true);
+    try {
+      const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
+      const jsonData = { jobId: retrieveData('jobId') };
+      const formData = new FormData();
+      formData.append("operation", "getExamCandidates");
+      formData.append("json", JSON.stringify(jsonData));
+      const res = await axios.post(url, formData);
+      console.log("res.data ni getInterviewCandidates: ", res);
+      setCandidates(res.data !== 0 ? res.data : []);
+    } catch (error) {
+      toast.error("Network error");
+      console.log("InterviewPage.jsx ~ getInterviewCandidates(): " + error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  const columns = [
+    { header: "Full Name", accessor: "fullName" },
+    {header: "Status", accessor: "status_name"},
+  ]
 
   useEffect(() => {
-    if (examData !== 0) {
-      setExamMaster(examData.examMaster[0]);
-      setQuestionMaster(examData.questionMaster.questions);
-    }
-    console.log("examData: ", examData);
-  }, [examData]);
-
-  // // delete question
-  // const [alertMessage, setAlertMessage] = useState("");
-  // const [showAlert, setShowAlert] = useState(false);
-  // const [selectedId, setSelectedId] = useState(null);
-  // const handleShowAlert = (message) => {
-  // setAlertMessage(message);
-  //   setShowAlert(true);
-  // };
-  // const handleCloseAlert = (status) => {
-  //   if (status === 1) {
-  //     // delete question
-  //   }
-  //   setShowAlert(false);
-  // };
-  // const handleRemoveList = (id) => {
-  //   setSelectedId(id);
-  //   handleShowAlert("This action cannot be undone. It will permanently delete the question");
-  // };
-
-  // const handleDeleteQuestion = () => {}
-
-
+    getExamCandidates();
+  }, [])
   return (
-    <div className='rounded-md p-4'>
-      {examData === 0 ? (
-        <div className='flex flex-col justify-center items-center gap-4'>
-          <p>No exam created yet</p>
-          <CreateExamMaster getSelectedJob={getSelectedJob} type={2} />
-        </div>
-      ) : (
-        <>
-          <AddExamQuestion examId={examMaster.exam_id} getSelectedJob={getSelectedJob} />
-          <div className='flex flex-col'>
-            <div className='flex md:justify-center'>
-              <Card className='mb-3 flex flex-col gap-1 bg-background w-full md:w-1/2'>
-                <CardContent className='p-3'>
-                  <div className='flex flex-row justify-between'>
-                    <h1 className='text-2xl font-boldtext-start'>
-                      {examMaster.exam_name}
-                    </h1>
-                    <UpdateExamMaster examMasterData={examMaster} getSelectedJob={getSelectedJob} />
-                  </div>
-                  <p>Exam duration: {examMaster.exam_duration} minutes</p>
-                  <p className='text-sm'>Date created: {examMaster.exam_createdAt ? formatDate(examMaster.exam_createdAt) : 'N/A'}</p>
-                  <p className='text-sm'>Date updated: {examMaster.exam_updatedAt ? formatDate(examMaster.exam_updatedAt) : 'N/A'}</p>
-                </CardContent>
-              </Card>
-            </div>
-            {questionMaster.length === 0 ? (
-              <div className='flex justify-center items-center mt-4'>
-                <p>No questions have been added to this exam yet.</p>
-              </div>
-            ) : (
-              <div className={`grid grid-cols-1 ${questionMaster.length === 1 ? 'md:grid-cols-1' : 'md:grid-cols-2'} gap-4`}>
-                {questionMaster.map((question, index) => (
-                  <Card key={index} className='mb-3 bg-background w-full flex flex-col'>
-                    <CardContent className="p-3 flex-grow">
-                      <div className='grid grid-cols-3 gap-2'>
-                        <p className='mb-4 text-lg font-bold col-span-2'>{index + 1}. {question.examQ_text}</p>
-                        <div className='flex flex-row gap-4 justify-end md:mr-2'>
-                          <UpdateExamQuestion examQuestionData={question} getSelectedJob={getSelectedJob} />
-                          {/* <Trash2 size={20} onClick={() => handleRemoveList(question.examQ_id)} className='cursor-pointer' /> */}
-                        </div>
-                      </div>
-                      <RadioGroup defaultValue={question.options.find(opt => opt.examC_isCorrect === 1)?.examC_id.toString()}>
-                        {question.options.map((option, optionIndex) => (
-                          <div key={optionIndex} className="flex items-center space-x-2 mb-2">
-                            <RadioGroupItem
-                              value={option.examC_id.toString()}
-                              id={`${option.examC_id}`}
-                              disabled
-                              checked={option.examC_isCorrect === 1}
-                            />
-                            <Label htmlFor={`${option.examC_id}`}>{option.examC_text}</Label>
-                          </div>
-                        ))}
-                      </RadioGroup>
-                    </CardContent>
-                    <CardFooter className="mt-auto">
-                      <Badge className="ml-auto">Points {question.examQ_points}</Badge>
-                    </CardFooter>
-                  </Card>
-                ))}
-              </div>
-            )}
+    <div>
+      <ViewExam />
+      {isLoading ? <Spinner /> :
+        (
+          <div className="p-3">
+            <DataTable columns={columns} data={candidates} autoIndex={true} />
           </div>
-        </>
-      )}
-      {/* <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} /> */}
+        )
+      }
     </div>
   )
 }

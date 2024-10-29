@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/separator'
 import { Card, CardContent } from '@/components/ui/card'
 import Spinner from '@/components/ui/spinner'
 
-const UpdateExamQuestion = ({ examQuestionData, getSelectedJob }) => {
+const UpdateExamQuestion = ({ examQuestionData, getExamDetails }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [question, setQuestion] = useState('');
@@ -111,7 +111,7 @@ const UpdateExamQuestion = ({ examQuestionData, getSelectedJob }) => {
       if (response.data === 1) {
         toast.success("Question updated successfully");
         setIsOpen(false);
-        getSelectedJob();
+        getExamDetails();
       } else {
         toast.error("Failed to update question");
       }
