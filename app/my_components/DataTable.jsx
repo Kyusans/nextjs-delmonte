@@ -169,27 +169,30 @@ const DataTable = ({ columns, data, itemsPerPage = 10, autoIndex = false, title,
               </TableBody>
             </Table>
           </div>
-          <div className='overflow-x-auto'>
-            <Pagination className="mt-4">
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    className='cursor-pointer'
-                    onClick={() => handlePageChange(currentPage - 1)}
-                    disabled={currentPage === 1}
-                  />
-                </PaginationItem>
-                {renderPaginationItems()}
-                <PaginationItem>
-                  <PaginationNext
-                    className='cursor-pointer'
-                    onClick={() => handlePageChange(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          </div>
+          {totalPages >= 2 && (
+            <div className='overflow-x-auto'>
+              <Pagination className="mt-4">
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      className='cursor-pointer'
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                    />
+                  </PaginationItem>
+                  {renderPaginationItems()}
+                  <PaginationItem>
+                    <PaginationNext
+                      className='cursor-pointer'
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          )}
+
         </>
       ) : (
         <div className="text-center py-4">No data found</div>

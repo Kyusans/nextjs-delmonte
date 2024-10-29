@@ -12,7 +12,7 @@ import { Separator } from '@/components/ui/separator'
 import { Card, CardContent } from '@/components/ui/card'
 import Spinner from '@/components/ui/spinner'
 
-function AddExamQuestion({examId, getSelectedJob}) {
+function AddExamQuestion({examId, getExamDetails}) {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [questions, setQuestions] = useState([
@@ -115,7 +115,7 @@ function AddExamQuestion({examId, getSelectedJob}) {
         setIsOpen(false);
         setQuestions([{ question: "", options: ["", ""], correctAnswer: "", points: 1 }]);
         setErrors({});
-        getSelectedJob();
+        getExamDetails();
       } else {
         toast.error("Failed to add questions");
       }

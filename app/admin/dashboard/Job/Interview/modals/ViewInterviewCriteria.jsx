@@ -6,7 +6,7 @@ import axios from 'axios'
 import { toast } from 'sonner'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import UpdateInterviewPassingPercentage from './UpdateInterview/UpdateInterviewPassingPercentage'
 import AddInterviewCriteria from './AddInterview/AddInterviewCriteria'
 import UpdateInterviewCriteria from './UpdateInterview/UpdateInterviewCriteria'
@@ -131,6 +131,9 @@ function ViewInterviewCriteria() {
           <Button>View criteria</Button>
         </SheetTrigger>
         <SheetContent side="bottom" className="h-full overflow-y-scroll">
+          <SheetHeader className="mb-5">
+            <SheetTitle>Interview criteria</SheetTitle>
+          </SheetHeader>
           {isLoading ? <Spinner /> : (
             <div>
               {data.length === 0 ? (
@@ -155,7 +158,7 @@ function ViewInterviewCriteria() {
                   </div>
                   <div className={`grid ${data.length > 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-2`}>
                     {data.map((item, index) => (
-                      <Card key={index} className='bg-background'>
+                      <Card key={index}>
                         <CardContent>
                           <CardHeader>
                             <div className='flex justify-end gap-3'>
