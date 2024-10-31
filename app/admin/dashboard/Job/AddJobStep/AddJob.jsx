@@ -159,7 +159,16 @@ function AddJob({ handleSwitchView }) {
     setTotalPoints(Number(totalPoints) + Number(points));
     return true;
   };
-  
+
+  const deductTotalPoints = (points) => {
+    const pointsToDeduct = Number(points);
+    if (isNaN(pointsToDeduct)) {
+      toast.error("Invalid points value");
+      return;
+    }
+    setTotalPoints(Number(totalPoints) - pointsToDeduct);
+  };
+
 
   const title = [
     "Job Master",
@@ -193,7 +202,7 @@ function AddJob({ handleSwitchView }) {
                 <AddDutiesMaster previousStep={handlePrevious} nextStep={handleNextStep} />
               </TabsContent>
               <TabsContent value={3}>
-                <AddJobKnowledge previousStep={handlePrevious} nextStep={handleNextStep} knowledgeList={knowledgeList} addTotalPoints={addTotalPoints} />
+                <AddJobKnowledge previousStep={handlePrevious} nextStep={handleNextStep} knowledgeList={knowledgeList} addTotalPoints={addTotalPoints} deductTotalPoints={deductTotalPoints} />
               </TabsContent>
               <TabsContent value={4}>
                 <AddJobEducation courseCategory={courseCategory} previousStep={handlePrevious} nextStep={handleNextStep} />
