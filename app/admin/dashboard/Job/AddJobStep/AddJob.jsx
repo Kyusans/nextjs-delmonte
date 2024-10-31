@@ -18,12 +18,8 @@ import { Separator } from '@/components/ui/separator';
 
 function AddJob({ handleSwitchView }) {
   const [isLoading, setIsLoading] = useState(true);
-  const [courseCategory, setCourseCategory] = useState([]);
-  const [training, setTraining] = useState([]);
-  const [skills, setSkills] = useState([]);
   const [currentStep, setCurrentStep] = useState(1);
   const [progress, setProgress] = useState(0);
-  const [knowledgeList, setKnowledgeList] = useState([]);
   const [totalPoints, setTotalPoints] = useState(0);
 
   const getDropDownForAddJobs = async () => {
@@ -103,10 +99,11 @@ function AddJob({ handleSwitchView }) {
         removeData("jobKnowledge");
         removeData("jobSkill");
         removeData("jobExperience");
+        removeData("totalPoints");
         handleNextStep(100);
         setTimeout(() => {
           handleSwitchView();
-        }, [1500])
+        }, [1500]);
       } else {
         toast.error("Failed to add job");
       }
@@ -129,24 +126,21 @@ function AddJob({ handleSwitchView }) {
   }
 
   useEffect(() => {
-    if (retrieveData("duties") === null) {
-      storeData("duties", "[]");
-    }
-    if (retrieveData("jobEducation") === null) {
-      storeData("jobEducation", "[]");
-    }
-    if (retrieveData("jobTraining") === null) {
-      storeData("jobTraining", "[]");
-    }
-    if (retrieveData("jobKnowledge") === null) {
-      storeData("jobKnowledge", "[]");
-    }
-    if (retrieveData("jobSkill") === null) {
-      storeData("jobSkill", "[]");
-    }
-    if (retrieveData("jobExperience") === null) {
-      storeData("jobExperience", "[]");
-    }
+    const dataKeys = [
+      "duties",
+      "jobEducation",
+      "jobTraining",
+      "jobKnowledge",
+      "jobSkill",
+      "jobExperience",
+      "totalPoints",
+    ];
+
+    dataKeys.forEach((key) => {
+      if (retrieveData(key) === null) {
+        storeData(key, key === "totalPoints" ? 0 : "[]");
+      }
+    });
     getDropDownForAddJobs();
   }, []);
 
@@ -157,6 +151,7 @@ function AddJob({ handleSwitchView }) {
       return false;
     }
     setTotalPoints(Number(totalPoints) + Number(points));
+    storeData("totalPoints", Number(totalPoints) + Number(points));
     return true;
   };
 
@@ -167,6 +162,7 @@ function AddJob({ handleSwitchView }) {
       return;
     }
     setTotalPoints(Number(totalPoints) - pointsToDeduct);
+    storeData("totalPoints", totalPoints - pointsToDeduct);
   };
 
 
@@ -186,7 +182,7 @@ function AddJob({ handleSwitchView }) {
         <Card className="rounded-md border-4 border-secondary mt-4">
           <CardHeader>
             <CardTitle>{title[currentStep - 1]}</CardTitle>
-            <CardDescription>Total points: {Number(totalPoints)}/100</CardDescription>
+            <CardDescription>Total points: {Number(retrieveData("totalPoints"))}/100</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex justify-center items-center my-10 ">
@@ -202,19 +198,44 @@ function AddJob({ handleSwitchView }) {
                 <AddDutiesMaster previousStep={handlePrevious} nextStep={handleNextStep} />
               </TabsContent>
               <TabsContent value={3}>
-                <AddJobKnowledge previousStep={handlePrevious} nextStep={handleNextStep} knowledgeList={knowledgeList} addTotalPoints={addTotalPoints} deductTotalPoints={deductTotalPoints} />
+                <AddJobKnowledge
+                  previousStep={handlePrevious}
+                  nextStep={handleNextStep}
+                  addTotalPoints={addTotalPoints}
+                  deductTotalPoints={deductTotalPoints}
+                />
               </TabsContent>
               <TabsContent value={4}>
-                <AddJobEducation courseCategory={courseCategory} previousStep={handlePrevious} nextStep={handleNextStep} />
+                <AddJobEducation
+                  previousStep={handlePrevious}
+                  nextStep={handleNextStep}
+                  addTotalPoints={addTotalPoints}
+                  deductTotalPoints={deductTotalPoints}
+                />
               </TabsContent>
               <TabsContent value={5}>
-                <AddJobTraining training={training} previousStep={handlePrevious} nextStep={handleNextStep} />
+                <AddJobTraining
+                  previousStep={handlePrevious}
+                  nextStep={handleNextStep}
+                  addTotalPoints={addTotalPoints}
+                  deductTotalPoints={deductTotalPoints}
+                />
               </TabsContent>
               <TabsContent value={6}>
-                <AddJobSkill skill={skills} previousStep={handlePrevious} nextStep={handleNextStep} />
+                <AddJobSkill
+                  previousStep={handlePrevious}
+                  nextStep={handleNextStep}
+                  addTotalPoints={addTotalPoints}
+                  deductTotalPoints={deductTotalPoints}
+                />
               </TabsContent>
               <TabsContent value={7}>
-                <AddJobExperience previousStep={handlePrevious} handleSubmit={handleSubmit} />
+                <AddJobExperience
+                  previousStep={handlePrevious}
+                  handleSubmit={handleSubmit}
+                  addTotalPoints={addTotalPoints}
+                  deductTotalPoints={deductTotalPoints}
+                />
               </TabsContent>
               <TabsContent value={8}>
                 <div className="flex justify-center items-center h-full">

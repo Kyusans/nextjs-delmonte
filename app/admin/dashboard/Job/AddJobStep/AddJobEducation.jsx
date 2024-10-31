@@ -13,13 +13,14 @@ import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 
 
-function AddJobEducation({ previousStep, nextStep }) {
+function AddJobEducation({ previousStep, nextStep, addTotalPoints, deductTotalPoints }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
   const [courseCategoryData, setCourseCategoryData] = useState([]);
 
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [selectedPoints, setSelectedPoints] = useState(0);
   const handleShowAlert = (message) => {
     setAlertMessage(message);
     setShowAlert(true);
@@ -29,6 +30,7 @@ function AddJobEducation({ previousStep, nextStep }) {
       const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
       setDatas(filteredDatas);
       storeData("jobEducation", JSON.stringify(filteredDatas));
+      deductTotalPoints(Number(selectedPoints));
     }
     setShowAlert(false);
   };
@@ -59,7 +61,8 @@ function AddJobEducation({ previousStep, nextStep }) {
     setShowModal(false);
   };
 
-  const handleRemoveList = (indexToRemove) => {
+  const handleRemoveList = (indexToRemove, points) => {
+    setSelectedPoints(points);
     setIndexToRemove(indexToRemove);
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
@@ -122,7 +125,7 @@ function AddJobEducation({ previousStep, nextStep }) {
                         <TableCell className="w-1/12 text-center">
                           <button
                             className="h-4 w-4"
-                            onClick={() => handleRemoveList(index)}
+                            onClick={() => handleRemoveList(index, data.points)}
                           >
                             <X className="h-4 w-4" />
                           </button>
@@ -138,7 +141,7 @@ function AddJobEducation({ previousStep, nextStep }) {
                     <div className="flex justify-end">
                       <button
                         className="h-6 w-6"
-                        onClick={() => handleRemoveList(index)}
+                        onClick={() => handleRemoveList(index, data.points)}
                       >
                         <X className="h-5 w-5" />
                       </button>
@@ -165,7 +168,13 @@ function AddJobEducation({ previousStep, nextStep }) {
             </CardDescription>
           )}
         </Alert>
-        <AddEducation open={showModal} onHide={handleCloseModal} handleAddList={handleAddList} handleAddData={handleAddData} />
+        <AddEducation
+          open={showModal}
+          onHide={handleCloseModal}
+          handleAddList={handleAddList}
+          handleAddData={handleAddData}
+          addTotalPoints={addTotalPoints}
+        />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
