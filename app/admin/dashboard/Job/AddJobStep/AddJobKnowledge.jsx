@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 
 
-function AddJobKnowledge({ previousStep, nextStep }) {
+function AddJobKnowledge({ previousStep, nextStep, addTotalPoints }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
   const [knowledgeData, setKnowledgeData] = useState([]);
@@ -172,6 +172,7 @@ function AddJobKnowledge({ previousStep, nextStep }) {
           onHide={handleCloseModal}
           handleAddList={handleAddList}
           handleAddData={handleAddData}
+          addTotalPoints={addTotalPoints}
         />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>

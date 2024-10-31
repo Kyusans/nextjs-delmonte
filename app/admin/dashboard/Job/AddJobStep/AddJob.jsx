@@ -1,17 +1,17 @@
 "use client";
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import React, { useEffect, useState } from 'react'
-import AddJobMaster from './AddJobStep/AddJobMaster';
-import AddDutiesMaster from './AddJobStep/AddDutiesMaster';
+import AddJobMaster from './AddJobMaster';
+import AddDutiesMaster from './AddDutiesMaster';
 import { removeData, retrieveData, storeData } from '@/app/utils/storageUtils';
-import AddJobEducation from './AddJobStep/AddJobEducation';
+import AddJobEducation from './AddJobEducation';
 import axios from 'axios';
 import { toast } from 'sonner';
 import Spinner from '@/components/ui/spinner';
-import AddJobTraining from './AddJobStep/AddJobTraining';
-import AddJobKnowledge from './AddJobStep/AddJobKnowledge';
-import AddJobSkill from './AddJobStep/AddJobSkill';
-import AddJobExperience from './AddJobStep/AddJobExperience';
+import AddJobTraining from './AddJobTraining';
+import AddJobKnowledge from './AddJobKnowledge';
+import AddJobSkill from './AddJobSkill';
+import AddJobExperience from './AddJobExperience';
 import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
@@ -24,6 +24,7 @@ function AddJob({ handleSwitchView }) {
   const [currentStep, setCurrentStep] = useState(1);
   const [progress, setProgress] = useState(0);
   const [knowledgeList, setKnowledgeList] = useState([]);
+  const [totalPoints, setTotalPoints] = useState(0);
 
   const getDropDownForAddJobs = async () => {
     setIsLoading(true);
@@ -149,6 +150,17 @@ function AddJob({ handleSwitchView }) {
     getDropDownForAddJobs();
   }, []);
 
+  const addTotalPoints = (points) => {
+    console.log("points:", Number(totalPoints) + Number(points));
+    if ((Number(totalPoints) + Number(points)) > 100) {
+      toast.error("Total points cannot exceed 100");
+      return false;
+    }
+    setTotalPoints(Number(totalPoints) + Number(points));
+    return true;
+  };
+  
+
   const title = [
     "Job Master",
     "Duties",
@@ -165,10 +177,12 @@ function AddJob({ handleSwitchView }) {
         <Card className="rounded-md border-4 border-secondary mt-4">
           <CardHeader>
             <CardTitle>{title[currentStep - 1]}</CardTitle>
+            <CardDescription>Total points: {Number(totalPoints)}/100</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex justify-center">
-              <Progress value={progress} className="my-10 md:w-3/4" />
+            <div className="flex justify-center items-center my-10 ">
+              <Progress value={progress} className="flex-grow mr-4" />
+              <p className="whitespace-nowrap">{progress}%</p>
             </div>
             <Separator />
             <Tabs defaultValue={1} value={currentStep}>
@@ -179,7 +193,7 @@ function AddJob({ handleSwitchView }) {
                 <AddDutiesMaster previousStep={handlePrevious} nextStep={handleNextStep} />
               </TabsContent>
               <TabsContent value={3}>
-                <AddJobKnowledge previousStep={handlePrevious} nextStep={handleNextStep} knowledgeList={knowledgeList} />
+                <AddJobKnowledge previousStep={handlePrevious} nextStep={handleNextStep} knowledgeList={knowledgeList} addTotalPoints={addTotalPoints} />
               </TabsContent>
               <TabsContent value={4}>
                 <AddJobEducation courseCategory={courseCategory} previousStep={handlePrevious} nextStep={handleNextStep} />

@@ -17,7 +17,7 @@ import Spinner from '@/components/ui/spinner';
 import { Button } from '@/components/ui/button';
 import { retrieveData } from '@/app/utils/storageUtils';
 
-function ViewExam({ examData }) {
+function ViewExam() {
   const [examMaster, setExamMaster] = useState([]);
   const [questionMaster, setQuestionMaster] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -59,7 +59,7 @@ function ViewExam({ examData }) {
         setExamMaster(res.examMaster[0]);
         setQuestionMaster(res.questionMaster.questions);
       } else {
-        setExamMaster(null);
+        setExamMaster(0);
         setQuestionMaster([]);
       }
     } catch (error) {
@@ -87,14 +87,14 @@ function ViewExam({ examData }) {
         <SheetTrigger asChild>
           <Button>View Exam</Button>
         </SheetTrigger>
-        <SheetContent side="bottom">
+        <SheetContent side="bottom" className="overflow-y-scroll">
           <SheetHeader>
             <SheetTitle>View Exam</SheetTitle>
           </SheetHeader>
           {isLoading ? <Spinner /> :
             (
               <div className='rounded-md p-4'>
-                {examData === 0 ? (
+                {examMaster === 0 ? (
                   <div className='flex flex-col justify-center items-center gap-4'>
                     <p>No exam created yet</p>
                     <CreateExamMaster getExamDetails={getExamDetails} type={2} />
