@@ -82,6 +82,7 @@ function AddJob({ handleSwitchView }) {
         jobKnowledge: JSON.parse(retrieveData("jobKnowledge")),
         jobSkill: JSON.parse(retrieveData("jobSkill")),
         jobExperience: JSON.parse(retrieveData("jobExperience")),
+        totalPoints: Number(retrieveData("totalPoints")),
       }
       console.log("jsonData", JSON.stringify(jsonData));
       const formData = new FormData();
