@@ -16,9 +16,6 @@ function AddJobKnowledge({ previousStep, nextStep, addTotalPoints, deductTotalPo
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
   const [knowledgeData, setKnowledgeData] = useState([]);
-
-
-
   const [showModal, setShowModal] = useState(false);
 
   const handleOpenModal = () => {

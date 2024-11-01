@@ -2,7 +2,7 @@
 import { retrieveData, storeData } from '@/app/utils/storageUtils'
 import { Alert } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
-import { CardContent, CardDescription } from '@/components/ui/card'
+import { CardDescription } from '@/components/ui/card'
 import ShowAlert from '@/components/ui/show-alert'
 import { PlusIcon, X } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
@@ -13,10 +13,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { toast } from 'sonner';
 
 
-function AddJobExperience({ previousStep, handleSubmit }) {
+function AddJobExperience({ previousStep, handleSubmit, addTotalPoints, deductTotalPoints }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
 
+  const [selectedPoints, setSelectedPoints] = useState(0);
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const handleShowAlert = (message) => {
@@ -28,6 +29,7 @@ function AddJobExperience({ previousStep, handleSubmit }) {
       const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
       setDatas(filteredDatas);
       storeData("jobExperience", JSON.stringify(filteredDatas));
+      deductTotalPoints(Number(selectedPoints));
     }
     setShowAlert(false);
   };
@@ -54,7 +56,8 @@ function AddJobExperience({ previousStep, handleSubmit }) {
     setShowModal(false);
   };
 
-  const handleRemoveList = (indexToRemove) => {
+  const handleRemoveList = (indexToRemove, points) => {
+    setSelectedPoints(points);
     setIndexToRemove(indexToRemove);
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
@@ -113,7 +116,7 @@ function AddJobExperience({ previousStep, handleSubmit }) {
                         <TableCell className="w-1/12 text-center">
                           <button
                             className="h-4 w-4"
-                            onClick={() => handleRemoveList(index)}
+                            onClick={() => handleRemoveList(index, data.points)}
                           >
                             <X className="h-4 w-4" />
                           </button>
@@ -129,7 +132,7 @@ function AddJobExperience({ previousStep, handleSubmit }) {
                     <div className="flex justify-end">
                       <button
                         className="h-6 w-6"
-                        onClick={() => handleRemoveList(index)}
+                        onClick={() => handleRemoveList(index, data.points)}
                       >
                         <X className="h-5 w-5" />
                       </button>
@@ -154,7 +157,12 @@ function AddJobExperience({ previousStep, handleSubmit }) {
             </CardDescription>
           )}
         </Alert>
-        <AddExperience open={showModal} onHide={handleCloseModal} handleAddList={handleAddList} />
+        <AddExperience
+          open={showModal}
+          onHide={handleCloseModal}
+          handleAddList={handleAddList}
+          addTotalPoints={addTotalPoints}
+        />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>
     </>
