@@ -68,10 +68,7 @@ function AddKnowledge({ open, onHide, handleAddList, handleAddData, addTotalPoin
       });
       if (isValid) {
         console.log("AddKnowledge.jsx => onSubmit():", values);
-        const isTotalPointsMax = addTotalPoints(values.points);
-        if (!isTotalPointsMax) {
-          return;
-        }
+        if (addTotalPoints(values.points) === false) return;
         // onHide(values);
         handleAddList(values);
         form.reset();

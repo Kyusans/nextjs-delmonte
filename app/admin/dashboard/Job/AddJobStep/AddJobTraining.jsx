@@ -13,13 +13,14 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 
 
-function AddJobTraining({ previousStep, nextStep }) {
+function AddJobTraining({ previousStep, nextStep, addTotalPoints, deductTotalPoints }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
   const [trainingData, setTrainingData] = useState([]);
 
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
+  const [selectedPoints, setSelectedPoints] = useState(0);
   const handleShowAlert = (message) => {
     setAlertMessage(message);
     setShowAlert(true);
@@ -30,6 +31,7 @@ function AddJobTraining({ previousStep, nextStep }) {
       const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
       setDatas(filteredDatas);
       storeData("jobTraining", JSON.stringify(filteredDatas));
+      deductTotalPoints(Number(selectedPoints));
     }
     setShowAlert(false);
   };
@@ -60,7 +62,8 @@ function AddJobTraining({ previousStep, nextStep }) {
     setTrainingData([...trainingData, { value: id, label: values.trainingName }]);
   }
 
-  const handleRemoveList = (indexToRemove) => {
+  const handleRemoveList = (indexToRemove, points) => {
+    setSelectedPoints(points);
     setIndexToRemove(indexToRemove);
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
@@ -122,7 +125,7 @@ function AddJobTraining({ previousStep, nextStep }) {
                         <TableCell className="w-1/12 text-center">
                           <button
                             className="h-4 w-4"
-                            onClick={() => handleRemoveList(index)}
+                            onClick={() => handleRemoveList(index, data.points)}
                           >
                             <X className="h-4 w-4" />
                           </button>
@@ -139,7 +142,7 @@ function AddJobTraining({ previousStep, nextStep }) {
                     <div className="flex justify-end">
                       <button
                         className="h-4 w-4"
-                        onClick={() => handleRemoveList(index)}
+                        onClick={() => handleRemoveList(index, data.points)}
                       >
                         <X className="h-5 w-5" />
                       </button>
@@ -172,6 +175,7 @@ function AddJobTraining({ previousStep, nextStep }) {
           onHide={handleCloseModal}
           handleAddList={handleAddList}
           handleAddData={handleAddData}
+          addTotalPoints={addTotalPoints}
         />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>

@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import AddTrainingMaster from '@/app/admin/dashboard/Masterfiles/modal/AddMasterfileForms/AddTrainingMaster';
 
-function AddTraining({ open, onHide, handleAddList, handleAddData }) {
+function AddTraining({ open, onHide, handleAddList, handleAddData, addTotalPoints }) {
   const [openState, setOpenState] = useState(false);
   const [trainingData, setTrainingData] = useState(JSON.parse(retrieveData("trainingList")));
 
@@ -64,6 +64,7 @@ function AddTraining({ open, onHide, handleAddList, handleAddData }) {
         }
       });
       if (isValid) {
+        if (addTotalPoints(values.points) === false) return;
         // onHide(values);
         handleAddList(values);
         form.reset();

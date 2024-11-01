@@ -69,10 +69,7 @@ function AddEducation({ open, onHide, handleAddList, isUpdate, handleAddData, ad
         if (isUpdate) {
           onHide(values);
         } else {
-          const isTotalPointsMax = addTotalPoints(values.points);
-          if (!isTotalPointsMax) {
-            return;
-          }
+          if (addTotalPoints(values.points) === false) return;
           handleAddList(values);
         }
         form.reset();
