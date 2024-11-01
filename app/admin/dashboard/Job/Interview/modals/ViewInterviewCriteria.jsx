@@ -130,7 +130,7 @@ function ViewInterviewCriteria() {
         <SheetTrigger>
           <Button>View criteria</Button>
         </SheetTrigger>
-        <SheetContent side="bottom" className="h-full overflow-y-scroll">
+        <SheetContent side="bottom" className="overflow-y-scroll">
           <SheetHeader className="mb-5">
             <SheetTitle>Interview criteria</SheetTitle>
           </SheetHeader>

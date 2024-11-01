@@ -12,27 +12,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 
-
-function AddJobKnowledge({ previousStep, nextStep }) {
+function AddJobKnowledge({ previousStep, nextStep, addTotalPoints, deductTotalPoints }) {
   const [datas, setDatas] = useState([]);
   const [indexToRemove, setIndexToRemove] = useState(null);
   const [knowledgeData, setKnowledgeData] = useState([]);
-
-  const [alertMessage, setAlertMessage] = useState("");
-  const [showAlert, setShowAlert] = useState(false);
-  const handleShowAlert = (message) => {
-    setAlertMessage(message);
-    setShowAlert(true);
-  };
-  const handleCloseAlert = (status) => {
-    if (status === 1) {
-      const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
-      setDatas(filteredDatas);
-      storeData("jobKnowledge", JSON.stringify(filteredDatas));
-    }
-    setShowAlert(false);
-  };
-
   const [showModal, setShowModal] = useState(false);
 
   const handleOpenModal = () => {
@@ -50,7 +33,25 @@ function AddJobKnowledge({ previousStep, nextStep }) {
     setShowModal(false);
   };
 
-  const handleRemoveList = (indexToRemove) => {
+  const [selectedPoints, setSelectedPoints] = useState(0);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+
+  const handleShowAlert = (message) => {
+    setAlertMessage(message);
+    setShowAlert(true);
+  };
+  const handleCloseAlert = (status) => {
+    if (status === 1) {
+      const filteredDatas = datas.filter((_, index) => index !== indexToRemove);
+      setDatas(filteredDatas);
+      storeData("jobKnowledge", JSON.stringify(filteredDatas));
+      deductTotalPoints(Number(selectedPoints));
+    }
+    setShowAlert(false);
+  };
+  const handleRemoveList = (indexToRemove, points) => {
+    setSelectedPoints(points);
     setIndexToRemove(indexToRemove);
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
@@ -124,7 +125,7 @@ function AddJobKnowledge({ previousStep, nextStep }) {
                         <TableCell className="w-1/12 text-center">
                           <button
                             className="h-4 w-4"
-                            onClick={() => handleRemoveList(index)}
+                            onClick={() => handleRemoveList(index, data.points)}
                           >
                             <X className="h-4 w-4" />
                           </button>
@@ -140,7 +141,7 @@ function AddJobKnowledge({ previousStep, nextStep }) {
                     <div className="flex justify-end">
                       <button
                         className="h-4 w-4"
-                        onClick={() => handleRemoveList(index)}
+                        onClick={() => handleRemoveList(index, data.points)}
                       >
                         <X className="h-5 w-5" />
                       </button>
@@ -172,6 +173,7 @@ function AddJobKnowledge({ previousStep, nextStep }) {
           onHide={handleCloseModal}
           handleAddList={handleAddList}
           handleAddData={handleAddData}
+          addTotalPoints={addTotalPoints}
         />
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
       </div>

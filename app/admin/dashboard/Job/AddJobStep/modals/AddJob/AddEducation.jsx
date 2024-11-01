@@ -14,7 +14,7 @@ import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import AddCourseMaster from '@/app/admin/dashboard/Masterfiles/modal/AddMasterfileForms/AddCourseMaster';
 import AddCourseCategoryMaster from '@/app/admin/dashboard/Masterfiles/modal/AddMasterfileForms/AddCourseCategoryMaster';
 
-function AddEducation({ open, onHide, handleAddList, isUpdate, handleAddData }) {
+function AddEducation({ open, onHide, handleAddList, isUpdate, handleAddData, addTotalPoints }) {
   const [courseCategory, setCourseCategory] = useState(JSON.parse(retrieveData("courseCategoryList")));
   const [openState, setOpenState] = useState(false);
   const formSchema = z.object({
@@ -69,6 +69,7 @@ function AddEducation({ open, onHide, handleAddList, isUpdate, handleAddData }) 
         if (isUpdate) {
           onHide(values);
         } else {
+          if (addTotalPoints(values.points) === false) return;
           handleAddList(values);
         }
         form.reset();
