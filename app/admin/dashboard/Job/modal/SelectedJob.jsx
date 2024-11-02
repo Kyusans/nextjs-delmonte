@@ -1,23 +1,17 @@
 import { removeData, storeData } from '@/app/utils/storageUtils';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Card } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
 import Spinner from '@/components/ui/spinner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import axios from 'axios';
 import React, { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import UpdateJobModal from '../AddJobStep/modals/UpdateJobDetails/UpdateJobModal';
-import { Badge } from '@/components/ui/badge';
 import InterviewPage from '../Interview/InterviewPage';
 import ViewApplicants from '../ViewApplicants/ViewApplicants';
 import ExamPage from '../Exam/ExamPage';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Button } from '@/components/ui/button';
-import { Edit } from 'lucide-react';
 import JobDetails from './JobDetails/JobDetails';
+import UpdateJobMaster from './UpdateJobMaster/UpdateJobMaster';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
@@ -56,10 +50,6 @@ function SelectedJob({ open, onHide, jobId }) {
     }
   }, [getSelectedJobs, jobId, open]);
 
-  // const handleUpdateJob = () => {
-  //   return <UpdateJobModal open={openUpdateJob} onClose={handleCloseUpdateJob} jobData={jobData} type={type} getSelectedJobs={getSelectedJobs} />;
-  // };
-
   const handleClose = () => {
     removeData("jobId");
     removeData("selectedStatus");
@@ -82,7 +72,16 @@ function SelectedJob({ open, onHide, jobId }) {
           ) : (
             <>
               <SheetHeader className="mb-4">
-                <SheetTitle>{data.jobMaster[0].jobM_title}</SheetTitle>
+                <SheetTitle>
+                  <div className="flex items-center">
+                    {data.jobMaster[0].jobM_title}
+                    <UpdateJobMaster
+                      title={data.jobMaster[0].jobM_title}
+                      description={data.jobMaster[0].jobM_description}
+                      getSelectedJobs={getSelectedJobs}
+                    />
+                  </div>
+                </SheetTitle>
                 <SheetDescription className="text-start">
                   {data.jobMaster[0].jobM_description}
                 </SheetDescription>

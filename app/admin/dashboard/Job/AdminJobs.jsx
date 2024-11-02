@@ -6,13 +6,11 @@ import { toast } from 'sonner';
 import { Briefcase, CheckCircle, Circle, Filter, PlusCircle, Settings, XCircle } from 'lucide-react';
 import Spinner from '@/components/ui/spinner';
 import AddJob from './AddJobStep/AddJob';
-import { removeData, retrieveData } from '@/app/utils/storageUtils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import SelectedJob from './modal/SelectedJob';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 import { Switch } from '@/components/ui/switch';
 import ShowAlert from '@/components/ui/show-alert';
-import UpdateJobModal from './AddJobStep/modals/UpdateJobDetails/UpdateJobModal';
 
 function AdminJobs() {
   const [allJobs, setAllJobs] = useState([]);
