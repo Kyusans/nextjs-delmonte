@@ -1,6 +1,6 @@
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ChevronsUpDown } from 'lucide-react';
+import { ChevronsUpDown, Filter } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import SelectedApplicant from '../modal/SelectedApplicant';
@@ -10,6 +10,7 @@ import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import axios from 'axios';
 import { toast } from 'sonner';
 import UpdateJobPassingPercentage from './modal/UpdateJobPassingPercentage';
+import SetToInterviewModal from './modal/SetToInterviewModal';
 
 const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
   const [data, setData] = useState({});
@@ -132,19 +133,15 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
   useEffect(() => {
     let filteredCandidates;
 
-    // Check the selected filter and apply the corresponding logic
     if (selectedFilter === "pass") {
-      // Filter candidates that passed based on the passing percentage
       filteredCandidates = datas.candidates?.filter(
         (cand) => cand.points.percentage >= (datas.jobPassing[0]?.passing_percentage || 0)
       );
     } else if (selectedFilter === "fail") {
-      // Filter candidates that failed based on the passing percentage
       filteredCandidates = datas.candidates?.filter(
         (cand) => cand.points.percentage < (datas.jobPassing[0]?.passing_percentage || 0)
       );
     } else {
-      // Show all candidates
       filteredCandidates = datas.candidates;
     }
 
@@ -152,6 +149,35 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
     setData({ ...datas, candidates: filteredCandidates });
   }, [selectedFilter, datas]);
 
+
+  // useEffect(() => {
+  //   let filteredCandidates;
+
+  //   // Base filter for status "Pending" or "Process" when selectedFilter is "pass" or "fail"
+  //   if (selectedFilter === "pass" || selectedFilter === "fail") {
+  //     filteredCandidates = datas.candidates?.filter(
+  //       (cand) => (cand.status_name === "Pending" || cand.status_name === "Process")
+  //     );
+
+  //     if (selectedFilter === "pass") {
+  //       // Further filter the candidates to show those who passed
+  //       filteredCandidates = filteredCandidates?.filter(
+  //         (cand) => cand.points.percentage >= (datas.jobPassing[0]?.passing_percentage || 0)
+  //       );
+  //     } else if (selectedFilter === "fail") {
+  //       // Further filter the candidates to show those who failed
+  //       filteredCandidates = filteredCandidates?.filter(
+  //         (cand) => cand.points.percentage < (datas.jobPassing[0]?.passing_percentage || 0)
+  //       );
+  //     }
+  //   } else {
+  //     // Show all candidates if selectedFilter is not "pass" or "fail"
+  //     filteredCandidates = datas.candidates;
+  //   }
+
+  //   setCurrentPage(1);
+  //   setData({ ...datas, candidates: filteredCandidates });
+  // }, [selectedFilter, datas]);
 
   return (
     <div>
@@ -163,12 +189,13 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
           className="w-2/3 md:w-1/2 ml-2"
         />
         <div className="flex items-center md:justify-end ml-1 md:mx-3 ">
+          <SetToInterviewModal datas={datas["candidates"]} />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button>Filter</Button>
+              <Button><Filter className="mr-2 h-4 w-4" /> Filter</Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56">
-              <DropdownMenuLabel>Select status</DropdownMenuLabel>
+              <DropdownMenuLabel>Filter candidate status</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuRadioGroup value={selectedFilter} onValueChange={setSelectedFilter}>
                 <DropdownMenuRadioItem value="all">All</DropdownMenuRadioItem>
