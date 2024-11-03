@@ -177,7 +177,7 @@ function UpdateSkill({ data, handleAddData, handleUpdate, deleteData }) {
             </CardDescription>
           )}
         </Card>
-        {showModal && <AddSkill open={showModal} onHide={handleCloseModal} skill={skill} handleAddList={handleAddList} />}
+        {showModal && <AddSkill open={showModal} onHide={handleCloseModal} skill={skill} handleAddList={handleAddList} isUpdate={true} />}
         {showUpdateModal && <UpdateSkillModal open={showUpdateModal} onHide={handleCloseUpdateModal} skill={skill} updateData={updateData} />}
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
       </div>

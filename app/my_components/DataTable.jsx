@@ -3,7 +3,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 
-const DataTable = ({ columns, data, itemsPerPage = 10, autoIndex = false, title, add }) => {
+const DataTable = ({
+  columns,
+  data,
+  itemsPerPage = 10,
+  autoIndex = false,
+  title,
+  add,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
@@ -131,13 +138,15 @@ const DataTable = ({ columns, data, itemsPerPage = 10, autoIndex = false, title,
           {title && <h2 className="text-lg font-bold">{title}</h2>}
           {add && add}
         </div>
-        <Input
-          type="text"
-          placeholder="Search..."
-          value={searchTerm}
-          onChange={handleSearch}
-          className={`${isMobile ? 'w-full' : 'max-w-xs'}`}
-        />
+        <div>
+          <Input
+            type="text"
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className={`${isMobile ? 'w-full' : 'max-w-xs'}`}
+          />
+        </div>
       </div>
       {filteredData.length > 0 ? (
         <>

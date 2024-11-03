@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner';
 import UpdateJobModal from '../../AddJobStep/modals/UpdateJobDetails/UpdateJobModal';
 
-const JobDetails = () => {
+const JobDetails = ({ getSelectedJobs }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState(null);
 
@@ -42,7 +42,7 @@ const JobDetails = () => {
 
   const handleCloseUpdateJob = () => {
     setOpenUpdateJob(false);
-    getJobDetails();
+    getSelectedJobs();
   }
 
   useEffect(() => {
@@ -147,7 +147,7 @@ const JobDetails = () => {
                   {data.jobExperience.map((exp, index) => (
                     <ul key={index} className="list-disc ml-4 mb-1">
                       <li>
-                        {exp.jwork_responsibilities} {` with at least ${exp.jwork_duration} year${exp.jwork_duration > 1 ? "s" : ""} of experience needed`}
+                        {exp.jwork_responsibilities} {` (with at least ${exp.jwork_duration} year${exp.jwork_duration > 1 ? "s" : ""} of experience needed)`}
                         <Badge className='ml-2 text-xs'>{exp.jwork_points} point{exp.jwork_points > 1 ? "s" : ""}</Badge>
                       </li>
                     </ul>

@@ -182,7 +182,7 @@ function UpdateTraining({ data, handleAddData, handleUpdate, deleteData }) {
             </CardDescription>
           )}
         </Card>
-        {showModal && <AddTraining open={showModal} onHide={handleCloseModal} training={training} handleAddList={handleAddList} />}
+        {showModal && <AddTraining open={showModal} onHide={handleCloseModal} training={training} handleAddList={handleAddList} isUpdate={true} />}
         {showUpdateModal && <UpdateTrainingModal open={showUpdateModal} onHide={handleCloseUpdateModal} training={training} updateData={updateData} />}
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
       </div>

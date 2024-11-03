@@ -1,7 +1,6 @@
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from '@/components/ui/pagination';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ChevronsUpDown, Edit } from 'lucide-react';
+import { ChevronsUpDown, Filter } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import SelectedApplicant from '../modal/SelectedApplicant';
@@ -11,6 +10,7 @@ import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import axios from 'axios';
 import { toast } from 'sonner';
 import UpdateJobPassingPercentage from './modal/UpdateJobPassingPercentage';
+import SetToInterviewModal from './modal/SetToInterviewModal';
 
 const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
   const [data, setData] = useState({});
@@ -108,6 +108,8 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
     setShowSelectedApplicant(false);
   };
 
+  const [selectedFilter, setSelectedFilter] = useState("All");
+
   useEffect(() => {
     setData(datas);
     setStatus(datas.status);
@@ -127,25 +129,95 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
     setData({ ...datas, candidates: filteredCandidates });
   }, [selectedStatus, datas]);
 
+
+  useEffect(() => {
+    let filteredCandidates;
+
+    if (selectedFilter === "pass") {
+      filteredCandidates = datas.candidates?.filter(
+        (cand) => cand.points.percentage >= (datas.jobPassing[0]?.passing_percentage || 0)
+      );
+    } else if (selectedFilter === "fail") {
+      filteredCandidates = datas.candidates?.filter(
+        (cand) => cand.points.percentage < (datas.jobPassing[0]?.passing_percentage || 0)
+      );
+    } else {
+      filteredCandidates = datas.candidates;
+    }
+
+    setCurrentPage(1);
+    setData({ ...datas, candidates: filteredCandidates });
+  }, [selectedFilter, datas]);
+
+
+  // useEffect(() => {
+  //   let filteredCandidates;
+
+  //   // Base filter for status "Pending" or "Process" when selectedFilter is "pass" or "fail"
+  //   if (selectedFilter === "pass" || selectedFilter === "fail") {
+  //     filteredCandidates = datas.candidates?.filter(
+  //       (cand) => (cand.status_name === "Pending" || cand.status_name === "Process")
+  //     );
+
+  //     if (selectedFilter === "pass") {
+  //       // Further filter the candidates to show those who passed
+  //       filteredCandidates = filteredCandidates?.filter(
+  //         (cand) => cand.points.percentage >= (datas.jobPassing[0]?.passing_percentage || 0)
+  //       );
+  //     } else if (selectedFilter === "fail") {
+  //       // Further filter the candidates to show those who failed
+  //       filteredCandidates = filteredCandidates?.filter(
+  //         (cand) => cand.points.percentage < (datas.jobPassing[0]?.passing_percentage || 0)
+  //       );
+  //     }
+  //   } else {
+  //     // Show all candidates if selectedFilter is not "pass" or "fail"
+  //     filteredCandidates = datas.candidates;
+  //   }
+
+  //   setCurrentPage(1);
+  //   setData({ ...datas, candidates: filteredCandidates });
+  // }, [selectedFilter, datas]);
+
   return (
     <div>
       <div className="mt-4 mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <Input
-          placeholder="Search by name" 
+          placeholder="Search by name"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-2/3 md:w-1/2 ml-2"
         />
         <div className="flex items-center md:justify-end ml-1 md:mx-3 ">
-          <p>Passing percentage: {passingPercentage ? passingPercentage : 0}%</p>
-          <UpdateJobPassingPercentage  currentPassingPercentage={passingPercentage} getSelectedJob={getSelectedJob} />
+          <SetToInterviewModal datas={datas["candidates"]} passingPercentage={passingPercentage} />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button><Filter className="mr-2 h-4 w-4" /> Filter</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56">
+              <DropdownMenuLabel>Filter candidate status</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuRadioGroup value={selectedFilter} onValueChange={setSelectedFilter}>
+                <DropdownMenuRadioItem value="all">All</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="pass">Pass</DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="fail">Fail</DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
+        {/* <div className="flex items-center md:justify-end ml-1 md:mx-3 ">
+          <p>Passing percentage: {passingPercentage ? passingPercentage : 0}%</p>
+          <UpdateJobPassingPercentage currentPassingPercentage={passingPercentage} getSelectedJob={getSelectedJob} />
+        </div> */}
       </div>
       <div className="whitespace-nowrap">
         <Table className="text-center">
-          {/* <TableCaption className="text-center">
-            Passing percentage: {passingPercentage ? passingPercentage : 0}%
-          </TableCaption> */}
+          <TableCaption className="text-center">
+            <div className="flex items-center justify-center ml-1 md:mx-3 ">
+              <p>Passing percentage: {passingPercentage ? passingPercentage : 0}%</p>
+              <UpdateJobPassingPercentage currentPassingPercentage={passingPercentage} getSelectedJob={getSelectedJob} />
+            </div>
+          </TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="cursor-pointer text-center">
@@ -231,7 +303,6 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
           </TableBody>
         </Table>
       </div>
-
       {data.candidates?.length > itemsPerPage && (
         <div className='flex justify-end items-end mt-4'>
           <Pagination>

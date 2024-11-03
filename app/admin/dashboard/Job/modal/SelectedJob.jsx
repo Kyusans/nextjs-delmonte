@@ -96,7 +96,7 @@ function SelectedJob({ open, onHide, jobId }) {
                   </TabsList>
                   <ScrollArea className="flex-grow">
                     <TabsContent value={1} className="h-full">
-                      <JobDetails />
+                      <JobDetails getSelectedJobs={getSelectedJobs} />
                     </TabsContent>
                     <TabsContent value={2}>
                       <ViewApplicants datas={data} passingPercentage={data.jobPassing[0].passing_percentage} getSelectedJob={getSelectedJobs} />
