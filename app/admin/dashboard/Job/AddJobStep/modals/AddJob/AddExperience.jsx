@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 
-function AddExperience({ open, onHide, handleAddList, addTotalPoints }) {
+function AddExperience({ open, onHide, handleAddList, addTotalPoints, isUpdate = false }) {
 
   const formSchema = z.object({
     yearsOfExperience: z.string()
@@ -46,7 +46,9 @@ function AddExperience({ open, onHide, handleAddList, addTotalPoints }) {
   const onSubmit = (values) => {
     try {
       // onHide(values);
-      if (addTotalPoints(values.points) === false) return;
+      if(!isUpdate){
+        if(addTotalPoints(values.points) === false) return;
+      }
       handleAddList(values);
       form.reset();
     } catch (error) {

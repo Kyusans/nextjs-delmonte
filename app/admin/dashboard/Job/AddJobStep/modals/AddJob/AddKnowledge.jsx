@@ -12,7 +12,7 @@ import ComboBox from '@/app/my_components/combo-box';
 import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import AddKnowledgeMaster from '@/app/admin/dashboard/Masterfiles/modal/AddMasterfileForms/AddKnowledgeMaster';
 
-function AddKnowledge({ open, onHide, handleAddList, handleAddData, addTotalPoints, isUpdate }) {
+function AddKnowledge({ open, onHide, handleAddList, handleAddData, addTotalPoints, isUpdate = false }) {
   const [openState, setOpenState] = useState(false);
   const [knowledgeData, setKnowledgeData] = useState(JSON.parse(retrieveData("knowledgeList")));
   const formSchema = z.object({

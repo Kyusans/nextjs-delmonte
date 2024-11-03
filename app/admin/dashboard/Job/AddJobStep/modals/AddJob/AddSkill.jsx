@@ -12,7 +12,7 @@ import ComboBox from '@/app/my_components/combo-box';
 import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import AddSkillMaster from '@/app/admin/dashboard/Masterfiles/modal/AddMasterfileForms/AddSkillMaster';
 
-function AddSkill({ open, onHide, handleAddList, handleAddData, addTotalPoints, isUpdate }) {
+function AddSkill({ open, onHide, handleAddList, handleAddData, addTotalPoints, isUpdate = false }) {
   const [openState, setOpenState] = useState(false);
   const [skillData, setSkillData] = useState(JSON.parse(retrieveData("skillsList")));
   const formSchema = z.object({

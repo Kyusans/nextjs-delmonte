@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner';
 import UpdateJobModal from '../../AddJobStep/modals/UpdateJobDetails/UpdateJobModal';
 
-const JobDetails = () => {
+const JobDetails = ({ getSelectedJobs }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState(null);
 
@@ -42,7 +42,7 @@ const JobDetails = () => {
 
   const handleCloseUpdateJob = () => {
     setOpenUpdateJob(false);
-    getJobDetails();
+    getSelectedJobs();
   }
 
   useEffect(() => {
