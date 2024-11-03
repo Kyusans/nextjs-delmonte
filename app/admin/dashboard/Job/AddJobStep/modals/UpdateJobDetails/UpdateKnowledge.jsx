@@ -180,7 +180,7 @@ function UpdateKnowledge({ data, handleAddData, handleUpdate, deleteData }) {
           )}
         </Card>
 
-        {showModal && <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} handleAddList={handleAddList} />}
+        {showModal && <AddKnowledge open={showModal} onHide={handleCloseModal} knowledgeList={knowledgeList} handleAddList={handleAddList} isUpdate={true} />}
         {showUpdateModal && <UpdateKnowledgeModal open={showUpdateModal} onHide={handleCloseUpdateModal} updateData={updateData} knowledgeList={knowledgeList} />}
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
       </div>

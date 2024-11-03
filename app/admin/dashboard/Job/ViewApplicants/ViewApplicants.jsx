@@ -189,7 +189,7 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
           className="w-2/3 md:w-1/2 ml-2"
         />
         <div className="flex items-center md:justify-end ml-1 md:mx-3 ">
-          <SetToInterviewModal datas={datas["candidates"]} />
+          <SetToInterviewModal datas={datas["candidates"]} passingPercentage={passingPercentage} />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button><Filter className="mr-2 h-4 w-4" /> Filter</Button>

@@ -12,7 +12,7 @@ import ComboBox from '@/app/my_components/combo-box';
 import { retrieveData, storeData } from '@/app/utils/storageUtils';
 import AddKnowledgeMaster from '@/app/admin/dashboard/Masterfiles/modal/AddMasterfileForms/AddKnowledgeMaster';
 
-function AddKnowledge({ open, onHide, handleAddList, handleAddData, addTotalPoints }) {
+function AddKnowledge({ open, onHide, handleAddList, handleAddData, addTotalPoints, isUpdate }) {
   const [openState, setOpenState] = useState(false);
   const [knowledgeData, setKnowledgeData] = useState(JSON.parse(retrieveData("knowledgeList")));
   const formSchema = z.object({
@@ -68,7 +68,9 @@ function AddKnowledge({ open, onHide, handleAddList, handleAddData, addTotalPoin
       });
       if (isValid) {
         console.log("AddKnowledge.jsx => onSubmit():", values);
-        if (addTotalPoints(values.points) === false) return;
+        if (!isUpdate) {
+          if (addTotalPoints(values.points) === false) return;
+        }
         // onHide(values);
         handleAddList(values);
         form.reset();
