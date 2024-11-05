@@ -22,6 +22,7 @@ import { retrieveData, storeData } from "../utils/storageUtils";
 import { formatDate } from "./page";
 import ShowAlert from "@/components/ui/show-alert";
 import { useRouter } from "next/navigation";
+import DatePicker from "../my_components/DatePicker";
 
 const formSchema = z.object({
   firstName: z.string().min(1, {
@@ -63,7 +64,7 @@ const formSchema = z.object({
       const parsedEndDate = Date.parse(date);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      return parsedEndDate < today.getTime();
+      return parsedEndDate <= today.getTime();
     }, {
       message: "Invalid date",
     }),
@@ -243,40 +244,11 @@ const PersonalInformation = ({ handleSubmit }) => {
                             </FormItem>
                           )}
                         />
-                        <FormField
-                          control={form.control}
+                        <DatePicker
+                          form={form}
                           name="dob"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Date of Birth</FormLabel>
-                              <div>
-                                <Popover open={showDOB}>
-                                  <PopoverTrigger asChild>
-                                    <Button
-                                      onClick={() => setShowDOB(!showDOB)}
-                                      variant={"outline"}
-                                      className={cn("justify-start w-full text-left font-normal bg-[#0e4028] hover:bg-[#0e5a35] border-2 border-[#0b864a]", !field.value && "text-muted-foreground")}
-                                    >
-                                      <CalendarIcon className="mr-2 h-4 w-4" />
-                                      {field.value ? formatDate(new Date(field.value), "yyyy-MM-dd") : <span>Pick a date</span>}
-                                    </Button>
-                                  </PopoverTrigger>
-                                  <PopoverContent align="start" className=" w-auto p-0">
-                                    <Calendar
-                                      mode="single"
-                                      captionLayout="dropdown-buttons"
-                                      selected={field.value ? new Date(field.value) : undefined}
-                                      onSelect={handleDateChange}
-                                      fromYear={1960}
-                                      toYear={new Date().getFullYear()}
-                                      disabled={(date) => date > new Date()}
-                                    />
-                                  </PopoverContent>
-                                </Popover>
-                              </div>
-                              <FormMessage />
-                            </FormItem>
-                          )}
+                          label={"Date of Birth"}
+                          design="justify-start w-full text-left font-normal bg-[#0e4028] hover:bg-[#0e5a35] border-2 border-[#0b864a]"
                         />
                       </div>
                     </div>
