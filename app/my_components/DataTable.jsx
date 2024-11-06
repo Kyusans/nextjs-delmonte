@@ -10,6 +10,7 @@ const DataTable = ({
   autoIndex = false,
   title,
   add,
+  hideSearch = false
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
@@ -139,13 +140,15 @@ const DataTable = ({
           {add && add}
         </div>
         <div>
-          <Input
-            type="text"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className={`${isMobile ? 'w-full' : 'max-w-xs'}`}
-          />
+          {!hideSearch && (
+            <Input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className={`${isMobile ? 'w-full' : 'max-w-xs'}`}
+            />
+          )}
         </div>
       </div>
       {filteredData.length > 0 ? (

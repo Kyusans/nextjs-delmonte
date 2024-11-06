@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { formatISO, format } from 'date-fns';
+import { formatISO } from 'date-fns';
 import { FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { cn } from '@/lib/utils';
-import { CalendarDays, CalendarIcon } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 import { formatDate } from '../signup/page';
 
-const DatePicker = ({ form, name, label = "Date", design }) => {
+const DatePicker = ({ form, name, label = "Date", futureAllowed = false, pastAllowed = true, design }) => {
   const [showPicker, setShowPicker] = useState(false);
 
   const handleDateChange = (date) => {
@@ -19,6 +19,15 @@ const DatePicker = ({ form, name, label = "Date", design }) => {
         setShowPicker(false);
       }, 50);
     }
+  };
+
+  const disableDate = (date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (futureAllowed && pastAllowed) return false;
+    if (!futureAllowed && date > today) return true;
+    if (!pastAllowed && date < today) return true;
+    return false;
   };
 
   return (
@@ -36,7 +45,6 @@ const DatePicker = ({ form, name, label = "Date", design }) => {
                   variant="outline"
                   className={cn(
                     design ? design : "justify-start w-full",
-                    // "justify-start w-full text-left font-normal bg-[#0e4028] hover:bg-[#0e5a35] border-2 border-[#0b864a]",
                     !field.value && "text-muted-foreground"
                   )}
                 >
@@ -52,7 +60,7 @@ const DatePicker = ({ form, name, label = "Date", design }) => {
                   onSelect={handleDateChange}
                   fromYear={1960}
                   toYear={new Date().getFullYear()}
-                  disabled={(date) => date > new Date()}
+                  disabled={disableDate}
                 />
               </PopoverContent>
             </Popover>

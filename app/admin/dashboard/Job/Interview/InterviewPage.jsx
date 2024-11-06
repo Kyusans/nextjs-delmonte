@@ -32,6 +32,7 @@ const InterviewPage = () => {
 
   const columns = [
     { header: "Full Name", accessor: "fullName" },
+    { header: 'Email', accessor: 'cand_email' },
     { header: "Status", accessor: "status_name" },
   ]
 
@@ -45,7 +46,7 @@ const InterviewPage = () => {
       {isLoading ? <Spinner /> :
         (<>
           <div className='p-3'>
-            <DataTable columns={columns} data={candidates} autoIndex={true}  />
+            <DataTable columns={columns} data={candidates} autoIndex={true} />
           </div>
         </>)
       }
