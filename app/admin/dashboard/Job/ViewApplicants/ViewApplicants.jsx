@@ -183,7 +183,7 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
     <div>
       <div className="mt-4 mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
         <Input
-          placeholder="Search by name"
+          placeholder="Search..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-2/3 md:w-1/2 ml-2"

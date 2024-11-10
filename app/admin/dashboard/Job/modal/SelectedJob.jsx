@@ -29,6 +29,8 @@ function SelectedJob({ open, onHide, jobId }) {
       const res = await axios.post(url, formData);
       console.log("RES DATA ni getSelectedJobs: ", res.data);
       if (res.data !== 0) {
+        const response = res.data;
+        storeData("jobTotalPoints", response.jobMaster[0].jobM_totalPoints);
         setData(res.data);
         if (res.data.exam !== 0) {
           const response = res.data.exam
@@ -51,15 +53,17 @@ function SelectedJob({ open, onHide, jobId }) {
   }, [getSelectedJobs, jobId, open]);
 
   const handleClose = () => {
-    removeData("jobId");
-    removeData("selectedStatus");
-    removeData("jobEducation");
-    removeData("jobTraining");
-    removeData("jobKnowledge");
-    removeData("jobSkill");
-    removeData("jobExperience");
-    removeData("jobMaster");
-    removeData("duties");
+    sessionStorage.clear();
+    // removeData("jobId");
+    // removeData("selectedStatus");
+    // removeData("jobEducation");
+    // removeData("jobTraining");
+    // removeData("jobKnowledge");
+    // removeData("jobSkill");
+    // removeData("jobExperience");
+    // removeData("jobMaster");
+    // removeData("duties");
+    // removeData("jobTotalPoints");
     onHide();
   };
   // bg-[#107343] dark:bg-background

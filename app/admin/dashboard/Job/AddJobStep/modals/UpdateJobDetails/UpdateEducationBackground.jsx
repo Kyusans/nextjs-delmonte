@@ -93,7 +93,7 @@ function UpdateEducation({ data, handleAddData, handleUpdate, deleteData }) {
     console.log("data ni education useEffect: ", data)
     console.log("courseCategory ni education useEffect: ", courseCategory)
     console.log("datas ni retrieveData: ", retrieveData("jobEducation"))
-  }, [data]);
+  }, [courseCategory, data]);
 
   return (
     <>

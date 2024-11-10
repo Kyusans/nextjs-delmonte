@@ -31,7 +31,7 @@ const InterviewPage = () => {
   }
 
   const columns = [
-    { header: "Full Name", accessor: "fullName" },
+    { header: "Full Name", accessor: "fullName", className: (row) => row.fullName === "Gallegos, Ralph Jan Pelino" ? "bg-red-500" : "" },
     { header: 'Email', accessor: 'cand_email' },
     { header: "Status", accessor: "status_name" },
   ]

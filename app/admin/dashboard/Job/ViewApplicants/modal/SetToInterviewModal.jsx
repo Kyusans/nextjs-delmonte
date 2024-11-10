@@ -59,11 +59,11 @@ const SetToInterviewModal = ({ datas, passingPercentage, getSelectedJob }) => {
       if (res.data === 1) {
         getSelectedJob();
         toast.success("Candidates set to interview successfully");
+        form.reset();
         setIsOpen(false);
       } else {
         toast.error("Failed to set candidates to interview");
       }
-      form.reset();
     } catch (error) {
       toast.error("Network error");
       console.log("SetToInterviewModal.jsx => onSubmit(): " + error);
@@ -97,7 +97,7 @@ const SetToInterviewModal = ({ datas, passingPercentage, getSelectedJob }) => {
   }, [datas, isOpen, passingPercentage])
 
   const columns = [
-    { header: 'Full Name', accessor: 'FullName' },
+    { header: 'Full Name', accessor: 'FullName'},
     { header: 'Status', accessor: 'status_name' },
   ];
   return (
