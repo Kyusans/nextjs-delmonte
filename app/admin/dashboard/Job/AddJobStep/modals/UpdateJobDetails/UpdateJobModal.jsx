@@ -14,13 +14,9 @@ import UpdateTraining from './UpdateTraining';
 import UpdateExperience from './UpdateExperience';
 import UpdateKnowledge from './UpdateKnowledge';
 
-function UpdateJobModal({ open, onClose, jobData, type, getJobDetails }) {
+function UpdateJobModal({ open, onClose, jobData, type }) {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
-
-  const handleClose = () => {
-    getJobDetails();
-  };
 
   const getData = async (operation) => {
     setIsLoading(true);
@@ -78,6 +74,7 @@ function UpdateJobModal({ open, onClose, jobData, type, getJobDetails }) {
       formData.append("operation", operation);
       formData.append("json", JSON.stringify(jsonData));
       const res = await axios.post(url, formData);
+      console.log("res ni handleUpdate: ", res)
       if (res.data === 1) {
         toast.success("Updated successfully");
         getData(getDataOperation);
@@ -226,6 +223,7 @@ function UpdateJobModal({ open, onClose, jobData, type, getJobDetails }) {
         return null
     }
   }
+
 
   useEffect(() => {
     if (jobData && open) {

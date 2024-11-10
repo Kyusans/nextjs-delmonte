@@ -1,5 +1,5 @@
 "use client"
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import React, { useEffect } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,9 +10,9 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
-import { retrieveData } from '@/app/utils/storageUtils';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
 
-function UpdateEducationModal({ open, onHide, courseCategory, updateData }) {
+function UpdateEducationModal({ open, onHide, courseCategory, updateData}) {
   const formSchema = z.object({
     courseCategory: z.number().min(1, {
       message: "This field is required",
@@ -52,6 +52,13 @@ function UpdateEducationModal({ open, onHide, courseCategory, updateData }) {
         }
       });
       if (isValid) {
+        const totalPoints = Number(retrieveData("jobTotalPoints") || 0);
+        const newTotalPoints = (totalPoints - Number(updateData.points)) + Number(values.points);
+        if (newTotalPoints > 100) {
+          toast.error("Total points cannot exceed 100");
+          return;
+        }
+        storeData("jobTotalPoints", newTotalPoints);
         onHide(values);
         form.reset();
       }
@@ -70,7 +77,8 @@ function UpdateEducationModal({ open, onHide, courseCategory, updateData }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold">Update Education</DialogTitle>
+            <DialogTitle>Update Education</DialogTitle>
+            <DialogDescription>Job&apos;s total points: {retrieveData("jobTotalPoints") || 0} </DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>

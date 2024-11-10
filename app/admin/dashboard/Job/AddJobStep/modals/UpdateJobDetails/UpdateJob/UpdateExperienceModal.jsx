@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
 
 function UpdateExperienceModal({ open, onHide, updateData }) {
 
@@ -45,6 +46,13 @@ function UpdateExperienceModal({ open, onHide, updateData }) {
 
   const onSubmit = (values) => {
     try {
+      const totalPoints = Number(retrieveData("jobTotalPoints") || 0);
+      const newTotalPoints = (totalPoints - Number(updateData.points)) + Number(values.points);
+      if (newTotalPoints > 100) {
+        toast.error("Total points cannot exceed 100");
+        return;
+      }
+      storeData("jobTotalPoints", newTotalPoints);
       onHide(values);
       form.reset();
     } catch (error) {
@@ -61,7 +69,8 @@ function UpdateExperienceModal({ open, onHide, updateData }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold">Update Experience</DialogTitle>
+            <DialogTitle>Update Experience</DialogTitle>
+            <DialogDescription>Job&apos;s total points: {retrieveData("jobTotalPoints") || 0} </DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>

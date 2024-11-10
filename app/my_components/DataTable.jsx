@@ -11,7 +11,8 @@ const DataTable = ({
   title,
   add,
   hideSearch = false,
-  onRowClick
+  onRowClick,
+  idAccessor
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
@@ -168,7 +169,10 @@ const DataTable = ({
                 {currentItems.map((row, rowIndex) => (
                   <TableRow
                     key={rowIndex}
-                    onClick={() => onRowClick && onRowClick(row)}
+                    onClick={() => {
+                      const rowIdentifier = idAccessor && row[idAccessor] ? row[idAccessor] : row;
+                      onRowClick && onRowClick(rowIdentifier);
+                    }}
                     className={onRowClick ? 'cursor-pointer' : ''}
                   >
                     {autoIndex && (
@@ -212,7 +216,6 @@ const DataTable = ({
               </Pagination>
             </div>
           )}
-
         </>
       ) : (
         <div className="text-center py-4">No data found</div>

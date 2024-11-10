@@ -1,5 +1,5 @@
 "use client"
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import React, { useEffect } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import ComboBox from '@/app/my_components/combo-box';
 import { Input } from '@/components/ui/input';
-import { retrieveData } from '@/app/utils/storageUtils';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
 
 function UpdateSkillModal({ open, onHide, skill, updateData }) {
   const formSchema = z.object({
@@ -50,6 +50,13 @@ function UpdateSkillModal({ open, onHide, skill, updateData }) {
         }
       });
       if (isValid) {
+        const totalPoints = Number(retrieveData("jobTotalPoints") || 0);
+        const newTotalPoints = (totalPoints - Number(updateData.points)) + Number(values.points);
+        if (newTotalPoints > 100) {
+          toast.error("Total points cannot exceed 100");
+          return;
+        }
+        storeData("jobTotalPoints", newTotalPoints);
         onHide(values);
         form.reset();
       }
@@ -68,7 +75,8 @@ function UpdateSkillModal({ open, onHide, skill, updateData }) {
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold">Update Skill</DialogTitle>
+            <DialogTitle>Update Skill</DialogTitle>
+            <DialogDescription>Job&apos;s total points: {retrieveData("jobTotalPoints") || 0} </DialogDescription>
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
