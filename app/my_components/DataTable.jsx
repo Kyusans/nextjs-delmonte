@@ -10,7 +10,8 @@ const DataTable = ({
   autoIndex = false,
   title,
   add,
-  hideSearch = false
+  hideSearch = false,
+  onRowClick
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
@@ -165,14 +166,21 @@ const DataTable = ({
               </TableHeader>
               <TableBody>
                 {currentItems.map((row, rowIndex) => (
-                  <TableRow key={rowIndex}>
+                  <TableRow
+                    key={rowIndex}
+                    onClick={() => onRowClick && onRowClick(row)}
+                    className={onRowClick ? 'cursor-pointer' : ''}
+                  >
                     {autoIndex && (
                       <TableCell>
                         {(currentPage - 1) * itemsPerPage + rowIndex + 1}
                       </TableCell>
                     )}
                     {columns.map((column, colIndex) => (
-                      <TableCell key={colIndex}>
+                      <TableCell
+                        key={colIndex}
+                        className={typeof column.className === 'function' ? column.className(row) : column.className || ''}
+                      >
                         {column.accessor ? row[column.accessor] : column.cell(row)}
                       </TableCell>
                     ))}
