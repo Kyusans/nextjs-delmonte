@@ -30,7 +30,8 @@ function SelectedJob({ open, onHide, jobId }) {
       console.log("RES DATA ni getSelectedJobs: ", res.data);
       if (res.data !== 0) {
         const response = res.data;
-        storeData("jobTotalPoints", response.jobMaster[0].jobM_totalPoints);
+        console.log("jobTOTALPOINJTS: ", response.jobTotalPoints);
+        storeData("jobTotalPoints", response.jobTotalPoints);
         setData(res.data);
         if (res.data.exam !== 0) {
           const response = res.data.exam

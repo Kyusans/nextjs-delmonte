@@ -66,7 +66,7 @@ const ExamplePage = () => {
   // Define columns
   const columns = [
     { header: 'ID', accessor: 'id' },
-    { header: 'Name', accessor: 'name' },
+    { header: 'Name', accessor: 'name', className: (row) => row.fullName === "Kobid" ? "bg-red-500" : "" },
     { header: 'Age', accessor: 'age' },
     { header: 'Email', accessor: 'email' },
     { 

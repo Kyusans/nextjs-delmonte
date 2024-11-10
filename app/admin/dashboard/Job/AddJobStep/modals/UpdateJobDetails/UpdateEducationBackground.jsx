@@ -109,7 +109,7 @@ function UpdateEducation({ data, handleAddData, handleUpdate, deleteData }) {
                 <Table className="w-full">
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-1/12">Index</TableHead>
+                      <TableHead className="w-1/12">#</TableHead>
                       <TableHead className="w-1/12 ">Course category</TableHead>
                       {/* <TableHead className="w-10/12">Description</TableHead> */}
                       <TableHead className="w-1/12 text-center">Points</TableHead>
@@ -176,7 +176,15 @@ function UpdateEducation({ data, handleAddData, handleUpdate, deleteData }) {
           )}
         </Card>
         {showModal && <AddEducation open={showModal} onHide={handleCloseModal} courseCategory={courseCategory} isUpdate={true} />}
-        {showUpdateModal && <UpdateEducationModal open={showUpdateModal} onHide={handleCloseUpdateModal} courseCategory={courseCategory} updateData={updateData} selectedEducations={data} />}
+        {showUpdateModal &&
+          <UpdateEducationModal
+            open={showUpdateModal}
+            onHide={handleCloseUpdateModal}
+            courseCategory={courseCategory}
+            updateData={updateData}
+            selectedEducations={data}
+          />
+        }
         <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={1} />
       </div>
     </>
