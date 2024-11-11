@@ -29,8 +29,8 @@ const ExamPage = () => {
   }
 
   const columns = [
-    { header: "Full Name", accessor: "fullName" },
-    {header: "Status", accessor: "status_name"},
+    { header: "Full Name", accessor: "fullName", columnSortable: true },
+    { header: "Status", accessor: "status_name" },
   ]
 
   useEffect(() => {
@@ -38,11 +38,16 @@ const ExamPage = () => {
   }, [])
   return (
     <div>
-      <ViewExam />
+
       {isLoading ? <Spinner /> :
         (
           <div className="p-3">
-            <DataTable columns={columns} data={candidates} autoIndex={true} />
+            <DataTable
+              columns={columns}
+              data={candidates}
+              autoIndex={true}
+              headerAction={<ViewExam />}
+            />
           </div>
         )
       }

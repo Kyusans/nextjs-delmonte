@@ -10,8 +10,8 @@ import InterviewPage from '../Interview/InterviewPage';
 import ViewApplicants from '../ViewApplicants/ViewApplicants';
 import ExamPage from '../Exam/ExamPage';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import JobDetails from './JobDetails/JobDetails';
-import UpdateJobMaster from './UpdateJobMaster/UpdateJobMaster';
+import JobDetails from './JobDetails';
+import UpdateJobMaster from './UpdateJobMaster';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);

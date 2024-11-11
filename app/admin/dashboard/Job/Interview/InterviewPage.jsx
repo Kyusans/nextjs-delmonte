@@ -79,7 +79,7 @@ const InterviewPage = () => {
 
   return (
     <div>
-      <ViewInterviewCriteria />
+      
       {isLoading ? (
         <Spinner />
       ) : (
@@ -90,6 +90,7 @@ const InterviewPage = () => {
             autoIndex={true}
             onRowClick={handleOnClickRow}
             idAccessor="cand_id"
+            headerAction={<ViewInterviewCriteria />}
           />
         </div>
       )}

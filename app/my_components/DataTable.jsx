@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
+import { ChevronsUpDown } from 'lucide-react';
 
 const DataTable = ({
   columns,
@@ -12,10 +13,13 @@ const DataTable = ({
   add,
   hideSearch = false,
   onRowClick,
-  idAccessor
+  idAccessor,
+  headerAction,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortColumn, setSortColumn] = useState(null);
+  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
 
   useEffect(() => {
@@ -24,14 +28,29 @@ const DataTable = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const sortedData = useMemo(() => {
+    let sorted = [...data];
+    if (sortColumn) {
+      sorted.sort((a, b) => {
+        const valA = a[sortColumn];
+        const valB = b[sortColumn];
+
+        if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+        if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    return sorted;
+  }, [data, sortColumn, sortOrder]);
+
   const filteredData = useMemo(() => {
-    return data.filter(item =>
+    return sortedData.filter(item =>
       columns.some(column =>
         column.accessor &&
         String(item[column.accessor]).toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
-  }, [data, columns, searchTerm]);
+  }, [sortedData, columns, searchTerm]);
 
   const totalPages = Math.max(1, Math.ceil(filteredData.length / itemsPerPage));
 
@@ -50,6 +69,15 @@ const DataTable = ({
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
+  };
+
+  const handleSort = (column) => {
+    if (sortColumn === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortOrder('asc');
+    }
   };
 
   const renderPaginationItems = () => {
@@ -140,8 +168,9 @@ const DataTable = ({
         <div className="flex items-center gap-2 mb-2 sm:mb-0">
           {title && <h2 className="text-lg font-bold">{title}</h2>}
           {add && add}
+          {headerAction && headerAction}
         </div>
-        <div>
+        <div className="flex w-full md:w-1/2 md:justify-end">
           {!hideSearch && (
             <Input
               type="text"
@@ -161,7 +190,18 @@ const DataTable = ({
                 <TableRow>
                   {autoIndex && <TableHead>#</TableHead>}
                   {columns.map((column, index) => (
-                    <TableHead key={index}>{column.header}</TableHead>
+                    <TableHead
+                      key={index}
+                      onClick={() => column.columnSortable && handleSort(column.accessor)}
+                      className={column.columnSortable ? 'cursor-pointer' : ''}
+                    >
+                      <div className="flex items-center gap-1">
+                        {column.header}
+                        {column.columnSortable && (
+                          <ChevronsUpDown className="h-4 w-4" />
+                        )}
+                      </div>
+                    </TableHead>
                   ))}
                 </TableRow>
               </TableHeader>

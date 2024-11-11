@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Edit } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner';
-import UpdateJobModal from '../../AddJobStep/modals/UpdateJobDetails/UpdateJobModal';
+import UpdateJobModal from '../AddJobStep/modals/UpdateJobDetails/UpdateJobModal';
 
 const JobDetails = ({ getSelectedJobs }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -67,7 +67,7 @@ const JobDetails = ({ getSelectedJobs }) => {
                 </ul>
               ))
             ) : (
-              <p>No duties and responsibilities found.</p>
+              <p className='text-primary'>No duties and responsibilities qualifications added yet.</p>
             )}
           </div>
           <div className='w-full px-3 mt-3'>
@@ -90,7 +90,7 @@ const JobDetails = ({ getSelectedJobs }) => {
               </>
             ) : (
               <>
-                <p className="ml-3">No educational background found.</p>
+                <p className="ml-3 text-primary">No educational background qualifications added yet.</p>
               </>
             )}
             <div className='text-sm my-3 font-bold flex items-center'>
@@ -112,7 +112,7 @@ const JobDetails = ({ getSelectedJobs }) => {
               </>
             ) : (
               <>
-                <p className="ml-3">No skills found.</p>
+                <p className="ml-3 text-primary">No skills qualifications added yet.</p>
               </>
             )}
             <div className='text-sm my-3 font-bold flex items-center'>
@@ -134,7 +134,7 @@ const JobDetails = ({ getSelectedJobs }) => {
               </>
             ) : (
               <>
-                <p className="ml-3">No trainings found.</p>
+                <p className="ml-3 text-primary">No trainings qualifications added yet.</p>
               </>
             )}
             <div className='text-sm my-3 font-bold flex items-center'>
@@ -156,7 +156,7 @@ const JobDetails = ({ getSelectedJobs }) => {
               </>
             ) : (
               <>
-                <p className="ml-3">No experience found.</p>
+                <p className="ml-3 text-primary">No experience qualifications added yet.</p>
               </>
             )}
             <div className='text-sm my-3 font-bold flex items-center'>
@@ -178,7 +178,7 @@ const JobDetails = ({ getSelectedJobs }) => {
               </>
             ) : (
               <>
-                <p className="ml-3">No knowledge and compliance found.</p>
+                <p className="ml-3 text-primary">No knowledge and compliance qualifications added yet.</p>
               </>
             )}
           </div>
