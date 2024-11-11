@@ -201,9 +201,7 @@ const DataTable = ({
                     >
                       <div className="flex items-center gap-1">
                         {column.header}
-                        {column.sortable && (
-                          <ChevronsUpDown className="h-4 w-4" />
-                        )}
+                        {column.sortable && <ChevronsUpDown className="h-4 w-4" />}
                       </div>
                     </TableHead>
                   ))}
@@ -214,8 +212,8 @@ const DataTable = ({
                   <TableRow
                     key={rowIndex}
                     onClick={() => {
-                      const rowIdentifier = idAccessor && row[idAccessor] ? row[idAccessor] : row;
-                      onRowClick && onRowClick(rowIdentifier);
+                      const rowIdentifier = idAccessor ? row[idAccessor] : row;
+                      if (onRowClick) onRowClick(rowIdentifier);
                     }}
                     className={onRowClick ? 'cursor-pointer' : ''}
                   >
@@ -229,9 +227,7 @@ const DataTable = ({
                         key={colIndex}
                         className={typeof column.className === 'function' ? column.className(row) : column.className || ''}
                       >
-                        {typeof column.accessor === 'function'
-                          ? column.accessor(row)
-                          : row[column.accessor]}
+                        {column.cell ? column.cell(row) : (typeof column.accessor === 'function' ? column.accessor(row) : row[column.accessor])}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -240,12 +236,12 @@ const DataTable = ({
             </Table>
           </div>
           {totalPages >= 2 && (
-            <div className='overflow-x-auto'>
+            <div className="overflow-x-auto">
               <Pagination className="mt-4">
                 <PaginationContent>
                   <PaginationItem>
                     <PaginationPrevious
-                      className='cursor-pointer'
+                      className="cursor-pointer"
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
                     />
@@ -253,7 +249,7 @@ const DataTable = ({
                   {renderPaginationItems()}
                   <PaginationItem>
                     <PaginationNext
-                      className='cursor-pointer'
+                      className="cursor-pointer"
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}
                     />

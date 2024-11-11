@@ -54,7 +54,6 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
 
   const columns = [
     { header: 'Full Name', accessor: 'FullName'},
-    { header: 'Email', accessor: 'cand_email' },
     {
       header: 'Total Points',
       accessor: (row) => `${row.points?.totalPoints || 0}/${row.points?.maxPoints || 0}`,

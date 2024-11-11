@@ -53,6 +53,29 @@ function SelectedJob({ open, onHide, jobId }) {
     }
   }, [getSelectedJobs, jobId, open]);
 
+  const handleChangeStatus = async (id, status) => {
+    try {
+      const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
+      const jsonData = {
+        jobId: retrieveData("jobId"),
+        candId: id,
+        status: status
+      }
+      console.log("jsonData: ", jsonData);
+      const formData = new FormData();
+      formData.append("json", JSON.stringify(jsonData));
+      formData.append("operation", "changeApplicantStatus");
+      const res = await axios.post(url, formData);
+      console.log("InterviewPage.jsx => handleChangeStatus(): ", res.data);
+      if (res.data !== 1) {
+        toast.error("There's something wrong");
+      }
+    } catch (error) {
+      toast.error("Network error");
+      console.log("InterviewPage.jsx => handleChangeStatus(): " + error);
+    }
+  }
+
   const handleClose = () => {
     sessionStorage.clear();
     // removeData("jobId");
@@ -107,10 +130,10 @@ function SelectedJob({ open, onHide, jobId }) {
                       <ViewApplicants datas={data} passingPercentage={data.jobPassing[0].passing_percentage} getSelectedJob={getSelectedJobs} />
                     </TabsContent>
                     <TabsContent value={3}>
-                      <InterviewPage interviewData={data.interview} getSelectedJob={getSelectedJobs} />
+                      <InterviewPage handleChangeStatus={handleChangeStatus} />
                     </TabsContent>
                     <TabsContent value={4}>
-                      <ExamPage examData={data.exam} getSelectedJob={getSelectedJobs} />
+                      <ExamPage handleChangeStatus={handleChangeStatus} />
                     </TabsContent>
                   </ScrollArea>
                 </Tabs>
