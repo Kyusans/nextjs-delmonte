@@ -29,7 +29,7 @@ const ExamPage = () => {
   }
 
   const columns = [
-    { header: "Full Name", accessor: "fullName", columnSortable: true },
+    { header: "Full Name", accessor: "fullName", sortable: true },
     { header: "Status", accessor: "status_name" },
   ]
 

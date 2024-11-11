@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { ChevronsUpDown } from 'lucide-react';
@@ -15,11 +15,12 @@ const DataTable = ({
   onRowClick,
   idAccessor,
   headerAction,
+  tableCaption
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortColumn, setSortColumn] = useState(null);
-  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' or 'desc'
+  const [sortOrder, setSortOrder] = useState('asc');
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
 
   useEffect(() => {
@@ -32,8 +33,8 @@ const DataTable = ({
     let sorted = [...data];
     if (sortColumn) {
       sorted.sort((a, b) => {
-        const valA = a[sortColumn];
-        const valB = b[sortColumn];
+        const valA = typeof sortColumn === 'function' ? sortColumn(a) : a[sortColumn];
+        const valB = typeof sortColumn === 'function' ? sortColumn(b) : b[sortColumn];
 
         if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
         if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
@@ -47,7 +48,9 @@ const DataTable = ({
     return sortedData.filter(item =>
       columns.some(column =>
         column.accessor &&
-        String(item[column.accessor]).toLowerCase().includes(searchTerm.toLowerCase())
+        String(typeof column.accessor === 'function' ? column.accessor(item) : item[column.accessor])
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
       )
     );
   }, [sortedData, columns, searchTerm]);
@@ -186,18 +189,19 @@ const DataTable = ({
         <>
           <div className="overflow-x-auto">
             <Table>
+              {tableCaption && <TableCaption>{tableCaption}</TableCaption>}
               <TableHeader>
                 <TableRow>
                   {autoIndex && <TableHead>#</TableHead>}
                   {columns.map((column, index) => (
                     <TableHead
                       key={index}
-                      onClick={() => column.columnSortable && handleSort(column.accessor)}
-                      className={column.columnSortable ? 'cursor-pointer' : ''}
+                      onClick={() => column.sortable && handleSort(column.accessor)}
+                      className={column.sortable ? 'cursor-pointer' : ''}
                     >
                       <div className="flex items-center gap-1">
                         {column.header}
-                        {column.columnSortable && (
+                        {column.sortable && (
                           <ChevronsUpDown className="h-4 w-4" />
                         )}
                       </div>
@@ -225,7 +229,9 @@ const DataTable = ({
                         key={colIndex}
                         className={typeof column.className === 'function' ? column.className(row) : column.className || ''}
                       >
-                        {column.accessor ? row[column.accessor] : column.cell(row)}
+                        {typeof column.accessor === 'function'
+                          ? column.accessor(row)
+                          : row[column.accessor]}
                       </TableCell>
                     ))}
                   </TableRow>
