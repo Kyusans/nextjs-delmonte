@@ -53,7 +53,7 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
   };
 
   const columns = [
-    { header: 'Full Name', accessor: 'FullName'},
+    { header: 'Full Name', accessor: 'FullName' },
     {
       header: 'Total Points',
       accessor: (row) => `${row.points?.totalPoints || 0}/${row.points?.maxPoints || 0}`,
@@ -61,7 +61,7 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
     },
     {
       header: 'Percentage',
-      accessor: (row) => row.points?.percentage ? `${row.points.percentage}%` : 'N/A',
+      accessor: (row) => `${row.points.percentage}%`,
       className: (row) => `${row.points?.percentage >= passingPercentage ? 'text-green-500' : 'text-red-500'}`,
     },
     { header: 'Status', accessor: 'status_name' }

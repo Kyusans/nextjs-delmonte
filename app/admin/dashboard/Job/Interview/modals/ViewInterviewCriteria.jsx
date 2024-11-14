@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import ShowAlert from '@/components/ui/show-alert'
 import axios from 'axios'
 import { toast } from 'sonner'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import UpdateInterviewPassingPercentage from './UpdateInterview/UpdateInterviewPassingPercentage'
@@ -12,6 +12,7 @@ import AddInterviewCriteria from './AddInterview/AddInterviewCriteria'
 import UpdateInterviewCriteria from './UpdateInterview/UpdateInterviewCriteria'
 import Spinner from '@/components/ui/spinner'
 import { retrieveData } from '@/app/utils/storageUtils'
+import { ScrollArea } from '@/components/ui/scroll-area'
 
 function ViewInterviewCriteria() {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,7 +35,8 @@ function ViewInterviewCriteria() {
     setData([...data, {
       criteria_inter_name: values.name,
       inter_criteria_points: values.points,
-      interview_categ_name: values.category
+      interview_categ_name: values.category,
+      inter_criteria_question: values.question
     }
     ]);
   }
@@ -81,7 +83,7 @@ function ViewInterviewCriteria() {
       const res = await axios.post(url, formData);
       console.log("res.data: ", res.data);
       if (res.data === 1) {
-        // getSelectedJob();
+        getJobInterviewDetails();
         toast.success("Criteria deleted successfully");
       }
     }
@@ -130,55 +132,58 @@ function ViewInterviewCriteria() {
         <SheetTrigger>
           <Button>View criteria</Button>
         </SheetTrigger>
-        <SheetContent side="bottom" className="overflow-y-scroll">
+        <SheetContent side="bottom" >
           <SheetHeader className="mb-5">
             <SheetTitle>Interview criteria</SheetTitle>
           </SheetHeader>
-          {isLoading ? <Spinner /> : (
-            <div>
-              {data.length === 0 ? (
-                <div className='flex flex-col justify-center items-center gap-3'>
-                  <div className='font-bold text-xl mt-3'>No criteria for interview</div>
-                  <Button onClick={openShowModal}>
-                    <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
-                  </Button>
-                </div>
-              ) : (
-                <div>
-                  <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
-                    <div className="ml-2">
-                      <Button onClick={openShowModal} className="md:mb-3">
-                        <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
-                      </Button>
+          <ScrollArea className="h-screen md:h-[80vh] overflow-y-auto">
+            {isLoading ? <Spinner /> : (
+              <div>
+                {data.length === 0 ? (
+                  <div className='flex flex-col justify-center items-center gap-3'>
+                    <div className='font-bold text-xl mt-3'>No criteria for interview</div>
+                    <Button onClick={openShowModal}>
+                      <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
+                    </Button>
+                  </div>
+                ) : (
+                  <div>
+                    <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+                      <div className="ml-2">
+                        <Button onClick={openShowModal} className="md:mb-3">
+                          <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
+                        </Button>
+                      </div>
+                      <div className='flex md:justify-end items-end ml-2 md:mx-5 mb-3'>
+                        <p>Passing percentage: {interviewPassingPercentage}%</p>
+                        <UpdateInterviewPassingPercentage currentPassingPercentage={interviewPassingPercentage} getJobInterviewDetails={getJobInterviewDetails} />
+                      </div>
                     </div>
-                    <div className='flex md:justify-end items-end ml-2 md:mx-5 mb-3'>
-                      <p>Passing percentage: {interviewPassingPercentage}%</p>
-                      <UpdateInterviewPassingPercentage currentPassingPercentage={interviewPassingPercentage} getJobInterviewDetails={getJobInterviewDetails} />
+                    <div className={`grid ${data.length > 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-2`}>
+                      {data.map((item, index) => (
+                        <Card key={index}>
+                          <CardContent>
+                            <CardHeader>
+                              <div className='flex justify-end gap-3'>
+                                <Edit2 className='h-5 w-5 mr-1 hover:cursor-pointer' />
+                                <Trash2 className='h-5 w-5 mr-1 hover:cursor-pointer' onClick={() => handleRemoveList(item.inter_criteria_id)} />
+                              </div>
+                              <CardTitle> {item.criteria_inter_name}</CardTitle>
+                              <CardDescription>{item.inter_criteria_question}</CardDescription>
+                            </CardHeader>
+                            <CardFooter>
+                              <Badge variant="secondary" className="mr-2">{item.interview_categ_name}</Badge>
+                              <Badge>{item.inter_criteria_points} points</Badge>
+                            </CardFooter>
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
                   </div>
-                  <div className={`grid ${data.length > 2 ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1"} gap-2`}>
-                    {data.map((item, index) => (
-                      <Card key={index}>
-                        <CardContent>
-                          <CardHeader>
-                            <div className='flex justify-end gap-3'>
-                              <Edit2 className='h-5 w-5 mr-1 hover:cursor-pointer' />
-                              <Trash2 className='h-5 w-5 mr-1 hover:cursor-pointer' onClick={() => handleRemoveList(item.inter_criteria_id)} />
-                            </div>
-                            <CardTitle> {item.criteria_inter_name}</CardTitle>
-                          </CardHeader>
-                          <CardFooter>
-                            <Badge variant="secondary" className="mr-2">{item.interview_categ_name}</Badge>
-                            <Badge>{item.inter_criteria_points} points</Badge>
-                          </CardFooter>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
+          </ScrollArea>
         </SheetContent>
       </Sheet>
       {
@@ -205,6 +210,7 @@ function ViewInterviewCriteria() {
       <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} duration={0} />
     </div>
   );
+
 }
 
 export default ViewInterviewCriteria;

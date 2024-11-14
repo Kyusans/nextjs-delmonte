@@ -24,7 +24,13 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
     }).refine((value) => !isNaN(Number(value)), {
       message: "Points must be a number",
     }),
+    interviewQuestion: z.string().min(1, {
+      message: "This field is required",
+    }),
     interviewCriteria: z.number().min(1, {
+      message: "This field is required",
+    }),
+    interviewCategory: z.number().min(1, {
       message: "This field is required",
     }),
   });
@@ -33,6 +39,7 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
     resolver: zodResolver(formSchema),
     defaultValues: {
       points: "",
+      interviewQuestion: "",
       interviewCriteria: 0,
       interviewCategory: 0,
     },
@@ -72,6 +79,7 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
   };
 
   const onSubmit = async (values) => {
+    console.log("AddInterviewCriteria.jsx => onSubmit():", values);
     setIsLoading(true);
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
@@ -83,6 +91,7 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
         jobId: retrieveData("jobId"),
         criteriaId: values.interviewCriteria,
         points: values.points,
+        question: values.interviewQuestion,
       };
       const formData = new FormData();
       formData.append("operation", "addInterviewCriteriaMaster");
@@ -100,6 +109,7 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
             (item) => item.value === form.getValues("interviewCriteria")
           ).label,
           points: values.points,
+          question: values.interviewQuestion,
         };
 
         console.log("returnData: ", returnData);
@@ -153,37 +163,52 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
                     )}
                   />
                   {form.getValues("interviewCategory") !== 0 && (
-                    <FormField
-                      name="interviewCriteria"
-                      control={form.control}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Interview Criteria</FormLabel>
-                          <ComboBox
-                            list={interviewCriteriaList}
-                            subject="criteria"
-                            value={field.value}
-                            onChange={field.onChange}
-                            styles={"bg-background"}
-                          />
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <>
+                      <FormField
+                        name="interviewCriteria"
+                        control={form.control}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Interview Criteria</FormLabel>
+                            <ComboBox
+                              list={interviewCriteriaList}
+                              subject="criteria"
+                              value={field.value}
+                              onChange={field.onChange}
+                              styles={"bg-background"}
+                            />
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="interviewQuestion"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Interview Question</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter question" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="points"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Points</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter points" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </>
                   )}
-                  <FormField
-                    control={form.control}
-                    name="points"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Points</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter points" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
                 </div>
               </div>
               <div className="flex flex-cols gap-2 justify-end mt-5">

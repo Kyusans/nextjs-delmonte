@@ -13,7 +13,6 @@ const ExamPage = ({ handleChangeStatus }) => {
   const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
   const [selectedCandId, setSelectedCandId] = useState(null);
 
-
   const handleOpenInterviewModal = () => {
     setIsInterviewModalOpen(true);
   };
