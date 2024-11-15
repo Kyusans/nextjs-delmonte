@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
+import { ChevronsUpDown } from 'lucide-react';
 
 const DataTable = ({
   columns,
@@ -12,10 +13,14 @@ const DataTable = ({
   add,
   hideSearch = false,
   onRowClick,
-  idAccessor
+  idAccessor,
+  headerAction,
+  tableCaption
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortColumn, setSortColumn] = useState(null);
+  const [sortOrder, setSortOrder] = useState('asc');
   const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 0);
 
   useEffect(() => {
@@ -24,14 +29,31 @@ const DataTable = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const sortedData = useMemo(() => {
+    let sorted = [...data];
+    if (sortColumn) {
+      sorted.sort((a, b) => {
+        const valA = typeof sortColumn === 'function' ? sortColumn(a) : a[sortColumn];
+        const valB = typeof sortColumn === 'function' ? sortColumn(b) : b[sortColumn];
+
+        if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+        if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    return sorted;
+  }, [data, sortColumn, sortOrder]);
+
   const filteredData = useMemo(() => {
-    return data.filter(item =>
+    return sortedData.filter(item =>
       columns.some(column =>
         column.accessor &&
-        String(item[column.accessor]).toLowerCase().includes(searchTerm.toLowerCase())
+        String(typeof column.accessor === 'function' ? column.accessor(item) : item[column.accessor])
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase())
       )
     );
-  }, [data, columns, searchTerm]);
+  }, [sortedData, columns, searchTerm]);
 
   const totalPages = Math.max(1, Math.ceil(filteredData.length / itemsPerPage));
 
@@ -50,6 +72,15 @@ const DataTable = ({
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
+  };
+
+  const handleSort = (column) => {
+    if (sortColumn === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(column);
+      setSortOrder('asc');
+    }
   };
 
   const renderPaginationItems = () => {
@@ -140,8 +171,9 @@ const DataTable = ({
         <div className="flex items-center gap-2 mb-2 sm:mb-0">
           {title && <h2 className="text-lg font-bold">{title}</h2>}
           {add && add}
+          {headerAction && headerAction}
         </div>
-        <div>
+        <div className="flex w-full md:w-1/2 md:justify-end">
           {!hideSearch && (
             <Input
               type="text"
@@ -157,11 +189,21 @@ const DataTable = ({
         <>
           <div className="overflow-x-auto">
             <Table>
+              {tableCaption && <TableCaption>{tableCaption}</TableCaption>}
               <TableHeader>
                 <TableRow>
                   {autoIndex && <TableHead>#</TableHead>}
                   {columns.map((column, index) => (
-                    <TableHead key={index}>{column.header}</TableHead>
+                    <TableHead
+                      key={index}
+                      onClick={() => column.sortable && handleSort(column.accessor)}
+                      className={column.sortable ? 'cursor-pointer' : ''}
+                    >
+                      <div className="flex items-center gap-1">
+                        {column.header}
+                        {column.sortable && <ChevronsUpDown className="h-4 w-4" />}
+                      </div>
+                    </TableHead>
                   ))}
                 </TableRow>
               </TableHeader>
@@ -170,8 +212,8 @@ const DataTable = ({
                   <TableRow
                     key={rowIndex}
                     onClick={() => {
-                      const rowIdentifier = idAccessor && row[idAccessor] ? row[idAccessor] : row;
-                      onRowClick && onRowClick(rowIdentifier);
+                      const rowIdentifier = idAccessor ? row[idAccessor] : row;
+                      if (onRowClick) onRowClick(rowIdentifier);
                     }}
                     className={onRowClick ? 'cursor-pointer' : ''}
                   >
@@ -185,7 +227,7 @@ const DataTable = ({
                         key={colIndex}
                         className={typeof column.className === 'function' ? column.className(row) : column.className || ''}
                       >
-                        {column.accessor ? row[column.accessor] : column.cell(row)}
+                        {column.cell ? column.cell(row) : (typeof column.accessor === 'function' ? column.accessor(row) : row[column.accessor])}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -194,12 +236,12 @@ const DataTable = ({
             </Table>
           </div>
           {totalPages >= 2 && (
-            <div className='overflow-x-auto'>
+            <div className="overflow-x-auto">
               <Pagination className="mt-4">
                 <PaginationContent>
                   <PaginationItem>
                     <PaginationPrevious
-                      className='cursor-pointer'
+                      className="cursor-pointer"
                       onClick={() => handlePageChange(currentPage - 1)}
                       disabled={currentPage === 1}
                     />
@@ -207,7 +249,7 @@ const DataTable = ({
                   {renderPaginationItems()}
                   <PaginationItem>
                     <PaginationNext
-                      className='cursor-pointer'
+                      className="cursor-pointer"
                       onClick={() => handlePageChange(currentPage + 1)}
                       disabled={currentPage === totalPages}
                     />

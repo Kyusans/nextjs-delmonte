@@ -7,7 +7,7 @@ import Spinner from '@/components/ui/spinner';
 import DataTable from '@/app/my_components/DataTable';
 import SelectedApplicant from '../modal/SelectedApplicant';
 
-const InterviewPage = () => {
+const InterviewPage = ({ handleChangeStatus }) => {
   const [candidates, setCandidates] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
@@ -40,29 +40,6 @@ const InterviewPage = () => {
     }
   };
 
-  const handleChangeStatus = async (id, status) => {
-    try {
-      const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
-      const jsonData = {
-        jobId: retrieveData("jobId"),
-        candId: id,
-        status: status
-      }
-      console.log("jsonData: ", jsonData);
-      const formData = new FormData();
-      formData.append("json", JSON.stringify(jsonData));
-      formData.append("operation", "changeApplicantStatus");
-      const res = await axios.post(url, formData);
-      console.log("InterviewPage.jsx => handleChangeStatus(): ", res.data);
-      if (res.data !== 1) {
-        toast.error("There's something wrong");
-      }
-    } catch (error) {
-      toast.error("Network error");
-      console.log("InterviewPage.jsx => handleChangeStatus(): " + error);
-    }
-  }
-
   const handleOnClickRow = (id) => {
     setSelectedCandId(id);
     handleOpenInterviewModal();
@@ -79,7 +56,6 @@ const InterviewPage = () => {
 
   return (
     <div>
-      <ViewInterviewCriteria />
       {isLoading ? (
         <Spinner />
       ) : (
@@ -90,6 +66,7 @@ const InterviewPage = () => {
             autoIndex={true}
             onRowClick={handleOnClickRow}
             idAccessor="cand_id"
+            headerAction={<ViewInterviewCriteria />}
           />
         </div>
       )}
