@@ -26,20 +26,25 @@ function ViewInterviewCriteria() {
 
   const closeShowModal = (status) => {
     if (status !== 0) {
-      // getSelectedJob();
+      getJobInterviewDetails();
     }
     setShowAddModal(false);
   };
 
   const addCriteria = (values) => {
-    setData([...data, {
-      criteria_inter_name: values.name,
-      inter_criteria_points: values.points,
-      interview_categ_name: values.category,
-      inter_criteria_question: values.question
-    }
+    setData((prevData) => [
+      ...prevData,
+      {
+        criteria_inter_name: values.name,
+        inter_criteria_points: values.points,
+        interview_categ_name: values.category,
+        inter_criteria_question: values.question,
+        criteria_inter_id: values.criteriaId,
+      },
     ]);
-  }
+  };
+
+
 
   // update interview criteria modal diri
   const [selectedData, setSelectedData] = useState({});
