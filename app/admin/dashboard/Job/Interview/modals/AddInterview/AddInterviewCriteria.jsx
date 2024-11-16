@@ -79,23 +79,30 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
   };
 
   const onSubmit = async (values) => {
-    console.log("AddInterviewCriteria.jsx => onSubmit():", values);
-    setIsLoading(true);
+    console.log("Submitted values:", values);
+    console.log("Current interviewCriteria list:", interviewCriteria);
+    const isDuplicate = interviewCriteria.some(
+      (element) => element.criteria_inter_id === values.interviewCriteria
+    );
+
+    if (isDuplicate) {
+      toast.error("Criteria already exists");
+      setIsLoading(false);
+      return;
+    }
     try {
-      const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
-      if (interviewCriteria.some((element) => element.criteria_inter_id === values.interviewCriteria)) {
-        toast.error("Criteria already exists");
-        return;
-      }
       const jsonData = {
         jobId: retrieveData("jobId"),
         criteriaId: values.interviewCriteria,
         points: values.points,
         question: values.interviewQuestion,
       };
+
+      const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
       const formData = new FormData();
       formData.append("operation", "addInterviewCriteriaMaster");
       formData.append("json", JSON.stringify(jsonData));
+
       const res = await axios.post(url, formData);
 
       if (res.data !== 0) {
@@ -104,20 +111,19 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
         const returnData = {
           category: interviewCategory.find(
             (item) => item.value === form.getValues("interviewCategory")
-          ).label,
+          )?.label,
           name: allInterviewCriteriaList.find(
             (item) => item.value === form.getValues("interviewCriteria")
-          ).label,
+          )?.label,
           points: values.points,
           question: values.interviewQuestion,
+          criteriaId: values.interviewCriteria,
         };
-
-        console.log("returnData: ", returnData);
         addCriteria(returnData);
       }
     } catch (error) {
       toast.error("Network error");
-      console.log("AddInterviewCriteria.jsx => onSubmit(): " + error);
+      console.error("Error in onSubmit:", error);
     } finally {
       setIsLoading(false);
     }

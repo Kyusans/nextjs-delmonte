@@ -1,86 +1,97 @@
 import React, { useEffect, useState } from 'react';
-import { Input } from '@/components/ui/input';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { retrieveData, storeData } from '@/app/utils/storageUtils';
+import { retrieveData } from '@/app/utils/storageUtils';
 import { toast } from 'sonner';
 import axios from 'axios';
 import SelectedApplicant from '../modal/SelectedApplicant';
 import SetToInterviewModal from './modal/SetToInterviewModal';
 import UpdateJobPassingPercentage from './modal/UpdateJobPassingPercentage';
-import { Filter } from 'lucide-react';
 import DataTable from '@/app/my_components/DataTable';
+import Spinner from '@/components/ui/spinner';
 
-const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
-  const [data, setData] = useState({});
+const ViewApplicants = ({ handleChangeStatus }) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [data, setData] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("0");
   const [showSelectedApplicant, setShowSelectedApplicant] = useState(false);
   const [selectedApplicantId, setSelectedApplicantId] = useState(0);
   const [statusName, setStatusName] = useState("");
+  const [passingPercentage, setPassingPercentage] = useState(0);
 
   const handleShowSelectedApplicant = (id, statusName) => {
+    if (statusName === "Pending") {
+      handleChangeStatus(id, 2);
+      setStatusName("Process");
+    } else {
+      setStatusName(statusName);
+    }
     setSelectedApplicantId(id);
-    setStatusName(statusName);
     setShowSelectedApplicant(true);
   };
 
   const handleCloseSelectedApplicant = () => {
-    getSelectedJob();
+    getPendingDetails();
     setShowSelectedApplicant(false);
   };
 
-  const handleChangeStatus = async (id, status) => {
+  const getPendingDetails = async () => {
+    setIsLoading(true);
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
-      const jsonData = {
-        jobId: retrieveData("jobId"),
-        candId: id,
-        status: status
-      };
-      console.log("jsonData: ", jsonData);
       const formData = new FormData();
+      const jsonData = { jobId: retrieveData("jobId") };
+      console.log("jsonData: ", jsonData);
+      formData.append("operation", "getPendingDetails");
       formData.append("json", JSON.stringify(jsonData));
-      formData.append("operation", "changeApplicantStatus");
-      const res = await axios.post(url, formData);
-      console.log("ViewApplicants.jsx => handleChangeStatus(): ", res.data);
-      if (res.data !== 1) {
-        toast.error("There's something wrong");
-      }
+      const response = await axios.post(url, formData);
+      const res = response.data;
+      setData(res.candidates || []);
+      setPassingPercentage(res.passingPercentage[0].passing_percentage || 0);
+      console.log("ViewApplicants.jsx => getPendingDetails(): ", res);
     } catch (error) {
       toast.error("Network error");
-      console.log("ViewApplicants.jsx => handleChangeStatus(): " + error);
+      console.log("ViewApplicants.jsx => getPendingDetails(): " + error);
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }
 
   const columns = [
     { header: 'Full Name', accessor: 'FullName' },
     {
       header: 'Total Points',
-      accessor: (row) => `${row.points?.totalPoints || 0}/${row.points?.maxPoints || 0}`,
-      className: (row) => `${row.points?.percentage >= passingPercentage ? 'text-green-500' : 'text-red-500'}`,
+      accessor: (row) => `${row.totalPoints || 0}/${row.maxPoints || 0}`,
+      className: (row) => `${row.percentage >= passingPercentage ? 'text-green-500' : 'text-red-500'}`,
     },
     {
       header: 'Percentage',
-      accessor: (row) => `${row.points.percentage}%`,
-      className: (row) => `${row.points?.percentage >= passingPercentage ? 'text-green-500' : 'text-red-500'}`,
+      accessor: "percentage",
+      className: (row) => `${row.percentage >= passingPercentage ? 'text-green-500' : 'text-red-500'}`,
+      sortable: true
     },
     { header: 'Status', accessor: 'status_name' }
   ];
 
   useEffect(() => {
-    console.log("datas: ", datas.candidates);
-    setData(datas);
-  }, [datas]);
+    getPendingDetails();
+  }, []);
 
   return (
     <div>
       <div className='p-3'>
-        <DataTable
-          columns={columns}
-          data={datas.candidates}
-          onRowClick={(row) => handleShowSelectedApplicant(row.cand_id, row.status_name)}
-          headerAction={<SetToInterviewModal datas={datas["candidates"]} passingPercentage={passingPercentage} getSelectedJob={getSelectedJob} />}
-        />
+        {isLoading ? <Spinner /> :
+          <DataTable
+            columns={columns}
+            data={data}
+            onRowClick={(row) => handleShowSelectedApplicant(row.cand_id, row.status_name)}
+            headerAction={<SetToInterviewModal datas={data} passingPercentage={passingPercentage} getPendingCandidates={getPendingDetails} />}
+            tableCaption={
+              <div className="flex items-center justify-center ml-1 md:mx-3 ">
+                <p>Passing percentage: {passingPercentage ? passingPercentage : 0}%</p>
+                <UpdateJobPassingPercentage currentPassingPercentage={passingPercentage} getSelectedJob={getPendingDetails} />
+              </div>
+            }
+          />
+        }
       </div>
 
       {showSelectedApplicant && (
@@ -95,5 +106,6 @@ const ViewApplicants = ({ datas, passingPercentage, getSelectedJob }) => {
     </div>
   );
 };
+
 
 export default ViewApplicants;
