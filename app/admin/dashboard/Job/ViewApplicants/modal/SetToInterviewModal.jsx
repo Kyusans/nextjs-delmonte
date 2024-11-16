@@ -15,7 +15,7 @@ import axios from 'axios';
 import Spinner from '@/components/ui/spinner';
 
 
-const SetToInterviewModal = ({ datas, passingPercentage, getSelectedJob }) => {
+const SetToInterviewModal = ({ datas, passingPercentage, getPendingCandidates }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -57,8 +57,8 @@ const SetToInterviewModal = ({ datas, passingPercentage, getSelectedJob }) => {
       console.log("res: ", res);
 
       if (res.data === 1) {
-        getSelectedJob();
-        toast.success("Candidates set to interview successfully");
+        getPendingCandidates();
+        toast.success("Set to interview successfully");
         form.reset();
         setIsOpen(false);
       } else {
@@ -85,7 +85,7 @@ const SetToInterviewModal = ({ datas, passingPercentage, getSelectedJob }) => {
       console.log("datas: ", datas);
       const filteredData = datas.filter(data =>
         data.status_name === "Pending" || data.status_name === "Process" &&
-        data.points.percentage >= passingPercentage
+        data.percentage >= passingPercentage
       );
       console.log("datas: ", filteredData);
       setData(filteredData);
@@ -107,7 +107,7 @@ const SetToInterviewModal = ({ datas, passingPercentage, getSelectedJob }) => {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Set all new passed candidates to interview</DialogTitle>
+          <DialogTitle>Set all passed candidates to interview</DialogTitle>
         </DialogHeader>
         <Separator className="mt-2" />
         {isLoading ? <Spinner /> :

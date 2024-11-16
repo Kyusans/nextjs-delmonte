@@ -1,4 +1,4 @@
-import { removeData, storeData } from '@/app/utils/storageUtils';
+import { removeData, retrieveData, storeData } from '@/app/utils/storageUtils';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Spinner from '@/components/ui/spinner';
@@ -118,7 +118,7 @@ function SelectedJob({ open, onHide, jobId }) {
                 <Tabs defaultValue={selectedTab} className="h-full flex flex-col" onValueChange={(value) => setSelectedTab(value)}>
                   <TabsList>
                     <TabsTrigger value={1}>Details</TabsTrigger>
-                    <TabsTrigger value={2}>Applicants</TabsTrigger>
+                    <TabsTrigger value={2}>Pending</TabsTrigger>
                     <TabsTrigger value={3}>Interview</TabsTrigger>
                     <TabsTrigger value={4}>Exam</TabsTrigger>
                   </TabsList>
@@ -127,7 +127,7 @@ function SelectedJob({ open, onHide, jobId }) {
                       <JobDetails getSelectedJobs={getSelectedJobs} />
                     </TabsContent>
                     <TabsContent value={2}>
-                      <ViewApplicants datas={data} passingPercentage={data.jobPassing[0].passing_percentage} getSelectedJob={getSelectedJobs} />
+                      <ViewApplicants handleChangeStatus={handleChangeStatus} />
                     </TabsContent>
                     <TabsContent value={3}>
                       <InterviewPage handleChangeStatus={handleChangeStatus} />

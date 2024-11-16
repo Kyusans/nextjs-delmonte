@@ -81,8 +81,6 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
   const onSubmit = async (values) => {
     console.log("Submitted values:", values);
     console.log("Current interviewCriteria list:", interviewCriteria);
-
-    // Duplicate check
     const isDuplicate = interviewCriteria.some(
       (element) => element.criteria_inter_id === values.interviewCriteria
     );
@@ -92,8 +90,6 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
       setIsLoading(false);
       return;
     }
-
-    // Proceed with adding if no duplicate is found
     try {
       const jsonData = {
         jobId: retrieveData("jobId"),
@@ -121,9 +117,8 @@ function AddInterviewCriteria({ open, onHide, interviewCriteria, addCriteria }) 
           )?.label,
           points: values.points,
           question: values.interviewQuestion,
-          criteriaId: values.interviewCriteria, // ensure criteriaId is returned
+          criteriaId: values.interviewCriteria,
         };
-
         addCriteria(returnData);
       }
     } catch (error) {
