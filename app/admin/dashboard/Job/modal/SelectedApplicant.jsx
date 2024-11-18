@@ -21,6 +21,7 @@ import ConductInterview from "./ConductInterview";
 import InterviewResult from "./InterviewResult";
 import ExamResult from "./ExamResult";
 import JobOffer from "./JobOffer";
+import SetToInterviewModal from "../ViewApplicants/modal/SetToInterviewModal";
 
 function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatus }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -70,11 +71,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
     setIsLoading(true);
     try {
       if (status === 1) {
-        if (alertMessage === "Are you sure you want to set this applicant for interview?") {
-          await handleChangeStatus(candId, 6);
-          toast.success("Applicant set for interview");
-          setStatus("Interview");
-        } else if (alertMessage === "Are you sure you want to proceed to job offer?") {
+        if (alertMessage === "Are you sure you want to proceed to job offer?") {
           await handleChangeStatus(candId, 8);
           toast.success("Applicant proceeded to Job Offer");
           setStatus("Job Offer");
@@ -90,21 +87,27 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
     }
   };
 
-  const handleShowInterviewAlert = () => {
-    handleShowAlert("Are you sure you want to set this applicant for interview?");
-  };
-
   const handleShowBackgroundCheckAlert = () => {
     handleShowAlert("Are you sure you want to proceed to job offer?");
   };
+
+  const handleSetToInterview = () => {
+    toast.success("Applicant set for interview");
+    setStatus("Interview");
+  }
+
+  // const handleShowInterviewAlert = () => {
+  //   handleShowAlert("Are you sure you want to set this applicant for interview?");
+  // };
+
+  // const handleCloseConductInterview = () => {
+  //   setShowConductInterview(false);
+  // };
 
   // modal for conduct interview
   const [showConductInterview, setShowConductInterview] = useState(false);
   const handleShowConductInterview = () => {
     setShowConductInterview(true);
-  };
-  const handleCloseConductInterview = () => {
-    setShowConductInterview(false);
   };
 
   const handleInterviewChangeStatus = async (status) => {
@@ -152,7 +155,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                 </SheetDescription> */}
               </div>
               <div className="ml-auto px-5">
-                {status === "Process" && (<Button onClick={() => handleShowInterviewAlert()}>Set for inverview</Button>)}
+                {status === "Process" && (<SetToInterviewModal datas={data.candidateInformation} getPendingCandidates={handleSetToInterview} isBatch={false} />)}
                 {status === "Interview" && (<Button onClick={() => handleShowConductInterview()}>Interview applicant</Button>)}
                 {status === "Background Check" && (<Button onClick={() => handleShowBackgroundCheckAlert()}>Background check</Button>)}
                 {status === "Job Offer" && isJobOffer === 0 && (<JobOffer candId={candId} changeStatus={handleJobOfferChangeStatus} />)}
@@ -691,14 +694,14 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
         </SheetContent>
       </Sheet>
       <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
-      {showConductInterview && (
+      {/* {showConductInterview && (
         <ConductInterview
           open={showConductInterview}
           onHide={handleCloseConductInterview}
           candId={candId}
           handleInterviewChangeStatus={handleInterviewChangeStatus}
         />
-      )}
+      )} */}
     </>
   );
 }

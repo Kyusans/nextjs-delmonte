@@ -1,9 +1,8 @@
 import DataTable from '@/app/my_components/DataTable';
 import DatePicker from '@/app/my_components/DatePicker';
 import { Button } from '@/components/ui/button'
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList } from '@/components/ui/tabs';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner';
@@ -15,7 +14,7 @@ import axios from 'axios';
 import Spinner from '@/components/ui/spinner';
 
 
-const SetToInterviewModal = ({ datas, passingPercentage, getPendingCandidates }) => {
+const SetToInterviewModal = ({ datas, passingPercentage = 0, getPendingCandidates, isBatch = true }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -36,22 +35,27 @@ const SetToInterviewModal = ({ datas, passingPercentage, getPendingCandidates })
     setIsLoading(true);
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
-      const candidates = data.map((candidate) => ({
+
+      const candidates = isBatch ? data.map((candidate) => ({
         fullName: candidate.FullName,
         candId: candidate.cand_id,
         candEmail: candidate.cand_email,
-      }));
+      })) : [{
+
+        fullName: data.cand_lastname + ", " + data.cand_firstname,
+        candId: data.cand_id,
+        candEmail: data.cand_email
+      }];
 
       const jsonData = {
         candidates: candidates,
         jobId: retrieveData("jobId"),
         date: values.date,
-      }
-
+      };
       const formData = new FormData();
+      console.log("jsonData: ", jsonData);
       formData.append("operation", "batchSetInterview");
       formData.append("json", JSON.stringify(jsonData));
-      console.log("jsonData: ", jsonData);
 
       const res = await axios.post(url, formData);
       console.log("res: ", res);
@@ -81,33 +85,37 @@ const SetToInterviewModal = ({ datas, passingPercentage, getPendingCandidates })
   }
 
   useEffect(() => {
+    console.log("datas: ", datas);
     if (isOpen) {
-      console.log("datas: ", datas);
-      const filteredData = datas.filter(data =>
-        data.status_name === "Pending" || data.status_name === "Process" &&
-        data.percentage >= passingPercentage
-      );
-      console.log("datas: ", filteredData);
-      setData(filteredData);
-      if (filteredData.length === 0) {
-        setIsOpen(false);
-        toast.error("No candidates to set to interview");
+      if (isBatch) {
+        const filteredData = datas.filter(data =>
+          data.status_name === "Pending" || data.status_name === "Process" &&
+          data.percentage >= passingPercentage
+        );
+        console.log("datas: ", filteredData);
+        setData(filteredData);
+        if (filteredData.length === 0) {
+          setIsOpen(false);
+          toast.error("No candidates to set to interview");
+        }
+      } else {
+        setData(datas);
       }
     }
-  }, [datas, isOpen, passingPercentage])
+  }, [data, datas, isBatch, isOpen, passingPercentage]);
 
   const columns = [
-    { header: 'Full Name', accessor: 'FullName'},
+    { header: 'Full Name', accessor: 'FullName' },
     { header: 'Status', accessor: 'status_name' },
   ];
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger>
-        <Button className="mr-1">Set all to interview</Button>
+        <Button className="mr-1">{isBatch ? "Batch set to interview" : "Set to interview"}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Set all passed candidates to interview</DialogTitle>
+          <DialogTitle>{isBatch ? "Set all passed applicants to interview" : "Set applicant to interview"}</DialogTitle>
         </DialogHeader>
         <Separator className="mt-2" />
         {isLoading ? <Spinner /> :
@@ -116,7 +124,11 @@ const SetToInterviewModal = ({ datas, passingPercentage, getPendingCandidates })
               {tabIndex === 0 && (
                 <>
                   <div className='px-3'>
-                    <DataTable columns={columns} data={data} itemsPerPage={5} hideSearch={true} />
+                    {isBatch ? <DataTable columns={columns} data={data} itemsPerPage={5} hideSearch={true} /> :
+                      <>
+                        <DialogDescription>Are you sure you want to set this applicant for interview?</DialogDescription>
+                      </>
+                    }
                   </div>
                   <div className="flex justify-end space-x-2 mt-3">
                     <Button variant="outline" onClick={() => setIsOpen(false)}>Close</Button>
@@ -150,7 +162,7 @@ const SetToInterviewModal = ({ datas, passingPercentage, getPendingCandidates })
                       <div className="flex justify-end space-x-2 mt-3">
                         <Button variant="outline" onClick={handlePrevPage}>Previous</Button>
                         <Button type="submit">
-                          Set all to interview
+                          Submit
                         </Button>
                       </div>
                     </form>

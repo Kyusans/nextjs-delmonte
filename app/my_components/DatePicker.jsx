@@ -59,7 +59,6 @@ const DatePicker = ({ form, name, label = "Date", futureAllowed = false, pastAll
                   selected={field.value ? new Date(field.value) : undefined}
                   onSelect={handleDateChange}
                   fromYear={1960}
-                  toYear={new Date().getFullYear()}
                   disabled={disableDate}
                 />
               </PopoverContent>
