@@ -17,11 +17,11 @@ import axios from "axios";
 import { Check, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import ConductInterview from "./ConductInterview";
 import InterviewResult from "./InterviewResult";
 import ExamResult from "./ExamResult";
 import JobOffer from "./JobOffer";
 import SetToInterviewModal from "../ViewApplicants/modal/SetToInterviewModal";
+import ConductInterview from "./ConductInterview";
 
 function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatus }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -100,9 +100,9 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
   //   handleShowAlert("Are you sure you want to set this applicant for interview?");
   // };
 
-  // const handleCloseConductInterview = () => {
-  //   setShowConductInterview(false);
-  // };
+  const handleCloseConductInterview = () => {
+    setShowConductInterview(false);
+  };
 
   // modal for conduct interview
   const [showConductInterview, setShowConductInterview] = useState(false);
@@ -694,14 +694,14 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
         </SheetContent>
       </Sheet>
       <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
-      {/* {showConductInterview && (
+      {showConductInterview && (
         <ConductInterview
           open={showConductInterview}
           onHide={handleCloseConductInterview}
           candId={candId}
           handleInterviewChangeStatus={handleInterviewChangeStatus}
         />
-      )} */}
+      )}
     </>
   );
 }
