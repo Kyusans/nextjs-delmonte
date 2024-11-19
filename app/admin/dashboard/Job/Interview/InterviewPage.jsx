@@ -31,6 +31,7 @@ const InterviewPage = ({ handleChangeStatus }) => {
       formData.append("operation", "getInterviewCandidates");
       formData.append("json", JSON.stringify(jsonData));
       const res = await axios.post(url, formData);
+      console.log("res.data ni getInterviewCandidates: ", res);
       setCandidates(res.data !== 0 ? res.data : []);
     } catch (error) {
       toast.error("Network error");
@@ -48,6 +49,7 @@ const InterviewPage = ({ handleChangeStatus }) => {
   const columns = [
     { header: "Full Name", accessor: "fullName" },
     { header: "Status", accessor: "status_name" },
+    { header: "Schedule date", accessor: "schedDate"},
   ];
 
   useEffect(() => {
