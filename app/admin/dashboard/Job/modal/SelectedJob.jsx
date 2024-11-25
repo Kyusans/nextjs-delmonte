@@ -13,6 +13,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import JobDetails from './JobDetails';
 import UpdateJobMaster from './UpdateJobMaster';
 import BackgroundCheckPage from '../BackgroundCheck/BackgroundCheckPage';
+import JobOfferPage from '../JobOffer/JobOfferPage';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
@@ -124,6 +125,7 @@ function SelectedJob({ open, onHide, jobId }) {
                       <TabsTrigger value={3}>Interview</TabsTrigger>
                       <TabsTrigger value={4}>Exam</TabsTrigger>
                       <TabsTrigger value={5}>Background Check</TabsTrigger>
+                      <TabsTrigger value={6}>Offer</TabsTrigger>
                     </TabsList>
                   </ScrollArea>
                   <ScrollArea className="flex-grow">
@@ -141,6 +143,9 @@ function SelectedJob({ open, onHide, jobId }) {
                     </TabsContent>
                     <TabsContent value={5}>
                       <BackgroundCheckPage handleChangeStatus={handleChangeStatus} />
+                    </TabsContent>
+                    <TabsContent value={6}>
+                      <JobOfferPage handleChangeStatus={handleChangeStatus} />
                     </TabsContent>
                   </ScrollArea>
                 </Tabs>
