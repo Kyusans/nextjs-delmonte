@@ -1,6 +1,6 @@
 import { retrieveData } from '@/app/utils/storageUtils';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -140,6 +140,9 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
                                   {criteria.criteria_inter_name}
                                   <span className='ml-1 text-xs'>{`(${criteria.interview_categ_name})`}</span>
                                 </label>
+                                <CardDescription className="mb-2">
+                                  Question: {criteria.inter_criteria_question}
+                                </CardDescription>
                                 <Input
                                   type="number"
                                   value={scores[criteria.inter_criteria_id] || ''}

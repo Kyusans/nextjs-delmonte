@@ -12,6 +12,8 @@ import ExamPage from '../Exam/ExamPage';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import JobDetails from './JobDetails';
 import UpdateJobMaster from './UpdateJobMaster';
+import BackgroundCheckPage from '../BackgroundCheck/BackgroundCheckPage';
+import JobOfferPage from '../JobOffer/JobOfferPage';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
@@ -114,14 +116,18 @@ function SelectedJob({ open, onHide, jobId }) {
                   {data.jobMaster[0].jobM_description}
                 </SheetDescription>
               </SheetHeader>
-              <Card className="p-1 w-full md:p-2 dark:bg-[#1c1917] flex-grow overflow-hidden">
+              <Card className="p-1 w-full md:p-2 dark:bg-[#1c1917] flex-grow">
                 <Tabs defaultValue={selectedTab} className="h-full flex flex-col" onValueChange={(value) => setSelectedTab(value)}>
-                  <TabsList>
-                    <TabsTrigger value={1}>Details</TabsTrigger>
-                    <TabsTrigger value={2}>Pending</TabsTrigger>
-                    <TabsTrigger value={3}>Interview</TabsTrigger>
-                    <TabsTrigger value={4}>Exam</TabsTrigger>
-                  </TabsList>
+                  <ScrollArea className="overflow-x-auto">
+                    <TabsList className="flex  md:flex-wrap gap-2">
+                      <TabsTrigger value={1}>Details</TabsTrigger>
+                      <TabsTrigger value={2}>Pending</TabsTrigger>
+                      <TabsTrigger value={3}>Interview</TabsTrigger>
+                      <TabsTrigger value={4}>Exam</TabsTrigger>
+                      <TabsTrigger value={5}>Background Check</TabsTrigger>
+                      <TabsTrigger value={6}>Offer</TabsTrigger>
+                    </TabsList>
+                  </ScrollArea>
                   <ScrollArea className="flex-grow">
                     <TabsContent value={1} className="h-full">
                       <JobDetails getSelectedJobs={getSelectedJobs} />
@@ -134,6 +140,12 @@ function SelectedJob({ open, onHide, jobId }) {
                     </TabsContent>
                     <TabsContent value={4}>
                       <ExamPage handleChangeStatus={handleChangeStatus} />
+                    </TabsContent>
+                    <TabsContent value={5}>
+                      <BackgroundCheckPage handleChangeStatus={handleChangeStatus} />
+                    </TabsContent>
+                    <TabsContent value={6}>
+                      <JobOfferPage handleChangeStatus={handleChangeStatus} />
                     </TabsContent>
                   </ScrollArea>
                 </Tabs>
