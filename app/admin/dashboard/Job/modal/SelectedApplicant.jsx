@@ -123,17 +123,8 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
     }
   };
 
-  const handleJobOfferChangeStatus = async (status) => {
-    setIsLoading(true);
-    try {
-      await handleChangeStatus(candId, status === 1 ? 3 : 2);
-      setStatus(status === 1 ? "Accept" : "Decline");
-    } catch (error) {
-      toast.error("Network error");
-      console.log("SelectedApplicant.jsx => handleChangestatus(): " + error);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleJobOfferChangeStatus = () => {
+    getCandidateProfile();
   };
 
   useEffect(() => {

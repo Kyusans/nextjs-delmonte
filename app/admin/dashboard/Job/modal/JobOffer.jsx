@@ -2,28 +2,11 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
@@ -65,7 +48,7 @@ const JobOffer = ({ candId, changeStatus }) => {
       document: data.joboffer_document,
       expiryDate: formattedDate,
     };
-
+    console.log("jsonData: ", jsonData);
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
       const formData = new FormData();
@@ -73,11 +56,11 @@ const JobOffer = ({ candId, changeStatus }) => {
       formData.append("json", JSON.stringify(jsonData));
 
       const response = await axios.post(url, formData);
-      console.log(response);
+      console.log(response.data);
       if (response.data === 1) {
         toast.success("Job offer sent successfully");
         setOpen(false);
-        // changeStatus(status);
+        changeStatus();
       } else {
         toast.error("Failed to send job offer");
       }
@@ -114,6 +97,7 @@ const JobOffer = ({ candId, changeStatus }) => {
                       onChange={(e) =>
                         field.onChange(parseFloat(e.target.value))
                       }
+                      placeholder="Enter salary"
                     />
                   </FormControl>
                   <FormMessage />
@@ -127,7 +111,7 @@ const JobOffer = ({ candId, changeStatus }) => {
                 <FormItem>
                   <FormLabel>Document</FormLabel>
                   <FormControl>
-                    <Input type="text" {...field} />
+                    <Input type="text" {...field} placeholder="Enter document" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
