@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { Trash2 } from 'lucide-react';
 import ShowAlert from '@/components/ui/show-alert';
 import AddInterviewCategoryMaster from './modal/AddMasterfileForms/AddInterviewCategoryMaster';
+import UpdateInterviewCategory from './modal/UpdateMasterfileForms/UpdateInterviewCategory';
 
 const InterviewCategoryMaster = () => {
   const [data, setData] = useState([]);
@@ -72,12 +73,12 @@ const InterviewCategoryMaster = () => {
       header: "Actions",
       cell: (row) => (
         <div className="flex gap-4">
-          {/* <UpdateInterviewCategory
+          <UpdateInterviewCategory
             data={data}
             id={row.interview_categ_id}
             currentName={row.interview_categ_name}
             getData={getData}
-          /> */}
+          />
           <Trash2 className="h-5 w-5 cursor-pointer" onClick={() => handleRemoveList(row.interview_categ_id)} />
         </div>
       )

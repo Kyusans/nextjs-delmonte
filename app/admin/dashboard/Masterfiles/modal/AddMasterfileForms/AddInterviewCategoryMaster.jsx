@@ -55,7 +55,7 @@ const AddInterviewCategoryMaster = ({ title, getData, data, addColumn, openState
 
       const res = await axios.post(url, formData);
       console.log("res.data ni add interview category: ", res.data);
-      if (res.data === 1) {
+      if (res.data !== 0) {
         toast.success('Interview category added successfully');
         addColumn(values, res.data);
         form.reset();

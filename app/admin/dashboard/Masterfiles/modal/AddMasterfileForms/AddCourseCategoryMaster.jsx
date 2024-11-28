@@ -68,7 +68,7 @@ const AddCourseCategoryMaster = ({ title, getData, data, addColumn, openState, c
 
       const res = await axios.post(url, formData);
       console.log("res.data ni course category: ", res.data);
-      if (res.data !== 1) {
+      if (res.data !== 0) {
         if (data === undefined || data === null) {
           storeData("courseCategoryList", JSON.stringify([...courseCategoryList, { value: res.data, label: values.courseCategoryName }]));
         }
