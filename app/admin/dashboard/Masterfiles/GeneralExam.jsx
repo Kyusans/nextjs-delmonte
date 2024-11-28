@@ -71,7 +71,7 @@ function GeneralExam() {
                               </h1>
                               <UpdateExamMaster examMasterData={examMaster} getSelectedJob={getGeneralExamDetails} />
                             </div>
-                            <p>Exam duration: {examMaster.exam_duration} minutes</p>
+                            {/* <p>Exam duration: {examMaster.exam_duration} minutes</p> */}
                             <p className='text-sm'>Date created: {examMaster.exam_createdAt ? formatDate(examMaster.exam_createdAt) : 'N/A'}</p>
                             <p className='text-sm'>Date updated: {examMaster.exam_updatedAt ? formatDate(examMaster.exam_updatedAt) : 'N/A'}</p>
                           </CardContent>
