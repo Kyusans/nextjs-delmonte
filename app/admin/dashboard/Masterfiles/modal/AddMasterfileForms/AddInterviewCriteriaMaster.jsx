@@ -67,7 +67,8 @@ const AddInterviewCriteriaMaster = ({ title, getData, data, addColumn }) => {
         const categoryName = interviewCategory.find(cat => cat.value === values.interviewCategoryId)?.label || '';
         addColumn({
           interviewCriteriaName: values.interviewCriteriaName,
-          interviewCategoryId: categoryName
+          interviewCategoryId: categoryName,
+          interview_categ_id: values.interviewCategoryId
         }, res.data);
         if (inputRef.current) {
           inputRef.current.focus();

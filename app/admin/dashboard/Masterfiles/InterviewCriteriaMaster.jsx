@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import { Trash2 } from 'lucide-react';
 import ShowAlert from '@/components/ui/show-alert';
 import AddInterviewCriteriaMaster from './modal/AddMasterfileForms/AddInterviewCriteriaMaster';
+import UpdateInterviewCriteriaMaster from './modal/UpdateMasterfileForms/UpdateInterviewCriteriaMaster';
 // import AddInterviewCriteriaMaster from './modal/AddMasterfileForms/AddInterviewCriteriaMaster';
 // import UpdateInterviewCriteria from './modal/UpdateMasterfileForms/UpdateInterviewCriteria';
 
@@ -17,7 +18,8 @@ const InterviewCriteriaMaster = () => {
     setData([...data, {
       criteria_inter_id: newId,
       criteria_inter_name: values.interviewCriteriaName,
-      interview_categ_name: values.interviewCategoryId
+      interview_categ_name: values.interviewCategoryId,
+      interview_categ_id: values.interview_categ_id
     }]);
   }
 
@@ -46,7 +48,7 @@ const InterviewCriteriaMaster = () => {
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
       const formData = new FormData();
       const jsonData = { criteriaId: selectedId }
-      formData.append("operation", "deleteInterviewCriteria");
+      formData.append("operation", "deleteInterviewCriteriaMaster");
       formData.append("json", JSON.stringify(jsonData));
       const res = await axios.post(url, formData);
       console.log("res.data ni handleDelete: ", res.data);
@@ -73,13 +75,13 @@ const InterviewCriteriaMaster = () => {
       header: "Actions",
       cell: (row) => (
         <div className="flex gap-4">
-          {/* <UpdateInterviewCriteria
+          <UpdateInterviewCriteriaMaster
             data={data}
             id={row.criteria_inter_id}
-            categoryId={row.interview_categ_name}
+            categoryId={row.interview_categ_id}
             currentName={row.criteria_inter_name}
             getData={getData}
-          /> */}
+          />
           <Trash2 className="h-5 w-5 cursor-pointer" onClick={() => handleRemoveList(row.criteria_inter_id)} />
         </div>
       )
