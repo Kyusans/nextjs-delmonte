@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { BookOpen, Brain, Briefcase, Building, CircleUser, FileCheck, FileCheck2, FileText, GraduationCap, Home, Lightbulb, LogOut, Menu, Settings, Settings2, Users, ChevronDown, Clipboard } from 'lucide-react'
+import { BookOpen, Brain, Briefcase, Building, CircleUser, FileCheck, FileCheck2, FileText, GraduationCap, Home, Lightbulb, LogOut, Menu, Settings, Settings2, Users, ChevronDown, Clipboard, ListCheck, Layers } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
@@ -29,7 +29,9 @@ function AdminSidebar({ changeView, changeMasterFile }) {
     { name: "License type", icon: <FileCheck2 className="h-5 w-5" />, index: 7 },
     { name: "Skills", icon: <Lightbulb className="h-5 w-5" />, index: 8 },
     { name: "Trainings", icon: <Users className="h-5 w-5" />, index: 9 },
-    { name: "General Exam", icon: <Clipboard className="h-5 w-5" />, index: 10 },
+    { name: "Interview Category", icon: <Layers className="h-5 w-5" />, index: 10 },
+    { name: "Interview Criteria", icon: <ListCheck className="h-5 w-5" />, index: 11 },
+    { name: "General Exam", icon: <Clipboard className="h-5 w-5" />, index: 12 },
   ]
   const handleChangeView = (index) => {
     changeView(index);

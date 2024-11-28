@@ -65,7 +65,7 @@ const InstitutionMaster = () => {
   }
 
   const columns = [
-    { header: "Institution", accessor: "institution_name" },
+    { header: "Institution", accessor: "institution_name", sortable: true },
     {
       header: "Actions",
       cell: (row) => (

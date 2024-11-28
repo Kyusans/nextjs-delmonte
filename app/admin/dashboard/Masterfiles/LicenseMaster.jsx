@@ -62,8 +62,8 @@ const LicenseMaster = () => {
   }
 
   const columns = [
-    { header: "License Master", accessor: "license_master_name" },
-    { header: "License Type", accessor: "license_type_name" },
+    { header: "License Master", accessor: "license_master_name", sortable: true },
+    { header: "License Type", accessor: "license_type_name", sortable: true },
     {
       header: "Actions",
       cell: (row) => (

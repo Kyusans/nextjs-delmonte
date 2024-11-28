@@ -11,13 +11,12 @@ import { Input } from '@/components/ui/input';
 import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { PlusSquare } from 'lucide-react';
-import { retrieveData, storeData } from '@/app/utils/storageUtils';
 
 const formSchema = z.object({
-  courseCategoryName: z.string().min(1, 'Course category name is required'),
+  interviewCategoryName: z.string().min(1, 'Interview category name is required'),
 });
 
-const AddCourseCategoryMaster = ({ title, getData, data, addColumn, openState, closeState }) => {
+const AddInterviewCategoryMaster = ({ title, getData, data, addColumn, openState, closeState }) => {
   const [isSubmit, setIsSubmit] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +25,7 @@ const AddCourseCategoryMaster = ({ title, getData, data, addColumn, openState, c
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      courseCategoryName: '',
+      interviewCategoryName: '',
     },
   });
 
@@ -37,53 +36,38 @@ const AddCourseCategoryMaster = ({ title, getData, data, addColumn, openState, c
   }, [isOpen]);
 
   const onSubmit = async (values) => {
-    console.log("values ni course category: ", values);
     setIsSubmit(true);
     try {
-      console.log("data ni course category: ", data);
-      console.log("values ni courseCategoryName: ", values.courseCategoryName);
-      console.log("data === null: ", data === undefined);
-      const courseCategoryList = JSON.parse(retrieveData("courseCategoryList")) || [];
-      let categoryExists = false;
-      if (data === undefined || data === null) {
-        console.log("courseCategoryList: ", courseCategoryList);
-        categoryExists = courseCategoryList.some(category =>
-          category.label.trim().toLowerCase() === values.courseCategoryName.trim().toLowerCase()
-        );
-      } else {
-        categoryExists = Array.isArray(data) && data.some(category =>
-          category.course_categoryName && category.course_categoryName.trim().toLowerCase() === values.courseCategoryName.trim().toLowerCase()
-        );
-      }
+      let categoryExists = Array.isArray(data) && data.some(category =>
+        category.interview_categ_name && 
+        category.interview_categ_name.trim().toLowerCase() === values.interviewCategoryName.trim().toLowerCase()
+      );
 
       if (categoryExists) {
-        toast.error("This course category already exists");
+        toast.error("This interview category already exists");
         return;
       }
 
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
       const formData = new FormData();
-      formData.append('operation', 'addCourseCategory');
+      formData.append('operation', 'addInterviewCategory');
       formData.append('json', JSON.stringify(values));
 
       const res = await axios.post(url, formData);
-      console.log("res.data ni course category: ", res.data);
+      console.log("res.data ni add interview category: ", res.data);
       if (res.data !== 0) {
-        if (data === undefined || data === null) {
-          storeData("courseCategoryList", JSON.stringify([...courseCategoryList, { value: res.data, label: values.courseCategoryName }]));
-        }
-        toast.success('Course category added successfully');
+        toast.success('Interview category added successfully');
         addColumn(values, res.data);
         form.reset();
         if (inputRef.current) {
           inputRef.current.focus();
         }
       } else {
-        toast.error('Failed to add course category');
+        toast.error('Failed to add interview category');
       }
     } catch (error) {
       toast.error('Network error');
-      console.error('AddCourseCategoryMaster.jsx ~ onSubmit ~ error:', error);
+      console.error('AddInterviewCategoryMaster.jsx ~ onSubmit ~ error:', error);
     } finally {
       setIsSubmit(false);
     }
@@ -119,13 +103,13 @@ const AddCourseCategoryMaster = ({ title, getData, data, addColumn, openState, c
                     <div className="space-y-2 sm:space-y-3 w-full max-w-8xl">
                       <FormField
                         control={form.control}
-                        name="courseCategoryName"
+                        name="interviewCategoryName"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Course Category Name</FormLabel>
+                            <FormLabel>Interview Category Name</FormLabel>
                             <FormControl>
                               <Input
-                                placeholder="Enter course category name"
+                                placeholder="Enter interview category name"
                                 {...field}
                                 ref={inputRef}
                               />
@@ -152,4 +136,4 @@ const AddCourseCategoryMaster = ({ title, getData, data, addColumn, openState, c
   );
 };
 
-export default AddCourseCategoryMaster;
+export default AddInterviewCategoryMaster;

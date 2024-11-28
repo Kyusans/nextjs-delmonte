@@ -67,9 +67,9 @@ const CourseMaster = () => {
   }
 
   const columns = [
-    { header: "Course", accessor: "courses_name" },
-    { header: "Course Category", accessor: "course_categoryName" },
-    { header: "Course Description", accessor: "crs_type_name" },
+    { header: "Course", accessor: "courses_name", sortable: true },
+    { header: "Course Category", accessor: "course_categoryName", sortable: true },
+    { header: "Course Description", accessor: "crs_type_name", sortable: true },
     {
       header: "Actions",
       cell: (row) => (

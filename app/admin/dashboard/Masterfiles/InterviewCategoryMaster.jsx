@@ -3,37 +3,41 @@ import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import { useEffect, useState } from 'react'
 import { toast } from 'sonner';
-import AddLicenseType from './modal/AddMasterfileForms/AddLicenseType';
-import UpdateMasterfile from './modal/UpdateMasterfile';
+// import AddInterviewCategoryMaster from './modal/AddMasterfileForms/AddInterviewCategoryMaster';
+// import UpdateInterviewCategory from './modal/UpdateMasterfileForms/UpdateInterviewCategory';
 import { Trash2 } from 'lucide-react';
-import UpdateLicenseType from './modal/UpdateMasterfileForms/UpdateLicenseType';
 import ShowAlert from '@/components/ui/show-alert';
+import AddInterviewCategoryMaster from './modal/AddMasterfileForms/AddInterviewCategoryMaster';
+import UpdateInterviewCategory from './modal/UpdateMasterfileForms/UpdateInterviewCategory';
 
-const LicenseTypeMaster = () => {
+const InterviewCategoryMaster = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const addColumn = (values, newId) => {
+    setData([...data, {
+      interview_categ_id: newId,
+      interview_categ_name: values.interviewCategoryName,
+      interview_categ_status: 1
+    }]);
+  }
+
+  // delete masterfile
   const [alertMessage, setAlertMessage] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
-
-  const addColumn = (values, id) => {
-    setData([...data, { ...values, license_type_id: id }]);
-  }
-
   const handleShowAlert = (message) => {
     setAlertMessage(message);
     setShowAlert(true);
   };
-
   const handleCloseAlert = (status) => {
     if (status === 1) {
       handleDelete(selectedId);
     }
     setShowAlert(false);
   };
-
-  const handleRemoveList = (licenseTypeId) => {
-    setSelectedId(licenseTypeId);
+  const handleRemoveList = (categId) => {
+    setSelectedId(categId);
     handleShowAlert("This action cannot be undone. It will permanently delete the item and remove it from your list");
   };
 
@@ -42,40 +46,40 @@ const LicenseTypeMaster = () => {
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
       const formData = new FormData();
-      const jsonData = { licenseTypeId: id }
-      formData.append("operation", "deleteLicenseType");
+      const jsonData = { interviewCategoryId: selectedId }
+      formData.append("operation", "deleteInterviewCategory");
       formData.append("json", JSON.stringify(jsonData));
       const res = await axios.post(url, formData);
       console.log("res.data ni handleDelete: ", res.data);
       if (res.data === -1) {
-        toast.error("Failed to delete, there's a transaction using this license type");
+        toast.error("Failed to delete, there's a transaction using this interview category");
       } else if (res.data === 1) {
-        toast.success("License type deleted successfully");
+        toast.success("Interview category deleted successfully");
         getData();
       } else {
-        toast.error("Failed to delete license type");
+        toast.error("Failed to delete interview category");
       }
     } catch (error) {
       toast.error("Network error");
-      console.log("LicenseTypeMaster.jsx ~ handleDelete ~ error:", error);
+      console.log("InterviewCategoryMaster.jsx ~ handleDelete ~ error:", error);
     } finally {
       setIsLoading(false);
     }
   }
 
   const columns = [
-    { header: "License type", accessor: "license_type_name", sortable: true },
+    { header: "Interview Category", accessor: "interview_categ_name", sortable: true },
     {
       header: "Actions",
       cell: (row) => (
         <div className="flex gap-4">
-          <UpdateLicenseType
+          <UpdateInterviewCategory
             data={data}
-            id={row.license_type_id}
-            currentName={row.license_type_name}
+            id={row.interview_categ_id}
+            currentName={row.interview_categ_name}
             getData={getData}
           />
-          <Trash2 className="h-5 w-5 cursor-pointer" onClick={() => handleRemoveList(row.license_type_id)} />
+          <Trash2 className="h-5 w-5 cursor-pointer" onClick={() => handleRemoveList(row.interview_categ_id)} />
         </div>
       )
     }
@@ -86,9 +90,9 @@ const LicenseTypeMaster = () => {
       setIsLoading(true);
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
       const formData = new FormData();
-      formData.append("operation", "getLicenseType");
+      formData.append("operation", "getInterviewCategory");
       const res = await axios.post(url, formData);
-      console.log("res.data ni getData: ", res.data);
+      console.log("res.data ni interview category: ", res.data);
       if (res.data !== 0) {
         setData(res.data);
       } else {
@@ -96,7 +100,7 @@ const LicenseTypeMaster = () => {
       }
     } catch (error) {
       toast.error("Network error");
-      console.log("LicenseTypeMaster.jsx ~ getData ~ error:", error);
+      console.log("InterviewCategoryMaster.jsx ~ getData ~ error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -111,16 +115,16 @@ const LicenseTypeMaster = () => {
       {isLoading ? <Spinner /> : (
         <>
           <DataTable
-            title="License Type"
+            title="Interview Category"
             data={data}
             columns={columns}
             autoIndex={true}
             add={
-              <AddLicenseType
-                title="license type"
-                subject="licenseType"
-                getData={getData}
+              <AddInterviewCategoryMaster
+                title="interview category"
+                subject="interviewCategory"
                 data={data}
+                getData={getData}
                 addColumn={addColumn}
               />
             }
@@ -132,4 +136,4 @@ const LicenseTypeMaster = () => {
   )
 }
 
-export default LicenseTypeMaster
+export default InterviewCategoryMaster

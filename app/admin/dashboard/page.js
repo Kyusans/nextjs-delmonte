@@ -14,6 +14,8 @@ import LicenseTypeMaster from './Masterfiles/LicenseTypeMaster';
 import SkillsMaster from './Masterfiles/SkillsMaster';
 import TrainingMaster from './Masterfiles/TrainingMaster';
 import GeneralExam from './Masterfiles/GeneralExam';
+import InterviewCategoryMaster from './Masterfiles/InterviewCategoryMaster';
+import InterviewCriteriaMaster from './Masterfiles/InterviewCriteriaMaster';
 
 export default function Page() {
   const [viewIndex, setViewIndex] = useState(0);
@@ -30,6 +32,8 @@ export default function Page() {
     { view: <LicenseTypeMaster /> },
     { view: <SkillsMaster /> },
     { view: <TrainingMaster /> },
+    { view: <InterviewCategoryMaster /> },
+    { view: <InterviewCriteriaMaster /> },
     { view: <GeneralExam /> },
   ]
 
