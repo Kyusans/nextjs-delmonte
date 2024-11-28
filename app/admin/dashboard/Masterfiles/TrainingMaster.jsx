@@ -66,7 +66,7 @@ const TrainingMaster = () => {
   }
 
   const columns = [
-    { header: "Training", accessor: "perT_name" },
+    { header: "Training", accessor: "perT_name", sortable: true },
     {
       header: "Actions",
       cell: (row) => (

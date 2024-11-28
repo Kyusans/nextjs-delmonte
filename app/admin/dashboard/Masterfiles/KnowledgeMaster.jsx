@@ -65,7 +65,7 @@ const KnowledgeMaster = () => {
   }
 
   const columns = [
-    { header: "Knowledge and Compliance", accessor: "knowledge_name" },
+    { header: "Knowledge and Compliance", accessor: "knowledge_name", sortable: true },
     {
       header: "Actions",
       cell: (row) => (

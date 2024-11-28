@@ -68,7 +68,7 @@ const InterviewCategoryMaster = () => {
   }
 
   const columns = [
-    { header: "Interview Category", accessor: "interview_categ_name" },
+    { header: "Interview Category", accessor: "interview_categ_name", sortable: true },
     {
       header: "Actions",
       cell: (row) => (

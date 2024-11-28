@@ -65,7 +65,7 @@ const CourseCategoryMaster = () => {
   }
 
   const columns = [
-    { header: "Course Category", accessor: "course_categoryName" },
+    { header: "Course Category", accessor: "course_categoryName", sortable: true },
     {
       header: "Actions",
       cell: (row) => (

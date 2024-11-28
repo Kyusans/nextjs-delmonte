@@ -64,7 +64,7 @@ const SkillsMaster = () => {
   }
 
   const columns = [
-    { header: "Skills", accessor: "perS_name" },
+    { header: "Skills", accessor: "perS_name", sortable: true },
     {
       header: "Actions",
       cell: (row) => (
