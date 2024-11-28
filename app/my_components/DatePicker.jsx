@@ -2,22 +2,49 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { formatISO } from 'date-fns';
+import { formatISO, format } from 'date-fns';
 import { FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { cn } from '@/lib/utils';
-import { CalendarIcon } from 'lucide-react';
+import { CalendarIcon, ClockIcon } from 'lucide-react';
 import { formatDate } from '../signup/page';
 
-const DatePicker = ({ form, name, label = "Date", futureAllowed = false, pastAllowed = true, design }) => {
+const DatePicker = ({
+  form,
+  name,
+  label = "Date",
+  futureAllowed = true,
+  pastAllowed = true,
+  design,
+  withTime = false
+}) => {
   const [showPicker, setShowPicker] = useState(false);
+  const [selectedTime, setSelectedTime] = useState("12:00");
 
   const handleDateChange = (date) => {
     if (date) {
-      form.setValue(name, formatISO(date, { representation: 'date' }));
+      let finalValue = formatISO(date, { representation: "date" });
+
+      if (withTime) {
+        const [hours, minutes] = selectedTime.split(":");
+        date.setHours(hours, minutes);
+        finalValue = date.toISOString();
+      }
+
+      form.setValue(name, finalValue);
       form.trigger(name);
-      setTimeout(() => {
-        setShowPicker(false);
-      }, 50);
+      setTimeout(() => setShowPicker(false), 50);
+    }
+  };
+
+  const handleTimeChange = (event) => {
+    const time = event.target.value;
+    setSelectedTime(time);
+
+    if (form.getValues(name)) {
+      const date = new Date(form.getValues(name));
+      const [hours, minutes] = time.split(":");
+      date.setHours(hours, minutes);
+      form.setValue(name, date.toISOString());
     }
   };
 
@@ -38,7 +65,7 @@ const DatePicker = ({ form, name, label = "Date", futureAllowed = false, pastAll
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <div>
-            <Popover open={showPicker}>
+            <Popover open={showPicker} onOpenChange={setShowPicker}>
               <PopoverTrigger asChild>
                 <Button
                   onClick={() => setShowPicker(!showPicker)}
@@ -49,16 +76,36 @@ const DatePicker = ({ form, name, label = "Date", futureAllowed = false, pastAll
                   )}
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {field.value ? formatDate(new Date(field.value), "yyyy-MM-dd") : <span>Pick a date</span>}
+                  {field.value ? (
+                    withTime
+                      ? format(new Date(field.value), "MMM dd, yyyy - h:mm a")
+                      : format(new Date(field.value), "MMM dd, yyyy")
+                  ) : (
+                    <span>Pick a date</span>
+                  )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent align="start" className="w-auto p-0">
+                {withTime && (
+                  <div className="p-4 border-b">
+                    <div className="flex items-center gap-2">
+                      <ClockIcon className="h-4 w-4" />
+                      <input
+                        type="time"
+                        value={selectedTime}
+                        onChange={handleTimeChange}
+                        className="border p-2 rounded-md w-full"
+                      />
+                    </div>
+                  </div>
+                )}
                 <Calendar
                   mode="single"
                   captionLayout="dropdown-buttons"
                   selected={field.value ? new Date(field.value) : undefined}
                   onSelect={handleDateChange}
                   fromYear={1960}
+                  toYear={new Date().getFullYear()}
                   disabled={disableDate}
                 />
               </PopoverContent>

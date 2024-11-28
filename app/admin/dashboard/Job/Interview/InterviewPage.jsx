@@ -50,6 +50,7 @@ const InterviewPage = ({ handleChangeStatus }) => {
     { header: "Full Name", accessor: "fullName" },
     { header: "Status", accessor: "status_name" },
     { header: "Schedule date", accessor: "schedDate"},
+    { header: "Schedule time", accessor: "schedTime"}
   ];
 
   useEffect(() => {
@@ -65,7 +66,6 @@ const InterviewPage = ({ handleChangeStatus }) => {
           <DataTable
             columns={columns}
             data={candidates}
-            autoIndex={true}
             onRowClick={handleOnClickRow}
             idAccessor="cand_id"
             headerAction={<ViewInterviewCriteria />}
