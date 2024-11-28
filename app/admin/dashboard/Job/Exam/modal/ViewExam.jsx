@@ -16,10 +16,12 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetHeader, SheetTi
 import Spinner from '@/components/ui/spinner';
 import { Button } from '@/components/ui/button';
 import { retrieveData } from '@/app/utils/storageUtils';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 function ViewExam() {
   const [examMaster, setExamMaster] = useState([]);
   const [questionMaster, setQuestionMaster] = useState([]);
+  const [passingPercent, setPassingPercent] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -58,6 +60,7 @@ function ViewExam() {
       if (res !== 0) {
         setExamMaster(res.examMaster[0]);
         setQuestionMaster(res.questionMaster.questions);
+        setPassingPercent(res.passingPercentage.jobM_passpercentage);
       } else {
         setExamMaster(0);
         setQuestionMaster([]);
@@ -87,81 +90,84 @@ function ViewExam() {
         <SheetTrigger asChild>
           <Button>View Exam</Button>
         </SheetTrigger>
-        <SheetContent side="bottom" className="overflow-y-scroll">
+        <SheetContent side="bottom">
           <SheetHeader>
             <SheetTitle>View Exam</SheetTitle>
           </SheetHeader>
-          {isLoading ? <Spinner /> :
-            (
-              <div className='rounded-md p-4'>
-                {examMaster === 0 ? (
-                  <div className='flex flex-col justify-center items-center gap-4'>
-                    <p>No exam created yet</p>
-                    <CreateExamMaster getExamDetails={getExamDetails} type={2} />
-                  </div>
-                ) : (
-                  <>
-                    <AddExamQuestion examId={examMaster.exam_id} getExamDetails={getExamDetails} />
-                    <div className='flex flex-col'>
-                      <div className='flex md:justify-center'>
-                        <Card className='mb-3 flex flex-col gap-1 w-full md:w-1/2'>
-                          <CardContent className='p-3'>
-                            <div className='flex flex-row justify-between'>
-                              <h1 className='text-2xl font-boldtext-start'>
-                                {examMaster.exam_name}
-                              </h1>
-                              <UpdateExamMaster examMasterData={examMaster} getExamDetails={getExamDetails} />
-                            </div>
-                            <p>Exam duration: {examMaster.exam_duration} minutes</p>
-                            <p className='text-sm'>Date created: {examMaster.exam_createdAt ? formatDate(examMaster.exam_createdAt) : 'N/A'}</p>
-                            <p className='text-sm'>Date updated: {examMaster.exam_updatedAt ? formatDate(examMaster.exam_updatedAt) : 'N/A'}</p>
-                          </CardContent>
-                        </Card>
-                      </div>
-                      {questionMaster.length === 0 ? (
-                        <div className='flex justify-center items-center mt-4'>
-                          <p>No questions have been added to this exam yet.</p>
-                        </div>
-                      ) : (
-                        <div className={`grid grid-cols-1 ${questionMaster.length === 1 ? 'md:grid-cols-1' : 'md:grid-cols-2'} gap-4`}>
-                          {questionMaster.map((question, index) => (
-                            <Card key={index} className='mb-3 w-full flex flex-col'>
-                              <CardContent className="p-3 flex-grow">
-                                <div className='grid grid-cols-3 gap-2'>
-                                  <p className='mb-4 text-lg font-bold col-span-2'>{index + 1}. {question.examQ_text}</p>
-                                  <div className='flex flex-row gap-4 justify-end md:mr-2'>
-                                    <UpdateExamQuestion examQuestionData={question} getExamDetails={getExamDetails} />
-                                    {/* <Trash2 size={20} onClick={() => handleRemoveList(question.examQ_id)} className='cursor-pointer' /> */}
-                                  </div>
-                                </div>
-                                <RadioGroup defaultValue={question.options.find(opt => opt.examC_isCorrect === 1)?.examC_id.toString()}>
-                                  {question.options.map((option, optionIndex) => (
-                                    <div key={optionIndex} className="flex items-center space-x-2 mb-2">
-                                      <RadioGroupItem
-                                        value={option.examC_id.toString()}
-                                        id={`${option.examC_id}`}
-                                        disabled
-                                        checked={option.examC_isCorrect === 1}
-                                      />
-                                      <Label htmlFor={`${option.examC_id}`}>{option.examC_text}</Label>
-                                    </div>
-                                  ))}
-                                </RadioGroup>
-                              </CardContent>
-                              <CardFooter className="mt-auto">
-                                <Badge className="ml-auto">Points {question.examQ_points}</Badge>
-                              </CardFooter>
-                            </Card>
-                          ))}
-                        </div>
-                      )}
+          <ScrollArea className="h-[80vh]">
+            {isLoading ? <Spinner /> :
+              (
+                <div className='rounded-md p-4'>
+                  {examMaster === 0 ? (
+                    <div className='flex flex-col justify-center items-center gap-4'>
+                      <p>No exam created yet</p>
+                      <CreateExamMaster getExamDetails={getExamDetails} type={2} />
                     </div>
-                  </>
-                )}
-                {/* <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} /> */}
-              </div>
-            )
-          }
+                  ) : (
+                    <>
+                      <AddExamQuestion examId={examMaster.exam_id} getExamDetails={getExamDetails} />
+                      <div className='flex flex-col'>
+                        <div className='flex md:justify-center'>
+                          <Card className='mb-3 flex flex-col gap-1 w-full md:w-1/2'>
+                            <CardContent className='p-3'>
+                              <div className='flex flex-row justify-between'>
+                                <h1 className='text-2xl font-boldtext-start'>
+                                  {examMaster.exam_name}
+                                </h1>
+                                <UpdateExamMaster examMasterData={examMaster} getExamDetails={getExamDetails} passingPercent={passingPercent} />
+                              </div>
+                              <p>Exam duration: {examMaster.exam_duration} minutes</p>
+                              <p className='text-sm'>Date created: {examMaster.exam_createdAt ? formatDate(examMaster.exam_createdAt) : 'N/A'}</p>
+                              <p className='text-sm'>Date updated: {examMaster.exam_updatedAt ? formatDate(examMaster.exam_updatedAt) : 'N/A'}</p>
+                              <p className='text-sm'>Passing percentage: {passingPercent}%</p>
+                            </CardContent>
+                          </Card>
+                        </div>
+                        {questionMaster.length === 0 ? (
+                          <div className='flex justify-center items-center mt-4'>
+                            <p>No questions have been added to this exam yet.</p>
+                          </div>
+                        ) : (
+                          <div className={`grid grid-cols-1 ${questionMaster.length === 1 ? 'md:grid-cols-1' : 'md:grid-cols-2'} gap-4`}>
+                            {questionMaster.map((question, index) => (
+                              <Card key={index} className='mb-3 w-full flex flex-col'>
+                                <CardContent className="p-3 flex-grow">
+                                  <div className='grid grid-cols-3 gap-2'>
+                                    <p className='mb-4 text-lg font-bold col-span-2'>{index + 1}. {question.examQ_text}</p>
+                                    <div className='flex flex-row gap-4 justify-end md:mr-2'>
+                                      <UpdateExamQuestion examQuestionData={question} getExamDetails={getExamDetails} />
+                                      {/* <Trash2 size={20} onClick={() => handleRemoveList(question.examQ_id)} className='cursor-pointer' /> */}
+                                    </div>
+                                  </div>
+                                  <RadioGroup defaultValue={question.options.find(opt => opt.examC_isCorrect === 1)?.examC_id.toString()}>
+                                    {question.options.map((option, optionIndex) => (
+                                      <div key={optionIndex} className="flex items-center space-x-2 mb-2">
+                                        <RadioGroupItem
+                                          value={option.examC_id.toString()}
+                                          id={`${option.examC_id}`}
+                                          disabled
+                                          checked={option.examC_isCorrect === 1}
+                                        />
+                                        <Label htmlFor={`${option.examC_id}`}>{option.examC_text}</Label>
+                                      </div>
+                                    ))}
+                                  </RadioGroup>
+                                </CardContent>
+                                <CardFooter className="mt-auto">
+                                  <Badge className="ml-auto">Points {question.examQ_points}</Badge>
+                                </CardFooter>
+                              </Card>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </>
+                  )}
+                  {/* <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} /> */}
+                </div>
+              )
+            }
+          </ScrollArea>
         </SheetContent>
       </Sheet>
     </>

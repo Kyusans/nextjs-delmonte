@@ -141,7 +141,7 @@ function ViewInterviewCriteria() {
           <SheetHeader className="mb-5">
             <SheetTitle>Interview criteria</SheetTitle>
           </SheetHeader>
-          <ScrollArea className="h-screen md:h-[80vh] overflow-y-auto">
+          <ScrollArea className="h-[80vh]">
             {isLoading ? <Spinner /> : (
               <div>
                 {data.length === 0 ? (
@@ -169,8 +169,9 @@ function ViewInterviewCriteria() {
                         <Card key={index}>
                           <CardContent>
                             <CardHeader>
-                              <div className='flex justify-end gap-3'>
-                                <Edit2 className='h-5 w-5 mr-1 hover:cursor-pointer' />
+                              <div className='flex justify-end'>
+                              {/* <div className='flex justify-end gap-3'> */}
+                                {/* <Edit2 className='h-5 w-5 mr-1 hover:cursor-pointer' /> */}
                                 <Trash2 className='h-5 w-5 mr-1 hover:cursor-pointer' onClick={() => handleRemoveList(item.inter_criteria_id)} />
                               </div>
                               <CardTitle> {item.criteria_inter_name}</CardTitle>

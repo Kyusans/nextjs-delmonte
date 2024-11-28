@@ -6,10 +6,19 @@ import { formatISO, format } from 'date-fns';
 import { FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { cn } from '@/lib/utils';
 import { CalendarIcon, ClockIcon } from 'lucide-react';
+import { formatDate } from '../signup/page';
 
-const DatePicker = ({ form, name, label = "Date", design, withTime = false }) => {
+const DatePicker = ({
+  form,
+  name,
+  label = "Date",
+  futureAllowed = true,
+  pastAllowed = true,
+  design,
+  withTime = false
+}) => {
   const [showPicker, setShowPicker] = useState(false);
-  const [selectedTime, setSelectedTime] = useState("12:00"); 
+  const [selectedTime, setSelectedTime] = useState("12:00");
 
   const handleDateChange = (date) => {
     if (date) {
@@ -39,6 +48,15 @@ const DatePicker = ({ form, name, label = "Date", design, withTime = false }) =>
     }
   };
 
+  const disableDate = (date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (futureAllowed && pastAllowed) return false;
+    if (!futureAllowed && date > today) return true;
+    if (!pastAllowed && date < today) return true;
+    return false;
+  };
+
   return (
     <FormField
       control={form.control}
@@ -66,20 +84,10 @@ const DatePicker = ({ form, name, label = "Date", design, withTime = false }) =>
                     <span>Pick a date</span>
                   )}
                 </Button>
-
               </PopoverTrigger>
               <PopoverContent align="start" className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  captionLayout="dropdown-buttons"
-                  selected={field.value ? new Date(field.value) : undefined}
-                  onSelect={handleDateChange}
-                  fromYear={1960}
-                  toYear={new Date().getFullYear()}
-                  disabled={(date) => date > new Date()}
-                />
                 {withTime && (
-                  <div className="p-4 border-t">
+                  <div className="p-4 border-b">
                     <div className="flex items-center gap-2">
                       <ClockIcon className="h-4 w-4" />
                       <input
@@ -91,6 +99,15 @@ const DatePicker = ({ form, name, label = "Date", design, withTime = false }) =>
                     </div>
                   </div>
                 )}
+                <Calendar
+                  mode="single"
+                  captionLayout="dropdown-buttons"
+                  selected={field.value ? new Date(field.value) : undefined}
+                  onSelect={handleDateChange}
+                  fromYear={1960}
+                  toYear={new Date().getFullYear()}
+                  disabled={disableDate}
+                />
               </PopoverContent>
             </Popover>
           </div>

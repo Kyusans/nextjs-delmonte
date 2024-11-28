@@ -102,7 +102,7 @@ const SetToInterviewModal = ({ datas, passingPercentage = 0, getPendingCandidate
         setData(datas);
       }
     }
-  }, [data, datas, isBatch, isOpen, passingPercentage]);
+  }, [isOpen]);
 
   const columns = [
     { header: 'Full Name', accessor: 'FullName' },
@@ -152,7 +152,6 @@ const SetToInterviewModal = ({ datas, passingPercentage = 0, getPendingCandidate
                               form={form}
                               name={field.name}
                               label="Pick a date for interview"
-                              futureAllowed={true}
                               pastAllowed={false}
                               withTime={true}
                             />
