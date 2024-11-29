@@ -47,7 +47,12 @@ const JobOfferPage = ({ handleChangeStatus }) => {
 
   const columns = [
     { header: "Full Name", accessor: "fullName" },
-    { header: "Status", accessor: "status_name" },
+    { header: "Job Offer Status", accessor: "jobOfferStatus" },
+    { header: "Salary", accessor: "joboffer_salary" },
+    { header: "Document", accessor: "joboffer_document" },
+    { header: "Date offered", accessor: "joboffer_date" },
+    { header: "Date Expired", accessor: "joboffer_expiryDate" },
+    { header: "Job Offer Status", accessor: "jobOfferStatus" },
   ];
 
   useEffect(() => {
@@ -63,7 +68,6 @@ const JobOfferPage = ({ handleChangeStatus }) => {
           <DataTable
             columns={columns}
             data={candidates}
-            autoIndex={true}
             onRowClick={handleOnClickRow}
             idAccessor="cand_id"
           />

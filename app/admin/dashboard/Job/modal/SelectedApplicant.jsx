@@ -123,7 +123,10 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
     }
   };
 
-  const handleJobOfferChangeStatus = () => {
+  const handleJobOfferChangeStatus = async () => {
+    console.log("hello");
+    await handleChangeStatus(candId, 8);
+    setStatus("Job Offer");
     getCandidateProfile();
   };
 
