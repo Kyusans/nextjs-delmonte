@@ -102,7 +102,7 @@ const SetToInterviewModal = ({ datas, passingPercentage = 0, getPendingCandidate
         setData(datas);
       }
     }
-  }, [isOpen]);
+  }, [datas, isBatch, isOpen, passingPercentage]);
 
   const columns = [
     { header: 'Full Name', accessor: 'FullName' },
