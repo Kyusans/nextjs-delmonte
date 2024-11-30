@@ -72,9 +72,9 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
     try {
       if (status === 1) {
         if (alertMessage === "Are you sure you want to proceed to job offer?") {
-          await handleChangeStatus(candId, 8);
+          await handleChangeStatus(candId, 13);
           toast.success("Applicant proceeded to Job Offer");
-          setStatus("Job Offer");
+          setStatus("Decision Pending");
           setIsJobOffer(1);
         }
       }
@@ -123,15 +123,19 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
     }
   };
 
-  const handleJobOfferChangeStatus = () => {
+  const handleJobOfferChangeStatus = async () => {
+    console.log("hello");
+    await handleChangeStatus(candId, 8);
+    setStatus("Job Offer");
     getCandidateProfile();
   };
 
   useEffect(() => {
     if (open) {
       getCandidateProfile();
+      setStatus(statusName)
     }
-  }, [getCandidateProfile, open]);
+  }, [getCandidateProfile, open, statusName]);
 
   return (
     <>
@@ -149,7 +153,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                 {status === "Process" && (<SetToInterviewModal datas={data.candidateInformation} getPendingCandidates={handleSetToInterview} isBatch={false} />)}
                 {status === "Interview" && (<Button onClick={() => handleShowConductInterview()}>Interview applicant</Button>)}
                 {status === "Background Check" && (<Button onClick={() => handleShowBackgroundCheckAlert()}>Background check</Button>)}
-                {status === "Job Offer" && isJobOffer === 0 && (<JobOffer candId={candId} changeStatus={handleJobOfferChangeStatus} />)}
+                {status === "Decision Pending" && isJobOffer === 0 && (<JobOffer candId={candId} changeStatus={handleJobOfferChangeStatus} />)}
               </div>
             </div>
           </SheetHeader>

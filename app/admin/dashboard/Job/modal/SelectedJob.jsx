@@ -14,6 +14,7 @@ import JobDetails from './JobDetails';
 import UpdateJobMaster from './UpdateJobMaster';
 import BackgroundCheckPage from '../BackgroundCheck/BackgroundCheckPage';
 import JobOfferPage from '../JobOffer/JobOfferPage';
+import DecisionPendingPage from '../DecisionPending/DecisionPendingPage';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
@@ -111,7 +112,7 @@ function SelectedJob({ open, onHide, jobId }) {
                       getSelectedJobs={getSelectedJobs}
                     />
                   </div>
-                </SheetTitle>
+                </SheetTitle> 
                 <SheetDescription className="text-start">
                   {data.jobMaster[0].jobM_description}
                 </SheetDescription>
@@ -125,7 +126,8 @@ function SelectedJob({ open, onHide, jobId }) {
                       <TabsTrigger value={3}>Interview</TabsTrigger>
                       <TabsTrigger value={4}>Exam</TabsTrigger>
                       <TabsTrigger value={5}>Background Check</TabsTrigger>
-                      <TabsTrigger value={6}>Offer</TabsTrigger>
+                      <TabsTrigger value={6}>Decision Pending</TabsTrigger>
+                      <TabsTrigger value={7}>Offer</TabsTrigger>
                     </TabsList>
                   </ScrollArea>
                   <ScrollArea className="flex-grow">
@@ -145,6 +147,9 @@ function SelectedJob({ open, onHide, jobId }) {
                       <BackgroundCheckPage handleChangeStatus={handleChangeStatus} />
                     </TabsContent>
                     <TabsContent value={6}>
+                      <DecisionPendingPage handleChangeStatus={handleChangeStatus} />
+                    </TabsContent>
+                    <TabsContent value={7}>
                       <JobOfferPage handleChangeStatus={handleChangeStatus} />
                     </TabsContent>
                   </ScrollArea>

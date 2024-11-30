@@ -59,8 +59,8 @@ const JobOffer = ({ candId, changeStatus }) => {
       console.log(response.data);
       if (response.data === 1) {
         toast.success("Job offer sent successfully");
-        setOpen(false);
         changeStatus();
+        setOpen(false);
       } else {
         toast.error("Failed to send job offer");
       }
