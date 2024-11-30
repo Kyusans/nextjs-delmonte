@@ -1,6 +1,6 @@
 "use client"
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -77,7 +77,7 @@ const UpdateInterviewCriteriaMaster = ({ data, id, currentName, currentCategory,
     }
   };
 
-  const getInterviewCategories = async () => {
+  const getInterviewCategories = useCallback(async () => {
     setIsLoading(true);
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + 'admin.php';
@@ -107,14 +107,14 @@ const UpdateInterviewCriteriaMaster = ({ data, id, currentName, currentCategory,
     } finally {
       setIsLoading(false);
     }
-  }
+  }, [data, form, id]);
 
   useEffect(() => {
     if (isOpen) {
       getInterviewCategories();
       form.setValue('interviewCriteriaName', currentName);
     }
-  }, [isOpen]);
+  }, [currentName, form, getInterviewCategories, isOpen]);
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

@@ -66,6 +66,7 @@ const JobOfferPage = ({ handleChangeStatus }) => {
       ) :
         (
           <DataTable
+            itemsPerPage={5}
             columns={columns}
             data={candidates}
             onRowClick={handleOnClickRow}

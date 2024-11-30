@@ -61,6 +61,7 @@ const ExamPage = ({ handleChangeStatus }) => {
           <div className="p-3">
             <DataTable
               columns={columns}
+              itemsPerPage={5}
               data={candidates}
               autoIndex={true}
               onRowClick={handleOnClickRow}

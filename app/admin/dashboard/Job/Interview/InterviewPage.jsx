@@ -49,8 +49,8 @@ const InterviewPage = ({ handleChangeStatus }) => {
   const columns = [
     { header: "Full Name", accessor: "fullName" },
     { header: "Status", accessor: "status_name" },
-    { header: "Schedule date", accessor: "schedDate"},
-    { header: "Schedule time", accessor: "schedTime"}
+    { header: "Schedule date", accessor: "schedDate" },
+    { header: "Schedule time", accessor: "schedTime" }
   ];
 
   useEffect(() => {
@@ -65,6 +65,7 @@ const InterviewPage = ({ handleChangeStatus }) => {
         <div className='p-3'>
           <DataTable
             columns={columns}
+            itemsPerPage={5}
             data={candidates}
             onRowClick={handleOnClickRow}
             idAccessor="cand_id"

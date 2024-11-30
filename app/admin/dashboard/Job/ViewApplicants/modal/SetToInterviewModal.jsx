@@ -41,7 +41,6 @@ const SetToInterviewModal = ({ datas, passingPercentage = 0, getPendingCandidate
         candId: candidate.cand_id,
         candEmail: candidate.cand_email,
       })) : [{
-
         fullName: data.cand_lastname + ", " + data.cand_firstname,
         candId: data.cand_id,
         candEmail: data.cand_email
@@ -88,9 +87,9 @@ const SetToInterviewModal = ({ datas, passingPercentage = 0, getPendingCandidate
     console.log("datas: ", datas);
     if (isOpen) {
       if (isBatch) {
-        const filteredData = datas.filter(data =>
-          data.status_name === "Pending" || data.status_name === "Process" &&
-          data.percentage >= passingPercentage
+        const filteredData = datas.filter(data => 
+          (data.status_name === "Pending" || data.status_name === "Process") &&
+          Number(data.percentage) >= Number(passingPercentage)
         );
         console.log("datas: ", filteredData);
         setData(filteredData);

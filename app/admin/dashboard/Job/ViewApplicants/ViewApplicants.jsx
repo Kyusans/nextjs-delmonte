@@ -82,6 +82,7 @@ const ViewApplicants = ({ handleChangeStatus }) => {
           <DataTable
             columns={columns}
             data={data}
+            itemsPerPage={5}
             onRowClick={(row) => handleShowSelectedApplicant(row.cand_id, row.status_name)}
             headerAction={<SetToInterviewModal datas={data} passingPercentage={passingPercentage} getPendingCandidates={getPendingDetails} />}
             tableCaption={
