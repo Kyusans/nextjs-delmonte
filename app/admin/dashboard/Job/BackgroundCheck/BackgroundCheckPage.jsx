@@ -64,7 +64,6 @@ const BackgroundCheckPage = ({ handleChangeStatus }) => {
           columns={columns}
           itemsPerPage={5}
           data={candidates}
-          itemsPerPage={5}
           autoIndex={true}
           onRowClick={handleOnClickRow}
           idAccessor="cand_id"

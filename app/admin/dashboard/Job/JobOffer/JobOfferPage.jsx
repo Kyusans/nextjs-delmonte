@@ -47,9 +47,8 @@ const JobOfferPage = ({ handleChangeStatus }) => {
 
   const columns = [
     { header: "Full Name", accessor: "fullName" },
-    { header: "Job Offer Status", accessor: "jobOfferStatus" },
-    { header: "Salary", accessor: "joboffer_salary" },
     { header: "Document", accessor: "joboffer_document" },
+    { header: "Salary", accessor: "joboffer_salary" },
     { header: "Date offered", accessor: "joboffer_date" },
     { header: "Date Expired", accessor: "joboffer_expiryDate" },
     { header: "Job Offer Status", accessor: "jobOfferStatus" },
@@ -69,7 +68,6 @@ const JobOfferPage = ({ handleChangeStatus }) => {
             itemsPerPage={5}
             columns={columns}
             data={candidates}
-            itemsPerPage={5}
             onRowClick={handleOnClickRow}
             idAccessor="cand_id"
           />
