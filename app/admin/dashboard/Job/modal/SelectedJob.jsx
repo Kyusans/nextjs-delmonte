@@ -15,6 +15,7 @@ import UpdateJobMaster from './UpdateJobMaster';
 import BackgroundCheckPage from '../BackgroundCheck/BackgroundCheckPage';
 import JobOfferPage from '../JobOffer/JobOfferPage';
 import DecisionPendingPage from '../DecisionPending/DecisionPendingPage';
+import EmployedPage from '../Employed/EmployedPage';
 
 function SelectedJob({ open, onHide, jobId }) {
   const [data, setData] = useState([]);
@@ -97,7 +98,7 @@ function SelectedJob({ open, onHide, jobId }) {
   return (
     <>
       <Sheet open={open} onOpenChange={handleClose}>
-        <SheetContent side="bottom" className="flex flex-col h-screen md:h-[80vh]">
+        <SheetContent side="bottom" className="flex flex-col h-screen md:h-[90vh]">
           {isLoading ? (
             <Spinner />
           ) : (
@@ -118,7 +119,7 @@ function SelectedJob({ open, onHide, jobId }) {
                 </SheetDescription>
               </SheetHeader>
               <Card className="p-1 w-full md:p-2 dark:bg-[#1c1917] flex-grow">
-                <Tabs defaultValue={selectedTab} className="h-full flex flex-col" onValueChange={(value) => setSelectedTab(value)}>
+                <Tabs defaultValue={selectedTab} className="flex flex-col" onValueChange={(value) => setSelectedTab(value)}>
                   <ScrollArea className="overflow-x-auto">
                     <TabsList className="flex  md:flex-wrap gap-2">
                       <TabsTrigger value={1}>Details</TabsTrigger>
@@ -128,6 +129,7 @@ function SelectedJob({ open, onHide, jobId }) {
                       <TabsTrigger value={5}>Background Check</TabsTrigger>
                       <TabsTrigger value={6}>Decision Pending</TabsTrigger>
                       <TabsTrigger value={7}>Offer</TabsTrigger>
+                      <TabsTrigger value={8}>Employed</TabsTrigger>
                     </TabsList>
                   </ScrollArea>
                   <ScrollArea className="flex-grow">
@@ -151,6 +153,9 @@ function SelectedJob({ open, onHide, jobId }) {
                     </TabsContent>
                     <TabsContent value={7}>
                       <JobOfferPage handleChangeStatus={handleChangeStatus} />
+                    </TabsContent>
+                    <TabsContent value={8}> 
+                      <EmployedPage handleChangeStatus={handleChangeStatus} />
                     </TabsContent>
                   </ScrollArea>
                 </Tabs>

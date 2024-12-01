@@ -667,7 +667,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                             </Accordion>
                           </TabsContent>
                           <TabsContent value="2">
-                            {status === "Exam" ? (
+                            {status !== "Pending" && status !== "Process" && status !== "Cancelled"  ? (
                               <div className="my-3">
                                 <InterviewResult candId={candId} handleInterviewChangeStatus={handleInterviewChangeStatus} />
                               </div>

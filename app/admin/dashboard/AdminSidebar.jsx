@@ -39,6 +39,13 @@ function AdminSidebar({ changeView, changeMasterFile }) {
     setIsOpen(false);
     console.log("index: ", index);
   }
+
+  const handleLogout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.href = "/login";
+
+  }
   return (
     <>
       <header className="sm:hidden w-full sticky top-0 flex h-16 items-center gap-4 border-b bg-[#0e4028] px-4 md:px-6 z-50">
@@ -115,7 +122,7 @@ function AdminSidebar({ changeView, changeMasterFile }) {
                 Settings
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="cursor-pointer text-red-500">
+              <DropdownMenuItem className="cursor-pointer text-red-500" onClick={handleLogout}>
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
               </DropdownMenuItem>
@@ -210,7 +217,7 @@ function AdminSidebar({ changeView, changeMasterFile }) {
                         Settings
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="cursor-pointer text-red-500">
+                      <DropdownMenuItem className="cursor-pointer text-red-500" onClick={handleLogout}>
                         <LogOut className="mr-2 h-4 w-4" />
                         Logout
                       </DropdownMenuItem>
