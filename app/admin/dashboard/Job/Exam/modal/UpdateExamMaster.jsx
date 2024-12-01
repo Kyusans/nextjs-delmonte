@@ -24,7 +24,7 @@ const formSchema = z.object({
   passingPercent: z.number().min(1, { message: "Passing percentage must be greater than 0" }),
 })
 
-const UpdateExamMaster = ({ examMasterData, getExamDetails, passingPercent }) => {
+const UpdateExamMaster = ({ examMasterData, getExamDetails, passingPercent, isGeneralExam = false }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -113,32 +113,36 @@ const UpdateExamMaster = ({ examMasterData, getExamDetails, passingPercent }) =>
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="duration"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Exam Duration (minutes)</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="passingPercent"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Passing Percentage</FormLabel>
-                  <FormControl>
-                    <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {!isGeneralExam && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="duration"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Exam Duration (minutes)</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="passingPercent"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Passing Percentage</FormLabel>
+                      <FormControl>
+                        <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
             <div className='flex justify-end gap-2'>
               <Button type="button" onClick={() => setIsOpen(false)} variant="outline">Close</Button>
               <Button type="submit" disabled={isLoading}>{isLoading && <Spinner />} {isLoading ? "Updating..." : "Update Exam"}</Button>

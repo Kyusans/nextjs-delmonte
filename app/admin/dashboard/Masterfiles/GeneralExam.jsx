@@ -69,7 +69,7 @@ function GeneralExam() {
                               <h1 className='text-2xl font-boldtext-start'>
                                 {examMaster.exam_name}
                               </h1>
-                              <UpdateExamMaster examMasterData={examMaster} getSelectedJob={getGeneralExamDetails} />
+                              <UpdateExamMaster examMasterData={examMaster} getSelectedJob={getGeneralExamDetails} isGeneralExam={true} />
                             </div>
                             {/* <p>Exam duration: {examMaster.exam_duration} minutes</p> */}
                             <p className='text-sm'>Date created: {examMaster.exam_createdAt ? formatDate(examMaster.exam_createdAt) : 'N/A'}</p>
