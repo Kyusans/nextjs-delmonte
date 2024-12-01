@@ -62,6 +62,7 @@ const BackgroundCheckPage = ({ handleChangeStatus }) => {
       ) : (
         <DataTable
           columns={columns}
+          itemsPerPage={5}
           data={candidates}
           itemsPerPage={5}
           autoIndex={true}
