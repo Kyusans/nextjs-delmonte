@@ -97,7 +97,7 @@ function SelectedJob({ open, onHide, jobId }) {
   return (
     <>
       <Sheet open={open} onOpenChange={handleClose}>
-        <SheetContent side="bottom" className="flex flex-col h-screen md:h-[80vh]">
+        <SheetContent side="bottom" className="flex flex-col h-screen md:h-[90vh]">
           {isLoading ? (
             <Spinner />
           ) : (
@@ -118,7 +118,7 @@ function SelectedJob({ open, onHide, jobId }) {
                 </SheetDescription>
               </SheetHeader>
               <Card className="p-1 w-full md:p-2 dark:bg-[#1c1917] flex-grow">
-                <Tabs defaultValue={selectedTab} className="h-full flex flex-col" onValueChange={(value) => setSelectedTab(value)}>
+                <Tabs defaultValue={selectedTab} className="flex flex-col" onValueChange={(value) => setSelectedTab(value)}>
                   <ScrollArea className="overflow-x-auto">
                     <TabsList className="flex  md:flex-wrap gap-2">
                       <TabsTrigger value={1}>Details</TabsTrigger>

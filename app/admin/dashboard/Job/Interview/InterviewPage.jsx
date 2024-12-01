@@ -48,7 +48,7 @@ const InterviewPage = ({ handleChangeStatus }) => {
 
   const columns = [
     { header: "Full Name", accessor: "fullName" },
-    { header: "Status", accessor: "status_name" },
+    // { header: "Status", accessor: "status_name" },
     { header: "Schedule date", accessor: "schedDate"},
     { header: "Schedule time", accessor: "schedTime"}
   ];
@@ -66,6 +66,7 @@ const InterviewPage = ({ handleChangeStatus }) => {
           <DataTable
             columns={columns}
             data={candidates}
+            itemsPerPage={5}
             onRowClick={handleOnClickRow}
             idAccessor="cand_id"
             headerAction={<ViewInterviewCriteria />}

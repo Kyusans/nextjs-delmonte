@@ -86,11 +86,12 @@ const SetToInterviewModal = ({ datas, passingPercentage = 0, getPendingCandidate
 
   useEffect(() => {
     console.log("datas: ", datas);
+    console.log("passingPercentage: ", passingPercentage);
     if (isOpen) {
       if (isBatch) {
         const filteredData = datas.filter(data =>
-          data.status_name === "Pending" || data.status_name === "Process" &&
-          data.percentage >= passingPercentage
+          data.percentage >= passingPercentage &&
+          (data.status_name === "Pending" || data.status_name === "Process")
         );
         console.log("datas: ", filteredData);
         setData(filteredData);

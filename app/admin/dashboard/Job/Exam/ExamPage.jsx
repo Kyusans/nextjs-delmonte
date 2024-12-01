@@ -62,6 +62,7 @@ const ExamPage = ({ handleChangeStatus }) => {
             <DataTable
               columns={columns}
               data={candidates}
+            itemsPerPage={5}
               autoIndex={true}
               onRowClick={handleOnClickRow}
               idAccessor="cand_id"

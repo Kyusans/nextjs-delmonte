@@ -68,6 +68,7 @@ const JobOfferPage = ({ handleChangeStatus }) => {
           <DataTable
             columns={columns}
             data={candidates}
+            itemsPerPage={5}
             onRowClick={handleOnClickRow}
             idAccessor="cand_id"
           />

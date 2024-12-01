@@ -68,7 +68,7 @@ const ViewApplicants = ({ handleChangeStatus }) => {
       className: (row) => `${row.percentage >= passingPercentage ? 'text-green-500' : 'text-red-500'}`,
       sortable: true
     },
-    { header: 'Status', accessor: 'status_name' }
+    { header: 'Status', accessor: 'status_name', className: (row) => `${row.status_name === "Pending" || row.status_name === "Process" ? 'text-green-500' : 'text-red-500'}` }
   ];
 
   useEffect(() => {
@@ -82,6 +82,7 @@ const ViewApplicants = ({ handleChangeStatus }) => {
           <DataTable
             columns={columns}
             data={data}
+            itemsPerPage={5}
             onRowClick={(row) => handleShowSelectedApplicant(row.cand_id, row.status_name)}
             headerAction={<SetToInterviewModal datas={data} passingPercentage={passingPercentage} getPendingCandidates={getPendingDetails} />}
             tableCaption={
