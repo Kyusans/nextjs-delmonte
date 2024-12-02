@@ -1,16 +1,17 @@
+"use client"
 import DataTable from '@/app/my_components/DataTable';
 import { retrieveData } from '@/app/utils/storageUtils';
 import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner';
-import SelectedApplicant from '../modal/SelectedApplicant';
+import ShowOffer from './modals/ShowOffer';
 
 const JobOfferPage = ({ handleChangeStatus }) => {
   const [candidates, setCandidates] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCandId, setSelectedCandId] = useState(null);
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
 
   const getJobOfferCandidates = async () => {
     setIsLoading(true);
@@ -37,11 +38,13 @@ const JobOfferPage = ({ handleChangeStatus }) => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    getJobOfferCandidates();
+    setSelectedCandidate(null);
+    // getJobOfferCandidates();
   }
 
   const handleOnClickRow = (id) => {
-    setSelectedCandId(id);
+    const candidate = candidates.find(c => c.cand_id === id);
+    setSelectedCandidate(candidate);
     handleOpenModal();
   };
 
@@ -62,27 +65,21 @@ const JobOfferPage = ({ handleChangeStatus }) => {
     <div>
       {isLoading ? (
         <Spinner />
-      ) :
-        (
-          <DataTable
-            itemsPerPage={5}
-            columns={columns}
-            data={candidates}
-            onRowClick={handleOnClickRow}
-            idAccessor="cand_id"
-          />
-        )
-      }
-
-      {isModalOpen &&
-        <SelectedApplicant
-          open={isModalOpen}
-          onHide={handleCloseModal}
-          statusName="Job Offer"
-          candId={selectedCandId}
-          handleChangeStatus={handleChangeStatus}
+      ) : (
+        <DataTable
+          itemsPerPage={5}
+          columns={columns}
+          data={candidates}
+          onRowClick={handleOnClickRow}
+          idAccessor="cand_id"
         />
-      }
+      )}
+
+      <ShowOffer
+        open={isModalOpen}
+        onHide={handleCloseModal}
+        candidate={selectedCandidate}
+      />
     </div>
   )
 }
