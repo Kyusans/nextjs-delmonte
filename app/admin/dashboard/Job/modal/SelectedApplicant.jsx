@@ -140,7 +140,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
   return (
     <>
       <Sheet open={open} onOpenChange={handleHide}>
-        <SheetContent side={"bottom"} className="h-full md:h-5/6">
+        <SheetContent side={"bottom"} className="h-full md:h-[90vh]">
           <SheetHeader className="px-5">
             <div className="flex justify-between mt-5">
               <div className="text-start">

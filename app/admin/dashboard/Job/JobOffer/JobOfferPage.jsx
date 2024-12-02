@@ -1,17 +1,19 @@
-"use client"
 import DataTable from '@/app/my_components/DataTable';
 import { retrieveData } from '@/app/utils/storageUtils';
 import Spinner from '@/components/ui/spinner';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { toast } from 'sonner';
-import ShowOffer from './modals/ShowOffer';
+import SelectedApplicant from '../modal/SelectedApplicant';
+import UpdateJobOffer from './modals/UpdateJobOffer';
+import { Trash2 } from 'lucide-react';
+import { formatDate } from '@/app/signup/page';
 
 const JobOfferPage = ({ handleChangeStatus }) => {
   const [candidates, setCandidates] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const [selectedCandId, setSelectedCandId] = useState(null);
 
   const getJobOfferCandidates = async () => {
     setIsLoading(true);
@@ -38,14 +40,14 @@ const JobOfferPage = ({ handleChangeStatus }) => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setSelectedCandidate(null);
-    // getJobOfferCandidates();
+    getJobOfferCandidates();
   }
 
-  const handleOnClickRow = (id) => {
-    const candidate = candidates.find(c => c.cand_id === id);
-    setSelectedCandidate(candidate);
-    handleOpenModal();
+  const handleOnClickRow = (id, isActionClick) => {
+    if (!isActionClick) {
+      setSelectedCandId(id);
+      handleOpenModal();
+    }
   };
 
   const columns = [
@@ -53,8 +55,20 @@ const JobOfferPage = ({ handleChangeStatus }) => {
     { header: "Document", accessor: "joboffer_document" },
     { header: "Salary", accessor: "joboffer_salary" },
     { header: "Date offered", accessor: "joboffer_date" },
-    { header: "Date Expired", accessor: "joboffer_expiryDate" },
-    { header: "Job Offer Status", accessor: "jobOfferStatus" },
+    { header: "Date Expired", accessor: (row) => formatDate(row.joboffer_expiryDate) },
+    { header: "Job Offer Status", accessor: "jobOfferStatus", className: "text-center" },
+    {
+      header: 'Actions',
+      cell: (row) => (
+        <div onClick={(e) => e.stopPropagation()} className='flex items-center gap-3'>
+          <UpdateJobOffer
+            candidate={row}
+            getJobOfferCandidates={getJobOfferCandidates}
+          />
+          <Trash2  className='cursor-pointer w-5 h-5' />
+        </div>
+      )
+    },
   ];
 
   useEffect(() => {
@@ -65,23 +79,28 @@ const JobOfferPage = ({ handleChangeStatus }) => {
     <div>
       {isLoading ? (
         <Spinner />
-      ) : (
-        <DataTable
-          itemsPerPage={5}
-          columns={columns}
-          data={candidates}
-          onRowClick={handleOnClickRow}
-          idAccessor="cand_id"
-        />
-      )}
+      ) :
+        (
+          <DataTable
+            itemsPerPage={5}
+            columns={columns}
+            data={candidates}
+            onRowClick={(id) => handleOnClickRow(id, false)}
+            idAccessor="cand_id"
+          />
+        )
+      }
 
-      <ShowOffer
-        open={isModalOpen}
-        onHide={handleCloseModal}
-        candidate={selectedCandidate}
-      />
+      {isModalOpen &&
+        <SelectedApplicant
+          open={isModalOpen}
+          onHide={handleCloseModal}
+          statusName="Job Offer"
+          candId={selectedCandId}
+          handleChangeStatus={handleChangeStatus}
+        />
+      }
     </div>
   )
 }
-
 export default JobOfferPage
