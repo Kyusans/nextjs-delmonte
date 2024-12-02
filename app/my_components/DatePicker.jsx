@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
-import { formatISO, format } from 'date-fns';
+import { formatISO, format, addYears } from 'date-fns';
 import { FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { cn } from '@/lib/utils';
 import { CalendarIcon, ClockIcon } from 'lucide-react';
@@ -51,10 +51,11 @@ const DatePicker = ({
   const disableDate = (date) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    if (futureAllowed && pastAllowed) return false;
+    const fiveYearsFromNow = addYears(today, 5);
+    if (futureAllowed && pastAllowed) return date > fiveYearsFromNow;
     if (!futureAllowed && date > today) return true;
     if (!pastAllowed && date < today) return true;
-    return false;
+    return date > fiveYearsFromNow;
   };
 
   return (
@@ -105,7 +106,7 @@ const DatePicker = ({
                   selected={field.value ? new Date(field.value) : undefined}
                   onSelect={handleDateChange}
                   fromYear={1960}
-                  toYear={new Date().getFullYear()}
+                  toYear={addYears(new Date(), 5).getFullYear()}
                   disabled={disableDate}
                 />
               </PopoverContent>
