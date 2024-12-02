@@ -90,23 +90,3 @@ const ExamplePage = () => {
 export default ExamplePage;
 data table how to use---------------------------------------------------------------------------
 
-
-show alert how to use 2---------------------------------------------------------------------------
-import { showAlert } from "@/components/ShowAlert";
-
-const handleDelete = () => {
-  showAlert.show(
-    "This action cannot be undone. It will permanently delete the item and remove it from your list",
-    (response) => {
-      if (response === 1) {
-        console.log("Confirmed");
-        // Handle the confirmed action
-      } else {
-        console.log("Cancelled");
-        // Handle the cancelled action
-      }
-    },
-    5 // Optional countdown duration in seconds
-  );
-};
-show alert how to use 2---------------------------------------------------------------------------
