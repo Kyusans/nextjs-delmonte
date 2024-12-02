@@ -3,6 +3,7 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Input } from "@/components/ui/input";
 import { ChevronsUpDown } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const DataTable = ({
   columns,
@@ -165,6 +166,23 @@ const DataTable = ({
 
   const isMobile = windowWidth < 640;
 
+  const truncateText = (text, maxLength = 50) => {
+    if (typeof text !== 'string') return text;
+    if (text.length <= maxLength) return text;
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger>
+            <span>{text.slice(0, maxLength)}...</span>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p className="max-w-xs whitespace-normal">{text}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  };
+
   return (
     <div>
       <div className={`flex ${isMobile ? 'flex-col' : 'justify-between'} items-start sm:items-center mb-4`}>
@@ -173,7 +191,7 @@ const DataTable = ({
           {add && add}
           {headerAction && headerAction}
         </div>
-        <div className="flex w-full md:w-1/2 md:justify-end">
+        <div className="flex w-full p-3 md:w-1/2 md:justify-end">
           {!hideSearch && (
             <Input
               type="text"
@@ -227,7 +245,7 @@ const DataTable = ({
                         key={colIndex}
                         className={typeof column.className === 'function' ? column.className(row) : column.className || ''}
                       >
-                        {column.cell ? column.cell(row) : (typeof column.accessor === 'function' ? column.accessor(row) : row[column.accessor])}
+                        {truncateText(column.cell ? column.cell(row) : (typeof column.accessor === 'function' ? column.accessor(row) : row[column.accessor]))}
                       </TableCell>
                     ))}
                   </TableRow>

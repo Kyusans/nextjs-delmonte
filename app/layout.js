@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "sonner";
+import ShowAlertListener, { ShowAlert } from "@/components/ui/show-alert";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -26,6 +27,8 @@ export default function RootLayout({ children }) {
           >
             <div className=" dark:bg-[#0e4028] h-screen">
               <Toaster position="top-center" richColors duration={2000} />
+              <ShowAlert />
+              <ShowAlertListener />
               {children}
             </div>
           </ThemeProvider>
