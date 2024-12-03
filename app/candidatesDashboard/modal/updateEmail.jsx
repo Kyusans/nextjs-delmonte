@@ -2,8 +2,14 @@
 
 import React, { useState } from "react";
 import axios from "axios";
-import { retrieveData } from "@/app/utils/storageUtils";
-import { toast } from "sonner";
+import { retrieveDataFromCookie,
+  retrieveDataFromSession,
+  storeDataInCookie,
+  storeDataInSession,
+  removeDataFromCookie,
+  removeDataFromSession, 
+  retrieveData} from "@/app/utils/storageUtils";
+import { Toaster, toast } from "react-hot-toast"; // Import React Hot Toast
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react"; // Added import for X icon
 
@@ -67,7 +73,9 @@ const UpdateEmail = ({
       if (data.pincode) {
         setCurrentEmailPinCode(data.pincode);
         setIsPinCodeSent(true);
-        toast.success("PIN code sent to your current email.");
+        toast.success("PIN code sent to your current email.", {
+          position: "bottom-left",
+        }); // Update toast position
       } else if (data.error) {
         toast.error(data.error);
       } else {
@@ -110,7 +118,9 @@ const UpdateEmail = ({
       if (data.pincode) {
         setNewEmailPinCode(data.pincode);
         setIsNewEmailPinCodeSent(true);
-        toast.success("PIN code sent to your new email.");
+        toast.success("PIN code sent to your new email.", {
+          position: "bottom-left",
+        }); // Update toast position
       } else {
         toast.error(data.error || "Failed to send PIN code to new email."); // Improved error handling
       }
@@ -150,7 +160,7 @@ const UpdateEmail = ({
       const response = await axios.post(url, formData);
 
       if (response.data.success) {
-        toast.success("Email updated successfully.");
+        toast.success("Email updated successfully."); // Update toast position
         await fetchProfile();
         setShowModal(false);
       } else {
@@ -165,107 +175,112 @@ const UpdateEmail = ({
   };
 
   return (
-    <div className={`modal ${showModal ? "block" : "hidden"}`}>
-      <div className="modal-content bg-gray-200 p-6 rounded-lg shadow-lg w-full relative">
-        <X
-          className="absolute top-4 right-4 cursor-pointer"
-          onClick={() => setShowModal(false)}
-        />
-        <h3 className="text-xl font-semibold text-gray-800 mb-4">
-          Update Email
-        </h3>
+    <>
+      <Toaster position="bottom-left" /> {/* Add Toaster component */}
+      <div className={`modal ${showModal ? "block" : "hidden"}`}>
+        <div className="modal-content bg-gray-200 p-6 rounded-lg shadow-lg w-full relative">
+          <X
+            className="absolute top-4 right-4 cursor-pointer"
+            onClick={() => setShowModal(false)}
+          />
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            Update Email
+          </h3>
 
-        {/* Step 1: Enter current password and new email */}
-        {!isPinCodeSent && (
-          <>
-            <div className="mb-4">
-              <label className="block text-gray-600 text-sm font-normal">
-                Current Password:
-              </label>
-              <input
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="Enter Current Password"
-                className="w-full p-2 border rounded-lg mt-1 bg-white"
-                required
-              />
-            </div>
+          {/* Step 1: Enter current password and new email */}
+          {!isPinCodeSent && (
+            <>
+              <div className="mb-4">
+                <label className="block text-gray-600 text-sm font-normal">
+                  Current Password:
+                </label>
+                <input
+                  type="password"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  placeholder="Enter Current Password"
+                  className="w-full p-2 border rounded-lg mt-1 bg-white"
+                  required
+                />
+              </div>
 
-            <button
-              onClick={requestPinCodeToCurrentEmail}
-              className="p-2 rounded-lg bg-blue-500 text-white mt-2"
-              disabled={requestLoading || loading}
-            >
-              {requestLoading ? "Sending OTP..." : "Send OTP to Current Email"}
-            </button>
-          </>
-        )}
+              <button
+                onClick={requestPinCodeToCurrentEmail}
+                className="p-2 rounded-lg bg-blue-500 text-white mt-2"
+                disabled={requestLoading || loading}
+              >
+                {requestLoading
+                  ? "Sending OTP..."
+                  : "Send OTP to Current Email"}
+              </button>
+            </>
+          )}
 
-        {/* Step 2: Enter and verify OTP from current email, send OTP to new email */}
-        {isPinCodeSent && !isNewEmailPinCodeSent && (
-          <>
-            <div className="mb-4">
-              <label className="block text-gray-600 text-sm font-normal">
-                Enter OTP from Current Email:
-              </label>
-              <input
-                type="text"
-                value={enteredPinCode}
-                onChange={(e) => setEnteredPinCode(e.target.value)}
-                placeholder="Enter OTP"
-                className="w-full p-2 border rounded-lg mt-1 bg-white"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="block text-gray-600 text-sm font-normal">
-                New Email:
-              </label>
-              <input
-                type="email"
-                value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
-                placeholder="Enter New Email"
-                className="w-full p-2 border rounded-lg mt-1 bg-white"
-                required
-              />
-            </div>
-            <button
-              onClick={verifyPinCodeAndSendToNewEmail}
-              className="p-2 rounded-lg bg-green-500 text-white mt-2"
-              disabled={loading}
-            >
-              {loading ? "Verifying..." : "Verify and Send OTP to New Email"}
-            </button>
-          </>
-        )}
+          {/* Step 2: Enter and verify OTP from current email, send OTP to new email */}
+          {isPinCodeSent && !isNewEmailPinCodeSent && (
+            <>
+              <div className="mb-4">
+                <label className="block text-gray-600 text-sm font-normal">
+                  Enter OTP from Current Email:
+                </label>
+                <input
+                  type="text"
+                  value={enteredPinCode}
+                  onChange={(e) => setEnteredPinCode(e.target.value)}
+                  placeholder="Enter OTP"
+                  className="w-full p-2 border rounded-lg mt-1 bg-white"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-gray-600 text-sm font-normal">
+                  New Email:
+                </label>
+                <input
+                  type="email"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  placeholder="Enter New Email"
+                  className="w-full p-2 border rounded-lg mt-1 bg-white"
+                  required
+                />
+              </div>
+              <button
+                onClick={verifyPinCodeAndSendToNewEmail}
+                className="p-2 rounded-lg bg-green-500 text-white mt-2"
+                disabled={loading}
+              >
+                {loading ? "Verifying..." : "Verify and Send OTP to New Email"}
+              </button>
+            </>
+          )}
 
-        {/* Step 3: OTP sent to new email */}
-        {isNewEmailPinCodeSent && (
-          <>
-            <div className="mb-4">
-              <label className="block text-gray-600 text-sm font-normal">
-                Enter OTP from New Email:
-              </label>
-              <input
-                type="text"
-                value={enteredNewPinCode}
-                onChange={(e) => setEnteredNewPinCode(e.target.value)}
-                placeholder="Enter OTP"
-                className="w-full p-2 border rounded-lg mt-1 bg-white"
-              />
-            </div>
-            <button
-              onClick={handleSubmit}
-              className="p-2 rounded-lg bg-green-500 text-white mt-2"
-              disabled={loading}
-            >
-              {loading ? "Submitting..." : "Submit"}
-            </button>
-          </>
-        )}
+          {/* Step 3: OTP sent to new email */}
+          {isNewEmailPinCodeSent && (
+            <>
+              <div className="mb-4">
+                <label className="block text-gray-600 text-sm font-normal">
+                  Enter OTP from New Email:
+                </label>
+                <input
+                  type="text"
+                  value={enteredNewPinCode}
+                  onChange={(e) => setEnteredNewPinCode(e.target.value)}
+                  placeholder="Enter OTP"
+                  className="w-full p-2 border rounded-lg mt-1 bg-white"
+                />
+              </div>
+              <button
+                onClick={handleSubmit}
+                className="p-2 rounded-lg bg-green-500 text-white mt-2"
+                disabled={loading}
+              >
+                {loading ? "Submitting..." : "Submit"}
+              </button>
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

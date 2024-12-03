@@ -1,53 +1,116 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { retrieveData } from "@/app/utils/storageUtils";
-import { toast } from "sonner";
+import {
+  retrieveDataFromCookie,
+  retrieveDataFromSession,
+  storeDataInCookie,
+  storeDataInSession,
+  removeDataFromCookie,
+  removeDataFromSession,
+  retrieveData,
+  removeData,
+} from "@/app/utils/storageUtils";
+import { Toaster, toast } from "react-hot-toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
-const ExamModal = ({ jobMId, jobTitle, onClose, jobPercentage }) => {
+const ExamModal = ({
+  startTimer,
+  jobMId,
+  jobTitle,
+  onClose,
+  jobPercentage,
+  jobPassingPoints,
+  fetchAppliedJobs,
+  fetchExamResult,
+}) => {
+  const [timeLeft, setTimeLeft] = useState(null);
   const [examData, setExamData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [examId, setExamId] = useState(null);
+  const [examDuration, setExamDuration] = useState(null);
+  const [timesUp, setTimesUp] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [questionPoints, setQuestionPoints] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0); // New state for pagination
-
-  const questionsPerPage = 5; // Limit of questions per page
-
-  console.log("examid:", examId);
-
-  console.log("jobpercentage", jobPercentage);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const questionsPerPage = 3;
 
   const fetchExamData = useCallback(async () => {
     const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
-    const jobId = retrieveData("jobMId");
-
-    const jsonData = { jobM_id: jobMId };
-
+    const jsonData = { jobM_id: jobMId || null };
+  
     const formData = new FormData();
     formData.append("operation", "getJobExam");
     formData.append("json", JSON.stringify(jsonData));
-
-    console.log("id:", jobId);
-
+  
     try {
       const response = await axios.post(url, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-
-      console.log("Response data:", response.data);
-
+  
       if (response.data && response.data.examQuestions) {
-        setExamData(response.data.examQuestions);
-        setExamId(response.data.examQuestions[0]?.exam_id);
+        const shuffledQuestions = response.data.examQuestions
+          .map((value) => ({ value, sort: Math.random() }))
+          .sort((a, b) => a.sort - b.sort)
+          .map(({ value }) => value)
+          .map((question) => ({
+            ...question,
+            choices: question.choices
+              .map((value) => ({ value, sort: Math.random() }))
+              .sort((a, b) => a.sort - b.sort)
+              .map(({ value }) => value),
+          }));
+  
+        if (!shuffledQuestions.length) {
+          throw new Error("No exam questions available");
+        }
+  
+        setExamData(shuffledQuestions);
+        setExamId(shuffledQuestions[0]?.exam_id);
+  
+       
+        let duration = null;
 
-        const pointsArray = response.data.examQuestions.map(
-          (q) => q.examQ_points
+        
+        const hasJobSpecificQuestions = shuffledQuestions.some(
+          (question) => question.exam_jobMId
         );
+
+        if (hasJobSpecificQuestions) {
+         
+          const jobSpecificQuestion = shuffledQuestions.find(
+            (question) => question.exam_jobMId && question.exam_duration
+          );
+          
+          if (jobSpecificQuestion) {
+            duration = jobSpecificQuestion.exam_duration;
+            console.log("Using job-specific exam duration:", duration);
+          } else {
+            throw new Error("No exam duration specified in job-specific questions");
+          }
+        } else {
+          
+          const generalQuestion = shuffledQuestions.find(
+            (question) => question.exam_duration
+          );
+
+          if (generalQuestion) {
+            duration = generalQuestion.exam_duration;
+            console.log("Using general exam duration:", duration);
+          } else {
+            throw new Error("No exam duration specified in any question");
+          }
+        }
+
+        // Convert duration from minutes to seconds
+        setExamDuration(duration * 60);
+  
+        const pointsArray = shuffledQuestions.map((q) => q.examQ_points);
         setQuestionPoints(pointsArray);
         setLoading(false);
       } else {
@@ -55,34 +118,58 @@ const ExamModal = ({ jobMId, jobTitle, onClose, jobPercentage }) => {
       }
     } catch (error) {
       console.error("Error fetching exam data:", error);
-      setError("Failed to load exam data.");
+      setError(error.message || "Failed to load exam data.");
       setLoading(false);
     }
   }, [jobMId]);
+  
 
   useEffect(() => {
     fetchExamData();
   }, [fetchExamData]);
 
+  useEffect(() => {
+    if (startTimer && examDuration) {
+      setTimeLeft(examDuration);
+    }
+  }, [startTimer, examDuration]);
+
   const handleAnswerChange = (questionId, choiceId) => {
-    setSelectedAnswers((prev) => ({
-      ...prev,
-      [questionId]: choiceId,
-    }));
+    setSelectedAnswers((prev) => ({ ...prev, [questionId]: choiceId }));
+  };
+
+  useEffect(() => {
+    let timer;
+    if (startTimer && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+    } else if (timeLeft === 0) {
+      setTimesUp(true);
+    }
+    return () => clearInterval(timer);
+  }, [startTimer, timeLeft]);
+
+  const formatTime = (seconds) => {
+    const hrs = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    const secs = Math.round(seconds % 60);
+    return `${hrs.toString().padStart(2, "0")}:${mins
+      .toString()
+      .padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
   const handleSubmit = async () => {
-    const candidateId = retrieveData("user_id");
-    const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
-
     try {
+      const candidateId = retrieveData("user_id");
+      const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
+
       let totalScore = 0;
       const totalPoints = questionPoints.reduce(
         (acc, points) => acc + points,
         0
       );
       const passingScore = (totalPoints * jobPercentage) / 100;
-      console.log("pass score:", passingScore);
 
       const answers = Object.keys(selectedAnswers).map((questionId) => {
         const question = examData.find(
@@ -96,7 +183,7 @@ const ExamModal = ({ jobMId, jobTitle, onClose, jobPercentage }) => {
           );
           return {
             question_id: questionId,
-            multiple_choice_answer: selectedChoiceId,
+            multiple_choice_answer: selectedChoiceId || null,
             essay_answer: null,
             points_earned: 0,
           };
@@ -117,7 +204,7 @@ const ExamModal = ({ jobMId, jobTitle, onClose, jobPercentage }) => {
 
         return {
           question_id: questionId,
-          multiple_choice_answer: selectedChoiceId,
+          multiple_choice_answer: selectedChoiceId || null,
           essay_answer: null,
           points_earned: pointsEarned,
         };
@@ -126,13 +213,12 @@ const ExamModal = ({ jobMId, jobTitle, onClose, jobPercentage }) => {
       const resultData = {
         examR_candId: candidateId,
         examR_examId: examId,
+        examR_jobMId: jobMId,
         examR_score: totalScore,
         examR_status: totalScore > passingScore ? 1 : 0,
         examR_totalscore: totalPoints,
         app_id: retrieveData("app_id"),
       };
-
-      console.log("Result data:", resultData);
 
       const resultFormData = new FormData();
       resultFormData.append("operation", "insertExamResult");
@@ -143,8 +229,6 @@ const ExamModal = ({ jobMId, jobTitle, onClose, jobPercentage }) => {
           "Content-Type": "multipart/form-data",
         },
       });
-
-      console.log("Insert exam result response:", resultResponse.data);
 
       const { success, examR_id } = resultResponse.data;
       if (!success || !examR_id) {
@@ -166,17 +250,17 @@ const ExamModal = ({ jobMId, jobTitle, onClose, jobPercentage }) => {
         },
       });
 
-      console.log("Insert candidate answers response:", answerResponse.data);
-
       if (answerResponse.data.success) {
         toast.success("Exam submitted successfully!");
+        removeData("app_id");
         window.location.reload();
       } else {
-        toast.error("Error submitting answers: " + answerResponse.data.message);
+        toast.error("Failed to submit exam: " + answerResponse.data.message);
       }
     } catch (error) {
       console.error("Error during exam submission:", error);
-      alert("Failed to submit exam and answers.");
+      toast.error("Error submitting exam: " + error.message);
+    } finally {
     }
   };
 
@@ -186,145 +270,330 @@ const ExamModal = ({ jobMId, jobTitle, onClose, jobPercentage }) => {
     return (answered / examData.length) * 100;
   };
 
+  const scrollToTop = () => {
+    const examContainer = document.querySelector(".questions-container");
+    if (examContainer) {
+      examContainer.scrollTop = 0;
+    }
+  };
+
   const handleNextPage = () => {
     if (currentPage < Math.ceil(examData.length / questionsPerPage) - 1) {
       setCurrentPage((prev) => prev + 1);
+      scrollToTop(); // Scrolls to the top of the new page
     }
   };
 
   const handlePreviousPage = () => {
     if (currentPage > 0) {
       setCurrentPage((prev) => prev - 1);
+      scrollToTop(); // Scrolls to the top of the previous page
     }
   };
 
   const isAllAnswered = () => {
-    return examData.every((question) => selectedAnswers[question.examQ_id]);
+    return examData?.every((question) => selectedAnswers[question.examQ_id]);
   };
 
+  const handleClearAnswers = () => {
+    setSelectedAnswers({});
+  };
+
+  useEffect(() => {
+    const preventCopy = (e) => {
+      e.preventDefault();
+      return false;
+    };
+
+    const preventContextMenu = (e) => {
+      e.preventDefault();
+      return false;
+    };
+
+    document.addEventListener("copy", preventCopy);
+    document.addEventListener("cut", preventCopy);
+    document.addEventListener("contextmenu", preventContextMenu);
+
+    return () => {
+      document.removeEventListener("copy", preventCopy);
+      document.removeEventListener("cut", preventCopy);
+      document.removeEventListener("contextmenu", preventContextMenu);
+    };
+  }, []);
+
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg shadow-lg w-full h-full flex flex-col">
-        <div className="flex justify-between items-center p-4 border-b bg-gray-100 shadow-md">
-          <h2 className="text-lg font-semibold text-gray-600 mb-2">
-            <span className="text-3xl font-bold text-blue-500">{jobTitle}</span>
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-600 hover:text-gray-800 transition"
-          >
-            <FontAwesomeIcon icon={faTimes} />
-          </button>
+    <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-sm flex justify-center items-center z-50">
+      <div className="bg-white shadow-2xl w-full h-full flex flex-col overflow-hidden">
+        {/* Header Section */}
+        <div className="flex justify-between items-center p-3 border-b border-gray-100 bg-white shadow-sm">
+          <div className="space-y-1">
+            <h2 className="text-3xl font-bold text-gray-800">
+              Online Assessment
+            </h2>
+            <p className="text-lg text-gray-500">{jobTitle}</p>
+          </div>
+
+          <div className="flex items-center space-x-8">
+            {/* Timer Display */}
+            <div className="flex items-center space-x-2 bg-gray-50 px-4 py-2 rounded-lg">
+              <svg
+                className="w-5 h-5 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span className="text-xl font-semibold text-gray-700">
+                {formatTime(timeLeft)}
+              </span>
+            </div>
+
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-full hover:bg-gray-100"
+            >
+              <FontAwesomeIcon icon={faTimes} className="text-xl" />
+            </button>
+          </div>
         </div>
 
-        {/* Scrollable Content */}
-        <div className="overflow-y-auto flex-1">
-          {loading ? (
-            <p className="text-gray-600">Loading exam data...</p>
-          ) : error ? (
-            <p className="text-red-600">{error}</p>
-          ) : examData && examData.length > 0 ? (
-            <>
-              {/* Progress Bar */}
-              <div className="w-full bg-gray-300 rounded-full h-2 sticky top-0 z-10">
-                <div
-                  className="bg-green-500 h-2 rounded-full"
-                  style={{ width: `${calculateProgress()}%` }}
-                ></div>
-              </div>
+        {/* Progress Bar */}
+        <div className="w-full bg-gray-100 h-1">
+          <div
+            className="bg-green-500 h-1 transition-all duration-300 ease-in-out"
+            style={{ width: `${calculateProgress()}%` }}
+          />
+        </div>
 
-              <div className="flex flex-col items-center space-y-4">
-                {examData
-                  .slice(
-                    currentPage * questionsPerPage,
-                    (currentPage + 1) * questionsPerPage
-                  )
-                  .map((question) => (
-                    <div
-                      key={question.examQ_id}
-                      className="bg-white p-6 rounded-lg shadow-lg w-full max-w-3xl border border-gray-200"
-                    >
-                      <p className="text-lg font-semibold mb-4 text-gray-800">
-                        {question.examQ_text}
-                      </p>
-                      <div className="space-y-3">
-                        {question.choices.map((choice) => (
-                          <label
-                            key={choice.examC_id}
-                            className="flex items-center space-x-3"
-                          >
-                            <input
-                              type="radio"
-                              name={`question-${question.examQ_id}`}
-                              value={choice.examC_id}
-                              checked={
-                                selectedAnswers[question.examQ_id] ===
-                                choice.examC_id
-                              }
-                              onChange={() =>
-                                handleAnswerChange(
-                                  question.examQ_id,
-                                  choice.examC_id
-                                )
-                              }
-                              className={`appearance-none h-4 w-4 border-2 rounded-full transition-all duration-200
+        {/* Main Content */}
+        <div className="questions-container flex-1 overflow-y-auto bg-gray-50 p-6">
+          {loading ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center space-y-3">
+                <div className="w-16 h-16 border-4 border-gray-200 border-t-green-500 rounded-full animate-spin mx-auto" />
+                <p className="text-gray-600 font-medium">
+                  Loading exam data...
+                </p>
+              </div>
+            </div>
+          ) : error ? (
+            <div className="text-center text-red-600 p-4 bg-red-50 rounded-lg">
+              {error}
+            </div>
+          ) : examData && examData.length > 0 ? (
+            <div className="max-w-4xl mx-auto space-y-6">
+              {examData
+                .slice(
+                  currentPage * questionsPerPage,
+                  (currentPage + 1) * questionsPerPage
+                )
+                .map((question, idx) => (
+                  <div
+                    key={question.examQ_id}
+                    className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-start space-x-4">
+                      <span className="flex-shrink-0 w-8 h-8 bg-green-50 text-green-600 rounded-full flex items-center justify-center font-semibold">
+                        {currentPage * questionsPerPage + idx + 1}
+                      </span>
+                      <div className="flex-1">
+                        <p className="text-lg font-medium text-gray-800 mb-6">
+                          {question.examQ_text}
+                        </p>
+                        <div className="space-y-4">
+                          {question.choices.map((choice) => (
+                            <label
+                              key={choice.examC_id}
+                              className={`flex items-center p-4 rounded-lg cursor-pointer transition-all duration-200
                                 ${
                                   selectedAnswers[question.examQ_id] ===
                                   choice.examC_id
-                                    ? "bg-green-600  ring-2 ring-gray-600"
-                                    : "border-gray-600"
+                                    ? "bg-green-50 border-2 border-green-500"
+                                    : "border-2 border-gray-100 hover:border-gray-200"
                                 }`}
-                            />
-                            <span className="text-gray-700 text-md">
-                              {choice.examC_text}
-                            </span>
-                          </label>
-                        ))}
+                            >
+                              <input
+                                type="radio"
+                                name={`question-${question.examQ_id}`}
+                                value={choice.examC_id}
+                                checked={
+                                  selectedAnswers[question.examQ_id] ===
+                                  choice.examC_id
+                                }
+                                onChange={() =>
+                                  handleAnswerChange(
+                                    question.examQ_id,
+                                    choice.examC_id
+                                  )
+                                }
+                                className="hidden"
+                              />
+                              <div
+                                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center mr-4
+                                ${
+                                  selectedAnswers[question.examQ_id] ===
+                                  choice.examC_id
+                                    ? "border-green-500 bg-green-500"
+                                    : "border-gray-300"
+                                }`}
+                              >
+                                {selectedAnswers[question.examQ_id] ===
+                                  choice.examC_id && (
+                                  <div className="w-2 h-2 rounded-full bg-white" />
+                                )}
+                              </div>
+                              <span className="text-gray-700 text-lg">
+                                {choice.examC_text}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  ))}
-              </div>
-
-              {/* Navigation Buttons */}
-              <div className="flex justify-between p-4">
-                {currentPage > 0 && ( // Show Previous button only if not on the first page
-                  <button
-                    onClick={handlePreviousPage}
-                    className="bg-gray-300 text-gray-700 rounded px-4 py-2 hover:bg-gray-400 transition"
-                  >
-                    Previous
-                  </button>
-                )}
-                <div className="flex-grow" />{" "}
-                {/* This div takes up space to push the Next button to the right */}
-                {currentPage <
-                  Math.ceil(examData.length / questionsPerPage) - 1 && ( // Show Next button only if not on the last page
-                  <button
-                    onClick={handleNextPage}
-                    className="bg-gray-300 text-gray-700 rounded px-4 py-2 hover:bg-gray-400 transition"
-                  >
-                    Next
-                  </button>
-                )}
-              </div>
-
-              {/* Submit Button */}
-              {isAllAnswered() && (
-                <div className="p-4 border-t flex justify-end bg-gray-100">
-                  <button
-                    onClick={handleSubmit}
-                    className="bg-green-600 text-white rounded px-6 py-2 hover:bg-green-700 transition"
-                  >
-                    Submit Exam
-                  </button>
-                </div>
-              )}
-            </>
+                  </div>
+                ))}
+            </div>
           ) : (
-            <p className="text-gray-600">No exam data found.</p>
+            <div className="text-center text-gray-600">No exam data found.</div>
           )}
         </div>
+
+        {/* Footer with Navigation and Actions */}
+        <div className="border-t border-gray-100 bg-white p-4 sm:p-6">
+          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex space-x-4 w-full sm:w-auto">
+              {currentPage > 0 && (
+                <button
+                  onClick={handlePreviousPage}
+                  className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-6 py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-gray-600 font-medium"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                  <span>Previous</span>
+                </button>
+              )}
+              {currentPage <
+                Math.ceil(examData?.length / questionsPerPage) - 1 && (
+                <button
+                  onClick={handleNextPage}
+                  className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-6 py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-gray-600 font-medium"
+                >
+                  <span>Next</span>
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
+              )}
+            </div>
+
+            {isAllAnswered() && (
+              <div className="flex space-x-4 w-full sm:w-auto">
+                <button
+                  onClick={handleClearAnswers}
+                  className="flex-1 sm:flex-none px-6 py-3 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors font-medium"
+                >
+                  Clear All
+                </button>
+                <button
+                  onClick={handleSubmit}
+                  className="flex-1 sm:flex-none px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                >
+                  Submit Exam
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Times Up Modal */}
+        {timesUp && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-[60]">
+            <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-8 max-w-md w-full mx-4 transform transition-all duration-300 ease-in-out">
+              <div className="text-center">
+                <div className="mb-6 relative">
+                  <div className="w-24 h-24 bg-red-100 dark:bg-red-900/30 rounded-full mx-auto flex items-center justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-12 w-12 text-red-500 dark:text-red-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="absolute top-0 right-0 -mr-2 -mt-2 bg-red-500 rounded-full p-2 animate-bounce">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-6 w-6 text-white"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+
+                <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+                  Time's Up!
+                </h3>
+
+                <p className="text-gray-600 dark:text-gray-300 mb-8">
+                  Your exam session has ended. Your answers will be
+                  automatically submitted.
+                </p>
+
+                <button
+                  onClick={handleSubmit}
+                  className="w-full bg-red-600 text-white py-4 px-6 rounded-xl font-semibold hover:bg-red-700 transition-all duration-200 transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                >
+                  Submit Exam
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
+
+      <Toaster position="bottom-left" />
     </div>
   );
 };

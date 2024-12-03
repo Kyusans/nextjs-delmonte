@@ -2,8 +2,14 @@
 
 import React, { useState } from "react";
 import axios from "axios";
-import { retrieveData } from "@/app/utils/storageUtils";
-import { toast } from "sonner";
+import { retrieveDataFromCookie,
+  retrieveDataFromSession,
+  storeDataInCookie,
+  storeDataInSession,
+  removeDataFromCookie,
+  removeDataFromSession, 
+  retrieveData} from "@/app/utils/storageUtils";
+import { Toaster, toast } from "react-hot-toast"; // Updated import
 import { Input } from "@/components/ui/input";
 import { X } from "lucide-react"; // Added import for X icon
 
@@ -136,7 +142,7 @@ const UpdatePassword = ({
       const response = await axios.post(url, formData);
 
       if (response.data.success) {
-        toast.success("password updated successfully.");
+        toast.success("Password updated successfully.");
         await fetchProfile();
         setShowModal(false);
       } else {
@@ -153,12 +159,10 @@ const UpdatePassword = ({
   return (
     <div className={`modal ${showModal ? "block" : "hidden"}`}>
       <div className="modal-content bg-gray-200 p-6 rounded-lg shadow-lg w-full relative">
-        {" "}
         <X
           className="absolute top-4 right-4 cursor-pointer"
           onClick={() => setShowModal(false)}
-        />{" "}
-        {/* Added icon and positioning */}
+        />
         <h3 className="text-xl font-semibold text-gray-800 mb-4">
           Update Password
         </h3>
@@ -189,19 +193,6 @@ const UpdatePassword = ({
           </div>
           {isPinCodeSent && (
             <>
-              {/* <div className="mb-4">
-                <label className="block text-gray-600 text-sm font-normal">
-                  New Email:
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter New Email"
-                  className="w-full p-2 border rounded-lg mt-1 bg-white"
-                />
-              </div> */}
               <div className="mb-4">
                 <label className="block text-gray-600 text-sm font-normal">
                   New Password:
@@ -273,13 +264,6 @@ const UpdatePassword = ({
             </>
           )}
           <div className="flex justify-between">
-            {/* <button
-              type="button"
-              onClick={() => setShowModal(false)}
-              className="p-2 rounded-lg bg-red-500 text-white"
-            >
-              Cancel
-            </button> */}
             {isPinCodeSent && (
               <button
                 type="submit"
@@ -292,6 +276,7 @@ const UpdatePassword = ({
           </div>
         </form>
       </div>
+      <Toaster position="bottom-left" /> {/* Add Toaster component */}
     </div>
   );
 };

@@ -237,7 +237,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                                 ? data.candidateInformation.cand_sex
                                 : "N/A"}
                             </div>
-                            {/* 
+                            
                           <div>
                             <p className="font-bold">Present address:</p>
                             {data.candidateInformation
@@ -250,7 +250,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                             {data.candidateInformation
                               ? data.candidateInformation.cand_permanentAddress
                               : "N/A"}
-                          </div> */}
+                          </div>
                           </CardContent>
                         </ScrollArea>
                       </Card>
@@ -265,6 +265,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                                 <TabsTrigger value={2}>Trainings</TabsTrigger>
                                 <TabsTrigger value={3}>Knowledge</TabsTrigger>
                                 <TabsTrigger value={4}>Experience</TabsTrigger>
+                                <TabsTrigger value={5}>License</TabsTrigger>
                               </TabsList>
 
                               <TabsContent value={1}>
@@ -457,6 +458,54 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                                   <p className="text-center text-gray-500">No experience added</p>
                                 )}
                               </TabsContent>
+
+                              <TabsContent value={5}>
+                                {data.licenses && data.licenses.length > 0 ? (
+                                  <>
+                                    <div className='w-full ml-3 hidden lg:block'>
+                                      <Table className="w-full">
+                                        <TableHeader>
+                                          <TableRow>
+                                            <TableHead>#</TableHead>
+                                            <TableHead>License Name</TableHead>
+                                            <TableHead>License Type</TableHead>
+                                            <TableHead>License Number</TableHead>
+                                          </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                          {data.licenses.map((license, index) => (
+                                            <TableRow key={index}>
+                                              <TableCell>{index + 1}</TableCell>
+                                              <TableCell>{license.license_master_name}</TableCell>
+                                              <TableCell>{license.license_type_name}</TableCell>
+                                              <TableCell>{license.license_number}</TableCell>
+                                            </TableRow>
+                                          ))}
+                                        </TableBody>
+                                      </Table>
+                                    </div>
+                                    <div className="block lg:hidden">
+                                      {data.licenses.map((license, index) => (
+                                        <div key={index} className="relative w-full p-4 rounded-md shadow">
+                                          <div className="mt-2 text-sm">
+                                            <div className='mb-1 text-xl break-words'>
+                                              {license.license_master_name}
+                                            </div>
+                                            {license.license_type_name}
+                                            <div className='text-gray-500'>
+                                              License No: {license.license_number}
+                                            </div>
+                                          </div>
+                                          <Separator className="mt-3" />
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </>
+                                ) : (
+                                  <p className="text-center text-gray-500">No licenses added</p>
+                                )}
+                              </TabsContent>
+
                             </Tabs>
                           </CardContent>
                         </ScrollArea>

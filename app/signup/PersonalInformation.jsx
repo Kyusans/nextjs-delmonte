@@ -248,6 +248,7 @@ const PersonalInformation = ({ handleSubmit }) => {
                           form={form}
                           name="dob"
                           label={"Date of Birth"}
+                          futureAllowed={false}
                           design="justify-start w-full text-left font-normal bg-[#0e4028] hover:bg-[#0e5a35] border-2 border-[#0b864a]"
                         />
                       </div>

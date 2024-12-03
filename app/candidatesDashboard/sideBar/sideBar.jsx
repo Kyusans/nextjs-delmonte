@@ -16,6 +16,8 @@ import {
   faUserTimes,
   faUserCheck,
 } from "@fortawesome/free-solid-svg-icons";
+import { MdOutlineCancel } from "react-icons/md";
+import { TbPencilX } from "react-icons/tb";
 
 import ViewProfile from "../modal/viewProfile";
 
@@ -26,11 +28,22 @@ import {
 
 import axios from "axios";
 import secureLocalStorage from "react-secure-storage";
-import { storeData, retrieveData } from "../../utils/storageUtils"; // Import the utility functions
+import {
+  retrieveDataFromCookie,
+  retrieveDataFromSession,
+  storeDataInCookie,
+  storeDataInSession,
+  removeDataFromCookie,
+  removeDataFromSession,
+  retrieveData,
+  storeData,
+  removeData,
+} from "../../utils/storageUtils"; // Import the utility functions
 import { FaUserTie, FaUserTimes } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import ExamModal from "../exam/exam";
 import JobOfferModal from "../modal/jobOffer";
+import CancelJobModal from "../modal/cancelJobApplied"; // Import the new modal component
 
 // Import useNavigate
 
@@ -58,11 +71,20 @@ const Sidebar = ({
   const [selectedJobMId, setSelectedJobMId] = useState(null);
   const [selectedJobTitle, setSelectedJobTitle] = useState(null);
   const [selectedJobPercentage, setSelectedJobPercentage] = useState(null);
+  const [selectedJobPassingPoints, setSelectedJobPassingPoints] =
+    useState(null);
+  const [appId, setAppId] = useState(null);
+  const [jobMId, setJobMId] = useState(null);
+  const [jobTitle, setJobTitle] = useState(null);
+  const [jobAppId, setJobAppId] = useState(null);
 
-  const [examResults, setExamResults] = useState([]); // State to hold exam results
+  const [examResults, setExamResults] = useState([]);
 
   const [isJobOfferModalOpen, setIsJobOfferModalOpen] = useState(false);
   const [jobOfferDetails, setJobOfferDetails] = useState(null); // State to hold job offer details
+
+  const [showCancelModal, setShowCancelModal] = useState(false);
+  const [jobToCancel, setJobToCancel] = useState(null);
 
   const toggleUserDropdown = () => {
     setIsUserDropdownOpen(!isUserDropdownOpen);
@@ -129,7 +151,7 @@ const Sidebar = ({
 
       const formData = new FormData();
       formData.append("operation", "getAppliedJobs");
-      formData.append("cand_id", personalInfoId);
+      formData.append("json", JSON.stringify({ cand_id: personalInfoId }));
 
       const response = await axios.post(url, formData);
 
@@ -138,13 +160,36 @@ const Sidebar = ({
       } else {
         setAppliedJobs(response.data);
         console.log("Applied jobs:", response.data);
+        // const passingpoints = response.data.passing_points;
+        // localStorage.setItem("passing", passingpoints);
+        // localStorage.setItem("app_id", response.data[0].app_id);
       }
     } catch (error) {
       console.error("Error fetching applied jobs:", error);
     }
   }
+
+  const fetchExamResult = async () => {
+    try {
+      const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
+      const candId = retrieveData("user_id");
+
+      const formData = new FormData();
+      formData.append("operation", "fetchExamResult");
+      formData.append("json", JSON.stringify({ cand_id: candId }));
+      const examResultsResponse = await axios.post(url, formData);
+
+      console.log("exam result", examResultsResponse.data);
+
+      setExamResults(examResultsResponse.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
   useEffect(() => {
     fetchAppliedJobs();
+    fetchExamResult();
   }, []);
 
   const userId = retrieveData("user_id");
@@ -158,7 +203,11 @@ const Sidebar = ({
             className="text-yellow-500 animate-pulse"
           />
         );
-      case "approved":
+      case "cancelled":
+        return (
+          <MdOutlineCancel className="text-red-500 animate-pulse text-xl" />
+        );
+      case "accept":
         return (
           <FontAwesomeIcon icon={faCheckCircle} className="text-green-500" />
         );
@@ -176,10 +225,22 @@ const Sidebar = ({
         return (
           <FontAwesomeIcon icon={faUserCheck} className="text-yellow-500" />
         );
+      case "failed exam":
+        return <TbPencilX className="text-red-500 text-xl animate-pulse" />;
       case "job offer":
         return (
           <FontAwesomeIcon icon={faUserCheck} className="text-green-500" />
         );
+      case "decline offer":
+        return <FontAwesomeIcon icon={faUserTimes} className="text-red-500" />;
+      case "employed":
+        return (
+          <FontAwesomeIcon
+            icon={faUserTie}
+            className="text-blue-300 animate-bounce animate-infinite"
+          />
+        );
+
       default:
         return (
           <FontAwesomeIcon
@@ -190,63 +251,46 @@ const Sidebar = ({
     }
   };
 
-  const openExamModal = (jobMId, jobTitle, jobAppId, jobPercentage) => {
+  const openExamModal = (
+    jobMId,
+    jobTitle,
+    jobAppId,
+    jobPercentage,
+    jobPassingPoints
+  ) => {
     setSelectedJobMId(jobMId);
     setSelectedJobTitle(jobTitle);
     setSelectedJobPercentage(jobPercentage);
     setIsExamModalOpen(true);
-    storeData("jobMId", jobMId);
+    setSelectedJobPassingPoints(jobPassingPoints);
+    // storeData("jobMId", jobMId);
     storeData("app_id", jobAppId);
+    // storeData("pass_percentage", jobPassingPoints);
   };
 
   const closeExamModal = () => {
-    setIsExamModalOpen(false); // Close the exam modal
-    setSelectedJobMId(null); // Clear the selected jobM_id
+    setIsExamModalOpen(false);
+    setSelectedJobMId(null);
   };
 
-  const fetchExamResults = async () => {
-    try {
-      const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
-      const candId = retrieveData("user_id");
 
-      const formData = new FormData();
-      formData.append("operation", "fetchExamResult");
-      formData.append("json", JSON.stringify({ cand_id: candId }));
-
-      const response = await axios.post(url, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      if (response.data.error) {
-        console.error(response.data.error);
-      } else {
-        setExamResults(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching exam results:", error);
-    }
-  };
-
-  // Call fetchExamResults when the component mounts or when needed
-  useEffect(() => {
-    fetchExamResults();
-  }, [userId]);
 
   // Function to fetch job offer details
-  const fetchJobOffer = async (appId) => {
-    // Accept appId as a parameter
+  const fetchJobOffer = async (jobMId) => {
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
       const candId = retrieveData("user_id");
+      // const appId = localStorage.getItem("app_id");
 
+      console.log("jobMId", jobMId);
       const formData = new FormData();
       formData.append("operation", "getJobOffer");
       formData.append(
         "json",
-        JSON.stringify({ cand_id: candId, app_id: appId })
-      ); // Include appId in the request
+        JSON.stringify({ cand_id: candId, jobM_id: jobMId })
+      );
+
+      console.log("formData", formData);
 
       const response = await axios.post(url, formData);
 
@@ -255,8 +299,7 @@ const Sidebar = ({
       if (response.data.error) {
         console.error(response.data.error);
       } else {
-        // Extract the first job offer from the response array
-        const jobOffer = response.data[0]; // Assuming the response is an array
+        const jobOffer = response.data[0];
         setJobOfferDetails(jobOffer);
         setIsJobOfferModalOpen(true);
       }
@@ -265,9 +308,63 @@ const Sidebar = ({
     }
   };
 
-  // ... existing code ...
+  // Function to open job offer modal
+  const openJobOfferModal = (appId, jobMId) => {
+    // console.log("Opening job offer modal for app ID:", appId);
+    // console.log("jobMId", jobMId);
+    setAppId(appId);
+    fetchJobOffer(jobMId);
+  };
 
-  // ... existing code ...
+  const openCancelJobAppliedModal = (appId, jobMId, jobTitle) => {
+    setJobAppId(appId);
+    setJobMId(jobMId);
+    setJobTitle(jobTitle);
+    // setJobToCancel({ jobMId, jobTitle });
+    setShowCancelModal(true);
+
+    // storeData("appId", appId);
+    // storeData("jobMId", jobMId);
+    // console.log("jobToCancel", appId, jobMId, jobTitle);
+  };
+
+  // const handleCancelJob = async () => {
+  //   // if (!jobToCancel) return;
+  //   const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
+  //   // const { appId, jobMId } = jobToCancel;
+  //   const userId = retrieveData("user_id");
+  //   const appId = retrieveData("app_id");
+  //   const jobMId = retrieveData("jobMId");
+
+  //   console.log("appId", appId, jobMId);
+
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("operation", "cancelJobApplied");
+  //     formData.append(
+  //       "json",
+  //       JSON.stringify({ user_id: userId, jobId: jobMId, appId: appId })
+  //     );
+
+  //     const response = await axios.post(url, formData, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     });
+
+  //     if (response.data.error) {
+  //       console.error(response.data.error);
+  //     } else {
+  //       console.log(response.data.success);
+  //       fetchAppliedJobs();
+  //     }
+  //   } catch (error) {
+  //     console.error("Error cancelling job application:", error);
+  //   } finally {
+  //     setShowCancelModal(false);
+  //     setJobToCancel(null);
+  //   }
+  // };
 
   return (
     <>
@@ -358,8 +455,8 @@ const Sidebar = ({
           )}
         </div>
 
-        <div className="overflow-y-auto scrollbar-custom">
-          <div className="mt-28 ">
+        <div className="mt-5">
+          <div className="mt-20">
             <h3
               className={`text-lg font-semibold ${
                 isDarkMode ? "text-[#43CD8A]" : "text-[#43CD8A]"
@@ -373,17 +470,17 @@ const Sidebar = ({
           }`}
         > */}
             <div
-              className={`max-h-72 overflow-y-auto scrollbar-custom ${
+              className={`max-h-60 overflow-y-auto scrollbar-custom ${
                 isDarkMode
                   ? "scrollbar-thumb-green-500 scrollbar-track-green-300"
-                  : "scrollbar-thumb-gray-400 scrollbar-track-gray-200"
+                  : ""
               }`}
             >
               {appliedJobs.length > 0 ? (
-                appliedJobs.slice(0, 5).map((job, index) => (
+                appliedJobs.map((job, index) => (
                   <div
                     key={index}
-                    className={`mb-4 p-4 rounded-lg shadow-md flex items-center justify-between text-[15px] cursor-pointer transition-all duration-300 ${
+                    className={`mb-4 p-4 rounded-lg shadow-md flex flex-col items-start text-[15px] cursor-pointer transition-all duration-300 ${
                       isDarkMode
                         ? "bg-[#1F2937] text-green-200 hover:bg-green-700"
                         : "bg-[#059e54] text-white hover:bg-green-600"
@@ -394,26 +491,49 @@ const Sidebar = ({
                           job.jobM_id,
                           job.jobM_title,
                           job.app_id,
-                          job.jobM_passpercentage
+                          job.jobM_passpercentage,
+                          job.passing_points
                         );
                       } else if (
                         job.status_name.toLowerCase() === "job offer"
                       ) {
-                        fetchJobOffer(job.app_id); // Fetch job offer details
+                        openJobOfferModal(job.app_id, job.jobM_id);
+                      } else if (job.status_name.toLowerCase() === "pending") {
+                        openCancelJobAppliedModal(
+                          job.app_id,
+                          job.jobM_id,
+                          job.jobM_title
+                        );
                       }
                     }}
                   >
-                    <span className="flex items-center font-medium">
-                      {job.jobM_title}
-                    </span>
-                    <span className="flex items-center">
-                      {getStatusIcon(job.status_name)}
-                      <span
-                        className={`ml-2 text-sm ${
-                          isDarkMode ? "text-green-400" : "text-gray-300"
-                        } animate-pulse transition-opacity duration-800 ease-in-out`}
-                      >
-                        {job.status_name}
+                    <span className="flex justify-between w-full items-center">
+                      <span className="flex flex-col">
+                        <span className="font-medium">{job.jobM_title}</span>
+                        {/* <span
+                          className={`text-sm ${
+                            isDarkMode ? "text-gray-800" : "text-gray-300"
+                          }`}
+                        >
+                          {job.appS_date}
+                        </span> */}
+                      </span>
+                      <span className="flex items-center">
+                        {getStatusIcon(job.status_name)}
+                        <span
+                          className={`ml-2 text-xs flex flex-col ${
+                            isDarkMode ? "text-green-400" : "text-gray-300"
+                          } animate-pulse transition-opacity duration-800 ease-in-out`}
+                        >
+                          {job.status_name}
+                          <span
+                            className={`text-sm ${
+                              isDarkMode ? "text-gray-800" : "text-gray-300"
+                            }`}
+                          >
+                            {job.appS_date}
+                          </span>
+                        </span>
                       </span>
                     </span>
                   </div>
@@ -423,30 +543,28 @@ const Sidebar = ({
                   className={`p-4 rounded-lg shadow-md ${
                     isDarkMode
                       ? "bg-[#1F2937] text-green-300"
-                      : "bg-white text-gray-500"
+                      : "bg-[#059e54] text-white"
                   }`}
                 >
-                  No applied jobs found.
+                  No applied jobs.
                 </p>
               )}
             </div>
           </div>
 
-          {/* Exam Modal */}
-          <div className="mt-6">
-            {/* Check if there are applied jobs with status "exam" */}
-            {appliedJobs.some(
-              (job) => job.status_name.toLowerCase() === "exam"
-            ) && (
-              <>
-                <h3 className="text-xl font-semibold text-[#43CD8A] mb-4">
-                  Exam Results
-                </h3>
-                {examResults.length > 0 ? (
-                  examResults.map((result, index) => (
+          <div className="mt-6 h-60">
+            {examResults.length > 0 && (
+              <div className="mt-6 h-60 relative">
+                <div className="sticky top-0">
+                  <h3 className="text-xl font-semibold text-[#43CD8A]">
+                    Exam Results
+                  </h3>
+                </div>
+                <div className="mt-4 max-h-[calc(100%-48px)] overflow-y-auto scrollbar-custom">
+                  {examResults.map((result, index) => (
                     <div
                       key={index}
-                      className={`mb-4 p-4 rounded-lg shadow-md transition-transform transform hover:scale-105 hover:shadow-lg ${
+                      className={`mb-4 p-4 rounded-lg shadow-md ${
                         isDarkMode
                           ? "bg-[#1F2937] text-green-200"
                           : "bg-[#059e54] text-white"
@@ -474,20 +592,17 @@ const Sidebar = ({
                       >
                         Status: {result.examR_status}
                       </p>
+                      <p
+                        className={`text-sm ${
+                          isDarkMode ? "text-white" : "text-gray-200"
+                        }`}
+                      >
+                        Date: {result.examR_date}
+                      </p>
                     </div>
-                  ))
-                ) : (
-                  <p
-                    className={`p-4 rounded-lg shadow-md ${
-                      isDarkMode
-                        ? "bg-[#1F2937] text-green-300"
-                        : "bg-white text-gray-500"
-                    }`}
-                  >
-                    No exam results found.
-                  </p>
-                )}
-              </>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -497,7 +612,14 @@ const Sidebar = ({
           jobMId={selectedJobMId}
           jobTitle={selectedJobTitle}
           jobPercentage={selectedJobPercentage}
-          onClose={closeExamModal}
+          jobPassingPoints={selectedJobPassingPoints}
+          fetchAppliedJobs={fetchAppliedJobs}
+          fetchExamResult={fetchExamResult}
+          startTimer={isExamModalOpen}
+          onClose={() => {
+            closeExamModal();
+            removeData("app_id");
+          }}
         />
       )}
       {isJobOfferModalOpen && (
@@ -505,7 +627,22 @@ const Sidebar = ({
           jobOfferDetails={jobOfferDetails}
           fetchJobOffer={fetchJobOffer}
           fetchAppliedJobs={fetchAppliedJobs}
-          onClose={() => setIsJobOfferModalOpen(false)}
+          appId={appId}
+          onClose={() => {
+            setIsJobOfferModalOpen(false);
+            setAppId(null);
+          }}
+        />
+      )}
+      {showCancelModal && (
+        <CancelJobModal
+          // jobTitle={jobToCancel.jobTitle}
+          jobAppId={jobAppId}
+          jobTitle={jobTitle}
+          jobMId={jobMId}
+          onCancel={showCancelModal}
+          fetchAppliedJobs={fetchAppliedJobs}
+          onClose={() => setShowCancelModal(false)}
         />
       )}
     </>

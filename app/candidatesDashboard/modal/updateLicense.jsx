@@ -1,37 +1,30 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { retrieveData } from "@/app/utils/storageUtils";
 import Select from "react-select";
+import { Toaster, toast } from "react-hot-toast";
 
 const UpdateLicense = ({
   showLicenseModal,
   setShowLicenseModal,
   selectedLicense,
   licenses,
-  lic,
+  licenseType,
   fetchProfile,
 }) => {
   const [data, setData] = useState({
-    license_id: lic?.license_id || "",
-    license_masterId: lic?.license_masterId || "",
-    license_number: lic?.license_number || "",
-    license_master_name: lic?.license_master_name || "",
-    license_master_id: lic?.license_master_id || "",
+    license_id: selectedLicense.license_id || "",
+    license_masterId: selectedLicense.license_masterId || "",
+    license_number: selectedLicense.license_number || "",
+    license_master_name: selectedLicense.license_master_name || "",
+    license_type_name: selectedLicense.license_type_name || "",
+    customLicenseType: "",
+    customLicenseMaster: "",
   });
 
-  useEffect(() => {
-    if (lic) {
-      setData({
-        license_id: lic.license_id || "",
-        license_masterId: lic.license_masterId || "",
-        license_number: lic.license_number || "",
-        license_master_name: lic.license_master_name || "",
-        license_master_id: lic.license_master_id || "",
-      });
-    }
-  }, [lic]);
+  const [error, setError] = useState(""); // State for error message
 
   useEffect(() => {
     if (selectedLicense) {
@@ -40,7 +33,9 @@ const UpdateLicense = ({
         license_masterId: selectedLicense.license_masterId || "",
         license_number: selectedLicense.license_number || "",
         license_master_name: selectedLicense.license_master_name || "",
-        license_master_id: selectedLicense.license_master_id || "",
+        license_type_name: selectedLicense.license_type_name || "",
+        customLicenseType: "",
+        customLicenseMaster: "",
       });
     }
   }, [selectedLicense]);
@@ -51,40 +46,125 @@ const UpdateLicense = ({
       ...prevData,
       [name]: value,
     }));
+
+    // Validate custom license type input
+    if (name === "customLicenseType") {
+      if (
+        licenseType.some(
+          (existingType) =>
+            existingType.license_type_name.toLowerCase() === value.toLowerCase()
+        )
+      ) {
+        setError("This license type already exists."); // Set error message
+      } else {
+        setError(""); // Clear error if no issue
+      }
+    }
+
+    // Validate custom license master input
+    if (name === "customLicenseMaster") {
+      if (
+        licenses.some(
+          (existingMaster) =>
+            existingMaster.license_master_name.toLowerCase() ===
+            value.toLowerCase()
+        )
+      ) {
+        setError("This license master already exists."); // Set error message
+      } else {
+        setError(""); // Clear error if no issue
+      }
+    }
   };
 
-  const handleSelectChange = (selectedOption) => {
-    setData({
-      ...data,
-      license_master_id: selectedOption ? selectedOption.value : "",
-      license_master_name: selectedOption ? selectedOption.label : "",
-    });
+  const handleLicenseTypeChange = (selectedOption) => {
+    const isCustom = selectedOption?.value === "custom";
+    setData((prevData) => ({
+      ...prevData,
+      license_type_id: selectedOption
+        ? isCustom
+          ? "custom"
+          : selectedOption.value
+        : "",
+      license_type_name: isCustom ? "" : selectedOption?.label || "",
+      customLicenseType: isCustom ? prevData.customLicenseType : "",
+    }));
+    setError(""); // Clear error when selecting a different option
+  };
+
+  const handleLicenseMasterChange = (selectedOption) => {
+    const isCustom = selectedOption?.value === "custom";
+    setData((prevData) => ({
+      ...prevData,
+      license_master_id: selectedOption
+        ? isCustom
+          ? "custom"
+          : selectedOption.value
+        : "",
+      license_master_name: isCustom ? "" : selectedOption?.label || "",
+      customLicenseMaster: isCustom ? prevData.customLicenseMaster : "",
+    }));
+    setError(""); // Clear error when selecting a different option
   };
 
   const handleSave = async () => {
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
 
+      // Validate custom license type before saving
+      if (
+        data.customLicenseType &&
+        licenseType.some(
+          (existingType) =>
+            existingType.license_type_name.toLowerCase() ===
+            data.customLicenseType.toLowerCase()
+        )
+      ) {
+        toast.error(
+          "Please choose the existing license type from the dropdown."
+        ); // Updated toast call
+        return; // Prevent saving
+      }
+
+      // Validate custom license master before saving
+      if (
+        data.customLicenseMaster &&
+        licenses.some(
+          (existingMaster) =>
+            existingMaster.license_master_name.toLowerCase() ===
+            data.customLicenseMaster.toLowerCase()
+        )
+      ) {
+        toast.error(
+          "Please choose the existing license master from the dropdown."
+        ); // Updated toast call
+        return; // Prevent saving
+      }
+
       const updatedLicense = {
         cand_id: retrieveData("user_id"),
         license: [
           {
             license_id: data.license_id,
-            license_masterId: parseInt(
+            license_masterId:
               data.license_master_id ||
-                lic?.license_masterId ||
-                selectedLicense?.license_masterId,
-              10
-            ), // Ensure it's an integer
-            license_number:
-              data.license_number ||
-              lic?.license_number ||
-              selectedLicense?.license_number,
+              (data.customLicenseMaster
+                ? "custom"
+                : selectedLicense.license_masterId),
+            license_type_id:
+              data.license_type_id ||
+              (data.customLicenseType
+                ? "custom"
+                : selectedLicense.license_type_id),
+            license_number: data.license_number,
+            customLicenseType: data.customLicenseType || data.license_type_name,
+            customLicenseMaster:
+              data.customLicenseMaster || data.license_master_name,
           },
         ],
       };
 
-      console.log("updateLicense", updatedLicense);
+      console.log("Update:", updatedLicense);
 
       const formData = new FormData();
       formData.append("operation", "updateCandidateLicense");
@@ -98,20 +178,67 @@ const UpdateLicense = ({
 
       if (response.data === 1) {
         console.log("License updated successfully.");
+        toast.success("License updated successfully."); // Updated toast call
         if (fetchProfile) {
-          fetchProfile(); // Refresh the profile after update
+          fetchProfile();
         }
-        setShowLicenseModal(false); // Close the modal after saving
+        setShowLicenseModal(false);
       } else {
         console.error("Failed to update license:", response.data);
+        toast.error("Failed to update license."); // Updated toast call
       }
     } catch (error) {
       console.error("Error updating license:", error);
+      toast.error("An error occurred while updating the license."); // Updated toast call
     }
   };
 
   const getSelectedOption = (options, value) =>
-    options.find((option) => option.value === value);
+    options.find((option) => option.value === value) || null;
+
+  const licenseOptions = useMemo(() => {
+    return [
+      { value: "custom", label: "Other (Specify)" },
+      ...licenses.map((license) => ({
+        value: license.license_master_id,
+        label: license.license_master_name,
+      })),
+    ];
+  }, [licenses]);
+
+  const selectedLicenseOption = useMemo(() => {
+    return getSelectedOption(
+      [
+        ...licenses.map((license) => ({
+          value: license.license_master_id,
+          label: license.license_master_name,
+        })),
+      ],
+      data.license_master_id
+    );
+  }, [licenses, data.license_master_id]);
+
+  const licenseTypeOptions = useMemo(() => {
+    return [
+      { value: "custom", label: "Other (Specify)" },
+      ...licenseType.map((type) => ({
+        value: type.license_type_id,
+        label: type.license_type_name,
+      })),
+    ];
+  }, [licenseType]);
+
+  const selectedLicenseType = useMemo(() => {
+    return getSelectedOption(
+      [
+        ...licenseType.map((type) => ({
+          value: type.license_type_id,
+          label: type.license_type_name,
+        })),
+      ],
+      data.license_type_id
+    );
+  }, [licenseType, data.license_type_id]);
 
   return (
     <div className={`modal ${showLicenseModal ? "block" : "hidden"}`}>
@@ -122,26 +249,92 @@ const UpdateLicense = ({
 
         <div className="mb-4">
           <label className="block text-gray-600 text-sm font-normal">
+            License Type:
+          </label>
+          <div className="flex items-center">
+            <Select
+              name="license_type_id"
+              value={selectedLicenseType}
+              onChange={handleLicenseTypeChange}
+              options={licenseTypeOptions}
+              placeholder={data.license_type_name || "Select License Type"}
+              isSearchable
+              className="w-full"
+              menuPlacement="auto"
+              menuPosition="fixed"
+              blurInputOnSelect
+              isOptionDisabled={(option) => option.isDisabled}
+            />
+            {data.license_type_id && (
+              <button
+                className="ml-2 text-red-500"
+                onClick={() => handleLicenseTypeChange(null)}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+          {data.license_type_id === "custom" && (
+            <div>
+              <input
+                type="text"
+                name="customLicenseType"
+                value={data.customLicenseType}
+                onChange={handleInputChange}
+                placeholder="Enter custom license type"
+                className={`w-full mt-2 border-b-2 pb-2 bg-transparent ${
+                  error ? "border-red-500" : "border-black"
+                }`}
+              />
+              {error && <p className="text-red-500 text-sm">{error}</p>}{" "}
+              {/* Display error message */}
+            </div>
+          )}
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-gray-600 text-sm font-normal">
             License Master ID:
           </label>
-          <Select
-            name="license_master_id"
-            value={getSelectedOption(
-              licenses.map((license) => ({
-                value: license.license_master_id,
-                label: license.license_master_name,
-              })),
-              data.license_master_id
+          <div className="flex items-center">
+            <Select
+              name="license_master_id"
+              value={selectedLicenseOption}
+              onChange={handleLicenseMasterChange}
+              options={licenseOptions}
+              placeholder={data.license_master_name || "Select License Master"}
+              isSearchable
+              className="w-full"
+              menuPlacement="auto"
+              menuPosition="fixed"
+              blurInputOnSelect
+              isOptionDisabled={(option) => option.isDisabled}
+            />
+            {data.license_master_id && (
+              <button
+                className="ml-2 text-red-500"
+                onClick={() => handleLicenseMasterChange(null)}
+              >
+                Clear
+              </button>
             )}
-            onChange={handleSelectChange}
-            options={licenses.map((license) => ({
-              value: license.license_master_id,
-              label: license.license_master_name,
-            }))}
-            placeholder={data.license_master_name || "Select License"}
-            isSearchable
-            className="w-full"
-          />
+          </div>
+          {data.license_master_id === "custom" && (
+            <div>
+              <input
+                type="text"
+                name="customLicenseMaster"
+                value={data.customLicenseMaster}
+                onChange={handleInputChange}
+                placeholder="Enter custom license master"
+                className={`w-full mt-2 border-b-2 pb-2 bg-transparent ${
+                  error ? "border-red-500" : "border-black"
+                }`}
+              />
+              {error && <p className="text-red-500 text-sm">{error}</p>}{" "}
+              {/* Display error message */}
+            </div>
+          )}
         </div>
 
         <div className="mb-4">
@@ -153,7 +346,7 @@ const UpdateLicense = ({
             name="license_number"
             value={data.license_number}
             onChange={handleInputChange}
-            className="w-full border-b-2 pb-2 bg-transparent"
+            className="w-full mt-2 border-b-2 pb-2 bg-transparent border-black"
           />
         </div>
 
@@ -172,6 +365,7 @@ const UpdateLicense = ({
           </button>
         </div>
       </div>
+      <Toaster position="bottom-left" />
     </div>
   );
 };

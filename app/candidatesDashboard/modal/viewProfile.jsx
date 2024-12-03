@@ -2,17 +2,35 @@
 
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
-import { retrieveData } from "@/app/utils/storageUtils";
-import { FaBars } from "react-icons/fa";
+import {
+  retrieveDataFromCookie,
+  retrieveDataFromSession,
+  storeDataInCookie,
+  storeDataInSession,
+  removeDataFromCookie,
+  removeDataFromSession,
+  retrieveData,
+} from "@/app/utils/storageUtils";
+import { FaArrowRight, FaBars } from "react-icons/fa";
+import { FaRegCheckCircle } from "react-icons/fa";
+import { BsArrowReturnRight } from "react-icons/bs";
 import UpdateEducBac from "./updateEducBac";
 import UpdateSkill from "./updateSkill";
 import UpdateTraining from "./updateTraining";
 import UpdateKnowledge from "./updateKnowledge";
 import UpdateLicense from "./updateLicense";
-import { MoreHoriz, Edit, Trash2, Plus, Settings, Lock } from "lucide-react";
+import {
+  MoreHoriz,
+  Edit,
+  Trash2,
+  Plus,
+  Settings,
+  Lock,
+  CheckIcon,
+} from "lucide-react";
 import { Check, X } from "lucide-react";
 import UpdateEmpHis from "./updateEmpHis";
-import { toast } from "react-toastify";
+import { Toaster, toast } from "react-hot-toast";
 import ConfirmationModal from "../components/ConfirmationModal";
 import VerificationEmailUpdate from "./verificationEmailUpdate";
 import UpdateEmailPassword from "./updatePassword";
@@ -122,6 +140,7 @@ const ViewProfile = ({ isOpen, onClose }) => {
   const [selectedLicense, setSelectedLicense] = useState(null);
   const [showLicenseModal, setShowLicenseModal] = useState(false);
   const [licenses, setLicense] = useState([]);
+  const [licenseType, setLicenseType] = useState([]);
 
   const [selectedResume, setSelectedResume] = useState(null);
   const [showResumeModal, setShowResumeModal] = useState(false);
@@ -129,6 +148,7 @@ const ViewProfile = ({ isOpen, onClose }) => {
 
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
+
 
   const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -312,6 +332,19 @@ const ViewProfile = ({ isOpen, onClose }) => {
       }
     };
 
+    const fetchLicenseType = async () => {
+      try {
+        const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
+
+        const formData = new FormData();
+        formData.append("operation", "getLicenseType");
+        const licenseResponse = await axios.post(url, formData);
+        setLicenseType(licenseResponse.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
     fetchCourses();
     fetchInstitutions();
     fetchCourseTypes();
@@ -320,6 +353,7 @@ const ViewProfile = ({ isOpen, onClose }) => {
     fetchTraining();
     fetchKnowledge();
     fetchLicense();
+    fetchLicenseType();
   }, []);
 
   async function fetchProfile() {
@@ -335,6 +369,7 @@ const ViewProfile = ({ isOpen, onClose }) => {
       formData.append("json", JSON.stringify(jsonData));
 
       const response = await axios.post(url, formData);
+      console.log("res", response.data);
       setProfile(response.data);
       setLoading(false);
     } catch (error) {
@@ -462,14 +497,14 @@ const ViewProfile = ({ isOpen, onClose }) => {
       if (response.data.success) {
         setProfile(updatedData);
         setIsEditingPersonalInfo(false);
-        console.log("Profile updated successfully");
+        toast.success("Profile updated successfully");
       } else if (response.data.error) {
-        console.error("Error updating profile:", response.data.error);
+        toast.error("Error updating profile: " + response.data.error);
       } else {
-        console.error("Unexpected response from server:", response.data);
+        toast.error("Unexpected response from server: " + response.data);
       }
     } catch (error) {
-      console.error("Error updating profile:", error);
+      toast.error("Error updating profile: " + error);
     }
   };
 
@@ -834,6 +869,39 @@ const ViewProfile = ({ isOpen, onClose }) => {
 
   const handleEditEmailClick = () => {
     setShowEmailModal(true);
+  };
+
+  const calculateCompletionPercentage = () => {
+    let totalFields = 19;
+    let completedFields = 0;
+
+    if (profile.educationalBackground.length > 0) completedFields++;
+    if (profile.employmentHistory.length > 0) completedFields++;
+    if (profile.skills.length > 0) completedFields++;
+    if (profile.training.length > 0) completedFields++;
+    if (profile.knowledge.length > 0) completedFields++;
+    if (profile.license.length > 0) completedFields++;
+    if (profile.resume.length > 0) completedFields++;
+
+    if (profile.candidateInformation.cand_firstname) completedFields++;
+    if (profile.candidateInformation.cand_lastname) completedFields++;
+    if (profile.candidateInformation.cand_contactNo) completedFields++;
+    if (profile.candidateInformation.cand_alternatecontactNo) completedFields++;
+    if (profile.candidateInformation.cand_presentAddress) completedFields++;
+    if (profile.candidateInformation.cand_permanentAddress) completedFields++;
+    if (profile.candidateInformation.cand_dateofBirth) completedFields++;
+    if (profile.candidateInformation.cand_alternateEmail) completedFields++;
+    if (profile.candidateInformation.cand_sssNo) completedFields++;
+    if (profile.candidateInformation.cand_tinNo) completedFields++;
+    if (profile.candidateInformation.cand_philhealthNo) completedFields++;
+    if (profile.candidateInformation.cand_pagibigNo) completedFields++;
+
+    return (completedFields / totalFields) * 100;
+  };
+
+  const handleAddEducation = () => {
+    setSelectedEducation({}); // Set to an empty object for adding new
+    setShowAddModal(true); // Show add modal
   };
 
   const renderSection = () => {
@@ -1264,39 +1332,31 @@ const ViewProfile = ({ isOpen, onClose }) => {
       case "Educational Background":
         return (
           <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-800 sm:mb-6">
               Educational Background
             </h3>
 
             <div className="flex justify-end">
               <button
-                onClick={() => {
-                  setSelectedEducation(null); // Empty object for adding new
-                  setShowAddModal(true); // Show add modal
-                }}
-                className="p-2 flex items-center bg-green-500 text-white rounded-lg hover:bg-green-600 transform hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out"
+                onClick={handleAddEducation}
+                className="p-2 flex items-center bg-green-500 text-white rounded-lg hover:bg-green-600"
               >
-                <Plus className="w-5 h-5 mr-2" />
                 <span>Add New Educational Background</span>
               </button>
             </div>
 
             {/* Add Modal */}
             {showAddModal && (
-              <div className="col-span-1 md:col-span-2 mt-4">
-                <div className="bg-transparent rounded-lg p-6 w-full">
-                  <UpdateEducBac
-                    showModalUpdateEduc={showAddModal}
-                    setShowModalUpdateEduc={setShowAddModal}
-                    selectedEducation={{}} // Empty object for adding
-                    courses={courses}
-                    courseTypes={courseTypes}
-                    courseCategory={courseCategory}
-                    institutions={institutions}
-                    fetchProfile={fetchProfile}
-                  />
-                </div>
-              </div>
+              <UpdateEducBac
+                showModalUpdateEduc={showAddModal}
+                setShowModalUpdateEduc={setShowAddModal}
+                selectedEducation={selectedEducation} // Pass the selectedEducation
+                courses={courses}
+                institutions={institutions}
+                courseTypes={courseTypes}
+                courseCategory={courseCategory}
+                fetchProfile={fetchProfile}
+              />
             )}
 
             {Array.isArray(profile.educationalBackground) &&
@@ -1618,8 +1678,8 @@ const ViewProfile = ({ isOpen, onClose }) => {
                   <UpdateSkill
                     showModal={showAddModal}
                     setShowModal={setShowAddModal}
-                    skill={{}}
-                    setUpdateTrigger={setUpdateTrigger}
+                    skill={selectedSkill}
+                    // setUpdateTrigger={setUpdateTrigger}
                     skills={skills}
                     fetchProfile={fetchProfile}
                     profile={profile}
@@ -1675,7 +1735,7 @@ const ViewProfile = ({ isOpen, onClose }) => {
                         <UpdateSkill
                           showModal={showSkillModal}
                           setShowModal={setShowSkillModal}
-                          skill={selectedSkill}
+                          selectedSkill={selectedSkill}
                           setUpdateTrigger={setUpdateTrigger}
                           skills={skills}
                           fetchProfile={fetchProfile}
@@ -1716,7 +1776,7 @@ const ViewProfile = ({ isOpen, onClose }) => {
                   <UpdateTraining
                     showModal={showAddModal}
                     setShowModal={setShowAddModal}
-                    train={{}}
+                    train={selectedTraining}
                     trainings={trainings}
                     fetchProfile={fetchProfile}
                     profile={profile}
@@ -1929,8 +1989,9 @@ const ViewProfile = ({ isOpen, onClose }) => {
                   <UpdateLicense
                     showLicenseModal={showAddModal}
                     setShowLicenseModal={setShowAddModal}
-                    selectedLicense={{}}
+                    selectedLicense={selectedLicense}
                     licenses={licenses}
+                    licenseType={licenseType}
                     fetchProfile={fetchProfile}
                     profile={profile}
                   />
@@ -1990,7 +2051,6 @@ const ViewProfile = ({ isOpen, onClose }) => {
                       </p>
                     </div>
 
-                    {/* License Number */}
                     <div className="bg-gray-200 p-3 sm:p-4 rounded-lg border shadow-lg">
                       <label className="block text-gray-600 text-sm font-normal">
                         License number:
@@ -2009,6 +2069,7 @@ const ViewProfile = ({ isOpen, onClose }) => {
                             setShowLicenseModal={setShowLicenseModal}
                             selectedLicense={selectedLicense}
                             licenses={licenses}
+                            licenseType={licenseType}
                             fetchProfile={fetchProfile}
                           />
                         </div>
@@ -2033,8 +2094,9 @@ const ViewProfile = ({ isOpen, onClose }) => {
             <div className="flex justify-end">
               <button
                 onClick={() => {
-                  setSelectedTraining({});
+                  // setSelectedTraining({});
                   setShowAddModal(true);
+                  setSelectedResume({});
                 }}
                 className="p-2 flex items-center bg-green-500 text-white rounded-lg hover:bg-green-600 transform hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out"
               >
@@ -2049,7 +2111,7 @@ const ViewProfile = ({ isOpen, onClose }) => {
                   <UpdateResume
                     showModal={showAddModal}
                     setShowModal={setShowAddModal}
-                    res={{}}
+                    res={selectedResume}
                     // trainings={trainings}
                     fetchProfile={fetchProfile}
                     profile={profile}
@@ -2142,24 +2204,46 @@ const ViewProfile = ({ isOpen, onClose }) => {
         ) : (
           <>
             {/* Hamburger icon for mobile */}
-            <button
-              className="md:hidden text-white p-4"
-              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            >
-              <FaBars size={24} />
-            </button>
 
             {/* Sidebar (hidden on mobile unless toggled) */}
             <aside
               className={`${
-                isSidebarOpen ? "block" : "hidden"
+                isSidebarOpen
+                  ? "block fixed inset-0 z-20 transition-transform transform"
+                  : "hidden"
               } md:block w-full md:w-1/3 p-4 md:rounded-l-lg ${
                 isDarkMode ? "bg-gray-800" : "bg-[#0A6338]"
               } text-white`}
             >
-              <h2 className="text-xl md:text-2xl font-semibold mb-10">
-                Account Details
-              </h2>
+              <div className="flex items-center justify-between mb-10">
+                {/* Added space between div */}
+                <div className="flex flex-col">
+                  <h2 className="text-xl md:text-2xl font-semibold ">
+                    Account Details
+                  </h2>
+                  {calculateCompletionPercentage() === 100 ? (
+                    <div className="flex items-center">
+                      <FaRegCheckCircle className="h-5 w-5 text-green-400 mr-2 mt-1" />
+                      <p className="text-gray-300 text-base">Fully Completed</p>
+                    </div>
+                  ) : (
+                    <p className="text-gray-300 text-base">
+                      Your profile is{" "}
+                      {calculateCompletionPercentage().toFixed(0)}% complete.
+                    </p>
+                  )}
+                </div>
+
+                {isSidebarOpen && (
+                  <button
+                    className=" text-white text-4xl"
+                    onClick={() => setIsSidebarOpen(false)} // Close sidebar
+                  >
+                    &times; {/* "X" character */}
+                  </button>
+                )}
+              </div>
+
               <ul>
                 {[
                   "Personal Information",
@@ -2185,12 +2269,21 @@ const ViewProfile = ({ isOpen, onClose }) => {
             </aside>
 
             <main className="flex-1 p-4 md:p-6 md:rounded-r-lg relative h-screen md:h-auto max-h-screen overflow-y-auto scrollbar-custom bg-[#F4F7FC]">
-              <button
-                onClick={onClose}
-                className="absolute top-2 right-2 text-gray-600 hover:text-gray-900 text-3xl"
-              >
-                &times;
-              </button>
+              <div className="flex justify-between items-center">
+                <button
+                  className="md:hidden text-black p-4"
+                  onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                >
+                  <FaBars size={24} />
+                </button>
+                <div className="flex-grow"></div>
+                <button
+                  onClick={() => { onClose(); }}
+                  className="text-gray-600 hover:text-gray-900 text-3xl"
+                >
+                  <BsArrowReturnRight />
+                </button>
+              </div>
 
               <div className="flex-1 overflow-y-auto scrollbar-custom">
                 {/* Card for renderSection */}
@@ -2202,6 +2295,8 @@ const ViewProfile = ({ isOpen, onClose }) => {
           </>
         )}
       </div>
+
+      <Toaster position="bottom-left" />
     </div>
   );
 };

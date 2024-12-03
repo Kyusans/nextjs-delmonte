@@ -19,24 +19,24 @@ const ForgotPassword = ({ showModal, setShowModal, fetchProfile }) => {
   const [passwordValid, setPasswordValid] = useState(false);
   const [confirmPasswordValid, setConfirmPasswordValid] = useState(false);
 
-  const modalRef = useRef(null); // Ref for modal container
+  const modalRef = useRef(null);
 
-  // Regular expression for validation: Minimum 5 characters and at least one number
+
   const passwordRegex = /^(?=.*\d).{8,}$/;
 
-  // Validate the new password based on the criteria
+
   const validatePassword = (password) => {
     return passwordRegex.test(password);
   };
 
-  // Handle password validation when the user types
+
   const handlePasswordChange = (e) => {
     const value = e.target.value;
     setNewPassword(value);
     setPasswordValid(validatePassword(value));
   };
 
-  // Handle confirm password validation
+  
   const handleConfirmPasswordChange = (e) => {
     const value = e.target.value;
     setConfirmPassword(value);
