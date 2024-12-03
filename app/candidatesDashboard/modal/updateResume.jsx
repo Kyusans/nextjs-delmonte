@@ -1,10 +1,17 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { retrieveData } from "@/app/utils/storageUtils";
+import {
+  retrieveDataFromCookie,
+  retrieveDataFromSession,
+  storeDataInCookie,
+  storeDataInSession,
+  removeDataFromCookie,
+  removeDataFromSession,
+  retrieveData,
+} from "@/app/utils/storageUtils";
 import { toast } from "sonner";
 import Tesseract from "tesseract.js";
-import stringSimilarity from "string-similarity";
 
 const UpdateResume = ({
   showModal,
@@ -14,31 +21,39 @@ const UpdateResume = ({
   selectedResume,
 }) => {
   const [data, setData] = useState({
-    canres_id: res?.canres_id || "",
+    canres_id: "",
     image: null,
-    canres_image: res?.canres_image || "",
+    canres_image: "",
   });
-  //   const [expectedResumeKeywords, setExpectedResumeKeywords] = useState([]);
-
+  const [isNewResume, setIsNewResume] = useState(true); // Track if adding a new resume
   const [profileData, setProfileData] = useState({
     candidateInfo: [],
     educationalBackground: [],
     employmentHistory: [],
     skills: [],
   });
-
   const [loading, setLoading] = useState(false);
   const [processingImage, setProcessingImage] = useState(false);
 
   useEffect(() => {
-    if (res) {
-      setData({
-        canres_id: res?.canres_id || "",
-        image: null,
-        canres_image: res?.canres_image || "",
-      });
+    if (showModal) {
+      // Reset data when the modal is opened
+      if (isNewResume) {
+        setData({
+          canres_id: "",
+          image: null,
+          canres_image: "",
+        });
+      } else {
+        // Populate data for editing
+        setData({
+          canres_id: res?.canres_id || "",
+          image: null, // Keep image null to avoid resetting the input
+          canres_image: res?.canres_image || "",
+        });
+      }
     }
-  }, [res]);
+  }, [showModal, res, isNewResume]);
 
   useEffect(() => {
     if (selectedResume) {
@@ -46,6 +61,7 @@ const UpdateResume = ({
         canres_id: selectedResume.canres_id || "",
         canres_image: selectedResume.canres_image || "",
       });
+      setIsNewResume(false); // Set to false when editing
     }
   }, [selectedResume]);
 
@@ -87,15 +103,21 @@ const UpdateResume = ({
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setData({ ...data, image: file });
+      setData({
+        ...data,
+        image: file,
+        canres_image: file.name,
+      });
+      console.log("File selected:", { ...data, image: file });
+    } else {
+      setData({
+        ...data,
+        image: null,
+        canres_image: "",
+      });
     }
   };
 
@@ -111,13 +133,11 @@ const UpdateResume = ({
       .replace(/\n+/g, " ")
       .replace(/\s+/g, " ")
       .replace(/[-.,]/g, " ")
-      .replace(/\s+/g, " ")
       .trim()
       .toLowerCase();
 
   const validateResume = (extractedText) => {
     const normalizedText = normalizeText(extractedText);
-
     const expectedResumeKeywords = [
       profileData.candidateInfo.fullName,
       ...profileData.educationalBackground.courses,
@@ -128,12 +148,11 @@ const UpdateResume = ({
     ];
 
     let allKeywordsPresent = true;
-
     expectedResumeKeywords.forEach((keyword) => {
       const normalizedKeyword = normalizeText(keyword);
       if (!normalizedText.includes(normalizedKeyword)) {
         console.log(`Keyword not found: "${normalizedKeyword}"`);
-        allKeywordsPresent = false;  
+        allKeywordsPresent = false;
       }
     });
 
@@ -149,9 +168,8 @@ const UpdateResume = ({
       toast.error(
         "Please complete your profile information before uploading the resume."
       );
-      return;
+      return; // Stop the function if validation fails
     }
-
     setLoading(true);
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
@@ -210,6 +228,9 @@ const UpdateResume = ({
     }
   };
 
+  // Create a URL for the uploaded image if it exists
+  const imageUrl = data.image ? URL.createObjectURL(data.image) : null;
+
   return (
     <div className={`modal ${showModal ? "block" : "hidden"}`}>
       <div className="modal-content bg-gray-200 p-6 rounded-lg shadow-lg">
@@ -256,26 +277,36 @@ const UpdateResume = ({
                 />
               </svg>
               <span className="ml-2 text-gray-600">
-                {data.image ? data.image.name : "Choose File"}
+                {data.image
+                  ? data.image.name
+                  : data.canres_image || "Select File"}
               </span>
             </div>
           </div>
+          {/* Display the newly selected image if it exists */}
+          {imageUrl && (
+            <div className="mt-4">
+              <img
+                src={imageUrl}
+                alt="Selected Resume"
+                className="w-32 h-32 object-cover rounded-lg shadow-md"
+              />
+            </div>
+          )}
         </div>
         <div className="flex justify-end">
           <button
-            type="button"
-            className="px-4 py-2 mr-2 text-gray-800 bg-gray-300 rounded hover:bg-gray-400 transition"
-            onClick={() => setShowModal(false)}
+            onClick={handleSave}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            disabled={loading || processingImage}
           >
-            Cancel
+            {loading || processingImage ? "Saving..." : "Save"}
           </button>
           <button
-            type="button"
-            className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700 transition"
-            onClick={handleSave}
-            disabled={loading}
+            onClick={() => setShowModal(false)} // Close the modal
+            className="ml-2 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
           >
-            {loading ? "Saving..." : "Save"}
+            Cancel
           </button>
         </div>
         {processingImage && (

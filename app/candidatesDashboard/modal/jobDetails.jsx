@@ -3,17 +3,28 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
-import { removeData, retrieveData } from "@/app/utils/storageUtils";
-import { ToastContainer, toast } from "react-toastify";
+import {
+  retrieveDataFromCookie,
+  retrieveDataFromSession,
+  storeDataInCookie,
+  storeDataInSession,
+  removeDataFromCookie,
+  removeDataFromSession,
+  retrieveData,
+  removeData,
+} from "@/app/utils/storageUtils";
+// import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { revalidatePath } from "next/cache";
 import { useRouter } from "next/navigation";
+import { Toaster, toast } from "react-hot-toast"; // Import from react-hot-toast
+import ViewProfile from "./viewProfile";
 
 // import { fetchAppliedJobs } from "../sideBar/sideBar.jsx";
 
 // import { fetchJobs } from "./candidatesDashboard/page.js";
 
-const JobDetailsModal = ({ job, onClose }) => {
+const JobDetailsModal = ({ job, onClose, fetchJobs }) => {
   const router = useRouter();
   const modalRef = useRef(null);
   const [loading, setLoading] = useState(true);
@@ -23,70 +34,109 @@ const JobDetailsModal = ({ job, onClose }) => {
   // const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [profile, setProfile] = useState(null);
+  const [AppliedJobs, setAppliedJobs] = useState([]);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
+  async function fetchProfile() {
+    try {
+      const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
+
+      const cand_id = retrieveData("user_id");
+
+      const jsonData = { cand_id: cand_id };
+
+      const formData = new FormData();
+      formData.append("operation", "getCandidateProfile");
+      formData.append("json", JSON.stringify(jsonData));
+
+      const response = await axios.post(url, formData);
+      console.log("Profile response:", response.data);
+      ("");
+      setProfile(response.data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
+  }
+
+  async function fetchAppliedJobs() {
+    try {
+      const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
+
+      const personalInfoId = retrieveData("user_id");
+      // console.log("cand ID:", personalInfoId);
+
+      if (!personalInfoId) {
+        // console.error("No cand_id found in localStorage.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("operation", "getAppliedJobs");
+      formData.append("json", JSON.stringify({ cand_id: personalInfoId }));
+
+      const response = await axios.post(url, formData);
+
+      if (response.data.error) {
+        console.error(response.data.error);
+      } else {
+        setAppliedJobs(response.data);
+        console.log("Applied jobs:", response.data);
+        // const passingpoints = response.data.passing_points;
+        // localStorage.setItem("passing", passingpoints);
+        // localStorage.setItem("app_id", response.data[0].app_id);
+      }
+    } catch (error) {
+      console.error("Error fetching applied jobs:", error);
+    }
+  }
+
   useEffect(() => {
-    async function fetchJobs() {
-      try {
-        const formData = new FormData();
-        formData.append("operation", "getActiveJob");
-        const response = await axios.post(url, formData);
-
-        // console.log("Response:", response);
-        // console.log("Response data:", response.data);
-
-        if (Array.isArray(response.data)) {
-          // console.log("Setting jobs:", response.data);
-          setJobs(response.data);
-        } else if (response.data.error) {
-          // console.error("Server error:", response.data.error);
-          setError("Error fetching jobs: " + response.data.error);
-        } else {
-          // console.error("Invalid data format:", response.data);
-          setError("Unexpected data format received from server.");
-        }
-      } catch (error) {
-        setError("Error fetching jobs");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    async function fetchProfile() {
-      try {
-        const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
-
-        const cand_id = retrieveData("user_id");
-
-        const jsonData = { cand_id: cand_id };
-
-        const formData = new FormData();
-        formData.append("operation", "getCandidateProfile");
-        formData.append("json", JSON.stringify(jsonData));
-
-        const response = await axios.post(url, formData);
-        ("");
-        setProfile(response.data);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-      }
-    }
-    fetchJobs();
     fetchProfile();
+    fetchAppliedJobs();
   }, []);
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        onClose();
-      }
-      // removeData("jobId");
-    }
+  // useEffect(() => {
+  //   function handleClickOutside(event) {
+  //     if (modalRef.current && !modalRef.current.contains(event.target)) {
+  //       onClose();
+  //     }
+  //     // removeData("jobId");
+  //   }
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [onClose]);
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [onClose]);
+
+  const calculateCompletionPercentage = () => {
+    let totalFields = 19;
+    let completedFields = 0;
+
+    if (profile.educationalBackground.length > 0) completedFields++;
+    if (profile.employmentHistory.length > 0) completedFields++;
+    if (profile.skills.length > 0) completedFields++;
+    if (profile.training.length > 0) completedFields++;
+    if (profile.knowledge.length > 0) completedFields++;
+    if (profile.license.length > 0) completedFields++;
+    if (profile.resume.length > 0) completedFields++;
+
+    if (profile.candidateInformation.cand_firstname) completedFields++;
+    if (profile.candidateInformation.cand_lastname) completedFields++;
+    if (profile.candidateInformation.cand_contactNo) completedFields++;
+    if (profile.candidateInformation.cand_alternatecontactNo) completedFields++;
+    if (profile.candidateInformation.cand_presentAddress) completedFields++;
+    if (profile.candidateInformation.cand_permanentAddress) completedFields++;
+    if (profile.candidateInformation.cand_dateofBirth) completedFields++;
+    if (profile.candidateInformation.cand_alternateEmail) completedFields++;
+    if (profile.candidateInformation.cand_sssNo) completedFields++;
+    if (profile.candidateInformation.cand_tinNo) completedFields++;
+    if (profile.candidateInformation.cand_philhealthNo) completedFields++;
+    if (profile.candidateInformation.cand_pagibigNo) completedFields++;
+
+    return (completedFields / totalFields) * 100;
+  };
 
   const handleApply = async () => {
     setIsLoading(true);
@@ -103,8 +153,47 @@ const JobDetailsModal = ({ job, onClose }) => {
       profile.license.length === 0 ||
       profile.resume.length === 0
     ) {
-      toast.error(
-        "Please complete your profile information before applying to this job."
+      const toastId = toast.error(
+        <div className="flex flex-col items-center space-y-4 p-4 bg-red-50 rounded-xl shadow-lg max-w-md mx-auto text-center">
+          <div>
+            <p className="text-base font-semibold text-red-800 mb-2">
+              Profile Incomplete
+            </p>
+            <p className="text-sm text-red-600 mb-3">
+              Please complete your profile information before applying to this job. Ensure all required sections are filled out to proceed with your application.
+            </p>
+            <div className="w-full bg-red-200 rounded-full h-2.5 mb-3">
+              <div 
+                className="bg-red-600 h-2.5 rounded-full" 
+                style={{ 
+                  width: `${calculateCompletionPercentage()}%`,
+                  transition: 'width 0.5s ease-in-out'
+                }}
+              ></div>
+            </div>
+            <p className="text-xs text-red-700 mb-2">
+              Profile Completion: {Math.round(calculateCompletionPercentage())}%
+            </p>
+          </div>
+          <button 
+            onClick={() => { 
+              setIsProfileModalOpen(true); 
+              toast.dismiss(toastId);
+            }} 
+            className="w-full px-4 py-2 bg-red-100 text-red-800 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors duration-200"
+          >
+            Click here to Complete Profile
+          </button>
+        </div>,
+        {
+          duration: 8000,
+          position: 'top-center',
+          style: {
+            background: 'transparent',
+            boxShadow: 'none',
+            padding: '0',
+          }
+        }
       );
       return;
     }
@@ -131,17 +220,23 @@ const JobDetailsModal = ({ job, onClose }) => {
 
         // fetchAppliedJobs();
 
-        // fetchJobs();
+        fetchJobs();
         // removeData("jobId");
 
         removeData("jobId");
         onClose();
 
-        // window.location.reload();
-        // revalidatePath("/candidatesDashboard");
+        window.location.reload();
         toast.success("Applied successfully!");
       } else if (response.data.status === "duplicate") {
-        toast.warning(response.data.message);
+        toast(response.data.message, {
+          icon: "⚠️",
+          style: {
+            border: "1px solid #FF0000",
+            padding: "16px",
+            color: "#FF0000",
+          },
+        });
         // removeData("jobId");
       } else {
         throw new Error(response.data.error || "Failed to apply for the job.");
@@ -363,19 +458,65 @@ const JobDetailsModal = ({ job, onClose }) => {
               : "bg-white border-gray-200"
           } flex justify-between`}
         >
-          <button
-            onClick={handleApply}
-            className={`px-4 py-2 rounded-md relative transition-transform duration-300 ease-in-out hover:scale-110 hover:-translate-y-1 ${
-              isDarkMode
-                ? "bg-green-600 text-white"
-                : "bg-green-700 hover:bg-[#0A6338] text-white"
-            }`}
-            style={{
-              boxShadow: "0 10px 15px rgba(0, 0, 0, 0.3)",
-            }}
-          >
-            Apply
-          </button>
+          {Array.isArray(AppliedJobs) &&
+            AppliedJobs.some(
+              (item) =>
+                item.Is_Applied !== 0 &&
+                item.jobM_id === job.jobM_id &&
+                [
+                  "Pending",
+                  "Processed",
+                  "Interview",
+                  "Exam",
+                  "Background Check",
+                  "Job Offer",
+                  "Employed",
+                ].includes(item.status_name)
+            ) ? (
+            <button
+              className={`px-4 py-2 rounded-md relative transition-transform duration-300 ease-in-out bg-gray-400 cursor-not-allowed`}
+              style={{
+                boxShadow: "0 10px 15px rgba(0, 0, 0, 0.3)",
+              }}
+              disabled
+            >
+              Already Applied
+            </button>
+          ) : Array.isArray(AppliedJobs) &&
+            AppliedJobs.some(
+              (item) =>
+                item.Is_Applied !== 0 &&
+                item.jobM_id === job.jobM_id &&
+                ["Cancelled", "Failed Exam", "Decline Offer"].includes(item.status_name)
+            ) ? (
+            <button
+              onClick={handleApply}
+              className={`px-4 py-2 rounded-md relative transition-transform duration-300 ease-in-out ${
+                isDarkMode
+                  ? "bg-green-600 text-white hover:scale-110 hover:-translate-y-1"
+                  : "bg-green-700 hover:bg-[#0A6338] text-white hover:scale-110 hover:-translate-y-1"
+              }`}
+              style={{
+                boxShadow: "0 10px 15px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              Reapply
+            </button>
+          ) : (
+            <button
+              onClick={handleApply}
+              className={`px-4 py-2 rounded-md relative transition-transform duration-300 ease-in-out ${
+                isDarkMode
+                  ? "bg-green-600 text-white hover:scale-110 hover:-translate-y-1"
+                  : "bg-green-700 hover:bg-[#0A6338] text-white hover:scale-110 hover:-translate-y-1"
+              }`}
+              style={{
+                boxShadow: "0 10px 15px rgba(0, 0, 0, 0.3)",
+              }}
+            >
+              Apply
+            </button>
+          )}
 
           <button
             onClick={onClose}
@@ -390,6 +531,17 @@ const JobDetailsModal = ({ job, onClose }) => {
           </button>
         </div>
       </div>
+      <Toaster position="bottom-left" />
+      {isProfileModalOpen && (
+
+        <ViewProfile
+          isOpen={isProfileModalOpen}
+          setShowModal={setIsProfileModalOpen}
+          onClose={() => setIsProfileModalOpen(false)}
+          onCloses={() => setIsProfileModalOpen(false)}
+        />
+
+      )}
     </div>
   );
 };

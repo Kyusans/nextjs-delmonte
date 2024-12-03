@@ -6,10 +6,15 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
 import JobDetailsModal from "./modal/jobDetails";
-import { storeData, retrieveData } from "../utils/storageUtils";
+import {
+  storeData,
+  retrieveData,
+  retrieveDataFromCookie,
+  retrieveDataFromSession,
+} from "../utils/storageUtils";
 
 export default function LandingArea() {
-  const [jobs, setJobs] = useState([]);
+  const [job, setJob] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const router = useRouter();
@@ -23,32 +28,30 @@ export default function LandingArea() {
   };
 
   useEffect(() => {
-    const userName = retrieveData("first_name");
-
-    if (userName) {
-      console.log("User name exists, redirecting to appropriate dashboard.");
-
+    const token = retrieveDataFromCookie("auth_token");
+    
+    if (token) {
       const userLevel = retrieveData("user_level");
+      // Redirect to appropriate dashboard if already logged in
       switch (userLevel) {
         case "100.0":
-          router.push("/admin/dashboard");
+          router.replace("/admin/dashboard");
           break;
         case "2":
-          router.push("/superAdminDashboard");
+          router.replace("/superAdminDashboard");
           break;
         case "supervisor":
-          router.push("/supervisorDashboard");
+          router.replace("/supervisorDashboard");
           break;
         case "1.0":
-          router.push("/candidatesDashboard");
+          router.replace("/candidatesDashboard");
           break;
         default:
-          console.log("Unknown user level:", userLevel);
+          console.error("Invalid user level:", userLevel);
           break;
       }
-      return;
     }
-  }, [router]);
+  }, []);
 
   async function fetchJobs() {
     try {
@@ -56,7 +59,7 @@ export default function LandingArea() {
       const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
 
       const formData = new FormData();
-      formData.append("operation", "getActiveJob");
+      formData.append("operation", "getActiveJobs");
       const response = await axios.post(url, formData);
 
       // console.log("Response:", response);
@@ -64,7 +67,7 @@ export default function LandingArea() {
 
       if (Array.isArray(response.data)) {
         // console.log("Setting jobs:", response.data);
-        setJobs(response.data);
+        setJob(response.data);
       } else if (response.data.error) {
         // console.error("Server error:", response.data.error);
         setError("Error fetching jobs: " + response.data.error);
@@ -118,8 +121,8 @@ export default function LandingArea() {
             <p>Loading jobs...</p>
           ) : error ? (
             <p className="text-red-500">{error}</p>
-          ) : jobs.length > 0 ? (
-            jobs.map((job) => (
+          ) : job.length > 0 ? (
+            job.map((job) => (
               <div
                 key={job.jobM_id}
                 className="rounded-lg overflow-hidden h-64 flex flex-col shadow-xl bg-white"

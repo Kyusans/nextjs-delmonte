@@ -41,18 +41,18 @@ const JobDetailsModal = ({ job, onClose }) => {
     fetchJobs();
   }, []);
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        onClose();
-      }
-    }
+  // useEffect(() => {
+  //   function handleClickOutside(event) {
+  //     if (modalRef.current && !modalRef.current.contains(event.target)) {
+  //       onClose();
+  //     }
+  //   }
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [onClose]);
+  //   document.addEventListener("mousedown", handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [onClose]);
 
   if (!job) return null;
 

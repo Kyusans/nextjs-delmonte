@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { retrieveData } from "@/app/utils/storageUtils";
 import Select from "react-select";
-import { toast } from "sonner";
+import { Toaster, toast } from "react-hot-toast"; // Updated import
 import Tesseract from "tesseract.js";
 import stringSimilarity from "string-similarity";
 
@@ -15,30 +15,45 @@ const UpdateTraining = ({
   fetchProfile,
   trainings,
   selectedTraining,
-  profile,
 }) => {
   const [data, setData] = useState({
     training_id: train?.training_id || "",
     perT_id: train?.training_perTId || "",
     perT_name: train?.perT_name || "",
-    training_title: "", // New field for training title
+    training_title: "",
     image: null,
     training_image: train?.training_image || "",
   });
 
+  const [isNewTraining, setIsNewTraining] = useState(true); // Track if adding a new training
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    if (train) {
-      setData({
-        training_id: train.training_id || "",
-        perT_id: train.training_perTId || "",
-        perT_name: train.perT_name || "",
-        training_image: train.training_image || "",
-        training_title: "", // Clear title when train changes
-      });
+    if (showModal) {
+      if (isNewTraining) {
+        // Reset data when adding a new training
+        setData({
+          training_id: "",
+          perT_id: "",
+          perT_name: "",
+          training_title: "",
+          image: null,
+          training_image: "",
+        });
+      } else {
+        // Populate data for editing
+        setData({
+          training_id: train.training_id || "",
+          perT_id: train.training_perTId || "",
+          perT_name: train.perT_name || "",
+          training_image: train.training_image || "",
+          training_title: "",
+        });
+      }
     }
-  }, [train]);
+  }, [showModal, train, isNewTraining]);
+  // console.log("Training:", data);
 
   useEffect(() => {
     if (selectedTraining) {
@@ -47,8 +62,9 @@ const UpdateTraining = ({
         perT_id: selectedTraining.training_perTId || "",
         perT_name: selectedTraining.perT_name || "",
         training_image: selectedTraining.training_image || "",
-        training_title: "", // Clear title when selected training changes
+        training_title: "",
       });
+      setIsNewTraining(false); // Set to false when editing
     }
   }, [selectedTraining]);
 
@@ -58,14 +74,34 @@ const UpdateTraining = ({
       ...prevData,
       [name]: value,
     }));
+
+    // Validate training title input
+    if (name === "perT_name") {
+      if (
+        trainings.some(
+          (existingTraining) =>
+            existingTraining.perT_name.toLowerCase() === value.toLowerCase()
+        )
+      ) {
+        setError("This training title already exists."); // Set error message
+      } else {
+        setError(""); // Clear error if no issue
+      }
+    }
   };
 
   const handleSelectChange = (selectedOption) => {
-    setData({
-      ...data,
-      perT_id: selectedOption ? selectedOption.value : "",
-      perT_name: selectedOption ? selectedOption.label : "",
-    });
+    if (selectedOption) {
+      const isCustom = selectedOption.value === "custom";
+      setData({
+        ...data,
+        perT_id: selectedOption.value,
+        perT_name: isCustom ? "" : selectedOption.label,
+      });
+    } else {
+      setData({ ...data, perT_id: "", perT_name: "" });
+    }
+    setError("");
   };
 
   const handleImageUpload = (e) => {
@@ -76,10 +112,15 @@ const UpdateTraining = ({
   };
 
   const processImage = async (file) => {
-    const result = await Tesseract.recognize(file, "eng", {
-      logger: (info) => console.log(info),
-    });
-    return result.data.text;
+    try {
+      const result = await Tesseract.recognize(file, "eng", {
+        logger: (info) => console.log(info),
+      });
+      return result.data.text;
+    } catch (error) {
+      console.error("Error processing image:", error);
+      throw new Error("Error processing image");
+    }
   };
 
   const handleSave = async () => {
@@ -88,16 +129,31 @@ const UpdateTraining = ({
       const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
       const cand_id = retrieveData("user_id");
 
+      if (
+        data.customTraining &&
+        trainings.some(
+          (existingTraining) =>
+            existingTraining.perT_name.toLowerCase() ===
+            data.perT_name.toLowerCase()
+        )
+      ) {
+        toast.error(
+          "Please choose the existing training title from the dropdown."
+        );
+        return;
+      }
+
       let textFromImage = "";
       if (data.image) {
         textFromImage = await processImage(data.image);
+      } else if (train?.training_image) {
+        textFromImage = await processImage(train?.training_image);
       }
 
       const normalizedTextFromImage = textFromImage.trim().toLowerCase();
-      const normalizedTrainingTitle = data.training_title.trim().toLowerCase(); // Compare with title
+      const normalizedTrainingTitle = data.training_title.trim().toLowerCase();
       const normalizedTrainingName = data.perT_name.trim().toLowerCase();
 
-      // First, check the image text against the training title
       if (
         data.image &&
         !normalizedTextFromImage.includes(normalizedTrainingTitle) &&
@@ -108,7 +164,6 @@ const UpdateTraining = ({
         return;
       }
 
-      // Then, check if the title matches or is similar to the selected training name
       const similarity = stringSimilarity.compareTwoStrings(
         normalizedTrainingTitle,
         normalizedTrainingName
@@ -125,9 +180,13 @@ const UpdateTraining = ({
         cand_id: cand_id,
         training: [
           {
-            training_id: data.training_id || null,
-            perT_id: data.perT_id || train?.training_perTId,
-            image: data.image ? data.image.name : data.training_image,
+            training_id: train?.training_id || null,
+            perT_id:
+              data.perT_id === "custom"
+                ? "custom"
+                : data.perT_id || train?.training_perTId,
+            customTraining: data.perT_id === "custom" ? data.perT_name : null,
+            image: data.image ? data.image.name : train?.training_image,
           },
         ],
       };
@@ -159,16 +218,40 @@ const UpdateTraining = ({
         setShowModal(false);
       } else {
         console.error("Failed to update training:", response.data);
+        toast.error("Failed to update training.");
       }
     } catch (error) {
       console.error("Error updating training:", error);
+      toast.error("An error occurred while updating the training.");
     } finally {
       setLoading(false);
     }
   };
 
   const getSelectedOption = (options, value) =>
-    options.find((option) => option.value === value);
+    options.find((option) => option.value === value) || null;
+
+  const trainingOptions = useMemo(() => {
+    return [
+      { value: "custom", label: "Other (Specify)" },
+      ...trainings.map((training) => ({
+        value: training.perT_id,
+        label: training.perT_name,
+      })),
+    ];
+  }, [trainings]);
+
+  const selectedValue = useMemo(() => {
+    return getSelectedOption(
+      trainings.map((training) => ({
+        value: training.perT_id,
+        label: training.perT_name,
+      })),
+      data.perT_id || train?.training_perTId
+    );
+  }, [data.perT_id, train?.training_perTId, trainings]);
+
+  const imageUrl = data.image ? URL.createObjectURL(data.image) : null;
 
   return (
     <div className={`modal ${showModal ? "block" : "hidden"}`}>
@@ -181,27 +264,44 @@ const UpdateTraining = ({
           <label className="block text-gray-600 text-sm font-normal">
             Select Training:
           </label>
-          <Select
-            name="perT_id"
-            value={getSelectedOption(
-              trainings.map((training) => ({
-                value: training.perT_id,
-                label: training.perT_name,
-              })),
-              data.perT_id
+          <div className="flex items-center">
+            <Select
+              name="perT_id"
+              value={selectedValue}
+              onChange={handleSelectChange}
+              options={trainingOptions}
+              placeholder="Select Training"
+              isSearchable
+              className="w-full"
+              menuPlacement="auto"
+              menuPosition="fixed"
+              blurInputOnSelect
+              isOptionDisabled={(option) => option.isDisabled}
+            />
+            {data.perT_id && (
+              <button
+                className="ml-2 text-red-500"
+                onClick={() => handleSelectChange(null, "perT_id")}
+              >
+                Clear
+              </button>
             )}
-            onChange={handleSelectChange}
-            options={trainings.map((training) => ({
-              value: training.perT_id,
-              label: training.perT_name,
-            }))}
-            placeholder={data.perT_name || "Select Training"}
-            isSearchable
-            className="w-full"
-          />
+          </div>
+          {data.perT_id === "custom" && (
+            <input
+              type="text"
+              name="perT_name"
+              value={data.perT_name}
+              onChange={handleChange}
+              className={`w-full mt-2 border-b-2 pb-2 bg-transparent ${
+                error ? "border-red-500" : "border-black"
+              }`}
+              placeholder="Enter custom training name"
+            />
+          )}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
         </div>
 
-        {/* Training Title Field */}
         <div className="mb-4">
           <label className="block text-gray-600 text-sm font-normal">
             Training Title:
@@ -211,7 +311,7 @@ const UpdateTraining = ({
             name="training_title"
             value={data.training_title}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 border border-gray-300 bg-white rounded"
             placeholder="Enter Training Title"
           />
         </div>
@@ -259,11 +359,25 @@ const UpdateTraining = ({
                 />
               </svg>
               <span className="ml-2 text-gray-600">
-                {data.image ? data.image.name : "Choose File"}
+                {data.image
+                  ? data.image.name
+                  : train?.training_image
+                  ? train.training_image
+                  : "Select File"}
               </span>
             </div>
           </div>
         </div>
+
+        {imageUrl && (
+          <div className="mt-4">
+            <img
+              src={imageUrl}
+              alt="Selected Training"
+              className="w-32 h-32 object-cover rounded-lg shadow-md"
+            />
+          </div>
+        )}
 
         <div className="flex justify-end">
           <button
@@ -290,6 +404,7 @@ const UpdateTraining = ({
           </div>
         )}
       </div>
+      <Toaster position="bottom-left" /> {/* Add Toaster component */}
     </div>
   );
 };

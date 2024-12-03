@@ -6,7 +6,6 @@ const VerificationEmailUpdate = ({ onSubmit, onClose }) => {
   const [code, setCode] = useState('');
 
   const handleSubmit = () => {
-    // Pass the entered code back to the parent component
     onSubmit(code);
   };
 
