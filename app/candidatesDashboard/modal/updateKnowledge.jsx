@@ -214,13 +214,13 @@ const UpdateKnowledge = ({
           <div className="flex justify-end">
             <button
               onClick={() => setShowModal(false)}
-              className="p-2 rounded-lg bg-red-500 text-white mr-2"
+              className="mr-2 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
             >
               Cancel
             </button>
             <button
               onClick={handleSave}
-              className="p-2 rounded-lg bg-green-500 text-white"
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
               Save
             </button>

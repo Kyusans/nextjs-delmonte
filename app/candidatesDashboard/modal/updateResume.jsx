@@ -296,18 +296,19 @@ const UpdateResume = ({
         </div>
         <div className="flex justify-end">
           <button
+            onClick={() => setShowModal(false)} // Close the modal
+            className="mr-2 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+          >
+            Cancel
+          </button>
+          <button
             onClick={handleSave}
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             disabled={loading || processingImage}
           >
             {loading || processingImage ? "Saving..." : "Save"}
           </button>
-          <button
-            onClick={() => setShowModal(false)} // Close the modal
-            className="ml-2 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
-          >
-            Cancel
-          </button>
+          
         </div>
         {processingImage && (
           <div className="flex justify-center items-center mt-4">

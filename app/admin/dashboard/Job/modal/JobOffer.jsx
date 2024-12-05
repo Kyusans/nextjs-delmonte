@@ -15,6 +15,7 @@ import { retrieveData } from "@/app/utils/storageUtils";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import axios from "axios";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   joboffer_salary: z.number().positive(),
@@ -111,7 +112,7 @@ const JobOffer = ({ candId, changeStatus }) => {
                 <FormItem>
                   <FormLabel>Document</FormLabel>
                   <FormControl>
-                    <Input type="text" {...field} placeholder="Enter document" />
+                    <Textarea row={5} type="text" {...field} placeholder="Enter document" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -85,8 +85,19 @@ const UpdateJobOffer = ({ candidate, getJobOfferCandidates }) => {
     }
   };
 
+  const handleOpenChange = (open) => {
+    if (!open) {
+      form.reset({
+        salary: candidate?.joboffer_salary || "",
+        document: candidate?.joboffer_document || "",
+        expiryDate: candidate?.joboffer_expiryDate || "",
+      });
+    }
+    setOpen(open);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Edit2 className="cursor-pointer w-5 h-5" />
       </DialogTrigger>

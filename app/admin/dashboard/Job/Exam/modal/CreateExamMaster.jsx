@@ -7,10 +7,11 @@ import { Label } from '@/components/ui/label'
 import { PlusCircle, Trash2 } from 'lucide-react'
 import axios from 'axios'
 import { toast } from 'sonner'
-import { retrieveData } from '@/app/utils/storageUtils'
+import { retrieveData, storeData } from '@/app/utils/storageUtils'
 import { Separator } from '@/components/ui/separator'
 import { Card, CardContent } from '@/components/ui/card'
 import Spinner from '@/components/ui/spinner'
+import { Love_Light } from 'next/font/google'
 
 const CreateExamMaster = ({getExamDetails, type}) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -124,7 +125,8 @@ const CreateExamMaster = ({getExamDetails, type}) => {
 
       const response = await axios.post(url, formData);
       console.log(response)
-      if (response.data === 1) {
+      if (response.data !== 0) {
+        storeData("examId", response.data);
         toast.success("Exam created successfully");
         setIsOpen(false);
         // Reset form

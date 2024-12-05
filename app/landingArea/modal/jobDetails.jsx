@@ -5,7 +5,7 @@ import axios from "axios";
 import Link from "next/link";
 import { retrieveData } from "@/app/utils/storageUtils";
 
-const JobDetailsModal = ({ job, onClose }) => {
+const JobDetailsModal = ({ job, onCloses }) => {
   const modalRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -224,7 +224,7 @@ const JobDetailsModal = ({ job, onClose }) => {
           </Link>
 
           <button
-            onClick={onClose}
+            onClick={onCloses}
             className="px-4 py-2 rounded-md bg-gray-500 text-white relative transition-transform duration-300 ease-in-out hover:scale-105 hover:-translate-y-1"
             style={{
               boxShadow: "0 10px 15px rgba(0, 0, 0, 0.3)",

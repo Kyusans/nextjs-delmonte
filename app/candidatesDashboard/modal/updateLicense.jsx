@@ -15,11 +15,11 @@ const UpdateLicense = ({
   fetchProfile,
 }) => {
   const [data, setData] = useState({
-    license_id: selectedLicense.license_id || "",
-    license_masterId: selectedLicense.license_masterId || "",
-    license_number: selectedLicense.license_number || "",
-    license_master_name: selectedLicense.license_master_name || "",
-    license_type_name: selectedLicense.license_type_name || "",
+    license_id: selectedLicense?.license_id || "",
+    license_masterId: selectedLicense?.license_masterId || "",
+    license_number: selectedLicense?.license_number || "",
+    license_master_name: selectedLicense?.license_master_name || "",
+    license_type_name: selectedLicense?.license_type_name || "",
     customLicenseType: "",
     customLicenseMaster: "",
   });
@@ -29,11 +29,11 @@ const UpdateLicense = ({
   useEffect(() => {
     if (selectedLicense) {
       setData({
-        license_id: selectedLicense.license_id || "",
-        license_masterId: selectedLicense.license_masterId || "",
-        license_number: selectedLicense.license_number || "",
-        license_master_name: selectedLicense.license_master_name || "",
-        license_type_name: selectedLicense.license_type_name || "",
+        license_id: selectedLicense?.license_id || "",
+        license_masterId: selectedLicense?.license_masterId || "",
+        license_number: selectedLicense?.license_number || "",
+        license_master_name: selectedLicense?.license_master_name || "",
+        license_type_name: selectedLicense?.license_type_name || "",
         customLicenseType: "",
         customLicenseMaster: "",
       });
@@ -353,13 +353,13 @@ const UpdateLicense = ({
         <div className="flex justify-end">
           <button
             onClick={() => setShowLicenseModal(false)}
-            className="p-2 rounded-lg bg-red-500 text-white mr-2"
+            className="mr-2 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
-            className="p-2 rounded-lg bg-green-500 text-white"
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           >
             Save
           </button>

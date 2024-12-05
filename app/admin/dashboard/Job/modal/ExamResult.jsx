@@ -14,13 +14,16 @@ const ExamResult = ({ candId }) => {
   const getCandidateExamPoints = useCallback(async () => {
     setIsLoading(true);
     try {
-      const examId = retrieveData("examId");
+      // const examId = retrieveData("examId");
+      const jobId = retrieveData("jobId");
       const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
-      const jsonData = { candidateId: candId, examId: examId }
+      const jsonData = { candidateId: candId, jobId: jobId }
+      console.log("jsonData", jsonData);
       const formData = new FormData();
       formData.append("operation", "getCandidateExamPoints");
       formData.append("json", JSON.stringify(jsonData));
       const res = await axios.post(url, formData);
+      console.log("res.data ni exam", res);
       if (res.data && res.data.length > 0) {
         setExamResult(res.data[0]);
       } else {

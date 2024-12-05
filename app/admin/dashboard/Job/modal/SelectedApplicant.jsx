@@ -71,9 +71,9 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
     setIsLoading(true);
     try {
       if (status === 1) {
-        if (alertMessage === "Are you sure you want to proceed to job offer?") {
+        if (alertMessage === "Are you sure you want to proceed to decision pending?") {
           await handleChangeStatus(candId, 13);
-          toast.success("Applicant proceeded to Job Offer");
+          toast.success("Applicant proceeded to decision pending");
           setStatus("Decision Pending");
           setIsJobOffer(1);
         }
@@ -88,7 +88,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
   };
 
   const handleShowBackgroundCheckAlert = () => {
-    handleShowAlert("Are you sure you want to proceed to job offer?");
+    handleShowAlert("Are you sure you want to proceed to decision pending?");
   };
 
   const handleSetToInterview = () => {
@@ -150,7 +150,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                 </SheetDescription> */}
               </div>
               <div className="ml-auto px-5">
-                {status === "Process" && (<SetToInterviewModal datas={data.candidateInformation} getPendingCandidates={handleSetToInterview} isBatch={false} />)}
+                {status === "Processed" && (<SetToInterviewModal datas={data.candidateInformation} getPendingCandidates={handleSetToInterview} isBatch={false} />)}
                 {status === "Interview" && (<Button onClick={() => handleShowConductInterview()}>Interview applicant</Button>)}
                 {status === "Background Check" && (<Button onClick={() => handleShowBackgroundCheckAlert()}>Background check</Button>)}
                 {status === "Decision Pending" && isJobOffer === 0 && (<JobOffer candId={candId} changeStatus={handleJobOfferChangeStatus} />)}
@@ -519,7 +519,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                           <TabsList>
                             <TabsTrigger value="1">Qualifications</TabsTrigger>
                             {status !== "Pending" && status !== "Process" && <TabsTrigger value="2">Interview</TabsTrigger>}
-                            {status !== "Pending" && status !== "Process" && status !== "Background Check" && status !== "Interview" && <TabsTrigger value="3">Exam</TabsTrigger>}
+                            {status !== "Pending" && status !== "Process" && status !== "Interview" && <TabsTrigger value="3">Exam</TabsTrigger>}
                           </TabsList>
                           <TabsContent value="1">
                             <Accordion type="multiple" collapsible="true" className="w-full p-5" defaultValue={["1", "2", "3", "4", "5"]}>
