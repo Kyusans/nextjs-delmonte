@@ -85,6 +85,8 @@ const Sidebar = ({
 
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [jobToCancel, setJobToCancel] = useState(null);
+  const [loading, setLoading] = useState(true);
+
 
   const toggleUserDropdown = () => {
     setIsUserDropdownOpen(!isUserDropdownOpen);
@@ -159,15 +161,21 @@ const Sidebar = ({
         console.error(response.data.error);
       } else {
         setAppliedJobs(response.data);
-        console.log("Applied jobs:", response.data);
+        // console.log("Applied jobs:", response.data);
         // const passingpoints = response.data.passing_points;
         // localStorage.setItem("passing", passingpoints);
         // localStorage.setItem("app_id", response.data[0].app_id);
       }
     } catch (error) {
       console.error("Error fetching applied jobs:", error);
+    } finally {
+      setLoading(false);
     }
   }
+
+  useEffect(() => {
+    fetchAppliedJobs();
+  }, []);
 
   const fetchExamResult = async () => {
     try {
@@ -456,101 +464,111 @@ const Sidebar = ({
         </div>
 
         <div className="mt-5">
-          <div className="mt-20">
-            <h3
-              className={`text-lg font-semibold ${
-                isDarkMode ? "text-[#43CD8A]" : "text-[#43CD8A]"
-              } mb-4`}
-            >
-              LIST OF APPLIED JOBS
-            </h3>
-            {/* <div
+
+          {loading ? (
+            <div className="flex justify-center items-center h-60">
+              <FontAwesomeIcon
+                icon={faSpinner}
+                className="animate-spin text-gray-300"
+              />
+            </div>
+          ) : (
+            <div className="mt-20">
+              <h3
+                className={`text-lg font-semibold ${
+                  isDarkMode ? "text-[#43CD8A]" : "text-[#43CD8A]"
+                } mb-4`}
+              >
+                LIST OF APPLIED JOBS
+              </h3>
+              {/* <div
           className={`pl-4 border-l-2 ${
             isDarkMode ? "border-green-500" : "border-[#43CD8A]"
           }`}
         > */}
-            <div
-              className={`max-h-60 overflow-y-auto scrollbar-custom ${
-                isDarkMode
-                  ? "scrollbar-thumb-green-500 scrollbar-track-green-300"
-                  : ""
-              }`}
-            >
-              {appliedJobs.length > 0 ? (
-                appliedJobs.map((job, index) => (
-                  <div
-                    key={index}
-                    className={`mb-4 p-4 rounded-lg shadow-md flex flex-col items-start text-[15px] cursor-pointer transition-all duration-300 ${
-                      isDarkMode
-                        ? "bg-[#1F2937] text-green-200 hover:bg-green-700"
-                        : "bg-[#059e54] text-white hover:bg-green-600"
-                    }`}
-                    onClick={() => {
-                      if (job.status_name.toLowerCase() === "exam") {
-                        openExamModal(
-                          job.jobM_id,
-                          job.jobM_title,
-                          job.app_id,
-                          job.jobM_passpercentage,
-                          job.passing_points
-                        );
-                      } else if (
-                        job.status_name.toLowerCase() === "job offer"
-                      ) {
-                        openJobOfferModal(job.app_id, job.jobM_id);
-                      } else if (job.status_name.toLowerCase() === "pending") {
-                        openCancelJobAppliedModal(
-                          job.app_id,
-                          job.jobM_id,
-                          job.jobM_title
-                        );
-                      }
-                    }}
-                  >
-                    <span className="flex justify-between w-full items-center">
-                      <span className="flex flex-col">
-                        <span className="font-medium">{job.jobM_title}</span>
-                        {/* <span
-                          className={`text-sm ${
-                            isDarkMode ? "text-gray-800" : "text-gray-300"
-                          }`}
-                        >
-                          {job.appS_date}
-                        </span> */}
-                      </span>
-                      <span className="flex items-center">
-                        {getStatusIcon(job.status_name)}
-                        <span
-                          className={`ml-2 text-xs flex flex-col ${
-                            isDarkMode ? "text-green-400" : "text-gray-300"
-                          } animate-pulse transition-opacity duration-800 ease-in-out`}
-                        >
-                          {job.status_name}
-                          <span
+              <div
+                className={`max-h-60 overflow-y-auto scrollbar-custom ${
+                  isDarkMode
+                    ? "scrollbar-thumb-green-500 scrollbar-track-green-300"
+                    : ""
+                }`}
+              >
+                {appliedJobs.length > 0 ? (
+                  appliedJobs.map((job, index) => (
+                    <div
+                      key={index}
+                      className={`mb-4 p-4 rounded-lg shadow-md flex flex-col items-start text-[15px] cursor-pointer transition-all duration-300 ${
+                        isDarkMode
+                          ? "bg-[#1F2937] text-green-200 hover:bg-green-700"
+                          : "bg-[#059e54] text-white hover:bg-green-600"
+                      }`}
+                      onClick={() => {
+                        if (job.status_name.toLowerCase() === "exam") {
+                          openExamModal(
+                            job.jobM_id,
+                            job.jobM_title,
+                            job.app_id,
+                            job.jobM_passpercentage,
+                            job.passing_points
+                          );
+                        } else if (
+                          job.status_name.toLowerCase() === "job offer"
+                        ) {
+                          openJobOfferModal(job.app_id, job.jobM_id);
+                        } else if (job.status_name.toLowerCase() === "pending") {
+                          openCancelJobAppliedModal(
+                            job.app_id,
+                            job.jobM_id,
+                            job.jobM_title
+                          );
+                        }
+                      }}
+                    >
+                      <span className="flex justify-between w-full items-center">
+                        <span className="flex flex-col">
+                          <span className="font-medium">{job.jobM_title}</span>
+                          {/* <span
                             className={`text-sm ${
                               isDarkMode ? "text-gray-800" : "text-gray-300"
                             }`}
                           >
                             {job.appS_date}
+                          </span> */}
+                        </span>
+                        <span className="flex items-center">
+                          {getStatusIcon(job.status_name)}
+                          <span
+                            className={`ml-2 text-xs flex flex-col ${
+                              isDarkMode ? "text-green-400" : "text-gray-300"
+                            } animate-pulse transition-opacity duration-800 ease-in-out`}
+                          >
+                            {job.status_name}
+                            <span
+                              className={`text-sm ${
+                                isDarkMode ? "text-gray-800" : "text-gray-300"
+                              }`}
+                            >
+                              {job.appS_date}
+                            </span>
                           </span>
                         </span>
                       </span>
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <p
-                  className={`p-4 rounded-lg shadow-md ${
-                    isDarkMode
-                      ? "bg-[#1F2937] text-green-300"
-                      : "bg-[#059e54] text-white"
-                  }`}
-                >
-                  No applied jobs.
-                </p>
-              )}
+                    </div>
+                  ))
+                ) : (
+                  <p
+                    className={`p-4 rounded-lg shadow-md ${
+                      isDarkMode
+                        ? "bg-[#1F2937] text-green-300"
+                        : "bg-[#059e54] text-white"
+                    }`}
+                  >
+                    No applied jobs.
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
+          )}
 
           <div className="mt-6 h-60">
             {examResults.length > 0 && (

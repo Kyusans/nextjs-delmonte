@@ -51,6 +51,7 @@ const SetToInterviewModal = ({ datas, passingPercentage = 0, getPendingCandidate
         jobId: retrieveData("jobId"),
         date: values.date,
       };
+      console.log("jsonData", jsonData);
       const formData = new FormData();
       console.log("jsonData: ", jsonData);
       formData.append("operation", "batchSetInterview");
@@ -91,7 +92,7 @@ const SetToInterviewModal = ({ datas, passingPercentage = 0, getPendingCandidate
 
         const filteredData = datas.filter(data => 
           Number(data.percentage) >= Number(passingPercentage) &&
-          (data.status_name === "Pending" || data.status_name === "Process")
+          (data.status_name === "Pending" || data.status_name === "Processed")
         );
         console.log("datas: ", filteredData);
         setData(filteredData);

@@ -38,7 +38,7 @@ import UpdateResume from "./updateResume";
 import UpdatePassword from "./updatePassword";
 import UpdateEmail from "./updateEmail";
 
-const ViewProfile = ({ isOpen, onClose }) => {
+const ViewProfile = ({ isOpen, onClose, onClosed }) => {
   const [profile, setProfile] = useState({
     candidateInformation: {},
     educationalBackground: [],
@@ -381,21 +381,25 @@ const ViewProfile = ({ isOpen, onClose }) => {
     fetchProfile();
   }, [updateTrigger]);
 
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        onClose();
-      }
-    }
+  // useEffect(() => {
+  //   function handleClickOutside(event) {
+  //     if (modalRef.current && !modalRef.current.contains(event.target)) {
+  //     if (onClose) {
+  //       onClose();
+  //     } else {
+  //       onClosed();
+  //     }
+  //     }
+  //   }
 
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
+  //   if (isOpen) {
+  //     document.addEventListener("mousedown", handleClickOutside);
+  //   }
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen, onClose]);
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [isOpen, onClose, onClosed]);
 
   const handleSectionClick = (section) => {
     setActiveSection(section);
@@ -2278,7 +2282,13 @@ const ViewProfile = ({ isOpen, onClose }) => {
                 </button>
                 <div className="flex-grow"></div>
                 <button
-                  onClick={() => { onClose(); }}
+                  onClick={() => {
+                    if (onClose) {
+                      onClose();
+                    } else if (onClosed) {
+                      onClosed();
+                    }
+                  }}
                   className="text-gray-600 hover:text-gray-900 text-3xl"
                 >
                   <BsArrowReturnRight />

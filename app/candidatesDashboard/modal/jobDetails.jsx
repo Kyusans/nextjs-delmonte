@@ -3,6 +3,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
+import { hourglass } from 'ldrs';
+
+hourglass.register()
+
 import {
   retrieveDataFromCookie,
   retrieveDataFromSession,
@@ -20,11 +24,13 @@ import { useRouter } from "next/navigation";
 import { Toaster, toast } from "react-hot-toast"; // Import from react-hot-toast
 import ViewProfile from "./viewProfile";
 
+
+
 // import { fetchAppliedJobs } from "../sideBar/sideBar.jsx";
 
 // import { fetchJobs } from "./candidatesDashboard/page.js";
 
-const JobDetailsModal = ({ job, onClose, fetchJobs }) => {
+const JobDetailsModal = ({ job, onClosed, fetchJobs }) => {
   const router = useRouter();
   const modalRef = useRef(null);
   const [loading, setLoading] = useState(true);
@@ -36,6 +42,8 @@ const JobDetailsModal = ({ job, onClose, fetchJobs }) => {
   const [profile, setProfile] = useState(null);
   const [AppliedJobs, setAppliedJobs] = useState([]);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isRedirecting, setIsRedirecting] = useState(false);
+
 
   async function fetchProfile() {
     try {
@@ -153,7 +161,7 @@ const JobDetailsModal = ({ job, onClose, fetchJobs }) => {
       profile.license.length === 0 ||
       profile.resume.length === 0
     ) {
-      const toastId = toast.error(
+      toast.error(
         <div className="flex flex-col items-center space-y-4 p-4 bg-red-50 rounded-xl shadow-lg max-w-md mx-auto text-center">
           <div>
             <p className="text-base font-semibold text-red-800 mb-2">
@@ -176,17 +184,14 @@ const JobDetailsModal = ({ job, onClose, fetchJobs }) => {
             </p>
           </div>
           <button 
-            onClick={() => { 
-              setIsProfileModalOpen(true); 
-              toast.dismiss(toastId);
-            }} 
+            onClick={() => setIsProfileModalOpen(true)} 
             className="w-full px-4 py-2 bg-red-100 text-red-800 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors duration-200"
           >
             Click here to Complete Profile
           </button>
         </div>,
         {
-          duration: 8000,
+          duration: 6000,
           position: 'top-center',
           style: {
             background: 'transparent',
@@ -223,10 +228,14 @@ const JobDetailsModal = ({ job, onClose, fetchJobs }) => {
         fetchJobs();
         // removeData("jobId");
 
+        setIsRedirecting(true);
         removeData("jobId");
-        onClose();
+        // onClosed();
 
-        window.location.reload();
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 10000);
         toast.success("Applied successfully!");
       } else if (response.data.status === "duplicate") {
         toast(response.data.message, {
@@ -519,7 +528,7 @@ const JobDetailsModal = ({ job, onClose, fetchJobs }) => {
           )}
 
           <button
-            onClick={onClose}
+            onClick={onClosed}
             className={`px-4 py-2 rounded-md relative transition-transform duration-300 ease-in-out hover:scale-110 hover:-translate-y-1 ${
               isDarkMode ? "bg-gray-600 text-white" : "bg-gray-500 text-white"
             }`}
@@ -530,18 +539,40 @@ const JobDetailsModal = ({ job, onClose, fetchJobs }) => {
             Close
           </button>
         </div>
+
       </div>
       <Toaster position="bottom-left" />
-      {isProfileModalOpen && (
 
+      {isRedirecting && (
+          <div className="fixed inset-0 bg-[#01472B] bg-opacity-90 flex items-center justify-center z-50">
+            <div className="text-center">
+              <l-hourglass
+                size="40"
+                bg-opacity="0.1"
+                speed="1.75" 
+                color="white" 
+              ></l-hourglass>
+              <p className="text-white text-xl font-semibold mt-4">
+                Application Received
+              </p>
+              <p className="text-green-300 mt-2">
+                We have received your application and are reviewing it. We will contact you shortly to inform you of the next steps.
+              </p>
+              <p className="text-green-300 mt-2">
+                Thank you for your interest in this position.
+              </p>
+            </div>
+          </div>
+       )}
+
+      {isProfileModalOpen && (
         <ViewProfile
           isOpen={isProfileModalOpen}
           setShowModal={setIsProfileModalOpen}
-          onClose={() => setIsProfileModalOpen(false)}
-          onCloses={() => setIsProfileModalOpen(false)}
+          onClosed={() => setIsProfileModalOpen(false)}
         />
-
       )}
+
     </div>
   );
 };

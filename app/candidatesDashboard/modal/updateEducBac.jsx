@@ -324,7 +324,7 @@ const UpdateEducBac = ({
               value={selectedCourse}
               onChange={(option) => handleSelectChange(option, "courses_id")}
               options={coursesOptions}
-              placeholder={selectedEducation.courses_name || "Select Course"}
+              placeholder={selectedEducation?.courses_name || "Select Course"}
               isSearchable
               className="w-full"
               menuPlacement="auto"
@@ -522,17 +522,18 @@ const UpdateEducBac = ({
 
         <div className="mt-4 flex justify-end">
           <button
+            className="mr-2 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+            onClick={() => setShowModalUpdateEduc(false)}
+          >
+            Cancel
+          </button>
+          <button
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             onClick={handleSave}
           >
             Save
           </button>
-          <button
-            className="ml-2 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
-            onClick={() => setShowModalUpdateEduc(false)}
-          >
-            Cancel
-          </button>
+          
         </div>
       </div>
       <Toaster position="bottom-left" />

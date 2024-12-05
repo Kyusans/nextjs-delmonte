@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
 import { tailChase } from 'ldrs'
 
-tailChase.register();
+tailChase.register()
 
 const JobOfferModal = ({
   jobOfferDetails,
@@ -44,7 +44,7 @@ const JobOfferModal = ({
         setResponseType(status);
         setIsRedirecting(true);
         // toast.success("Response submitted successfully!");
-        await fetchAppliedJobs();
+        // await fetchAppliedJobs();
         setTimeout(() => {
           window.location.reload();
         }, 2000);

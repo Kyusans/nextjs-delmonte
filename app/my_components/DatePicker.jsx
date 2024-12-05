@@ -26,8 +26,8 @@ const DatePicker = ({
 
       if (withTime) {
         const [hours, minutes] = selectedTime.split(":");
-        date.setHours(hours, minutes);
-        finalValue = date.toISOString();
+        date.setHours(parseInt(hours) || 0, parseInt(minutes) || 0, 0); // Set seconds to 0
+        finalValue = format(date, "yyyy-MM-dd'T'HH:mm:ss"); // Format as HH:MM:SS
       }
 
       form.setValue(name, finalValue);
@@ -41,10 +41,14 @@ const DatePicker = ({
     setSelectedTime(time);
 
     if (form.getValues(name)) {
-      const date = new Date(form.getValues(name));
-      const [hours, minutes] = time.split(":");
-      date.setHours(hours, minutes);
-      form.setValue(name, date.toISOString());
+      try {
+        const date = new Date(form.getValues(name));
+        const [hours, minutes] = time.split(":");
+        date.setHours(parseInt(hours) || 0, parseInt(minutes) || 0, 0); // Set seconds to 0
+        form.setValue(name, format(date, "yyyy-MM-dd'T'HH:mm:ss")); // Format as HH:MM:SS
+      } catch (error) {
+        console.error("Invalid time value:", error);
+      }
     }
   };
 
@@ -87,28 +91,30 @@ const DatePicker = ({
                 </Button>
               </PopoverTrigger>
               <PopoverContent align="start" className="w-auto p-0">
-                {withTime && (
-                  <div className="p-4 border-b">
-                    <div className="flex items-center gap-2">
-                      <ClockIcon className="h-4 w-4" />
-                      <input
-                        type="time"
-                        value={selectedTime}
-                        onChange={handleTimeChange}
-                        className="border p-2 rounded-md w-full"
-                      />
+                <div className="flex">
+                  <Calendar
+                    mode="single"
+                    captionLayout="dropdown-buttons"
+                    selected={field.value ? new Date(field.value) : undefined}
+                    onSelect={handleDateChange}
+                    fromYear={1960}
+                    toYear={addYears(new Date(), 5).getFullYear()}
+                    disabled={disableDate}
+                  />
+                  {withTime && (
+                    <div className="p-4 border-l">
+                      <div className="flex items-center gap-2">
+                        <ClockIcon className="h-4 w-4" />
+                        <input
+                          type="time"
+                          value={selectedTime}
+                          onChange={handleTimeChange}
+                          className="border p-2 rounded-md w-full"
+                        />
+                      </div>
                     </div>
-                  </div>
-                )}
-                <Calendar
-                  mode="single"
-                  captionLayout="dropdown-buttons"
-                  selected={field.value ? new Date(field.value) : undefined}
-                  onSelect={handleDateChange}
-                  fromYear={1960}
-                  toYear={addYears(new Date(), 5).getFullYear()}
-                  disabled={disableDate}
-                />
+                  )}
+                </div> 
               </PopoverContent>
             </Popover>
           </div>

@@ -92,7 +92,7 @@ export default function LandingArea() {
 
   return (
     <div className="min-h-screen bg-[#f4f7fc]">
-      <div className="p-6 flex justify-between items-center text-center text-white fixed top-0 left-0 w-full h-32 bg-[#116b40] slide-up">
+      <div className="p-6 flex justify-between items-center text-center text-white fixed top-0 left-0 z-10 w-full h-32 bg-[#116b40] slide-up">
         <img
           src="/assets/images/delMontes.png"
           alt="Del Monte Logo"
@@ -116,68 +116,65 @@ export default function LandingArea() {
         <h2 className="text-3xl font-semibold text-[#188C54] mb-6">
           Active Jobs
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 rounded-lg">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
-            <p>Loading jobs...</p>
+            <div className="fixed inset-0 bg-[#01472B] bg-opacity-90 flex items-center justify-center z-50">
+              <div className="text-center">
+                <l-tail-chase
+                  size="40"
+                  speed="1.75"
+                  color="#0B864A"
+                ></l-tail-chase>
+                <p className="text-white text-xl font-semibold mt-4">Loading...</p>
+                <p className="text-green-300 mt-2">Please wait while we load available jobs</p>
+              </div>
+            </div>
           ) : error ? (
             <p className="text-red-500">{error}</p>
-          ) : job.length > 0 ? (
+          ) : job.length === 0 ? (
+            <p className="text-center text-gray-500">No jobs available</p>
+          ) : (
             job.map((job) => (
               <div
                 key={job.jobM_id}
-                className="rounded-lg overflow-hidden h-64 flex flex-col shadow-xl bg-white"
+                className="rounded-xl shadow-lg overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl bg-white"
               >
-                <div className="bg-[#188C54] text-white rounded-t-lg px-4 py-5 h-1/3">
-                  <h3 className="text-xl font-semibold">{job.jobM_title}</h3>
+                <div className="p-4 h-20 flex items-center justify-start bg-[#188C54]">
+                  <h3 className="text-xl font-semibold text-white truncate">
+                    {job.jobM_title}
+                  </h3>
                 </div>
-                <div className="p-4 flex flex-col justify-between h-2/3">
-                  <div>
-                    <div className="flex space-x-2 mb-2">
-                      {/* <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
-                        Full-time
-                      </span> */}
-                    </div>
-                    <p className="text-gray-700 mb-2">
-                      {job.Total_Applied} Applicants{" "}
-                      <span className="text-green-500">•</span>
-                    </p>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <button
-                      onClick={() => handleDetailsClick(job)}
-                      className="px-4 py-2 rounded-md w-36 bg-[#188C54] text-white relative transition-transform duration-300 ease-in-out hover:scale-105 hover:-translate-y-1"
-                      style={{
-                        boxShadow: "0 10px 15px rgba(0, 0, 0, 0.3)",
-                      }}
-                    >
-                      Details
-                    </button>
 
-                    {/* <button
-                      onClick={() => handleDetailsClick(job)}
-                      className="px-4 py-2 rounded-md w-36 bg-[#188C54] text-white relative transition-transform duration-300 ease-in-out hover:rotate-6 hover:-translate-y-1"
-                      style={{
-                        boxShadow: "0 10px 20px rgba(0, 0, 0, 0.2)",
-                      }}
-                    >
-                      Details
-                    </button> */}
-
-                    <span className="text-gray-500 text-sm ml-4">
-                      {job.jobM_createdAt}
-                    </span>
+                <div className="p-4 space-y-4">
+                  <div className="flex items-center space-x-2 text-sm mt-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span>{job.Total_Applied} Applicants</span>
                   </div>
+
+                  <div className="flex items-center space-x-1 text-sm mb-5">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <span>{job.jobM_createdAt}</span>
+                  </div>
+
+                  <button
+                    onClick={() => handleDetailsClick(job)}
+                    className="w-full px-4 py-2 rounded-md font-semibold transition-colors duration-300 bg-[#188C54] hover:bg-green-600 text-white"
+                  >
+                    View Details
+                  </button>
                 </div>
               </div>
             ))
-          ) : (
-            <p>No jobs available</p>
           )}
         </div>
         {isModalOpen && (
           <JobDetailsModal
             job={selectedJob}
-            onClose={() => setIsModalOpen(false)}
+            onCloses={() => setIsModalOpen(false)}
           />
         )}
       </div>

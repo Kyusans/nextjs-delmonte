@@ -50,9 +50,11 @@ import {
   UserGroupIcon,
   CheckCircleIcon,
 } from "@heroicons/react/24/outline";
-import { tailChase } from "ldrs";
 import { XCircleIcon } from "lucide-react";
 import { UserIcon } from "@heroicons/react/24/solid";
+import { tailChase } from "ldrs";
+
+tailChase.register();
 
 export default function DashboardCandidates() {
   const [jobs, setJobs] = useState([]);
@@ -132,7 +134,7 @@ export default function DashboardCandidates() {
       const response = await axios.post(url, formData);
 
       // console.log("Response:", response);
-      // console.log("Response data:", response.data);
+      // console.log("active job data:", response.data);
 
       if (Array.isArray(response.data)) {
         // console.log("Setting jobs:", response.data);
@@ -154,7 +156,7 @@ export default function DashboardCandidates() {
 
   useEffect(() => {
     fetchJobs();
-  }, [fetchJobs]);
+  }, []);
 
   const fetchNotification = async () => {
     try {
@@ -166,7 +168,7 @@ export default function DashboardCandidates() {
       formData.append("json", JSON.stringify({ cand_id: candId }));
       
       const response = await axios.post(url, formData);
-      console.log('Notification response:', response.data);
+      // console.log('Notification response:', response.data);
 
       // Ensure response.data is an array
       const notifications = Array.isArray(response.data) ? response.data : [];
@@ -1118,17 +1120,19 @@ export default function DashboardCandidates() {
         <JobDetailsModal
           job={selectedJob}
           fetchJobs={fetchJobs}
-          onClose={() => {
+          onClosed={() => {
             setIsModalOpen(false);
             removeData("jobId");
           }}
         />
       )}
-      <ViewProfile
-        isOpen={isProfileModalOpen}
-        onClose={handleCloseProfileModal}
-        candId={selectedCandidateId}
-      />
+      {isProfileModalOpen && (
+        <ViewProfile
+          isOpen={isProfileModalOpen}
+          onClose={handleCloseProfileModal}
+          candId={selectedCandidateId}
+        />
+      )}
       {isExamModalOpen && (
         <ExamModal jobMId={selectedJobMId} onClose={closeExamModal} />
       )}
