@@ -108,12 +108,15 @@ const UpdateExamQuestion = ({ examQuestionData, getExamDetails }) => {
       formData.append("json", JSON.stringify(questionData));
 
       const response = await axios.post(url, formData);
+      console.log("response: ", response);
       if (response.data === 1) {
         toast.success("Question updated successfully");
         setIsOpen(false);
         getExamDetails();
-      } else {
+      } else if (response.data === 0) {
         toast.error("Failed to update question");
+      } else {
+        toast.error("Failed to update question. There's already a transaction made in this question");
       }
     } catch (error) {
       console.error("Error updating question:", error);

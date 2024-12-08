@@ -17,7 +17,7 @@ import JobOfferPage from '../JobOffer/JobOfferPage';
 import DecisionPendingPage from '../DecisionPending/DecisionPendingPage';
 import EmployedPage from '../Employed/EmployedPage';
 
-function SelectedJob({ open, onHide, jobId }) {
+function SelectedJob({ open, onHide, jobId, getJobs }) {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedTab, setSelectedTab] = useState(1);
@@ -82,6 +82,7 @@ function SelectedJob({ open, onHide, jobId }) {
 
   const handleClose = () => {
     sessionStorage.clear();
+    getJobs();
     // removeData("jobId");
     // removeData("selectedStatus");
     // removeData("jobEducation");

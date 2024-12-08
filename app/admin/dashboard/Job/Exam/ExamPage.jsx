@@ -12,6 +12,7 @@ const ExamPage = ({ handleChangeStatus }) => {
   const [candidates, setCandidates] = useState([]);
   const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
   const [selectedCandId, setSelectedCandId] = useState(null);
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   const handleOpenInterviewModal = () => {
     setIsInterviewModalOpen(true);
@@ -47,7 +48,9 @@ const ExamPage = ({ handleChangeStatus }) => {
   ]
 
   const handleOnClickRow = (id) => {
+    const selectedCandidate = candidates.find(candidate => candidate.cand_id === id);
     setSelectedCandId(id);
+    setSelectedStatus(selectedCandidate.status_name);
     handleOpenInterviewModal();
   };
 
@@ -75,7 +78,7 @@ const ExamPage = ({ handleChangeStatus }) => {
         <SelectedApplicant
           open={isInterviewModalOpen}
           onHide={handleCloseInterviewModal}
-          statusName="Exam"
+          statusName={selectedStatus}
           candId={selectedCandId}
           handleChangeStatus={handleChangeStatus}
         />

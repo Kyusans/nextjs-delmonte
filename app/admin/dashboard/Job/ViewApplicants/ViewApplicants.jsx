@@ -68,6 +68,7 @@ const ViewApplicants = ({ handleChangeStatus }) => {
       className: (row) => `${row.percentage >= passingPercentage ? 'text-green-500' : 'text-red-500'}`,
       sortable: true
     },
+    { header: 'Date', accessor: 'Date', sortable: true },
     { header: 'Status', accessor: 'status_name', className: (row) => `${row.status_name === "Pending" || row.status_name === "Processed" ? 'text-green-500' : 'text-red-500'}` }
   ];
 

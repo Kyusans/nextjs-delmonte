@@ -69,9 +69,12 @@ const UpdateExamMaster = ({ examMasterData, getExamDetails, passingPercent, isGe
         jobId: examMasterData.exam_jobMId
       };
 
+      console.log("examData: ", examData);
+
       formData.append("json", JSON.stringify(examData));
 
       const response = await axios.post(url, formData);
+      console.log("response: ", response);
       if (response.data === 1) {
         toast.success("Exam updated successfully");
         setIsOpen(false);

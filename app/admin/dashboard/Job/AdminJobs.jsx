@@ -222,7 +222,7 @@ function AdminJobs() {
             </Card >
           )
       }
-      {showSelectedJobModal && <SelectedJob open={showSelectedJobModal} onHide={closeShowSelectedJobModal} jobId={selectedJobId} />}
+      {showSelectedJobModal && <SelectedJob open={showSelectedJobModal} onHide={closeShowSelectedJobModal} jobId={selectedJobId} getJobs={getAllJobs} />}
       <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
     </>
   )

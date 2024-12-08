@@ -15,7 +15,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { retrieveData } from '@/app/utils/storageUtils';
 import { Edit2 } from 'lucide-react';
 
-const UpdateJobOffer = ({ candidate, getJobOfferCandidates }) => {
+const UpdateJobOffer = ({ candidate, getJobOfferCandidates, disabled }) => {
   const [isSubmit, setIsSubmit] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -96,10 +96,20 @@ const UpdateJobOffer = ({ candidate, getJobOfferCandidates }) => {
     setOpen(open);
   };
 
+  const handleEditClick = (e) => {
+    if (disabled) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogTrigger asChild>
-        <Edit2 className="cursor-pointer w-5 h-5" />
+      <DialogTrigger asChild disabled={disabled}>
+        <div onClick={handleEditClick}>
+          <Edit2 className={`w-5 h-5 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`} />
+        </div>
       </DialogTrigger>
       <DialogContent className="w-[95vw] max-w-[600px] sm:w-full">
         <DialogHeader>
