@@ -30,7 +30,7 @@ import ViewProfile from "./viewProfile";
 
 // import { fetchJobs } from "./candidatesDashboard/page.js";
 
-const JobDetailsModal = ({ job, onClosed, fetchJobs }) => {
+const JobDetailsModal = ({ job, onClosedd, fetchJobs }) => {
   const router = useRouter();
   const modalRef = useRef(null);
   const [loading, setLoading] = useState(true);
@@ -480,6 +480,7 @@ const JobDetailsModal = ({ job, onClosed, fetchJobs }) => {
                   "Background Check",
                   "Job Offer",
                   "Employed",
+                  "Failed Exam",
                 ].includes(item.status_name)
             ) ? (
             <button
@@ -496,7 +497,7 @@ const JobDetailsModal = ({ job, onClosed, fetchJobs }) => {
               (item) =>
                 item.Is_Applied !== 0 &&
                 item.jobM_id === job.jobM_id &&
-                ["Cancelled", "Failed Exam", "Decline Offer"].includes(item.status_name)
+                ["Cancelled", "Decline Offer"].includes(item.status_name)
             ) ? (
             <button
               onClick={handleApply}
@@ -528,7 +529,7 @@ const JobDetailsModal = ({ job, onClosed, fetchJobs }) => {
           )}
 
           <button
-            onClick={onClosed}
+            onClick={onClosedd}
             className={`px-4 py-2 rounded-md relative transition-transform duration-300 ease-in-out hover:scale-110 hover:-translate-y-1 ${
               isDarkMode ? "bg-gray-600 text-white" : "bg-gray-500 text-white"
             }`}

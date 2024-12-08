@@ -141,7 +141,7 @@ export default function Login(user) {
         setLoading(true);
         setIsRedirecting(true);
 
-        toast.success("Login successful! Redirecting...");
+        // toast.success("Login successful! Redirecting...");
 
         const tokenData = {
           userId: user.adm_id || user.sup_id || user.cand_id,

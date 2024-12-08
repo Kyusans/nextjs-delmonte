@@ -91,30 +91,28 @@ const DatePicker = ({
                 </Button>
               </PopoverTrigger>
               <PopoverContent align="start" className="w-auto p-0">
-                <div className="flex">
-                  <Calendar
-                    mode="single"
-                    captionLayout="dropdown-buttons"
-                    selected={field.value ? new Date(field.value) : undefined}
-                    onSelect={handleDateChange}
-                    fromYear={1960}
-                    toYear={addYears(new Date(), 5).getFullYear()}
-                    disabled={disableDate}
-                  />
-                  {withTime && (
-                    <div className="p-4 border-l">
-                      <div className="flex items-center gap-2">
-                        <ClockIcon className="h-4 w-4" />
-                        <input
-                          type="time"
-                          value={selectedTime}
-                          onChange={handleTimeChange}
-                          className="border p-2 rounded-md w-full"
-                        />
-                      </div>
+                {withTime && (
+                  <div className="p-4 border-b">
+                    <div className="flex items-center gap-2">
+                      <ClockIcon className="h-4 w-4" />
+                      <input
+                        type="time"
+                        value={selectedTime}
+                        onChange={handleTimeChange}
+                        className="border p-2 rounded-md w-full"
+                      />
                     </div>
-                  )}
-                </div> 
+                  </div>
+                )}
+                <Calendar
+                  mode="single"
+                  captionLayout="dropdown-buttons"
+                  selected={field.value ? new Date(field.value) : undefined}
+                  onSelect={handleDateChange}
+                  fromYear={1960}
+                  toYear={addYears(new Date(), 5).getFullYear()}
+                  disabled={disableDate}
+                />
               </PopoverContent>
             </Popover>
           </div>

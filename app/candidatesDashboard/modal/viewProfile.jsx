@@ -914,10 +914,14 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
         return (
           <div
             className={`p-6 space-y-6 ${
-              isDarkMode ? "bg-gray-800 text-white" : "bg-[#F4F7FC]"
+              isDarkMode ? "bg-[#1A202C] text-white" : "bg-[#F4F7FC]"
             }`}
           >
-            <h3 className="text-2xl font-bold text-gray-800 mb-6">
+            <h3
+              className={`text-2xl font-bold ${
+                isDarkMode ? "text-white" : "text-gray-800"
+              } mb-6`}
+            >
               Personal Information
             </h3>
 
@@ -927,20 +931,26 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
             >
               <button
                 onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                className="p-2 rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 transition-colors duration-200 flex items-center justify-end"
+                className={`p-2 rounded-full ${isDarkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-gray-600"} hover:bg-gray-300 transition-colors duration-200 flex items-center justify-end`}
               >
                 <Settings className="w-6 h-6" />
               </button>
 
               {isSettingsOpen && (
-                <div className="absolute right-0 top-full mt-2 w-60 bg-white rounded-md shadow-2xl z-10 p-3">
+                <div
+                  className={`absolute right-0 top-full mt-2 w-60 ${
+                    isDarkMode ? "bg-gray-800 text-white" : "bg-white"
+                  } rounded-md shadow-2xl z-10 p-3`}
+                >
                   <div className="py-1">
                     <button
                       onClick={() => {
                         handleEditPersonalClick();
                         setIsSettingsOpen(false);
                       }}
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-400 hover:text-white w-full text-left"
+                      className={`flex items-center px-4 py-2 text-sm ${
+                        isDarkMode ? "text-white" : "text-gray-700"
+                      } hover:bg-gray-400 hover:text-white w-full text-left`}
                     >
                       <Edit className="w-4 h-4 mr-2" />
                       Personal Information
@@ -950,7 +960,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                         handleEditPasswordClick();
                         setIsSettingsOpen(false);
                       }}
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-400 hover:text-white w-full text-left"
+                      className={`flex items-center px-4 py-2 text-sm ${
+                        isDarkMode ? "text-white" : "text-gray-700"
+                      } hover:bg-gray-400 hover:text-white w-full text-left`}
                     >
                       <Lock className="w-4 h-4 mr-2" />
                       Change Password
@@ -961,7 +973,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                         handleEditEmailClick();
                         setIsSettingsOpen(false);
                       }}
-                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-400 hover:text-white w-full text-left"
+                      className={`flex items-center px-4 py-2 text-sm ${
+                        isDarkMode ? "text-white" : "text-gray-700"
+                      } hover:bg-gray-400 hover:text-white w-full text-left`}
                     >
                       <Lock className="w-4 h-4 mr-2" />
                       Change Email
@@ -1001,21 +1015,33 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
               <div className="flex space-x-2 mb-4">
                 <button
                   onClick={handleSavePersonalInfo}
-                  className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200"
+                  className={`px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200 ${
+                    isDarkMode ? "bg-gray-700" : ""
+                  }`}
                 >
                   Save Changes
                 </button>
                 <button
                   onClick={() => setIsEditingPersonalInfo(false)}
-                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors duration-200"
+                  className={`px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors duration-200 ${
+                    isDarkMode ? "bg-gray-800" : ""
+                  }`}
                 >
                   Cancel
                 </button>
               </div>
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
-                <label className="text-gray-600 block text-sm font-normal">
+              <div
+                className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                  isDarkMode ? "bg-gray-700 text-white" : ""
+                }`}
+              >
+                <label
+                  className={`text-gray-600 block text-sm font-normal ${
+                    isDarkMode ? "text-white " : ""
+                  }`}
+                >
                   Name:
                 </label>
                 {isEditingPersonalInfo ? (
@@ -1025,7 +1051,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                       name="candidateInformation.cand_lastname"
                       value={editData.candidateInformation?.cand_lastname || ""}
                       onChange={handleChangeNotArray}
-                      className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                      className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                        isDarkMode ? "bg-gray-700 text-white" : ""
+                      }`}
                     />
                     <input
                       type="text"
@@ -1034,7 +1062,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                         editData.candidateInformation?.cand_firstname || ""
                       }
                       onChange={handleChangeNotArray}
-                      className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                      className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                        isDarkMode ? "bg-gray-700 text-white" : ""
+                      }`}
                     />
                     <input
                       type="text"
@@ -1043,11 +1073,17 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                         editData.candidateInformation?.cand_middlename || ""
                       }
                       onChange={handleChangeNotArray}
-                      className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                      className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                        isDarkMode ? "bg-gray-700 text-white" : ""
+                      }`}
                     />
                   </>
                 ) : (
-                  <p className="text-gray-800 font-semibold mt-1">
+                  <p
+                    className={`text-gray-800 font-semibold mt-1 ${
+                      isDarkMode ? "text-white" : ""
+                    }`}
+                  >
                     {profile.candidateInformation?.cand_lastname || "N/A"},{" "}
                     {profile.candidateInformation?.cand_firstname || "N/A"}{" "}
                     {profile.candidateInformation?.cand_middlename || "N/A"}
@@ -1055,8 +1091,16 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                 )}
               </div>
 
-              <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
-                <label className="block text-gray-600 text-sm font-normal">
+              <div
+                className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                  isDarkMode ? "bg-gray-700 text-white" : ""
+                }`}
+              >
+                <label
+                  className={`block text-gray-600 text-sm font-normal ${
+                    isDarkMode ? "text-white" : ""
+                  }`}
+                >
                   Alternate Email Address:
                 </label>
                 {isEditingPersonalInfo ? (
@@ -1067,10 +1111,16 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                       editData.candidateInformation?.cand_alternateEmail || ""
                     }
                     onChange={handleChangeNotArray}
-                    className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                    className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                      isDarkMode ? "bg-gray-700 text-white" : ""
+                    }`}
                   />
                 ) : (
-                  <p className="text-gray-800 font-semibold mt-1">
+                  <p
+                    className={`text-gray-800 font-semibold mt-1 ${
+                      isDarkMode ? "text-white" : ""
+                    }`}
+                  >
                     {profile.candidateInformation?.cand_alternateEmail || "N/A"}
                   </p>
                 )}
@@ -1079,8 +1129,16 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
 
             {/* contact no */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
-                <label className="block text-gray-600 text-sm font-normal">
+              <div
+                className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                  isDarkMode ? "bg-gray-700 text-white" : ""
+                }`}
+              >
+                <label
+                  className={`block text-gray-600 text-sm font-normal ${
+                    isDarkMode ? "text-white" : ""
+                  }`}
+                >
                   Contact No:
                 </label>
                 {isEditingPersonalInfo ? (
@@ -1092,17 +1150,31 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                         editData.candidateInformation?.cand_contactNo || ""
                       }
                       onChange={handleChangeNotArray}
-                      className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                      className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                        isDarkMode ? "bg-gray-700 text-white" : ""
+                      }`}
                     />
                   </>
                 ) : (
-                  <p className="text-gray-800 font-semibold mt-1">
+                  <p
+                    className={`text-gray-800 font-semibold mt-1 ${
+                      isDarkMode ? "text-white" : ""
+                    }`}
+                  >
                     {profile.candidateInformation?.cand_contactNo || "N/A"}
                   </p>
                 )}
               </div>
-              <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
-                <label className="block text-gray-600 text-sm font-normal">
+              <div
+                className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                  isDarkMode ? "bg-gray-700 text-white" : ""
+                }`}
+              >
+                <label
+                  className={`block text-gray-600 text-sm font-normal ${
+                    isDarkMode ? "text-white" : ""
+                  }`}
+                >
                   Alternate Contact No:
                 </label>
                 {isEditingPersonalInfo ? (
@@ -1114,10 +1186,16 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                       ""
                     }
                     onChange={handleChangeNotArray}
-                    className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                    className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                      isDarkMode ? "bg-gray-700 text-white" : ""
+                    }`}
                   />
                 ) : (
-                  <p className="text-gray-800 font-semibold mt-1">
+                  <p
+                    className={`text-gray-800 font-semibold mt-1 ${
+                      isDarkMode ? "text-white" : ""
+                    }`}
+                  >
                     {profile.candidateInformation?.cand_alternatecontactNo ||
                       "N/A"}
                   </p>
@@ -1132,8 +1210,16 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
             {/* Address */}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
-                <label className="block text-gray-600 text-sm font-normal">
+              <div
+                className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                  isDarkMode ? "bg-gray-700 text-white" : ""
+                }`}
+              >
+                <label
+                  className={`block text-gray-600 text-sm font-normal ${
+                    isDarkMode ? "text-white" : ""
+                  }`}
+                >
                   Present Address:
                 </label>
                 {isEditingPersonalInfo ? (
@@ -1145,17 +1231,31 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                         editData.candidateInformation?.cand_presentAddress || ""
                       }
                       onChange={handleChangeNotArray}
-                      className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                      className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                        isDarkMode ? "bg-gray-700 text-white" : ""
+                      }`}
                     />
                   </>
                 ) : (
-                  <p className="text-gray-800 font-semibold mt-1">
+                  <p
+                    className={`text-gray-800 font-semibold mt-1 ${
+                      isDarkMode ? "text-white" : ""
+                    }`}
+                  >
                     {profile.candidateInformation?.cand_presentAddress || "N/A"}
                   </p>
                 )}
               </div>
-              <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
-                <label className="block text-gray-600 text-sm font-normal">
+              <div
+                className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                  isDarkMode ? "bg-gray-700 text-white" : ""
+                }`}
+              >
+                <label
+                  className={`block text-gray-600 text-sm font-normal ${
+                    isDarkMode ? "text-white" : ""
+                  }`}
+                >
                   Permanent Address:
                 </label>
                 {isEditingPersonalInfo ? (
@@ -1166,10 +1266,16 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                       editData.candidateInformation?.cand_permanentAddress || ""
                     }
                     onChange={handleChangeNotArray}
-                    className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                    className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                      isDarkMode ? "bg-gray-700 text-white" : ""
+                    }`}
                   />
                 ) : (
-                  <p className="text-gray-800 font-semibold mt-1">
+                  <p
+                    className={`text-gray-800 font-semibold mt-1 ${
+                      isDarkMode ? "text-white" : ""
+                    }`}
+                  >
                     {profile.candidateInformation?.cand_permanentAddress ||
                       "N/A"}
                   </p>
@@ -1180,8 +1286,16 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
             {/* date of birth */}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
-                <label className="block text-gray-600 text-sm font-normal">
+              <div
+                className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                  isDarkMode ? "bg-gray-700 text-white" : ""
+                }`}
+              >
+                <label
+                  className={`block text-gray-600 text-sm font-normal ${
+                    isDarkMode ? "text-white" : ""
+                  }`}
+                >
                   Date of Birth:
                 </label>
                 {isEditingPersonalInfo ? (
@@ -1193,17 +1307,31 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                         editData.candidateInformation?.cand_dateofBirth || ""
                       }
                       onChange={handleChangeNotArray}
-                      className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                      className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                        isDarkMode ? "bg-gray-700 text-white" : ""
+                      }`}
                     />
                   </>
                 ) : (
-                  <p className="text-gray-800 font-semibold mt-1">
+                  <p
+                    className={`text-gray-800 font-semibold mt-1 ${
+                      isDarkMode ? "text-white" : ""
+                    }`}
+                  >
                     {profile.candidateInformation?.cand_dateofBirth || "N/A"}
                   </p>
                 )}
               </div>
-              <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
-                <label className="block text-gray-600 text-sm font-normal mb-2">
+              <div
+                className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                  isDarkMode ? "bg-gray-700 text-white" : ""
+                }`}
+              >
+                <label
+                  className={`block text-gray-600 text-sm font-normal mb-2 ${
+                    isDarkMode ? "text-white" : ""
+                  }`}
+                >
                   Gender:
                 </label>
                 {isEditingPersonalInfo ? (
@@ -1219,7 +1347,13 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                         onChange={handleChangeNotArray}
                         className="form-radio h-5 w-5 text-green-600"
                       />
-                      <span className="ml-2 text-gray-700">Male</span>
+                      <span
+                        className={`ml-2 text-gray-700 ${
+                          isDarkMode ? "text-white" : ""
+                        }`}
+                      >
+                        Male
+                      </span>
                     </label>
                     <label className="inline-flex items-center">
                       <input
@@ -1232,11 +1366,21 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                         onChange={handleChangeNotArray}
                         className="form-radio h-5 w-5 text-green-600"
                       />
-                      <span className="ml-2 text-gray-700">Female</span>
+                      <span
+                        className={`ml-2 text-gray-700 ${
+                          isDarkMode ? "text-white" : ""
+                        }`}
+                      >
+                        Female
+                      </span>
                     </label>
                   </div>
                 ) : (
-                  <p className="text-gray-800 font-semibold mt-1">
+                  <p
+                    className={`text-gray-800 font-semibold mt-1 ${
+                      isDarkMode ? "text-white" : ""
+                    }`}
+                  >
                     {profile.candidateInformation?.cand_sex || "N/A"}
                   </p>
                 )}
@@ -1246,8 +1390,16 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
             {/* sss no and tin no */}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
-                <label className="block text-gray-600 text-sm font-normal">
+              <div
+                className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                  isDarkMode ? "bg-gray-700 text-white" : ""
+                }`}
+              >
+                <label
+                  className={`block text-gray-600 text-sm font-normal ${
+                    isDarkMode ? "text-white" : ""
+                  }`}
+                >
                   SSS NO:
                 </label>
                 {isEditingPersonalInfo ? (
@@ -1257,17 +1409,31 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                       name="candidateInformation.cand_sssNo"
                       value={editData.candidateInformation?.cand_sssNo || ""}
                       onChange={handleChangeNotArray}
-                      className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                      className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                        isDarkMode ? "bg-gray-700 text-white" : ""
+                      }`}
                     />
                   </>
                 ) : (
-                  <p className="text-gray-800 font-semibold mt-1">
+                  <p
+                    className={`text-gray-800 font-semibold mt-1 ${
+                      isDarkMode ? "text-white" : ""
+                    }`}
+                  >
                     {profile.candidateInformation?.cand_sssNo || "N/A"}
                   </p>
                 )}
               </div>
-              <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
-                <label className="block text-gray-600 text-sm font-normal">
+              <div
+                className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                  isDarkMode ? "bg-gray-700 text-white" : ""
+                }`}
+              >
+                <label
+                  className={`block text-gray-600 text-sm font-normal ${
+                    isDarkMode ? "text-white" : ""
+                  }`}
+                >
                   TIN NO:
                 </label>
                 {isEditingPersonalInfo ? (
@@ -1276,10 +1442,16 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                     name="candidateInformation.cand_tinNo"
                     value={editData.candidateInformation?.cand_tinNo || ""}
                     onChange={handleChangeNotArray}
-                    className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                    className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                      isDarkMode ? "bg-gray-700 text-white" : ""
+                    }`}
                   />
                 ) : (
-                  <p className="text-gray-800 font-semibold mt-1">
+                  <p
+                    className={`text-gray-800 font-semibold mt-1 ${
+                      isDarkMode ? "text-white" : ""
+                    }`}
+                  >
                     {profile.candidateInformation?.cand_tinNo || "N/A"}
                   </p>
                 )}
@@ -1289,8 +1461,16 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
             {/* philhealt ug pagibig no */}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
-                <label className="block text-gray-600 text-sm font-normal">
+              <div
+                className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                  isDarkMode ? "bg-gray-700 text-white" : ""
+                }`}
+              >
+                <label
+                  className={`block text-gray-600 text-sm font-normal ${
+                    isDarkMode ? "text-white" : ""
+                  }`}
+                >
                   Philhealth NO:
                 </label>
                 {isEditingPersonalInfo ? (
@@ -1302,17 +1482,31 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                         editData.candidateInformation?.cand_philhealthNo || ""
                       }
                       onChange={handleChangeNotArray}
-                      className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                      className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                        isDarkMode ? "bg-gray-700 text-white" : ""
+                      }`}
                     />
                   </>
                 ) : (
-                  <p className="text-gray-800 font-semibold mt-1">
+                  <p
+                    className={`text-gray-800 font-semibold mt-1 ${
+                      isDarkMode ? "text-white" : ""
+                    }`}
+                  >
                     {profile.candidateInformation?.cand_philhealthNo || "N/A"}
                   </p>
                 )}
               </div>
-              <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
-                <label className="block text-gray-600 text-sm font-normal">
+              <div
+                className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                  isDarkMode ? "bg-gray-700 text-white" : ""
+                }`}
+              >
+                <label
+                  className={`block text-gray-600 text-sm font-normal ${
+                    isDarkMode ? "text-white" : ""
+                  }`}
+                >
                   Pagibig NO:
                 </label>
                 {isEditingPersonalInfo ? (
@@ -1321,10 +1515,16 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                     name="candidateInformation.cand_pagibigNo"
                     value={editData.candidateInformation?.cand_pagibigNo || ""}
                     onChange={handleChangeNotArray}
-                    className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                    className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                      isDarkMode ? "bg-gray-700 text-white" : ""
+                    }`}
                   />
                 ) : (
-                  <p className="text-gray-800 font-semibold mt-1">
+                  <p
+                    className={`text-gray-800 font-semibold mt-1 ${
+                      isDarkMode ? "text-white" : ""
+                    }`}
+                  >
                     {profile.candidateInformation?.cand_pagibigNo || "N/A"}
                   </p>
                 )}
@@ -1336,15 +1536,23 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
       case "Educational Background":
         return (
           <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-800 sm:mb-6">
+            <h3
+              className={`text-lg sm:text-xl font-semibold ${
+                isDarkMode ? "text-white" : "text-gray-800"
+              } sm:mb-6`}
+            >
               Educational Background
             </h3>
 
             <div className="flex justify-end">
               <button
                 onClick={handleAddEducation}
-                className="p-2 flex items-center bg-green-500 text-white rounded-lg hover:bg-green-600"
+                className={`p-2 flex items-center ${
+                  isDarkMode ? "bg-green-700 text-white" : "bg-green-500 text-white"
+                } rounded-lg hover:bg-green-600 transform hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out`}
               >
+                <Plus className="w-5 h-5 mr-2" />
+
                 <span>Add New Educational Background</span>
               </button>
             </div>
@@ -1368,14 +1576,18 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
               profile.educationalBackground.map((education, index) => (
                 <div
                   key={index}
-                  className="relative grid grid-cols-1 gap-4 md:grid-cols-1 md:gap-6 pb-4 sm:pb-6 border-b border-gray-300"
+                  className={`relative grid grid-cols-1 gap-4 md:grid-cols-1 md:gap-6 pb-4 sm:pb-6 border-b ${
+                    isDarkMode ? "border-gray-700" : "border-gray-300"
+                  }`}
                 >
                   <div className="relative">
                     {/* Edit Icon Button */}
                     <div className="absolute top-0 right-0">
                       <button
                         onClick={() => handleEditClick(education, index)}
-                        className="p-2 rounded-full bg-gray-200 text-black hover:bg-gray-800 hover:text-white"
+                        className={`p-2 rounded-full ${
+                          isDarkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-black"
+                        } hover:bg-gray-800 hover:text-white`}
                         title="Edit"
                       >
                         <Edit className="w-5 h-5" />
@@ -1385,7 +1597,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                         onClick={() =>
                           handleDeleteClick(education.educ_back_id)
                         }
-                        className="p-2 rounded-full bg-gray-200 text-black hover:bg-gray-800 hover:text-white"
+                        className={`p-2 rounded-full ${
+                          isDarkMode ? "bg-gray-700 text-white" : "bg-gray-200 text-black"
+                        } hover:bg-gray-800 hover:text-white`}
                         title="Edit"
                       >
                         <Trash2 className="w-5 h-5" />
@@ -1400,41 +1614,65 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                     </div>
 
                     {/* Course */}
-                    <div className="bg-gray-200 p-3 sm:p-4 rounded-lg border shadow-lg">
-                      <label className="block text-gray-600 text-sm font-normal">
+                    <div
+                      className={`bg-gray-200 p-3 sm:p-4 rounded-lg border shadow-lg ${
+                        isDarkMode ? "bg-gray-700 text-white" : ""
+                      }`}
+                    >
+                      <label
+                        className={`block text-gray-600 text-sm font-normal ${
+                          isDarkMode ? "text-white" : ""
+                        }`}
+                      >
                         Course:
                       </label>
-                      <p className="text-gray-800 font-semibold mt-1">
+                      <p
+                        className={`text-gray-800 font-semibold mb-3 ${
+                          isDarkMode ? "text-white" : ""
+                        }`}
+                      >
                         {education.courses_name || "N/A"}
                       </p>
-                    </div>
-
-                    {/* Category Name */}
-                    <div className="bg-gray-200 p-3 sm:p-4 rounded-lg border shadow-lg">
-                      <label className="block text-gray-600 text-sm font-normal">
+                      <label
+                        className={`block text-gray-600 text-sm font-normal mt-2 ${
+                          isDarkMode ? "text-white" : ""
+                        }`}
+                      >
                         Course Category:
                       </label>
-                      <p className="text-gray-800 font-semibold mt-1">
+                      <p
+                        className={`text-gray-800 font-semibold mb-3 ${
+                          isDarkMode ? "text-white" : ""
+                        }`}
+                      >
                         {education.course_categoryName || "N/A"}
                       </p>
-                    </div>
-
-                    {/* Institution */}
-                    <div className="bg-gray-200 p-3 sm:p-4 rounded-lg border shadow-lg">
-                      <label className="block text-gray-600 text-sm font-normal">
+                      <label
+                        className={`block text-gray-600 text-sm font-normal mt-2 ${
+                          isDarkMode ? "text-white" : ""
+                        }`}
+                      >
                         Institution:
                       </label>
-                      <p className="text-gray-800 font-semibold mt-1">
+                      <p
+                        className={`text-gray-800 font-semibold mb-3 ${
+                          isDarkMode ? "text-white" : ""
+                        }`}
+                      >
                         {education.institution_name || "N/A"}
                       </p>
-                    </div>
-
-                    {/* Date Graduated */}
-                    <div className="bg-gray-200 p-3 sm:p-4 rounded-lg border shadow-lg">
-                      <label className="block text-gray-600 text-sm font-normal">
+                      <label
+                        className={`block text-gray-600 text-sm font-normal mt-2 ${
+                          isDarkMode ? "text-white" : ""
+                        }`}
+                      >
                         Date Graduated:
                       </label>
-                      <p className="text-gray-800 font-semibold mt-1">
+                      <p
+                        className={`text-gray-800 font-semibold mb-3 ${
+                          isDarkMode ? "text-white" : ""
+                        }`}
+                      >
                         {education.educ_dategraduate || "N/A"}
                       </p>
                     </div>
@@ -1470,7 +1708,11 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
       case "Employment History":
         return (
           <div className="p-6 space-y-6">
-            <h3 className="text-xl font-semibold text-gray-800 mb-6">
+            <h3
+              className={`text-xl font-semibold ${
+                isDarkMode ? "text-white" : "text-gray-800"
+              } mb-6`}
+            >
               Employment History
             </h3>
 
@@ -1479,7 +1721,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                 onClick={() => {
                   setShowAddModal(true);
                 }}
-                className="p-2 flex items-center bg-green-500 text-white rounded-lg hover:bg-green-600 transform hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out"
+                className={`p-2 flex items-center ${
+                  isDarkMode ? "bg-green-700 text-white" : "bg-green-500 text-white"
+                } rounded-lg hover:bg-green-600 transform hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out`}
               >
                 <Plus className="w-5 h-5 mr-2" />
                 <span>Add New Employment History</span>
@@ -1505,7 +1749,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
               profile.employmentHistory.map((employment, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-1 md:grid-cols-1 gap-4 pb-4 border-b border-gray-300"
+                  className={`grid grid-cols-1 md:grid-cols-1 gap-4 pb-4 border-b border-gray-300 ${
+                    isDarkMode ? "border-gray-700" : ""
+                  }`}
                 >
                   <div className="relative">
                     <div className="absolute top-0 right-0">
@@ -1514,14 +1760,18 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                           <div className="flex space-x-2">
                             <button
                               onClick={handleSaveEmploymentInfo}
-                              className="p-2 rounded-lg bg-green-500 text-white flex items-center space-x-2"
+                              className={`p-2 rounded-lg ${
+                                isDarkMode ? "bg-green-700 text-white" : "bg-green-500 text-white"
+                              } flex items-center space-x-2`}
                             >
                               <Check className="w-4 h-4" />
                               <span>Save</span>{" "}
                             </button>
                             <button
                               onClick={() => setIsEditingEmploymentInfo(false)}
-                              className="p-2 rounded-lg bg-red-500 text-white flex items-center space-x-2"
+                              className={`p-2 rounded-lg ${
+                                isDarkMode ? "bg-red-700 text-white" : "bg-red-500 text-white"
+                              } flex items-center space-x-2`}
                             >
                               <X className="w-4 h-4" />
                               <span>Cancel</span>{" "}
@@ -1532,7 +1782,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                         <>
                           <button
                             onClick={handleEditEmploymentClick}
-                            className="p-2 rounded-full bg-gray-200 text-black hover:bg-gray-800 hover:text-white"
+                            className={`p-2 rounded-full ${
+                              isDarkMode ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
+                            } hover:bg-gray-800 hover:text-white`}
                           >
                             <Edit className="w-5 h-5" />
                           </button>
@@ -1541,7 +1793,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                             onClick={() =>
                               handleDeleteClick(employment.empH_id)
                             }
-                            className="p-2 rounded-full bg-gray-200 text-black hover:bg-gray-800 hover:text-white"
+                            className={`p-2 rounded-full ${
+                              isDarkMode ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
+                            } hover:bg-gray-800 hover:text-white`}
                             title="Delete"
                           >
                             <Trash2 className="w-5 h-5" />
@@ -1557,7 +1811,11 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                       )}
                     </div>
 
-                    <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
+                    <div
+                      className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                        isDarkMode ? "bg-gray-800 text-white" : ""
+                      }`}
+                    >
                       <label className="block text-gray-600 text-sm font-normal">
                         Position Name:
                       </label>
@@ -1572,15 +1830,17 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                             ""
                           }
                           onChange={handleChange}
-                          className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                          className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                            isDarkMode ? "text-white" : ""
+                          }`}
                         />
                       ) : (
-                        <p className="text-gray-800 font-semibold mt-1">
+                        <p className={`text-gray-800 font-semibold mt-1 mb-3 ${isDarkMode ? "text-white" : ""}`}>
                           {employment.empH_positionName || "N/A"}
                         </p>
                       )}
-                    </div>
-                    <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
+                    
+
                       <label className="block text-gray-600 text-sm font-normal">
                         Company Name:
                       </label>
@@ -1595,16 +1855,16 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                             "N/A"
                           }
                           onChange={handleChange}
-                          className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                          className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                            isDarkMode ? "text-white" : ""
+                          }`}
                         />
                       ) : (
-                        <p className="text-gray-800 font-semibold mt-1">
+                        <p className={`text-gray-800 font-semibold mt-1 mb-3 ${isDarkMode ? "text-white" : ""}`}>
                           {employment.empH_companyName || "N/A"}
                         </p>
                       )}
-                    </div>
-                    {/* Date Fields */}
-                    <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
+
                       <label className="block text-gray-600 text-sm font-normal">
                         Start Date:
                       </label>
@@ -1619,15 +1879,20 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                             ""
                           }
                           onChange={handleChange}
-                          className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                          className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                            isDarkMode ? "text-white" : ""
+                          }`}
                         />
                       ) : (
-                        <p className="text-gray-800 font-semibold mt-1">
+                        <p
+                          className={`text-gray-800 font-semibold mt-1 mb-3 ${
+                            isDarkMode ? "text-white" : ""
+                          }`}
+                        >
                           {employment.empH_startdate || "N/A"}
                         </p>
                       )}
-                    </div>
-                    <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
+
                       <label className="block text-gray-600 text-sm font-normal">
                         End Date:
                       </label>
@@ -1636,15 +1901,22 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                           type="date"
                           name={`employmentHistory.${index}.empH_enddate`}
                           value={
-                            editData.employmentHistory?.[index]?.empH_enddate ||
+                            editData.employmentHistory?.[index]
+                              ?.empH_enddate ||
                             employment.empH_enddate ||
                             "N/A"
                           }
                           onChange={handleChange}
-                          className="text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent"
+                          className={`text-gray-800 font-semibold mt-1 w-full border-b-2 pb-2 bg-transparent ${
+                            isDarkMode ? "text-white" : ""
+                          }`}
                         />
                       ) : (
-                        <p className="text-gray-800 font-semibold mt-1">
+                        <p
+                          className={`text-gray-800 font-semibold mt-1 mb-3 ${
+                            isDarkMode ? "text-white" : ""
+                          }`}
+                        >
                           {employment.empH_enddate || "N/A"}
                         </p>
                       )}
@@ -1661,7 +1933,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
       case "Skills":
         return (
           <div className="p-4 space-y-4">
-            <h3 className="text-xl font-semibold mb-4">Skills</h3>
+            <h3 className="text-xl font-semibold mb-4" style={{ color: isDarkMode ? "white" : "" }}>
+              Skills
+            </h3>
 
             <div className="flex justify-end">
               <button
@@ -1669,10 +1943,12 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                   setSelectedSkill({});
                   setShowAddModal(true);
                 }}
-                className="p-2 flex items-center bg-green-500 text-white rounded-lg hover:bg-green-600 transform hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out"
+                className={`p-2 flex items-center bg-green-500 text-white rounded-lg hover:bg-green-600 transform hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out ${
+                  isDarkMode ? "bg-green-700 hover:bg-green-800" : ""
+                }`}
               >
-                <Plus className="w-5 h-5 mr-2" />
-                <span>Add New Skill</span>
+                <Plus className="w-5 h-5 mr-2" style={{ color: isDarkMode ? "white" : "" }} />
+                <span style={{ color: isDarkMode ? "white" : "" }}>Add New Skill</span>
               </button>
             </div>
 
@@ -1696,12 +1972,12 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
               profile.skills.map((skill, index) => (
                 <div
                   key={index}
-                  className="relative grid grid-cols-1 md:grid-cols-1 gap-4 pb-4 border-b border-gray-300"
+                  className={`relative grid grid-cols-1 md:grid-cols-1 gap-4 pb-4 border-b ${isDarkMode ? "border-gray-700" : "border-gray-300"}`}
                 >
                   <div className="absolute top-0 right-0">
                     <button
                       onClick={() => handleEditSkillClick(skill, index)}
-                      className="p-2 rounded-full bg-gray-200 text-black hover:bg-gray-600 hover:text-white"
+                      className={`p-2 rounded-full ${isDarkMode ? "bg-gray-700 text-white hover:bg-gray-800" : "bg-gray-200 text-black hover:bg-gray-600"}`}
                       title="Edit"
                     >
                       <Edit className="w-5 h-5" />
@@ -1709,7 +1985,7 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
 
                     <button
                       onClick={() => handleDeleteClick(skill.skills_id)}
-                      className="p-2 rounded-full bg-gray-200 text-black hover:bg-gray-800 hover:text-white"
+                      className={`p-2 rounded-full ${isDarkMode ? "bg-gray-700 text-white hover:bg-gray-800" : "bg-gray-200 text-black hover:bg-gray-600"}`}
                       title="Delete"
                     >
                       <Trash2 className="w-5 h-5" />
@@ -1723,11 +1999,19 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                     />
                   </div>
 
-                  <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
+                  <div
+                    className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                      isDarkMode ? "bg-gray-800 text-white" : ""
+                    }`}
+                  >
                     <label className="block text-gray-600 text-sm font-normal">
                       Skills:
                     </label>
-                    <p className="text-gray-800 font-semibold mt-1">
+                    <p
+                      className={`text-gray-800 font-semibold mt-1 ${
+                        isDarkMode ? "text-white" : ""
+                      }`}
+                    >
                       {skill.perS_name || "N/A"}
                     </p>
                   </div>
@@ -1759,7 +2043,13 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
       case "Training":
         return (
           <div className="p-4 space-y-4">
-            <h3 className="text-xl font-semibold mb-4">Training</h3>
+            <h3
+              className={`text-xl font-semibold mb-4 ${
+                isDarkMode ? "text-white" : "text-black"
+              }`}
+            >
+              Training
+            </h3>
 
             <div className="flex justify-end">
               <button
@@ -1767,7 +2057,11 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                   setSelectedTraining({}); // Empty object for adding new skill
                   setShowAddModal(true);
                 }}
-                className="p-2 flex items-center bg-green-500 text-white rounded-lg hover:bg-green-600 transform hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out"
+                className={`p-2 flex items-center rounded-lg hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out ${
+                  isDarkMode
+                    ? "bg-green-500 text-white hover:bg-green-600"
+                    : "bg-green-200 text-black hover:bg-green-300"
+                }`}
               >
                 <Plus className="w-5 h-5 mr-2" />
                 <span>Add New Training</span>
@@ -1793,14 +2087,18 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
               profile.training.map((train, index) => (
                 <div
                   key={index}
-                  className="relative grid grid-cols-1 md:grid-cols-1 gap-4 pb-4 border-b border-gray-300"
+                  className={`relative grid grid-cols-1 md:grid-cols-1 gap-4 pb-4 border-b ${
+                    isDarkMode ? "border-gray-600" : "border-gray-300"
+                  }`}
                 >
                   <div className="relative">
                     {/* Edit Icon Button */}
                     <div className="absolute top-0 right-0">
                       <button
                         onClick={() => handleEditTrainingClick(train, index)}
-                        className="p-2 rounded-full bg-gray-200 text-black hover:bg-gray-600 hover:text-white"
+                        className={`p-2 rounded-full ${
+                          isDarkMode ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
+                        } hover:bg-gray-600 hover:text-white`}
                         title="Edit"
                       >
                         <Edit className="w-5 h-5" />
@@ -1808,7 +2106,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
 
                       <button
                         onClick={() => handleDeleteClick(train.training_id)}
-                        className="p-2 rounded-full bg-gray-200 text-black hover:bg-gray-800 hover:text-white"
+                        className={`p-2 rounded-full ${
+                          isDarkMode ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
+                        } hover:bg-gray-800 hover:text-white`}
                         title="Delete"
                       >
                         <Trash2 className="w-5 h-5" />
@@ -1822,17 +2122,27 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                       />
                     </div>
 
-                    <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
-                      <label className="block text-gray-600 text-sm font-normal">
+                    <div
+                      className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                        isDarkMode ? "bg-gray-800 text-white" : ""
+                      }`}
+                    >
+                      <label
+                        className={`block text-sm font-normal ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
+                      >
                         Training:
                       </label>
-                      <p className="text-gray-800 font-semibold mt-1">
+                      <p
+                        className={`font-semibold mt-1 ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}
+                      >
                         {train.perT_name || "N/A"}
                       </p>
 
                       {train.training_image && (
                         <div className="mt-4">
-                          <label className="block text-gray-600 text-sm font-normal">
+                          <label
+                            className={`block text-sm font-normal ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
+                          >
                             Training Image:
                           </label>
                           <img
@@ -1869,7 +2179,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
       case "Knowledge":
         return (
           <div className="p-4 space-y-4">
-            <h3 className="text-xl font-semibold mb-4">Knowledge</h3>
+            <h3 className={`text-xl font-semibold mb-4 ${isDarkMode ? "text-white" : "text-black"}`}>
+              Knowledge
+            </h3>
 
             <div className="flex justify-end">
               <button
@@ -1877,7 +2189,11 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                   setSelectedKnowledge({}); // Empty object for adding new skill
                   setShowAddModal(true);
                 }}
-                className="p-2 flex items-center bg-green-500 text-white rounded-lg hover:bg-green-600 transform hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out"
+                className={
+                  isDarkMode
+                    ? "p-2 flex items-center bg-green-500 text-white rounded-lg hover:bg-green-600 transform hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out"
+                    : "p-2 flex items-center bg-green-500 text-black rounded-lg hover:bg-green-600 transform hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out"
+                }
               >
                 <Plus className="w-5 h-5 mr-2" />
                 <span>Add New Knowledge</span>
@@ -1905,14 +2221,14 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
               profile.knowledge.map((know, index) => (
                 <div
                   key={index}
-                  className="relative grid grid-cols-1 md:grid-cols-1 gap-4 pb-4 border-b border-gray-300"
+                  className={`relative grid grid-cols-1 md:grid-cols-1 gap-4 pb-4 border-b ${isDarkMode ? "border-gray-700" : "border-gray-300"}`}
                 >
                   <div className="relative">
                     {/* Edit Icon Button */}
                     <div className="absolute top-0 right-0">
                       <button
                         onClick={() => handleEditKnowledgeClick(know, index)}
-                        className="p-2 rounded-full bg-gray-200 text-black hover:bg-gray-600 hover:text-white"
+                        className={`p-2 rounded-full ${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-600" : "bg-gray-200 text-black hover:bg-gray-600"}`}
                         title="Edit"
                       >
                         <Edit className="w-5 h-5" /> {/* Lucide Edit Icon */}
@@ -1920,7 +2236,7 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
 
                       <button
                         onClick={() => handleDeleteClick(know.canknow_id)}
-                        className="p-2 rounded-full bg-gray-200 text-black hover:bg-gray-800 hover:text-white"
+                        className={`p-2 rounded-full ${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-600" : "bg-gray-200 text-black hover:bg-gray-600"}`}
                         title="Delete"
                       >
                         <Trash2 className="w-5 h-5" />
@@ -1934,11 +2250,19 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                       />
                     </div>
 
-                    <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
-                      <label className="block text-gray-600 text-sm font-normal">
+                    <div
+                      className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                        isDarkMode ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
+                      }`}
+                    >
+                      <label
+                        className={`block text-gray-600 text-sm font-normal ${isDarkMode ? "text-gray-300" : "text-gray-600"}`}
+                      >
                         Knowledge:
                       </label>
-                      <p className="text-gray-800 font-semibold mt-1">
+                      <p
+                        className={`text-gray-800 font-semibold mt-1 ${isDarkMode ? "text-gray-200" : "text-gray-800"}`}
+                      >
                         {know.knowledge_name || "N/A"}
                       </p>
                     </div>
@@ -1947,7 +2271,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                   {/* Modal */}
                   {selectedIndex === index && showKnowledgeModal && (
                     <div className="col-span-1 md:col-span-1 mt-4">
-                      <div className="bg-transparent rounded-lg p-6 w-full">
+                      <div
+                        className={`bg-transparent rounded-lg p-6 w-full ${isDarkMode ? "bg-gray-800" : ""}`}
+                      >
                         <UpdateKnowledge
                           showModal={showKnowledgeModal}
                           setShowModal={setShowKnowledgeModal}
@@ -1970,7 +2296,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
       case "License":
         return (
           <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-800 sm:mb-6">
+            <h3
+              className={`text-lg sm:text-xl font-semibold ${isDarkMode ? "text-white" : "text-gray-800"} sm:mb-6`}
+            >
               License
             </h3>
 
@@ -1980,7 +2308,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                   setSelectedLicense({});
                   setShowAddModal(true);
                 }}
-                className="p-2 flex items-center bg-green-500 text-white rounded-lg hover:bg-green-600 transform hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out"
+                className={`p-2 flex items-center rounded-lg hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out ${
+                  isDarkMode ? "bg-green-500 text-white hover:bg-green-600" : "bg-green-500 text-black hover:bg-green-600"
+                }`}
               >
                 <Plus className="w-5 h-5 mr-2" />
                 <span>Add New License</span>
@@ -2013,7 +2343,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                     <div className="absolute top-0 right-0">
                       <button
                         onClick={() => handleEditLicenseClick(lic, index)}
-                        className="p-2 rounded-full bg-gray-200 text-black hover:bg-gray-600 hover:text-white"
+                        className={`p-2 rounded-full ${
+                          isDarkMode ? "bg-gray-700 text-white hover:bg-gray-600" : "bg-gray-200 text-black hover:bg-gray-600"
+                        }`}
                         title="Edit"
                       >
                         <Edit className="w-5 h-5" />
@@ -2021,7 +2353,9 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
 
                       <button
                         onClick={() => handleDeleteClick(lic.license_id)}
-                        className="p-2 rounded-full bg-gray-200 text-black hover:bg-gray-800 hover:text-white"
+                        className={`p-2 rounded-full ${
+                          isDarkMode ? "bg-gray-700 text-white hover:bg-gray-800" : "bg-gray-200 text-black hover:bg-gray-800"
+                        }`}
                         title="Delete"
                       >
                         <Trash2 className="w-5 h-5" />
@@ -2036,30 +2370,29 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                     </div>
 
                     {/* License Name */}
-                    <div className="bg-gray-200 p-3 sm:p-4 rounded-lg border shadow-lg">
-                      <label className="block text-gray-600 text-sm font-normal">
+                    <div
+                      className={`bg-gray-200 p-3 sm:p-4 rounded-lg border shadow-lg ${
+                        isDarkMode ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
+                      }`}
+                    >
+                      <label className={`block text-sm font-normal ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                         License name:
                       </label>
-                      <p className="text-gray-800 font-semibold mt-1">
+                      <p className={`font-semibold mt-1 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                         {lic.license_master_name || "N/A"}
                       </p>
-                    </div>
 
-                    {/* License Type */}
-                    <div className="bg-gray-200 p-3 sm:p-4 rounded-lg border shadow-lg">
-                      <label className="block text-gray-600 text-sm font-normal">
+                      <label className={`block text-sm font-normal ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                         License Type:
                       </label>
-                      <p className="text-gray-800 font-semibold mt-1">
+                      <p className={`font-semibold mt-1 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                         {lic.license_type_name || "N/A"}
                       </p>
-                    </div>
 
-                    <div className="bg-gray-200 p-3 sm:p-4 rounded-lg border shadow-lg">
-                      <label className="block text-gray-600 text-sm font-normal">
+                      <label className={`block text-sm font-normal ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                         License number:
                       </label>
-                      <p className="text-gray-800 font-semibold mt-1">
+                      <p className={`font-semibold mt-1 ${isDarkMode ? 'text-gray-200' : 'text-gray-800'}`}>
                         {lic.license_number || "N/A"}
                       </p>
                     </div>
@@ -2102,7 +2435,11 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                   setShowAddModal(true);
                   setSelectedResume({});
                 }}
-                className="p-2 flex items-center bg-green-500 text-white rounded-lg hover:bg-green-600 transform hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out"
+                className={`p-2 flex items-center rounded-lg hover:scale-105 hover:-translate-y-1 hover:rotate-2 transition-all duration-300 ease-in-out ${
+                  isDarkMode
+                    ? "bg-green-700 text-white hover:bg-green-600"
+                    : "bg-green-500 text-white hover:bg-green-600"
+                }`}
               >
                 <Plus className="w-5 h-5 mr-2" />
                 <span>Add New Resume</span>
@@ -2134,7 +2471,7 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                     <div className="absolute top-0 right-0">
                       <button
                         onClick={() => handleEditResumeClick(res, index)}
-                        className="p-2 rounded-full bg-gray-200 text-black hover:bg-gray-600 hover:text-white"
+                        className={`p-2 rounded-full ${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-600" : "bg-gray-200 text-black hover:bg-gray-600"}`}
                         title="Edit"
                       >
                         <Edit className="w-5 h-5" />
@@ -2142,7 +2479,7 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
 
                       <button
                         onClick={() => handleDeleteClick(res.canres_id)}
-                        className="p-2 rounded-full bg-gray-200 text-black hover:bg-gray-800 hover:text-white"
+                        className={`p-2 rounded-full ${isDarkMode ? "bg-gray-800 text-white hover:bg-gray-600" : "bg-gray-200 text-black hover:bg-gray-600"}`}
                         title="Delete"
                       >
                         <Trash2 className="w-5 h-5" />
@@ -2156,7 +2493,11 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                       />
                     </div>
 
-                    <div className="bg-gray-200 p-4 rounded-lg border shadow-lg">
+                    <div
+                      className={`bg-gray-200 p-4 rounded-lg border shadow-lg ${
+                        isDarkMode ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
+                      }`}
+                    >
                       {res.canres_image && (
                         <div className="mt-4">
                           <label className="block text-gray-600 text-sm font-normal">
@@ -2272,7 +2613,11 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
               </ul>
             </aside>
 
-            <main className="flex-1 p-4 md:p-6 md:rounded-r-lg relative h-screen md:h-auto max-h-screen overflow-y-auto scrollbar-custom bg-[#F4F7FC]">
+            <main
+              className={`flex-1 p-4 md:p-6 md:rounded-r-lg relative h-screen md:h-auto max-h-screen overflow-y-auto scrollbar-custom ${
+                isDarkMode ? "bg-[#1A202C]" : "bg-[#F4F7FC]"
+              }`}
+            >
               <div className="flex justify-between items-center">
                 <button
                   className="md:hidden text-black p-4"
@@ -2289,7 +2634,7 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
                       onClosed();
                     }
                   }}
-                  className="text-gray-600 hover:text-gray-900 text-3xl"
+                  className={`text-3xl ${isDarkMode ? "text-gray-300 hover:text-gray-100" : "text-gray-600 hover:text-gray-900"}`}
                 >
                   <BsArrowReturnRight />
                 </button>
@@ -2297,7 +2642,11 @@ const ViewProfile = ({ isOpen, onClose, onClosed }) => {
 
               <div className="flex-1 overflow-y-auto scrollbar-custom">
                 {/* Card for renderSection */}
-                <div className="bg-[#F4F7FC] p-1 rounded-lg shadow-md">
+                <div
+                  className={`p-1 rounded-lg shadow-md ${
+                    isDarkMode ? "bg-[#1A202C]" : ""
+                  }`}
+                >
                   {renderSection()}
                 </div>
               </div>
