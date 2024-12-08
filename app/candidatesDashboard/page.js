@@ -701,7 +701,7 @@ export default function DashboardCandidates() {
         <div className="flex justify-between items-center mb-8">
           <h1
             className={`text-2xl md:text-4xl font-semibold slide-up ${
-              isDarkMode ? "text-[#93B1A6]" : "text-[#0A6338]"
+              isDarkMode ? "text-[#188C54]" : "text-[#0A6338]"
             }`}
           >
             Active Jobs
@@ -727,12 +727,12 @@ export default function DashboardCandidates() {
                 )}
               </button>
               {isNotificationDropdownOpen && (
-                <div className="absolute mt-2 w-96 right-5 z-10 bg-white rounded-lg shadow-lg transition-all duration-300 ease-in-out animate-in fade-in slide-in-from-top-2">
+                <div className={`absolute mt-2 w-96 right-5 z-10 ${isDarkMode ? 'bg-[#101010]' : 'bg-white'} rounded-lg shadow-lg transition-all duration-300 ease-in-out animate-in fade-in slide-in-from-top-2`}>
                   {/* Header */}
                   <div className="p-4 border-b border-gray-200">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 text-[#0A6338]">
+                        <div className={`w-6 h-6 ${isDarkMode ? 'text-[#188C54]' : 'text-[#188C54]'}`}>
                           {/* Updated Icon */}
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -749,10 +749,10 @@ export default function DashboardCandidates() {
                           </svg>
                         </div>
                         <div>
-                          <h3 className="text-xl font-semibold text-[#0A6338]">
+                          <h3 className={`text-xl font-semibold ${isDarkMode ? 'text-[#188C54]' : 'text-[#0A6338]'}`}>
                             Notifications
                           </h3>
-                          <p className="text-sm text-gray-600">Earlier Today</p>
+                          <p className={`text-sm ${isDarkMode ? 'text-[#93B1A6]' : 'text-[#0A6338]'}`}>Earlier Today</p>
                         </div>
                       </div>
                       <button
@@ -835,7 +835,7 @@ export default function DashboardCandidates() {
                                 : "bg-[#0A6338] text-white"
                             } hover:shadow-lg`}
                           >
-                            <div className="p-4 space-y-3 border border-gray-200 rounded-lg shadow-sm hover:shadow-md">
+                            <div className="p-4 space-y-3 shadow-sm hover:shadow-md">
                               {/* Header with Logo and Date */}
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
@@ -1022,7 +1022,7 @@ export default function DashboardCandidates() {
               >
                 <div
                   className={`p-4 h-20 flex items-center justify-start ${
-                    isDarkMode ? "bg-green-700" : "bg-[#188C54]"
+                    isDarkMode ? "bg-[#188C54]" : "bg-[#188C54]"
                   }`}
                 >
                   <h3 className="text-xl font-semibold text-white truncate">
@@ -1046,7 +1046,7 @@ export default function DashboardCandidates() {
                             ["Pending", "Processed", "Exam", "Interview"].includes(aj.status_name)
                           );
                           
-                          if ((hasFailed || hasCancelled || hasDeclinedOffer) && hasActiveStatus) {
+                          if ((hasCancelled || hasDeclinedOffer) && hasActiveStatus) {
                             return (
                               <>
                                 <CheckCircleIcon className="w-5 h-5 mr-1 text-blue-500" />
@@ -1104,7 +1104,7 @@ export default function DashboardCandidates() {
                     onClick={() => handleDetailsClick(job)}
                     className={`w-full px-4 py-2 rounded-md font-semibold transition-colors duration-300 ${
                       isDarkMode
-                        ? "bg-green-600 hover:bg-green-700 text-white"
+                        ? "bg-[#188C54] hover:bg-green-600 text-white"
                         : "bg-[#188C54] hover:bg-green-600 text-white"
                     }`}
                   >
@@ -1120,7 +1120,7 @@ export default function DashboardCandidates() {
         <JobDetailsModal
           job={selectedJob}
           fetchJobs={fetchJobs}
-          onClosed={() => {
+          onClosedd={() => {
             setIsModalOpen(false);
             removeData("jobId");
           }}

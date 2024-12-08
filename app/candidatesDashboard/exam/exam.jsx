@@ -38,6 +38,54 @@ const ExamModal = ({
   const [isLoading, setIsLoading] = useState(false);
   const questionsPerPage = 3;
 
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem("appearance");
+    if (savedTheme === "dark") return true;
+    if (savedTheme === "light") return false;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const updateTheme = () => {
+      const savedTheme = localStorage.getItem("appearance");
+      if (savedTheme === "dark") {
+        setIsDarkMode(true);
+      } else if (savedTheme === "light") {
+        setIsDarkMode(false);
+      } else {
+        setIsDarkMode(mediaQuery.matches);
+      }
+    };
+
+    // Set initial theme
+    updateTheme();
+
+    // Listen for changes in localStorage
+    const handleStorageChange = (e) => {
+      if (e.key === "appearance") {
+        updateTheme();
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+
+    // Listen for changes in system preference
+    const handleMediaQueryChange = (e) => {
+      const savedTheme = localStorage.getItem("appearance");
+      if (savedTheme === "system") {
+        setIsDarkMode(e.matches);
+      }
+    };
+    mediaQuery.addEventListener("change", handleMediaQueryChange);
+
+    // Cleanup
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      mediaQuery.removeEventListener("change", handleMediaQueryChange);
+    };
+  }, []);
+
   const fetchExamData = useCallback(async () => {
     const url = process.env.NEXT_PUBLIC_API_URL + "users.php";
     const jsonData = { jobM_id: jobMId || null };
@@ -322,22 +370,22 @@ const ExamModal = ({
   }, []);
 
   return (
-    <div className="fixed inset-0 bg-gray-900/95 backdrop-blur-sm flex justify-center items-center z-50">
-      <div className="bg-white shadow-2xl w-full h-full flex flex-col overflow-hidden">
+    <div className={`fixed inset-0 ${isDarkMode ? 'bg-gray-900/95' : 'bg-gray-100/95'} backdrop-blur-sm flex justify-center items-center z-50`}>
+      <div className={`${isDarkMode ? 'bg-gray-800 text-white' : 'bg-white'} shadow-2xl w-full h-full flex flex-col overflow-hidden`}>
         {/* Header Section */}
-        <div className="flex justify-between items-center p-3 border-b border-gray-100 bg-white shadow-sm">
+        <div className={`flex justify-between items-center p-3 border-b border-gray-100 ${isDarkMode ? 'bg-gray-700' : 'bg-white'} shadow-sm`}>
           <div className="space-y-1">
-            <h2 className="text-3xl font-bold text-gray-800">
+            <h2 className={`text-3xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
               Online Assessment
             </h2>
-            <p className="text-lg text-gray-500">{jobTitle}</p>
+            <p className={`text-lg ${isDarkMode ? 'text-gray-300' : 'text-gray-500'}`}>{jobTitle}</p>
           </div>
 
           <div className="flex items-center space-x-8">
             {/* Timer Display */}
-            <div className="flex items-center space-x-2 bg-gray-50 px-4 py-2 rounded-lg">
+            <div className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'}`}>
               <svg
-                className="w-5 h-5 text-gray-600"
+                className={`w-5 h-5 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -349,14 +397,14 @@ const ExamModal = ({
                   d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <span className="text-xl font-semibold text-gray-700">
+              <span className={`text-xl font-semibold ${isDarkMode ? 'text-gray-300' : 'text-gray-700'}`}>
                 {formatTime(timeLeft)}
               </span>
             </div>
 
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors p-2 rounded-full hover:bg-gray-100"
+              className={`${isDarkMode ? 'text-gray-300 hover:text-gray-100 hover:bg-gray-700' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'} transition-colors p-2 rounded-full`}
             >
               <FontAwesomeIcon icon={faTimes} className="text-xl" />
             </button>
@@ -364,26 +412,26 @@ const ExamModal = ({
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-gray-100 h-1">
+        <div className={`w-full ${isDarkMode ? 'bg-gray-700' : 'bg-gray-100'} h-1`}>
           <div
-            className="bg-green-500 h-1 transition-all duration-300 ease-in-out"
+            className={`${isDarkMode ? 'bg-green-400' : 'bg-green-500'} h-1 transition-all duration-300 ease-in-out`}
             style={{ width: `${calculateProgress()}%` }}
           />
         </div>
 
         {/* Main Content */}
-        <div className="questions-container flex-1 overflow-y-auto bg-gray-50 p-6">
+        <div className={`questions-container flex-1 overflow-y-auto scrollbar-custom ${isDarkMode ? 'bg-gray-800' : 'bg-gray-50'} p-6`}>
           {loading ? (
             <div className="flex items-center justify-center h-full">
               <div className="text-center space-y-3">
-                <div className="w-16 h-16 border-4 border-gray-200 border-t-green-500 rounded-full animate-spin mx-auto" />
-                <p className="text-gray-600 font-medium">
+                <div className={`w-16 h-16 border-4 ${isDarkMode ? 'border-gray-700 border-t-green-400' : 'border-gray-200 border-t-green-500'} rounded-full animate-spin mx-auto`} />
+                <p className={`${isDarkMode ? 'text-gray-300' : 'text-gray-600'} font-medium`}>
                   Loading exam data...
                 </p>
               </div>
             </div>
           ) : error ? (
-            <div className="text-center text-red-600 p-4 bg-red-50 rounded-lg">
+            <div className={`text-center ${isDarkMode ? 'text-red-400 bg-red-900' : 'text-red-600 bg-red-50'} p-4 rounded-lg`}>
               {error}
             </div>
           ) : examData && examData.length > 0 ? (
@@ -396,14 +444,14 @@ const ExamModal = ({
                 .map((question, idx) => (
                   <div
                     key={question.examQ_id}
-                    className="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                    className={`${isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-100'} p-8 rounded-xl shadow-sm border hover:shadow-md transition-shadow`}
                   >
                     <div className="flex items-start space-x-4">
-                      <span className="flex-shrink-0 w-8 h-8 bg-green-50 text-green-600 rounded-full flex items-center justify-center font-semibold">
+                      <span className={`flex-shrink-0 w-8 h-8 ${isDarkMode ? 'bg-green-900 text-green-300' : 'bg-green-50 text-green-600'} rounded-full flex items-center justify-center font-semibold`}>
                         {currentPage * questionsPerPage + idx + 1}
                       </span>
                       <div className="flex-1">
-                        <p className="text-lg font-medium text-gray-800 mb-6">
+                        <p className={`text-lg font-medium ${isDarkMode ? 'text-gray-300' : 'text-gray-800'} mb-6`}>
                           {question.examQ_text}
                         </p>
                         <div className="space-y-4">
@@ -414,8 +462,12 @@ const ExamModal = ({
                                 ${
                                   selectedAnswers[question.examQ_id] ===
                                   choice.examC_id
-                                    ? "bg-green-50 border-2 border-green-500"
-                                    : "border-2 border-gray-100 hover:border-gray-200"
+                                    ? isDarkMode
+                                      ? "bg-green-900 border-2 border-green-600"
+                                      : "bg-green-50 border-2 border-green-500"
+                                    : isDarkMode
+                                      ? "border-2 border-gray-700 hover:border-gray-600"
+                                      : "border-2 border-gray-100 hover:border-gray-200"
                                 }`}
                             >
                               <input
@@ -439,16 +491,20 @@ const ExamModal = ({
                                 ${
                                   selectedAnswers[question.examQ_id] ===
                                   choice.examC_id
-                                    ? "border-green-500 bg-green-500"
-                                    : "border-gray-300"
+                                    ? isDarkMode
+                                      ? "border-green-600 bg-green-600"
+                                      : "border-green-500 bg-green-500"
+                                    : isDarkMode
+                                      ? "border-gray-600"
+                                      : "border-gray-300"
                                 }`}
                               >
                                 {selectedAnswers[question.examQ_id] ===
                                   choice.examC_id && (
-                                  <div className="w-2 h-2 rounded-full bg-white" />
+                                  <div className={`w-2 h-2 rounded-full ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`} />
                                 )}
                               </div>
-                              <span className="text-gray-700 text-lg">
+                              <span className={`text-gray-700 text-lg ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>
                                 {choice.examC_text}
                               </span>
                             </label>
@@ -460,18 +516,24 @@ const ExamModal = ({
                 ))}
             </div>
           ) : (
-            <div className="text-center text-gray-600">No exam data found.</div>
+            <div className={`text-center ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+              No exam data found.
+            </div>
           )}
         </div>
 
         {/* Footer with Navigation and Actions */}
-        <div className="border-t border-gray-100 bg-white p-4 sm:p-6">
+        <div className={`border-t ${isDarkMode ? 'border-gray-700 bg-gray-800' : 'border-gray-100 bg-white'} p-4 sm:p-6`}>
           <div className="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
             <div className="flex space-x-4 w-full sm:w-auto">
               {currentPage > 0 && (
                 <button
                   onClick={handlePreviousPage}
-                  className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-6 py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-gray-600 font-medium"
+                  className={`flex-1 sm:flex-none flex items-center justify-center space-x-2 px-6 py-3 ${
+                    isDarkMode
+                      ? 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+                      : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                  } border rounded-lg transition-colors font-medium`}
                 >
                   <svg
                     className="w-5 h-5"
@@ -493,7 +555,11 @@ const ExamModal = ({
                 Math.ceil(examData?.length / questionsPerPage) - 1 && (
                 <button
                   onClick={handleNextPage}
-                  className="flex-1 sm:flex-none flex items-center justify-center space-x-2 px-6 py-3 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors text-gray-600 font-medium"
+                  className={`flex-1 sm:flex-none flex items-center justify-center space-x-2 px-6 py-3 ${
+                    isDarkMode
+                      ? 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+                      : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                  } border rounded-lg transition-colors font-medium`}
                 >
                   <span>Next</span>
                   <svg
@@ -517,13 +583,21 @@ const ExamModal = ({
               <div className="flex space-x-4 w-full sm:w-auto">
                 <button
                   onClick={handleClearAnswers}
-                  className="flex-1 sm:flex-none px-6 py-3 border border-red-200 text-red-600 rounded-lg hover:bg-red-50 transition-colors font-medium"
+                  className={`flex-1 sm:flex-none px-6 py-3 border rounded-lg transition-colors font-medium ${
+                    isDarkMode
+                      ? 'border-red-700 text-red-400 hover:bg-red-900'
+                      : 'border-red-200 text-red-600 hover:bg-red-50'
+                  }`}
                 >
                   Clear All
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="flex-1 sm:flex-none px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                  className={`flex-1 sm:flex-none px-8 py-3 ${
+                    isDarkMode
+                      ? 'bg-green-700 hover:bg-green-600'
+                      : 'bg-green-600 hover:bg-green-700'
+                  } text-white rounded-lg transition-colors font-medium`}
                 >
                   Submit Exam
                 </button>

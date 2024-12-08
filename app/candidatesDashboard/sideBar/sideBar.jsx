@@ -499,7 +499,7 @@ const Sidebar = ({
                       key={index}
                       className={`mb-4 p-4 rounded-lg shadow-md flex flex-col items-start text-[15px] cursor-pointer transition-all duration-300 ${
                         isDarkMode
-                          ? "bg-[#1F2937] text-green-200 hover:bg-green-700"
+                          ? "bg-gray-800 text-green-200 hover:bg-green-700"
                           : "bg-[#059e54] text-white hover:bg-green-600"
                       }`}
                       onClick={() => {
@@ -545,7 +545,7 @@ const Sidebar = ({
                             {job.status_name}
                             <span
                               className={`text-sm ${
-                                isDarkMode ? "text-gray-800" : "text-gray-300"
+                                isDarkMode ? "text-gray-400" : "text-gray-300"
                               }`}
                             >
                               {job.appS_date}
@@ -584,7 +584,7 @@ const Sidebar = ({
                       key={index}
                       className={`mb-4 p-4 rounded-lg shadow-md ${
                         isDarkMode
-                          ? "bg-[#1F2937] text-green-200"
+                          ? "bg-gray-800 text-green-200"
                           : "bg-[#059e54] text-white"
                       }`}
                     >
