@@ -75,7 +75,11 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
           await handleChangeStatus(candId, 13);
           toast.success("Applicant proceeded to decision pending");
           setStatus("Decision Pending");
-          setIsJobOffer(1);
+          setIsJobOffer(0);
+        } else if (alertMessage === "Are you sure you want to proceed to background check?") {
+          await handleChangeStatus(candId, 7);
+          toast.success("Applicant proceeded to background check");
+          setStatus("Background Check");
         }
       }
       setShowAlert(false);
@@ -86,6 +90,10 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
       setIsLoading(false);
     }
   };
+
+  const handleProceedToBackgroundCheck = () => {
+    handleShowAlert("Are you sure you want to proceed to background check?");
+  }
 
   const handleShowBackgroundCheckAlert = () => {
     handleShowAlert("Are you sure you want to proceed to decision pending?");
@@ -154,6 +162,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                 {status === "Interview" && (<Button onClick={() => handleShowConductInterview()}>Interview applicant</Button>)}
                 {status === "Background Check" && (<Button onClick={() => handleShowBackgroundCheckAlert()}>Background check</Button>)}
                 {status === "Decision Pending" && isJobOffer === 0 && (<JobOffer candId={candId} changeStatus={handleJobOfferChangeStatus} />)}
+                {status === "Failed Exam" && (<Button onClick={() => handleProceedToBackgroundCheck()}>Proceed to background check</Button>)}
               </div>
             </div>
           </SheetHeader>
@@ -237,20 +246,20 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                                 ? data.candidateInformation.cand_sex
                                 : "N/A"}
                             </div>
-                            
-                          <div>
-                            <p className="font-bold">Present address:</p>
-                            {data.candidateInformation
-                              ? data.candidateInformation.cand_presentAddress
-                              : "N/A"}
-                          </div>
 
-                          <div>
-                            <p className="font-bold">Permanent address:</p>
-                            {data.candidateInformation
-                              ? data.candidateInformation.cand_permanentAddress
-                              : "N/A"}
-                          </div>
+                            <div>
+                              <p className="font-bold">Present address:</p>
+                              {data.candidateInformation
+                                ? data.candidateInformation.cand_presentAddress
+                                : "N/A"}
+                            </div>
+
+                            <div>
+                              <p className="font-bold">Permanent address:</p>
+                              {data.candidateInformation
+                                ? data.candidateInformation.cand_permanentAddress
+                                : "N/A"}
+                            </div>
                           </CardContent>
                         </ScrollArea>
                       </Card>
@@ -518,8 +527,8 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                         <Tabs defaultValue="1" className='h-full flex flex-col'>
                           <TabsList>
                             <TabsTrigger value="1">Qualifications</TabsTrigger>
-                            {status !== "Pending" && status !== "Process" && <TabsTrigger value="2">Interview</TabsTrigger>}
-                            {status !== "Pending" && status !== "Process" && status !== "Interview" && <TabsTrigger value="3">Exam</TabsTrigger>}
+                            {status !== "Pending" && status !== "Processed" && <TabsTrigger value="2">Interview</TabsTrigger>}
+                            {status !== "Pending" && status !== "Processed" && status !== "Interview" && <TabsTrigger value="3">Exam</TabsTrigger>}
                           </TabsList>
                           <TabsContent value="1">
                             <Accordion type="multiple" collapsible="true" className="w-full p-5" defaultValue={["1", "2", "3", "4", "5"]}>
@@ -716,7 +725,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                             </Accordion>
                           </TabsContent>
                           <TabsContent value="2">
-                            {status !== "Pending" && status !== "Process" && status !== "Cancelled"  ? (
+                            {status !== "Pending" && status !== "Process" && status !== "Cancelled" ? (
                               <div className="my-3">
                                 <InterviewResult candId={candId} handleInterviewChangeStatus={handleInterviewChangeStatus} />
                               </div>

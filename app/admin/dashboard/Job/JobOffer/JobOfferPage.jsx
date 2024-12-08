@@ -93,11 +93,18 @@ const JobOfferPage = ({ handleChangeStatus }) => {
       header: 'Actions',
       cell: (row) => (
         <div onClick={(e) => e.stopPropagation()} className='flex items-center gap-3'>
-          <UpdateJobOffer
-            candidate={row}
-            getJobOfferCandidates={getJobOfferCandidates}
+          <div>
+            <UpdateJobOffer
+              candidate={row}
+              getJobOfferCandidates={getJobOfferCandidates}
+              handleChangeStatus={handleChangeStatus}
+              disabled={row.jobOfferStatus !== "Pending"}
+            />
+          </div>
+          <Trash2 
+            onClick={() => row.jobOfferStatus === "Pending" && handleRemoveList(row.cand_id)} 
+            className={`w-5 h-5 ${row.jobOfferStatus === "Pending" ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'}`} 
           />
-          <Trash2 onClick={() => handleRemoveList(row.cand_id)} className='cursor-pointer w-5 h-5' />
         </div>
       )
     },
