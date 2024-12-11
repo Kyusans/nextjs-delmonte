@@ -34,8 +34,9 @@ function SelectedJob({ open, onHide, jobId, getJobs }) {
       console.log("RES DATA ni getSelectedJobs: ", res.data);
       if (res.data !== 0) {
         const response = res.data;
-        console.log("jobTOTALPOINJTS: ", response.jobTotalPoints);
+        console.log("res ni RESDATA: ", response);
         storeData("jobTotalPoints", response.jobTotalPoints);
+        // storeData("interviewPassing", response.passingPercentage);
         setData(res.data);
         if (res.data.exam !== 0) {
           const response = res.data.exam

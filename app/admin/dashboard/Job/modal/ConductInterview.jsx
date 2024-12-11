@@ -15,6 +15,9 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
   const [interviewCriteria, setInterviewCriteria] = useState([]);
   const [scores, setScores] = useState({});
   const [errors, setErrors] = useState({});
+  const [candidateScore, setCandidateScore] = useState(0);
+  const [overAllScore, setOverAllScore] = useState(0);
+  const [passingPercentage, setPassingPercentage] = useState(0);
 
   const getInterviewCriteria = async () => {
     setIsLoading(true);
@@ -25,14 +28,27 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
       formData.append("operation", "getCriteriaForInterview");
       formData.append("json", JSON.stringify(jsonData));
       const res = await axios.post(url, formData);
-      console.log("res.data ni getInterviewCriteria: ", res.data);
+      console.log("res.data ni getInterviewCriteria: ", res);
 
-      if (Array.isArray(res.data) && res.data.length > 0) {
+      if (res.data && res.data.criteria && res.data.criteria.length > 0) {
         setHasCriteria(true);
-        setInterviewCriteria(res.data);
+        setInterviewCriteria(res.data.criteria);
+
+        // Calculate overall score by summing up inter_criteria_points
+        const totalPoints = res.data.criteria.reduce((sum, criteria) => {
+          return sum + parseInt(criteria.inter_criteria_points);
+        }, 0);
+
+        setOverAllScore(totalPoints);
+
+        // Set passing percentage if available
+        if (res.data.passingPoints && res.data.passingPoints.length > 0) {
+          setPassingPercentage(res.data.passingPoints[0].passing_percent);
+        }
       } else {
         setHasCriteria(false);
         setInterviewCriteria([]);
+        setOverAllScore(0);
       }
     } catch (error) {
       toast.error("Network error");
@@ -41,14 +57,6 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
       setIsLoading(false);
     }
   };
-
-  // const [showAddInterviewMaster, setShowAddInterviewMaster] = useState(false);
-  // const openShowModalMaster = () => { setShowAddInterviewMaster(true); };
-  // const closeShowModalMaster = () => {
-  //   setShowAddInterviewMaster(false);
-  //   getInterviewCriteria();
-  // };
-
 
   useEffect(() => {
     getInterviewCriteria();
@@ -77,6 +85,9 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
     e.stopPropagation();
 
     let valid = true;
+    let score = 0;
+    //pass ni or fail
+    let status = 0;
 
     interviewCriteria.forEach(criteria => {
       if (!scores[criteria.inter_criteria_id]) {
@@ -85,24 +96,48 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
           [criteria.inter_criteria_id]: "This field is required",
         }));
         valid = false;
+      } else {
+        score += Number(scores[criteria.inter_criteria_id]);
       }
     });
+
     if (valid) {
+      const percentageScore = (score / overAllScore) * 100;
+      status = percentageScore >= passingPercentage ? 1 : 0;
+
+      const masterData = {
+        jobId: retrieveData("jobId"),
+        candId: candId,
+        status: status,
+        percentageScore: percentageScore,
+        score: score,
+        totalScore: overAllScore
+      }
       const scoreData = interviewCriteria.map(criteria => ({
         jobId: retrieveData("jobId"),
         criteriaId: criteria.inter_criteria_id,
         candId: candId,
         points: Number(scores[criteria.inter_criteria_id]) || 0,
       }));
+
+      console.log("passingPercentage: ", passingPercentage);
+      console.log("Score percentage: ", percentageScore);
+      console.log("status: ", status);
+
       try {
         const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
+        const jsonData = {
+          masterData: masterData,
+          scoreData: scoreData
+        }
+        console.log("jsonData: ", jsonData);
         const formData = new FormData();
         formData.append("operation", "scoreInterviewApplicant");
-        formData.append("json", JSON.stringify(scoreData));
+        formData.append("json", JSON.stringify(jsonData));
         const res = await axios.post(url, formData);
         console.log("ConductInterview.jsx => handleSubmit(): ", res);
         if (res.data === 1) {
-          toast.success("Scores submitted successfully!");
+          toast.success(`Scores submitted successfully!`);
           handleInterviewChangeStatus(5);
           onHide();
         } else {
@@ -167,9 +202,6 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
                         <div>
                           <div className='flex flex-col justify-center items-center gap-3'>
                             <div className='font-bold text-xl mt-3'>No interview criteria added yet</div>
-                            {/* <Button type="button" onClick={openShowModalMaster}>
-                              <PlusCircle className='h-5 w-5 mr-1' /> Add criteria
-                            </Button> */}
                           </div>
                         </div>
                       )}
@@ -189,12 +221,6 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
           </form>
         </DialogContent>
       </Dialog>
-      {/* {showAddInterviewMaster && (
-        <AddInterviewMaster
-          open={showAddInterviewMaster}
-          onHide={closeShowModalMaster}
-        />
-      )} */}
     </div>
   );
 };
