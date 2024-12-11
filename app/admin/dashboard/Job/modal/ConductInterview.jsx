@@ -85,7 +85,7 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
     e.stopPropagation();
 
     let valid = true;
-    let totalScore = 0;
+    let score = 0;
     //pass ni or fail
     let status = 0;
 
@@ -97,13 +97,12 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
         }));
         valid = false;
       } else {
-        totalScore += Number(scores[criteria.inter_criteria_id]);
+        score += Number(scores[criteria.inter_criteria_id]);
       }
     });
 
     if (valid) {
-      // Calculate if passed based on passing percentage
-      const percentageScore = (totalScore / overAllScore) * 100;
+      const percentageScore = (score / overAllScore) * 100;
       status = percentageScore >= passingPercentage ? 1 : 0;
 
       const masterData = {
@@ -111,7 +110,8 @@ const ConductInterview = ({ open, onHide, candId, handleInterviewChangeStatus })
         candId: candId,
         status: status,
         percentageScore: percentageScore,
-        totalScore: totalScore
+        score: score,
+        totalScore: overAllScore
       }
       const scoreData = interviewCriteria.map(criteria => ({
         jobId: retrieveData("jobId"),
