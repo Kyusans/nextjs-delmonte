@@ -16,6 +16,7 @@ import BackgroundCheckPage from '../BackgroundCheck/BackgroundCheckPage';
 import JobOfferPage from '../JobOffer/JobOfferPage';
 import DecisionPendingPage from '../DecisionPending/DecisionPendingPage';
 import EmployedPage from '../Employed/EmployedPage';
+import ReapplyPage from '../Reapplied/ReapplyPage';
 
 function SelectedJob({ open, onHide, jobId, getJobs }) {
   const [data, setData] = useState([]);
@@ -115,7 +116,7 @@ function SelectedJob({ open, onHide, jobId, getJobs }) {
                       getSelectedJobs={getSelectedJobs}
                     />
                   </div>
-                </SheetTitle> 
+                </SheetTitle>
                 <SheetDescription className="text-start">
                   {data.jobMaster[0].jobM_description}
                 </SheetDescription>
@@ -132,6 +133,7 @@ function SelectedJob({ open, onHide, jobId, getJobs }) {
                       <TabsTrigger value={6}>Decision Pending</TabsTrigger>
                       <TabsTrigger value={7}>Offer</TabsTrigger>
                       <TabsTrigger value={8}>Employed</TabsTrigger>
+                      <TabsTrigger value={9}>Reapplied</TabsTrigger>
                     </TabsList>
                   </ScrollArea>
                   <ScrollArea className="flex-grow overflow-y-auto">
@@ -156,8 +158,11 @@ function SelectedJob({ open, onHide, jobId, getJobs }) {
                     <TabsContent value={7}>
                       <JobOfferPage handleChangeStatus={handleChangeStatus} />
                     </TabsContent>
-                    <TabsContent value={8}> 
+                    <TabsContent value={8}>
                       <EmployedPage handleChangeStatus={handleChangeStatus} />
+                    </TabsContent>
+                    <TabsContent value={9}>
+                      <ReapplyPage />
                     </TabsContent>
                   </ScrollArea>
                 </Tabs>
