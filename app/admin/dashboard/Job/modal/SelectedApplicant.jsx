@@ -23,7 +23,7 @@ import JobOffer from "./JobOffer";
 import SetToInterviewModal from "../ViewApplicants/modal/SetToInterviewModal";
 import ConductInterview from "./ConductInterview";
 
-function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatus }) {
+function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatus, isReapply = false }) {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
   const [status, setStatus] = useState(statusName);
@@ -188,7 +188,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                             <Spinner />
                           </AvatarFallback>
                         </Avatar>
-                        <Badge className="my-4">Status: {status}</Badge>
+                        <Badge className="my-4">{status !== "Reapplied" && "Status: "} {status}</Badge>
                         <CardTitle className="mt-2">
                           {data.candidateInformation
                             ? `${data.candidateInformation.cand_firstname} ${data.candidateInformation.cand_lastname}`

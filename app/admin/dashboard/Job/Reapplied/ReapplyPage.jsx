@@ -78,7 +78,7 @@ const ReapplyPage = () => {
         <SelectedApplicant
           open={isInterviewModalOpen}
           onHide={handleCloseInterviewModal}
-          statusName={selectedStatus}
+          statusName={"Reapplied"}
           candId={selectedCandId}
           // handleChangeStatus={handleChangeStatus}
         />
