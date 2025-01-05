@@ -44,8 +44,8 @@ function AdminSidebar({ changeView, changeMasterFile }) {
     localStorage.clear();
     sessionStorage.clear();
     window.location.href = "/login";
-
   }
+  
   return (
     <>
       <header className="sm:hidden w-full sticky top-0 flex h-16 items-center gap-4 border-b bg-[#0e4028] px-4 md:px-6 z-50">
