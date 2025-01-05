@@ -35,7 +35,6 @@ const SetToInterviewModal = ({ datas, passingPercentage = 0, getPendingCandidate
     setIsLoading(true);
     try {
       const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
-
       const candidates = isBatch ? data.map((candidate) => ({
         fullName: candidate.FullName,
         candId: candidate.cand_id,

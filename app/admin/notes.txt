@@ -68,7 +68,7 @@ const ExamplePage = () => {
     { header: 'ID', accessor: 'id', sortable: true },
     { header: 'Name', accessor: 'name', className: (row) => row.fullName === "Kobid" ? "bg-red-500" : "" },
     { header: 'Age', accessor: 'age' },
-    { header: 'Email', accessor: 'email' },
+    { header: 'Email', accessor: 'email', hiddenOnMobile: true},
     { 
       header: 'Actions', 
       cell: (row) => (

@@ -15,7 +15,6 @@ import UpdateJobModal from '../UpdateJobDetails/UpdateJobModal';
 import SelectedApplicant from './SelectedApplicant';
 
 function SelectedJob({ open, onHide, jobId }) {
-
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);

@@ -16,6 +16,8 @@ import TrainingMaster from './Masterfiles/TrainingMaster';
 import GeneralExam from './Masterfiles/GeneralExam';
 import InterviewCategoryMaster from './Masterfiles/InterviewCategoryMaster';
 import InterviewCriteriaMaster from './Masterfiles/InterviewCriteriaMaster';
+import { useRouter } from 'next/navigation';
+import { retrieveData } from '@/app/utils/storageUtils';
 
 export default function Page() {
   const [viewIndex, setViewIndex] = useState(0);
@@ -35,7 +37,20 @@ export default function Page() {
     { view: <InterviewCategoryMaster /> },
     { view: <InterviewCriteriaMaster /> },
     { view: <GeneralExam /> },
-  ]
+  ];
+
+  const router = useRouter();
+
+  const userLevel = retrieveData("user_level");
+
+  // const userName = retrieveData("first_name");
+  // const userId = retrieveData("user_id");
+
+  // if (!userLevel) {
+  //   sessionStorage.clear();
+  //   router.push("/");
+  //   return;
+  // }
 
 
   const handleChangeView = (index) => {

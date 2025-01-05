@@ -7,6 +7,7 @@ import SetToInterviewModal from './modal/SetToInterviewModal';
 import UpdateJobPassingPercentage from './modal/UpdateJobPassingPercentage';
 import DataTable from '@/app/my_components/DataTable';
 import Spinner from '@/components/ui/spinner';
+import PotentialCandidatesModal from './modal/PotentialCandidatesModal';
 
 const ViewApplicants = ({ handleChangeStatus }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -61,6 +62,7 @@ const ViewApplicants = ({ handleChangeStatus }) => {
       header: 'Total Points',
       accessor: (row) => `${row.totalPoints || 0}/${row.maxPoints || 0}`,
       className: (row) => `${row.percentage >= passingPercentage ? 'text-green-500' : 'text-red-500'}`,
+      hiddenOnMobile: true,
     },
     {
       header: 'Percentage',
@@ -85,7 +87,12 @@ const ViewApplicants = ({ handleChangeStatus }) => {
             data={data}
             itemsPerPage={5}
             onRowClick={(row) => handleShowSelectedApplicant(row.cand_id, row.status_name)}
-            headerAction={<SetToInterviewModal datas={data} passingPercentage={passingPercentage} getPendingCandidates={getPendingDetails} />}
+            headerAction={
+              <div className='flex'>
+                <SetToInterviewModal datas={data} passingPercentage={passingPercentage} getPendingCandidates={getPendingDetails} />
+                <PotentialCandidatesModal passingPercentage={passingPercentage} />
+              </div>
+            }
             tableCaption={
               <div className="flex items-center justify-center ml-1 md:mx-3 ">
                 <p>Passing percentage: {passingPercentage ? passingPercentage : 0}%</p>

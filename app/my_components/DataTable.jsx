@@ -192,7 +192,7 @@ const DataTable = ({
           {headerAction && headerAction}
         </div>
         <div className="flex w-full p-3 md:w-1/2 md:justify-end">
-          {!hideSearch && (
+          {!hideSearch && data.length > 0 && (
             <Input
               type="text"
               placeholder="Search..."
@@ -211,18 +211,20 @@ const DataTable = ({
               <TableHeader>
                 <TableRow>
                   {autoIndex && <TableHead>#</TableHead>}
-                  {columns.map((column, index) => (
-                    <TableHead
-                      key={index}
-                      onClick={() => column.sortable && handleSort(column.accessor)}
-                      className={column.sortable ? 'cursor-pointer' : ''}
-                    >
-                      <div className="flex items-center gap-1">
-                        {column.header}
-                        {column.sortable && <ChevronsUpDown className="h-4 w-4" />}
-                      </div>
-                    </TableHead>
-                  ))}
+                  {columns.map((column, index) =>
+                    (!isMobile || !column.hiddenOnMobile) && (
+                      <TableHead
+                        key={index}
+                        onClick={() => column.sortable && handleSort(column.accessor)}
+                        className={column.sortable ? 'cursor-pointer' : ''}
+                      >
+                        <div className="flex items-center gap-1">
+                          {column.header}
+                          {column.sortable && <ChevronsUpDown className="h-4 w-4" />}
+                        </div>
+                      </TableHead>
+                    )
+                  )}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -240,14 +242,16 @@ const DataTable = ({
                         {(currentPage - 1) * itemsPerPage + rowIndex + 1}
                       </TableCell>
                     )}
-                    {columns.map((column, colIndex) => (
-                      <TableCell
-                        key={colIndex}
-                        className={typeof column.className === 'function' ? column.className(row) : column.className || ''}
-                      >
-                        {truncateText(column.cell ? column.cell(row) : (typeof column.accessor === 'function' ? column.accessor(row) : row[column.accessor]))}
-                      </TableCell>
-                    ))}
+                    {columns.map((column, colIndex) =>
+                      (!isMobile || !column.hiddenOnMobile) && (
+                        <TableCell
+                          key={colIndex}
+                          className={typeof column.className === 'function' ? column.className(row) : column.className || ''}
+                        >
+                          {truncateText(column.cell ? column.cell(row) : (typeof column.accessor === 'function' ? column.accessor(row) : row[column.accessor]))}
+                        </TableCell>
+                      )
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
