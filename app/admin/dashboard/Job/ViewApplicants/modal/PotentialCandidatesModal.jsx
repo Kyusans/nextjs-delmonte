@@ -34,21 +34,18 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
     }
   }, [passingPercentage]);
 
-  // const setAllToPending = () => {
-  //   setIsLoading(false);
-  //   try {
-  //     const url = env.process.NEXT_PUBLIC_API_URL + "admin.php";
-  //     // const jobId = retrieveData("jobId");
-  //     // const jsonData = {
-  //     //   jobId: jobId,
-  //     // }
-
-  //   } catch (error) {
-
-  //   } finally {
-  //     setIsLoading(true);
-  //   }
-  // }
+  const setAllToPending = () => {
+    setIsLoading(false);
+    try {
+      // const url = env.process.NEXT_PUBLIC_API_URL + "admin.php";
+      console.log("potentialCandidates", potentialCandidates);
+    } catch (error) {
+      toast.error("Network Error");
+      console.error(error);
+    } finally {
+      setIsLoading(true);
+    }
+  }
 
   useEffect(() => {
     if (isOpen) {
@@ -88,7 +85,7 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
                 data={potentialCandidates}
                 headerAction={
                   <>
-                    <Button>Set all to pending</Button>
+                    <Button onClick={setAllToPending}>Set all to pending</Button>
                   </>
                 }
               />
