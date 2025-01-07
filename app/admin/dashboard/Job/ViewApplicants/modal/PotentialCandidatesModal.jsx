@@ -24,7 +24,8 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
       formData.append("json", JSON.stringify(jsonData));
       formData.append("operation", "getPotentialCandidates");
       const res = await axios.post(url, formData);
-      // console.log("res poteningal", res);
+      console.log("res poteningal", res);
+      console.log("JobTitle", retrieveData("jobTitle"));
       setPotentialCandidates(res.data === 0 ? [] : res.data);
     } catch (error) {
       console.error("PotentialCanidatasModal.jsx ~ getPotentialCandidates() : ", error);
@@ -34,16 +35,30 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
     }
   }, [passingPercentage]);
 
-  const setAllToPending = () => {
-    setIsLoading(false);
+  const sendEmailToAll = async () => {
+    setIsLoading(true);
     try {
-      // const url = env.process.NEXT_PUBLIC_API_URL + "admin.php";
+      const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
       console.log("potentialCandidates", potentialCandidates);
+      const master = { jobTitle: retrieveData("jobTitle") };
+      const candidates = potentialCandidates.map((candidate) => ({
+        fullName: candidate.fullName,
+        candEmail: candidate.email,
+      }));
+      const jsonData = { candidates: candidates, master: master };
+      const formData = new FormData();
+      formData.append("json", JSON.stringify(jsonData));
+      formData.append("operation", "sendPotentialCandidateEmail");
+      const res = await axios.post(url, formData);
+      if(res.data === 1) {
+        toast.success("Email sent successfully");
+      }
+      console.log("res ni sendEmailToAll", res);
     } catch (error) {
       toast.error("Network Error");
       console.error(error);
     } finally {
-      setIsLoading(true);
+      setIsLoading(false);
     }
   }
 
@@ -85,7 +100,7 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
                 data={potentialCandidates}
                 headerAction={
                   <>
-                    <Button onClick={setAllToPending}>Set all to pending</Button>
+                    <Button onClick={sendEmailToAll}>Send email to all</Button>
                   </>
                 }
               />
