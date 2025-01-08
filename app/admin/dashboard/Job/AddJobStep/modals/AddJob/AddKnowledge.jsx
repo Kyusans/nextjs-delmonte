@@ -47,9 +47,12 @@ function AddKnowledge({ open, onHide, handleAddList, handleAddData, addTotalPoin
   }
 
   const addColumn = (values, id) => {
+    console.log("values ni addColumn: ", values);
     storeData("knowledgeList", JSON.stringify([...knowledgeData, { value: id, label: values.knowledgeName }]));
     setKnowledgeData([...knowledgeData, { value: id, label: values.knowledgeName }]);
-    handleAddData(values, id);
+    if (!isUpdate) {
+      handleAddData(values, id);
+    }
   }
 
   const onSubmit = (values) => {

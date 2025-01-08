@@ -16,6 +16,7 @@ const formSchema = z.object({
   courseCategoryName: z.string().min(1, 'Course category name is required'),
 });
 
+
 const AddCourseCategory = ({ title, getData, data, addColumn }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);

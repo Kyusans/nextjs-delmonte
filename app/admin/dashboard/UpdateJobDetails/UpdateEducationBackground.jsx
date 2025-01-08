@@ -171,7 +171,7 @@ function UpdateEducation({ courseCategory, data, handleAddData, getData, handleU
               </div>
             </>
           ) : (
-            <CardDescription className="text-center">
+            <CardDescription className="text-center">   
               No education added yet
             </CardDescription>
           )}
