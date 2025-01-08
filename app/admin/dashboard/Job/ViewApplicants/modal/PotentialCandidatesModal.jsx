@@ -9,6 +9,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import SetToInterviewModal from './SetToInterviewModal'
 import SelectedApplicant from '../../modal/SelectedApplicant'
+import ShowAlert from '@/components/ui/show-alert'
 
 const PotentialCandidatesModal = ({ passingPercentage }) => {
   const [isOpen, setIsOpen] = useState(false)
@@ -16,6 +17,25 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
   const [potentialCandidates, setPotentialCandidates] = useState([])
   const [selectedCandId, setSelectedCandId] = useState(null);
   const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleShowAlert = (message) => {
+    setAlertMessage(message);
+    setShowAlert(true);
+  };
+  const handleCloseAlert = async (status) => {
+    if (status === 1) {
+      const toastId = toast.loading("Sending emails to all potential candidates");
+      await sendEmailToAll();
+      toast.dismiss(toastId);
+    }
+    setShowAlert(false);
+  };
+  const handleOpenAlert = () => {
+    handleShowAlert(`Are you sure you want to send emails to all ${potentialCandidates.length} potential candidates?`);
+  };
 
   const getPotentialCandidates = useCallback(async () => {
     setIsLoading(true);
@@ -112,16 +132,24 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
           <DialogDescription />
           {isLoading ? <Spinner /> :
             <>
-              <DataTable
-                columns={columns}
-                data={potentialCandidates}
-                onRowClick={handleOnClickRow}
-                headerAction={
-                  <>
-                    <Button onClick={sendEmailToAll}>Send email to all</Button>
-                  </>
-                }
-              />
+
+              {potentialCandidates.length > 0 ?
+                <DataTable
+                  columns={columns}
+                  data={potentialCandidates}
+                  onRowClick={handleOnClickRow}
+                  headerAction={
+                    <>
+                      <Button onClick={handleOpenAlert}>Send email to all</Button>
+                    </>
+                  }
+                />
+                :
+                <div className="flex justify-center items-center h-40">
+                  <p>No potential candidates found</p>
+                </div>
+              }
+
             </>
           }
         </DialogContent>
@@ -135,6 +163,7 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
         // handleChangeStatus={handleChangeStatus}
         />
       }
+      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
     </div>
   )
 }
