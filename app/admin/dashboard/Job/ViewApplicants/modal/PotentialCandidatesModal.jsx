@@ -8,11 +8,14 @@ import { set } from 'date-fns'
 import React, { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import SetToInterviewModal from './SetToInterviewModal'
+import SelectedApplicant from '../../modal/SelectedApplicant'
 
 const PotentialCandidatesModal = ({ passingPercentage }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true);
   const [potentialCandidates, setPotentialCandidates] = useState([])
+  const [selectedCandId, setSelectedCandId] = useState(null);
+  const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
 
   const getPotentialCandidates = useCallback(async () => {
     setIsLoading(true);
@@ -50,7 +53,7 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
       formData.append("json", JSON.stringify(jsonData));
       formData.append("operation", "sendPotentialCandidateEmail");
       const res = await axios.post(url, formData);
-      if(res.data === 1) {
+      if (res.data === 1) {
         toast.success("Email sent successfully");
       }
       console.log("res ni sendEmailToAll", res);
@@ -84,6 +87,20 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
     },
   ];
 
+  const handleOpenInterviewModal = () => {
+    setIsInterviewModalOpen(true);
+  };
+
+  const handleCloseInterviewModal = () => {
+    getPotentialCandidates();
+    setIsInterviewModalOpen(false);
+  };
+
+  const handleOnClickRow = (id) => {
+    setSelectedCandId(id.candId);
+    handleOpenInterviewModal();
+  };
+
   return (
     <div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -98,6 +115,7 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
               <DataTable
                 columns={columns}
                 data={potentialCandidates}
+                onRowClick={handleOnClickRow}
                 headerAction={
                   <>
                     <Button onClick={sendEmailToAll}>Send email to all</Button>
@@ -108,6 +126,15 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
           }
         </DialogContent>
       </Dialog>
+      {isInterviewModalOpen &&
+        <SelectedApplicant
+          open={isInterviewModalOpen}
+          onHide={handleCloseInterviewModal}
+          statusName={"Potential"}
+          candId={selectedCandId}
+        // handleChangeStatus={handleChangeStatus}
+        />
+      }
     </div>
   )
 }

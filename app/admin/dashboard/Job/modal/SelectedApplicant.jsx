@@ -80,6 +80,23 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
           await handleChangeStatus(candId, 7);
           toast.success("Applicant proceeded to background check");
           setStatus("Background Check");
+        } else if (alertMessage === "Are you sure you want to send an email to this applicant?") {
+          const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
+          const master = { jobTitle: retrieveData("jobTitle") };
+          const candidate = {
+            fullName: `${data.candidateInformation.cand_firstname} ${data.candidateInformation.cand_lastname}`,
+            candEmail: data.candidateInformation.cand_email,
+          };
+          const jsonData = { candidates: [candidate], master: master };
+          const formData = new FormData();
+          formData.append("json", JSON.stringify(jsonData));
+          formData.append("operation", "sendPotentialCandidateEmail");
+          const res = await axios.post(url, formData);
+          if (res.data === 1) {
+            toast.success("Email sent successfully");
+          } else {
+            toast.error("Failed to send email");
+          }
         }
       }
       setShowAlert(false);
@@ -138,12 +155,17 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
     getCandidateProfile();
   };
 
+  const handleSendEmail = () => {
+    handleShowAlert("Are you sure you want to send an email to this applicant?");
+  }
+
   useEffect(() => {
     if (open) {
       getCandidateProfile();
       setStatus(statusName)
     }
   }, [getCandidateProfile, open, statusName]);
+
 
   return (
     <>
@@ -163,6 +185,7 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                 {status === "Background Check" && (<Button onClick={() => handleShowBackgroundCheckAlert()}>Background check</Button>)}
                 {status === "Decision Pending" && isJobOffer === 0 && (<JobOffer candId={candId} changeStatus={handleJobOfferChangeStatus} />)}
                 {status === "Failed Exam" && (<Button onClick={() => handleProceedToBackgroundCheck()}>Proceed to background check</Button>)}
+                {status === "Potential" && (<Button onClick={() => handleSendEmail()}>Send Email</Button>)}
               </div>
             </div>
           </SheetHeader>
@@ -188,7 +211,9 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                             <Spinner />
                           </AvatarFallback>
                         </Avatar>
-                        <Badge className="my-4">{status !== "Reapplied" && "Status: "} {status}</Badge>
+                        {status !== "Potential" &&
+                          <Badge className="my-4">{status !== "Reapplied" && "Status: "} {status}</Badge>
+                        }
                         <CardTitle className="mt-2">
                           {data.candidateInformation
                             ? `${data.candidateInformation.cand_firstname} ${data.candidateInformation.cand_lastname}`
@@ -527,8 +552,9 @@ function SelectedApplicant({ open, onHide, candId, statusName, handleChangeStatu
                         <Tabs defaultValue="1" className='h-full flex flex-col'>
                           <TabsList>
                             <TabsTrigger value="1">Qualifications</TabsTrigger>
-                            {status !== "Pending" && status !== "Processed" && <TabsTrigger value="2">Interview</TabsTrigger>}
-                            {status !== "Pending" && status !== "Processed" && status !== "Interview" && <TabsTrigger value="3">Exam</TabsTrigger>}
+
+                            {status !== "Pending" && status !== "Processed" && status !== "Potential" && <TabsTrigger value="2">Interview</TabsTrigger>}
+                            {status !== "Pending" && status !== "Processed" && status !== "Interview" && status !== "Potential" && <TabsTrigger value="3">Exam</TabsTrigger>}
                           </TabsList>
                           <TabsContent value="1">
                             <Accordion type="multiple" collapsible="true" className="w-full p-5" defaultValue={["1", "2", "3", "4", "5"]}>
