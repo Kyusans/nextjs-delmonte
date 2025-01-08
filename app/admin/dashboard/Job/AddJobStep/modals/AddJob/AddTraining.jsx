@@ -50,7 +50,9 @@ function AddTraining({ open, onHide, handleAddList, handleAddData, addTotalPoint
   const addColumn = (values, id) => {
     storeData("trainingList", JSON.stringify([...trainingData, { value: id, label: values.trainingName }]));
     setTrainingData([...trainingData, { value: id, label: values.trainingName }]);
-    handleAddData(values, id);
+    if (!isUpdate) {
+      handleAddData(values, id);
+    }
   }
 
   const onSubmit = (values) => {

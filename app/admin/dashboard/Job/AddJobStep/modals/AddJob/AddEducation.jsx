@@ -52,7 +52,9 @@ function AddEducation({ open, onHide, handleAddList, isUpdate, handleAddData, ad
     console.log("values ni addColumn: ", values);
     storeData("courseCategoryList", JSON.stringify([...courseCategory, { value: id, label: values.courseCategoryName }]));
     setCourseCategory([...courseCategory, { value: id, label: values.courseCategoryName }]);
-    handleAddData(values, id);
+    if (!isUpdate) {
+      handleAddData(values, id);
+    }
   }
 
   const onSubmit = (values) => {

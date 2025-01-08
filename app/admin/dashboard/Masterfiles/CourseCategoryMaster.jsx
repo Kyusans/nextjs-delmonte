@@ -12,6 +12,7 @@ const CourseCategoryMaster = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  
   const addColumn = (values, newId) => {
     setData([...data, {
       course_categoryId: newId,

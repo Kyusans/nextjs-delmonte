@@ -45,7 +45,9 @@ function AddSkill({ open, onHide, handleAddList, handleAddData, addTotalPoints, 
   const addColumn = (values, id) => {
     storeData("skillsList", JSON.stringify([...skillData, { value: id, label: values.skillName }]));
     setSkillData([...skillData, { value: id, label: values.skillName }]);
-    handleAddData(values, id);
+    if (!isUpdate) {
+      handleAddData(values, id);
+    }
   }
 
   const onSubmit = (values) => {

@@ -27,7 +27,7 @@ function UpdateDuties({ data, handleAddData, getData, handleUpdate, deleteData }
 
   const handleCloseAlert = (status) => {
     if (status === 1) {
-      const jsonData = {dutyId: selectedId}
+      const jsonData = { dutyId: selectedId }
       deleteData("deleteDuties", jsonData, "getDuties");
     }
     setShowAlert(false);
@@ -72,7 +72,7 @@ function UpdateDuties({ data, handleAddData, getData, handleUpdate, deleteData }
     if (editedText === datas[editIndex].duties_text) {
       handleCancelEdit();
       return;
-    }else if (!editedText) {
+    } else if (!editedText) {
       toast.error("Empty field is not allowed");
     }
 
