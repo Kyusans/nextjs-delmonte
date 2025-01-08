@@ -64,6 +64,13 @@ function AddSkill({ open, onHide, handleAddList, handleAddData, addTotalPoints, 
         if (!isUpdate) {
           if (addTotalPoints(values.points) === false) return;
         }
+        const jobTotalPoints = Number(retrieveData("jobTotalPoints"));
+        const jobPointSum = jobTotalPoints + Number(values.points);
+        if (jobPointSum > 100) {
+          toast.error("Total points must not exceed 100");
+          return;
+        }
+        storeData("jobTotalPoints", jobPointSum);
         handleAddList(values);
         form.reset();
       }
@@ -82,7 +89,8 @@ function AddSkill({ open, onHide, handleAddList, handleAddData, addTotalPoints, 
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold">Add Skill</DialogTitle>
+            <DialogTitle>Add Skill</DialogTitle>
+            {isUpdate && <DialogDescription>Total points: {retrieveData("jobTotalPoints")}</DialogDescription>}
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>

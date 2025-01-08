@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
+import { retrieveData, storeData } from '@/app/utils/storageUtils';
 
 function AddExperience({ open, onHide, handleAddList, addTotalPoints, isUpdate = false }) {
 
@@ -46,9 +47,18 @@ function AddExperience({ open, onHide, handleAddList, addTotalPoints, isUpdate =
   const onSubmit = (values) => {
     try {
       // onHide(values);
-      if(!isUpdate){
-        if(addTotalPoints(values.points) === false) return;
+      if (!isUpdate) {
+        if (addTotalPoints(values.points) === false) return;
+      } else {
+        const jobTotalPoints = Number(retrieveData("jobTotalPoints"));
+        const jobPointSum = jobTotalPoints + Number(values.points);
+        if (jobPointSum > 100) {
+          toast.error("Total points must not exceed 100");
+          return;
+        }
+        storeData("jobTotalPoints", jobPointSum);
       }
+
       handleAddList(values);
       form.reset();
     } catch (error) {
@@ -65,7 +75,8 @@ function AddExperience({ open, onHide, handleAddList, addTotalPoints, isUpdate =
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold">Add Experience</DialogTitle>
+            <DialogTitle>Add Experience</DialogTitle>
+            {isUpdate && <DialogDescription>Total points: {retrieveData("jobTotalPoints")}</DialogDescription>}
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>

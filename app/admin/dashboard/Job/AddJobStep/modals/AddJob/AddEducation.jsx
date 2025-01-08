@@ -1,5 +1,5 @@
 "use client"
-import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import React, { useEffect, useState } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
@@ -69,6 +69,13 @@ function AddEducation({ open, onHide, handleAddList, isUpdate, handleAddData, ad
       });
       if (isValid) {
         if (isUpdate) {
+          const jobTotalPoints = Number(retrieveData("jobTotalPoints"));
+          const jobPointSum = jobTotalPoints + Number(values.points);
+          if (jobPointSum > 100) {
+            toast.error("Total points must not exceed 100");
+            return;
+          }
+          storeData("jobTotalPoints", jobPointSum);
           onHide(values);
         } else {
           if (addTotalPoints(values.points) === false) return;
@@ -91,7 +98,8 @@ function AddEducation({ open, onHide, handleAddList, isUpdate, handleAddData, ad
       <Dialog open={open} onOpenChange={handleOnHide}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl font-bold">Add Education</DialogTitle>
+            <DialogTitle>Add Education</DialogTitle>
+            {isUpdate && <DialogDescription>Total points: {retrieveData("jobTotalPoints")}</DialogDescription>}
           </DialogHeader>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
