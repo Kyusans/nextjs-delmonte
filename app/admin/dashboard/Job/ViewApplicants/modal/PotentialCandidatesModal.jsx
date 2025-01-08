@@ -138,6 +138,7 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
                   columns={columns}
                   data={potentialCandidates}
                   onRowClick={handleOnClickRow}
+                  itemsPerPage={5}
                   headerAction={
                     <>
                       <Button onClick={handleOpenAlert}>Send email to all</Button>
