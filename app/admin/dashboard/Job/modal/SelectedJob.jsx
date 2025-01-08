@@ -37,6 +37,7 @@ function SelectedJob({ open, onHide, jobId, getJobs }) {
         const response = res.data;
         console.log("res ni RESDATA: ", response);
         storeData("jobTotalPoints", response.jobTotalPoints);
+        storeData("jobTitle", response.jobMaster[0].jobM_title);
         // storeData("interviewPassing", response.passingPercentage);
         setData(res.data);
         if (res.data.exam !== 0) {
@@ -102,6 +103,8 @@ function SelectedJob({ open, onHide, jobId, getJobs }) {
     <>
       <Sheet open={open} onOpenChange={handleClose}>
         <SheetContent side="bottom" className="flex flex-col h-screen md:h-[90vh] overflow-y-auto">
+          <SheetTitle />
+          <SheetDescription />
           {isLoading ? (
             <Spinner />
           ) : (

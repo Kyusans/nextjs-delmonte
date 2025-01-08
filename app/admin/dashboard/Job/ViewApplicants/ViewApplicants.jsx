@@ -8,6 +8,7 @@ import UpdateJobPassingPercentage from './modal/UpdateJobPassingPercentage';
 import DataTable from '@/app/my_components/DataTable';
 import Spinner from '@/components/ui/spinner';
 import PotentialCandidatesModal from './modal/PotentialCandidatesModal';
+import { Badge } from '@/components/ui/badge';
 
 const ViewApplicants = ({ handleChangeStatus }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -70,7 +71,7 @@ const ViewApplicants = ({ handleChangeStatus }) => {
       className: (row) => `${row.percentage >= passingPercentage ? 'text-green-500' : 'text-red-500'}`,
       sortable: true
     },
-    { header: 'Date', accessor: 'Date', sortable: true },
+    { header: 'Date', accessor: 'Date', sortable: true, hiddenOnMobile: true },
     { header: 'Status', accessor: 'status_name', className: (row) => `${row.status_name === "Pending" || row.status_name === "Processed" ? 'text-green-500' : 'text-red-500'}` }
   ];
 
@@ -80,6 +81,10 @@ const ViewApplicants = ({ handleChangeStatus }) => {
 
   return (
     <div>
+      <div className="flex items-center justify-end ml-1 md:mx-3 ">
+        <p>Passing percentage: <Badge>{passingPercentage ? passingPercentage : 0}%</Badge> </p>
+        <UpdateJobPassingPercentage currentPassingPercentage={passingPercentage} getSelectedJob={getPendingDetails} />
+      </div>
       <div className='p-3'>
         {isLoading ? <Spinner /> :
           <DataTable
@@ -91,12 +96,6 @@ const ViewApplicants = ({ handleChangeStatus }) => {
               <div className='flex'>
                 <SetToInterviewModal datas={data} passingPercentage={passingPercentage} getPendingCandidates={getPendingDetails} />
                 <PotentialCandidatesModal passingPercentage={passingPercentage} />
-              </div>
-            }
-            tableCaption={
-              <div className="flex items-center justify-center ml-1 md:mx-3 ">
-                <p>Passing percentage: {passingPercentage ? passingPercentage : 0}%</p>
-                <UpdateJobPassingPercentage currentPassingPercentage={passingPercentage} getSelectedJob={getPendingDetails} />
               </div>
             }
           />

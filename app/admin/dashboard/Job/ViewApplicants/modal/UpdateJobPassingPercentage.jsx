@@ -1,6 +1,6 @@
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Edit } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -31,9 +31,13 @@ function UpdateJobPassingPercentage({ currentPassingPercentage, getSelectedJob }
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      passingPercent: currentPassingPercentage.toString(),
+      passingPercent: currentPassingPercentage,
     },
   });
+
+  useEffect(() => {
+    form.reset({ passingPercent: currentPassingPercentage });
+  }, [currentPassingPercentage, form]);
 
   const onSubmit = async (values) => {
     if (Number(values.passingPercent) === Number(currentPassingPercentage)) {
@@ -65,10 +69,12 @@ function UpdateJobPassingPercentage({ currentPassingPercentage, getSelectedJob }
       setIsLoading(false);
     }
   };
+
   const handleOnHide = () => {
     setIsDialogOpen(false);
     form.reset();
   }
+
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>

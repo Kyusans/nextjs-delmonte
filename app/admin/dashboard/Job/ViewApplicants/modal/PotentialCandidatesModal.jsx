@@ -8,11 +8,34 @@ import { set } from 'date-fns'
 import React, { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import SetToInterviewModal from './SetToInterviewModal'
+import SelectedApplicant from '../../modal/SelectedApplicant'
+import ShowAlert from '@/components/ui/show-alert'
 
 const PotentialCandidatesModal = ({ passingPercentage }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true);
   const [potentialCandidates, setPotentialCandidates] = useState([])
+  const [selectedCandId, setSelectedCandId] = useState(null);
+  const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const handleShowAlert = (message) => {
+    setAlertMessage(message);
+    setShowAlert(true);
+  };
+  const handleCloseAlert = async (status) => {
+    if (status === 1) {
+      const toastId = toast.loading("Sending emails to all potential candidates");
+      await sendEmailToAll();
+      toast.dismiss(toastId);
+    }
+    setShowAlert(false);
+  };
+  const handleOpenAlert = () => {
+    handleShowAlert(`Are you sure you want to send emails to all ${potentialCandidates.length} potential candidates?`);
+  };
 
   const getPotentialCandidates = useCallback(async () => {
     setIsLoading(true);
@@ -24,7 +47,8 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
       formData.append("json", JSON.stringify(jsonData));
       formData.append("operation", "getPotentialCandidates");
       const res = await axios.post(url, formData);
-      // console.log("res poteningal", res);
+      console.log("res poteningal", res);
+      console.log("JobTitle", retrieveData("jobTitle"));
       setPotentialCandidates(res.data === 0 ? [] : res.data);
     } catch (error) {
       console.error("PotentialCanidatasModal.jsx ~ getPotentialCandidates() : ", error);
@@ -34,16 +58,30 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
     }
   }, [passingPercentage]);
 
-  const setAllToPending = () => {
-    setIsLoading(false);
+  const sendEmailToAll = async () => {
+    setIsLoading(true);
     try {
-      // const url = env.process.NEXT_PUBLIC_API_URL + "admin.php";
+      const url = process.env.NEXT_PUBLIC_API_URL + "admin.php";
       console.log("potentialCandidates", potentialCandidates);
+      const master = { jobTitle: retrieveData("jobTitle") };
+      const candidates = potentialCandidates.map((candidate) => ({
+        fullName: candidate.fullName,
+        candEmail: candidate.email,
+      }));
+      const jsonData = { candidates: candidates, master: master };
+      const formData = new FormData();
+      formData.append("json", JSON.stringify(jsonData));
+      formData.append("operation", "sendPotentialCandidateEmail");
+      const res = await axios.post(url, formData);
+      if (res.data === 1) {
+        toast.success("Email sent successfully");
+      }
+      console.log("res ni sendEmailToAll", res);
     } catch (error) {
       toast.error("Network Error");
       console.error(error);
     } finally {
-      setIsLoading(true);
+      setIsLoading(false);
     }
   }
 
@@ -69,6 +107,20 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
     },
   ];
 
+  const handleOpenInterviewModal = () => {
+    setIsInterviewModalOpen(true);
+  };
+
+  const handleCloseInterviewModal = () => {
+    getPotentialCandidates();
+    setIsInterviewModalOpen(false);
+  };
+
+  const handleOnClickRow = (id) => {
+    setSelectedCandId(id.candId);
+    handleOpenInterviewModal();
+  };
+
   return (
     <div>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -80,19 +132,39 @@ const PotentialCandidatesModal = ({ passingPercentage }) => {
           <DialogDescription />
           {isLoading ? <Spinner /> :
             <>
-              <DataTable
-                columns={columns}
-                data={potentialCandidates}
-                headerAction={
-                  <>
-                    <Button onClick={setAllToPending}>Set all to pending</Button>
-                  </>
-                }
-              />
+
+              {potentialCandidates.length > 0 ?
+                <DataTable
+                  columns={columns}
+                  data={potentialCandidates}
+                  onRowClick={handleOnClickRow}
+                  itemsPerPage={5}
+                  headerAction={
+                    <>
+                      <Button onClick={handleOpenAlert}>Send email to all</Button>
+                    </>
+                  }
+                />
+                :
+                <div className="flex justify-center items-center h-40">
+                  <p>No potential candidates found</p>
+                </div>
+              }
+
             </>
           }
         </DialogContent>
       </Dialog>
+      {isInterviewModalOpen &&
+        <SelectedApplicant
+          open={isInterviewModalOpen}
+          onHide={handleCloseInterviewModal}
+          statusName={"Potential"}
+          candId={selectedCandId}
+        // handleChangeStatus={handleChangeStatus}
+        />
+      }
+      <ShowAlert open={showAlert} onHide={handleCloseAlert} message={alertMessage} />
     </div>
   )
 }
